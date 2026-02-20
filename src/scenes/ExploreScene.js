@@ -17,6 +17,7 @@ import Enemy       from '../entities/Enemy.js';
 import NPC         from '../entities/NPC.js';
 import HUD         from '../ui/HUD.js';
 import DialogBox   from '../ui/DialogBox.js';
+import NPC_JOKES   from '../data/npcJokes.json' with { type: 'json' };
 
 //  World constants 
 const T     = 32;    // tile size in pixels
@@ -564,9 +565,15 @@ export default class ExploreScene extends Phaser.Scene {
       px, py,
       { spriteKey: 'npc_wizard', spriteKeyB: 'npc_wizard_b' },
       (done) => {
-        if (!this.dialog.isOpen) {
-          this.dialog.show(this.regionData.npcHint, done, ' Hint');
-        }
+        if (this.dialog.isOpen) return;
+        // Pick a new random joke every interaction
+        const joke = NPC_JOKES[Math.floor(Math.random() * NPC_JOKES.length)];
+        // Page 1: setup — pause for the player to read it
+        this.dialog.show(joke.setup, () => {
+          // Page 2: punchline + math hint together
+          const hint = this.regionData.npcHint;
+          this.dialog.show(`${joke.punchline}\n\n💡 Hint: ${hint}`, done, '🧙 Wizard');
+        }, '🧙 Wizard');
       },
     );
     this._npc.registerOverlap(this.mimi.sprite);

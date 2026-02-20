@@ -121,6 +121,10 @@ export function generateDistractors(question) {
  * @returns {Array<{text: string, correct: boolean}>}
  */
 export function getChoices(question) {
+  // Questions that embed their own 4 candidates (e.g. "pick the largest of these 4").
+  // Just shuffle them — no distractor generation needed.
+  if (question.choices) return shuffle([...question.choices]);
+
   const distractors = generateDistractors(question);
   const choices = [
     { text: String(question.answerDisplay ?? question.answer), correct: true },

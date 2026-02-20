@@ -88,8 +88,8 @@ export default class BattleScene extends Phaser.Scene {
       this.add.rectangle(W / 2, H / 2, W, H, 0x0A0A20).setDepth(0);
     }
     
-    // Add subtle overlay for UI readability
-    this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.15).setDepth(1);
+    // Subtle overlay — keeps backdrop visible without crushing other UI
+    this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.20).setDepth(1);
     
     // Separator lines
     const gfx = this.add.graphics();
@@ -132,11 +132,16 @@ export default class BattleScene extends Phaser.Scene {
       .setOrigin(0.5, 0);
 
     // ── Question display ────────────────────────────────────────────────
+    // Dark pill behind the question text only — guarantees contrast without
+    // darkening the rest of the battle scene.
+    this.add.rectangle(W / 2, H * 0.43, W - 40, 88, 0x000000, 0.68).setDepth(2);
+
     this.questionText = this.add.text(W / 2, H * 0.43, '', {
       ...TEXT_STYLE(34, '#FFE44D', true),
+      stroke: '#000000', strokeThickness: 4,
       align: 'center',
-      wordWrap: { width: W - 60 },
-    }).setOrigin(0.5);
+      wordWrap: { width: W - 80 },
+    }).setOrigin(0.5).setDepth(3);
 
     // ── Answer buttons ──────────────────────────────────────────────────
     this._buildAnswerButtons(W, H);

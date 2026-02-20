@@ -26,7 +26,14 @@ function frac(num, den) {
   const d = den / g;
   return d === 1 ? String(n) : `${n}/${d}`;
 }
-
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 // ── Addition & Subtraction (Grades 1–3) ──────────────────────────────────────
 
 function addSubD1() {
@@ -50,14 +57,14 @@ function addSubD2() {
 }
 
 function addSubD3() {
-  // Mixed within 99
+  // Grade 3 — 2-digit arithmetic capped at ~60; no 88−24 territory
   if (Math.random() < 0.5) {
-    const a = rand(11, 89);
-    const b = rand(5, 99 - a);
+    const a = rand(11, 45);
+    const b = rand(5, Math.min(25, 99 - a));
     return { text: `${a} + ${b} = ?`, answer: a + b, answerDisplay: String(a + b), topic: 'addSub' };
   } else {
-    const a = rand(20, 99);
-    const b = rand(5, a - 5);
+    const a = rand(15, 59);
+    const b = rand(3, Math.min(20, a - 1));
     return { text: `${a} − ${b} = ?`, answer: a - b, answerDisplay: String(a - b), topic: 'addSub' };
   }
 }
@@ -130,21 +137,15 @@ const SIMPLE_FRACS = [
 ];
 
 function fracD1() {
-  // Compare two simple fractions — which is larger?
-  let idx1 = rand(0, SIMPLE_FRACS.length - 1);
-  let idx2 = rand(0, SIMPLE_FRACS.length - 1);
-  while (idx2 === idx1) idx2 = rand(0, SIMPLE_FRACS.length - 1);
-  const [n1, d1] = SIMPLE_FRACS[idx1];
-  const [n2, d2] = SIMPLE_FRACS[idx2];
-  const v1 = n1 / d1;
-  const v2 = n2 / d2;
-  if (Math.abs(v1 - v2) < 0.01) return fracD1(); // too close — retry
-  const larger = v1 > v2 ? `${n1}/${d1}` : `${n2}/${d2}`;
+  // 4 random fractions from the pool; player picks the largest.
+  const fracs = shuffle([...SIMPLE_FRACS]).slice(0, 4);
+  const best  = fracs.reduce((a, b) => a[0] / a[1] >= b[0] / b[1] ? a : b);
+  const ans   = `${best[0]}/${best[1]}`;
   return {
-    text:          `Which is larger?\n${n1}/${d1}   or   ${n2}/${d2}`,
-    answer:        larger,
-    answerDisplay: larger,
-    altAnswer:     v1 > v2 ? `${n2}/${d2}` : `${n1}/${d1}`,
+    text:          'Which is the LARGEST fraction?',
+    answer:        ans,
+    answerDisplay: ans,
+    choices:       fracs.map(([n, d]) => { const s = `${n}/${d}`; return { text: s, correct: s === ans }; }),
     topic:         'fractions',
   };
 }
@@ -252,7 +253,8 @@ function additionD2() {
   return { text: `${a} + ${b} = ?`, answer: a + b, answerDisplay: String(a + b), topic: 'addition' };
 }
 function additionD3() {
-  const a = rand(11, 89); const b = rand(5, 99 - a);
+  // Grade 3 cap: sums stay under ~65
+  const a = rand(11, 39); const b = rand(5, Math.min(25, 99 - a));
   return { text: `${a} + ${b} = ?`, answer: a + b, answerDisplay: String(a + b), topic: 'addition' };
 }
 
@@ -267,16 +269,26 @@ function subtractionD2() {
   return { text: `${a} − ${b} = ?`, answer: a - b, answerDisplay: String(a - b), topic: 'subtraction' };
 }
 function subtractionD3() {
-  const a = rand(20, 99); const b = rand(5, a - 5);
+  // Grade 3 cap: minuend ≤59, subtrahend ≤20
+  const a = rand(15, 59); const b = rand(3, Math.min(20, a - 1));
   return { text: `${a} − ${b} = ?`, answer: a - b, answerDisplay: String(a - b), topic: 'subtraction' };
 }
 
 // ── Number comparison (Region 0 — NEW additional type) ───────────────────────
 
 function comparisonD1() {
-  let a = rand(1, 9), b;
-  do { b = rand(1, 9); } while (b === a);
-  return { text: `Which is larger?\n  ${a}  or  ${b}`, answer: Math.max(a, b), answerDisplay: String(Math.max(a, b)), topic: 'comparison' };
+  // 4 distinct numbers; player picks the largest.
+  const seen = new Set();
+  while (seen.size < 4) seen.add(rand(1, 20));
+  const nums    = [...seen];
+  const largest = Math.max(...nums);
+  return {
+    text:          'Which is the LARGEST number?',
+    answer:        largest,
+    answerDisplay: String(largest),
+    choices:       nums.map(n => ({ text: String(n), correct: n === largest })),
+    topic:         'comparison',
+  };
 }
 function comparisonD2() {
   const b = rand(5, 20); const diff = rand(2, 10); const a = b + diff;
@@ -357,29 +369,44 @@ function divisionWordD3() {
 // ── Fraction comparison only (Region 3 enemy 1) ───────────────────────────────
 
 function fractionCompareD1() {
-  const pool   = [[1,2],[1,4],[3,4],[1,3],[2,3]];
-  let i1 = rand(0, pool.length-1), i2;
-  do { i2 = rand(0, pool.length-1); } while (i2 === i1);
-  const [n1,d1] = pool[i1]; const [n2,d2] = pool[i2];
-  const larger = (n1/d1 > n2/d2) ? `${n1}/${d1}` : `${n2}/${d2}`;
-  return { text: `Which is larger?\n${n1}/${d1}   or   ${n2}/${d2}`, answer: larger, answerDisplay: larger, topic: 'fractionCompare' };
+  // Small friendly pool; player picks the largest of 4.
+  const pool  = [[1,2],[1,4],[3,4],[1,3],[2,3],[1,6],[5,6],[3,8],[5,8]];
+  const fracs = shuffle([...pool]).slice(0, 4);
+  const best  = fracs.reduce((a, b) => a[0] / a[1] >= b[0] / b[1] ? a : b);
+  const ans   = `${best[0]}/${best[1]}`;
+  return {
+    text:          'Which is the LARGEST fraction?',
+    answer:        ans,
+    answerDisplay: ans,
+    choices:       fracs.map(([n, d]) => { const s = `${n}/${d}`; return { text: s, correct: s === ans }; }),
+    topic:         'fractionCompare',
+  };
 }
 function fractionCompareD2() {
-  let idx1 = rand(0, SIMPLE_FRACS.length-1), idx2;
-  do { idx2 = rand(0, SIMPLE_FRACS.length-1); } while (idx2 === idx1);
-  const [n1,d1] = SIMPLE_FRACS[idx1]; const [n2,d2] = SIMPLE_FRACS[idx2];
-  if (Math.abs(n1/d1 - n2/d2) < 0.02) return fractionCompareD2();
-  const larger = (n1/d1 > n2/d2) ? `${n1}/${d1}` : `${n2}/${d2}`;
-  return { text: `Which is larger?\n${n1}/${d1}   or   ${n2}/${d2}`, answer: larger, answerDisplay: larger, topic: 'fractionCompare' };
+  // Full SIMPLE_FRACS pool; player picks the largest of 4.
+  const fracs = shuffle([...SIMPLE_FRACS]).slice(0, 4);
+  const best  = fracs.reduce((a, b) => a[0] / a[1] >= b[0] / b[1] ? a : b);
+  const ans   = `${best[0]}/${best[1]}`;
+  return {
+    text:          'Which is the LARGEST fraction?',
+    answer:        ans,
+    answerDisplay: ans,
+    choices:       fracs.map(([n, d]) => { const s = `${n}/${d}`; return { text: s, correct: s === ans }; }),
+    topic:         'fractionCompare',
+  };
 }
 function fractionCompareD3() {
-  // Which is smaller?
-  let idx1 = rand(0, SIMPLE_FRACS.length-1), idx2;
-  do { idx2 = rand(0, SIMPLE_FRACS.length-1); } while (idx2 === idx1);
-  const [n1,d1] = SIMPLE_FRACS[idx1]; const [n2,d2] = SIMPLE_FRACS[idx2];
-  if (Math.abs(n1/d1 - n2/d2) < 0.02) return fractionCompareD3();
-  const smaller = (n1/d1 < n2/d2) ? `${n1}/${d1}` : `${n2}/${d2}`;
-  return { text: `Which is SMALLER?\n${n1}/${d1}   or   ${n2}/${d2}`, answer: smaller, answerDisplay: smaller, topic: 'fractionCompare' };
+  // Full SIMPLE_FRACS pool; player picks the SMALLEST of 4.
+  const fracs = shuffle([...SIMPLE_FRACS]).slice(0, 4);
+  const best  = fracs.reduce((a, b) => a[0] / a[1] <= b[0] / b[1] ? a : b);
+  const ans   = `${best[0]}/${best[1]}`;
+  return {
+    text:          'Which is the SMALLEST fraction?',
+    answer:        ans,
+    answerDisplay: ans,
+    choices:       fracs.map(([n, d]) => { const s = `${n}/${d}`; return { text: s, correct: s === ans }; }),
+    topic:         'fractionCompare',
+  };
 }
 
 // ── Fraction addition only (Region 3 enemy 2) ────────────────────────────────

@@ -1,12 +1,6 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Stone A — clean paving stone with mortar grid -->
-  <rect width="32" height="32" fill="#8B8B8B"/>
-  <!-- Mortar joints: one horizontal, one vertical (brick-offset look) -->
-  <line x1="0"  y1="16" x2="32" y2="16" stroke="#606060" stroke-width="1.5" opacity="0.6"/>
-  <line x1="16" y1="0"  x2="16" y2="16" stroke="#606060" stroke-width="1.5" opacity="0.6"/>
-  <line x1="8"  y1="16" x2="8"  y2="32" stroke="#606060" stroke-width="1.5" opacity="0.55"/>
-  <line x1="24" y1="16" x2="24" y2="32" stroke="#606060" stroke-width="1.5" opacity="0.55"/>
-  <!-- Faint top-surface sheen on two blocks -->
-  <rect x="1" y="1"   width="14" height="14" rx="0.5" fill="#969696" opacity="0.12"/>
-  <rect x="1" y="17"  width="6"  height="14" rx="0.5" fill="#969696" opacity="0.10"/>
+  <!-- Stone A — smooth dark flagstone with faint centre-slab highlight -->
+  <rect width="32" height="32" fill="#5A5268"/>
+  <!-- Very subtle broad oval suggesting one large stone face — all sides ≥7 px inset -->
+  <ellipse cx="17" cy="16" rx="10" ry="9" fill="#6E6980" opacity="0.22"/>
 </svg>

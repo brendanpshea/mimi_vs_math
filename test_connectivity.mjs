@@ -2,17 +2,15 @@
  * test_connectivity.mjs
  * Structural reachability tests for all five ExploreScene regions.
  *
- * For each region we build a walkability grid (the same blocked-tile set
- * that ExploreScene constructs at runtime from decorations + the clearance
- * guard), then run BFS from mimiStart and assert that every key position
- * (enemies, NPC, chest, boss) is reachable.
+ * Uses WALK_GRIDS — the exact blocked-tile Sets produced by the procedural
+ * map generator — to run BFS from mimiStart and assert that every key
+ * position (enemies, NPC, chest, boss) is reachable.
  *
  * Run with:  node test_connectivity.mjs
  */
 
-import MAPS            from './src/data/maps.js';
-import { buildWalkGrid } from './src/data/maps.js';
-import REGIONS          from './src/data/regions.js';
+import MAPS, { WALK_GRIDS } from './src/data/maps.js';
+import REGIONS               from './src/data/regions.js';
 
 // ── BFS ──────────────────────────────────────────────────────────────────────
 
@@ -72,22 +70,12 @@ function assert(condition, message) {
 for (const region of REGIONS) {
   console.log(`\n── Region ${region.id}: ${region.name} ──`);
 
-  const decorations = MAPS[region.id];
-  if (!decorations) {
-    assert(false, `MAPS[${region.id}] exists`);
+  const blocked = WALK_GRIDS[region.id];
+  if (!blocked) {
+    assert(false, `WALK_GRIDS[${region.id}] exists`);
     continue;
   }
 
-  // Collect key positions — same set ExploreScene passes to the clearance guard
-  const keyPositions = [
-    region.mimiStart,
-    region.npcTile,
-    region.chestTile,
-    region.bossTile,
-    ...region.enemySpawns.map(s => ({ col: s.col, row: s.row })),
-  ];
-
-  const blocked   = buildWalkGrid(decorations, keyPositions);
   const reachable = bfsReachable(region.mimiStart, blocked);
 
   // Helper: is a tile reachable (exact position OR any immediately adjacent tile)?

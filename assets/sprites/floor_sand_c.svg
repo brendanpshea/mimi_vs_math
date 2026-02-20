@@ -1,8 +1,6 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Sand C — slightly darker sand tint patch, upper-left -->
+  <!-- Sand C — a subtle shadow-hollow suggesting a shallow dip, upper-left, inset -->
   <rect width="32" height="32" fill="#E8D4A0"/>
-  <!-- Small darker sand patch — like a damp spot or shadow -->
-  <ellipse cx="8" cy="9" rx="5" ry="4" fill="#C4A055" opacity="0.40"/>
-  <!-- Same soft ripple -->
-  <path d="M3,20 Q10,18 18,20 Q25,22 29,20" stroke="#C8B070" stroke-width="1" fill="none" opacity="0.45"/>
+  <!-- Faint darker ellipse — fully interior, ≥5 px from all edges -->
+  <ellipse cx="10" cy="10" rx="5" ry="4" fill="#C4A055" opacity="0.35"/>
 </svg>

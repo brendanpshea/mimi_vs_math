@@ -35,6 +35,10 @@ const GameState = {
     hintCharges: 0,     // fish fossil
   },
 
+  // ── Boss intro cutscene tracking ──────────────────────────────────────
+  // Stores region ids whose boss intro has already been shown this save.
+  bossIntroSeen: [],
+
   // ─────────────────────────────────────────────────────────────────────
   // Persistence
   // ─────────────────────────────────────────────────────────────────────
@@ -50,6 +54,7 @@ const GameState = {
       defeatedBosses:  this.defeatedBosses,
       defeatedEnemies: this.defeatedEnemies,
       inventory:       this.inventory,
+      bossIntroSeen:   this.bossIntroSeen,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   },
@@ -60,6 +65,8 @@ const GameState = {
     try {
       const data = JSON.parse(raw);
       Object.assign(this, data);
+      // Ensure fields added after old saves exist
+      if (!this.bossIntroSeen) this.bossIntroSeen = [];
       return true;
     } catch {
       return false;
@@ -76,6 +83,7 @@ const GameState = {
     this.defeatedBosses  = [];
     this.defeatedEnemies = {};
     this.inventory       = {};
+    this.bossIntroSeen   = [];
     this.activeEffects   = { timerBonus: 0, doubleHit: false, shield: false, hintCharges: 0 };
     this.save();
   },
@@ -104,6 +112,15 @@ const GameState = {
 
   defeatEnemy(regionId, enemyId) {
     this.defeatedEnemies[`r${regionId}_${enemyId}`] = true;
+    this.save();
+  },
+
+  /** Remove all defeated-enemy records for a region (called on Mimi's defeat). */
+  clearRegionEnemies(regionId) {
+    const prefix = `r${regionId}_`;
+    for (const key of Object.keys(this.defeatedEnemies)) {
+      if (key.startsWith(prefix)) delete this.defeatedEnemies[key];
+    }
     this.save();
   },
 

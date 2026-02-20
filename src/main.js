@@ -7,11 +7,13 @@
  */
 import * as Phaser from 'phaser';
 
-import BootScene     from './scenes/BootScene.js';
-import TitleScene    from './scenes/TitleScene.js';
-import OverworldScene from './scenes/OverworldScene.js';
-import ExploreScene  from './scenes/ExploreScene.js';
-import BattleScene   from './scenes/BattleScene.js';
+import BootScene        from './scenes/BootScene.js';
+import TitleScene       from './scenes/TitleScene.js';
+import StoryScene       from './scenes/StoryScene.js';
+import BossIntroScene   from './scenes/BossIntroScene.js';
+import OverworldScene   from './scenes/OverworldScene.js';
+import ExploreScene     from './scenes/ExploreScene.js';
+import BattleScene      from './scenes/BattleScene.js';
 
 const config = {
   type: Phaser.AUTO,          // WebGL with Canvas fallback
@@ -32,6 +34,8 @@ const config = {
   scene: [
     BootScene,
     TitleScene,
+    StoryScene,
+    BossIntroScene,
     OverworldScene,
     ExploreScene,
     BattleScene,

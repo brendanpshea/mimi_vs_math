@@ -12,9 +12,11 @@
  * }
  */
 import * as Phaser from 'phaser';
-import GameState        from '../config/GameState.js';
-import { generateQuestion } from '../math/QuestionBank.js';
-import { getChoices }       from '../math/Distractors.js';
+import GameState             from '../config/GameState.js';
+import { generateQuestion }  from '../math/QuestionBank.js';
+import { getChoices }        from '../math/Distractors.js';
+import { getExplanation }    from '../math/Explanations.js';
+import ITEMS                 from '../data/items.js';
 
 const BTN_COLORS = {
   idle:    0x1E3A6E,
@@ -41,17 +43,15 @@ export default class BattleScene extends Phaser.Scene {
 
     // Battle state
     this.enemyHP     = this.enemyData.hp;
-    this.playerHP    = GameState.hp;
     this.streak      = 0;
     this.questionIdx = 0;
     this.battleOver  = false;
     this.answering   = false;
 
+    // Consume inventory items → may raise GameState.hp before snapshotting
     GameState.resetEffects();
-    // Apply inventory effects if any
-    if (GameState.inventory.yarn_ball > 0) {
-      GameState.activeEffects.timerBonus = 5;
-    }
+    this._applyInventoryEffects();
+    this.playerHP = GameState.hp;
   }
 
   create() {
@@ -160,6 +160,10 @@ export default class BattleScene extends Phaser.Scene {
 
     this._updateHPBar(this.playerHPBar, this.playerHP);
     this._updateHPBar(this.enemyHPBar, this.enemyHP);
+
+    // ── Active effects badges ────────────────────────────────────────────
+    this.effectsRow = this.add.container(0, 0).setDepth(3);
+    this._refreshEffectsDisplay();
   }
 
   _makeHPBar(cx, cy, maxHP, fillColor) {
@@ -240,6 +244,7 @@ export default class BattleScene extends Phaser.Scene {
     const topics     = this.enemyData.mathTopics ?? [this.enemyData.mathTopic];
     const topic      = topics[Math.floor(Math.random() * topics.length)];
     const q = generateQuestion(topic, difficulty);
+    this.currentQuestion = q;
     this.currentChoices = getChoices(q);
 
     this.questionText.setText(q.text);
@@ -247,8 +252,25 @@ export default class BattleScene extends Phaser.Scene {
     this.answerButtons.forEach((btn, i) => {
       const choice = this.currentChoices[i];
       btn.lbl.setText(choice.text);
+      btn.lbl.setColor('#FFFFFF');
+      btn.numLbl.setAlpha(1);
       btn.bg.setFillStyle(BTN_COLORS.idle).setInteractive();
     });
+
+    // Hint: auto-eliminate one wrong choice when fossil charges remain
+    if (GameState.activeEffects.hintCharges > 0) {
+      GameState.activeEffects.hintCharges--;
+      const wrongIdxs = this.currentChoices
+        .map((c, i) => (c.correct ? -1 : i))
+        .filter(i => i !== -1);
+      if (wrongIdxs.length > 0) {
+        const hi = wrongIdxs[Math.floor(Math.random() * wrongIdxs.length)];
+        this.answerButtons[hi].bg.setFillStyle(0x111111).removeInteractive();
+        this.answerButtons[hi].lbl.setColor('#333333');
+        this.answerButtons[hi].numLbl.setAlpha(0.2);
+      }
+      this._refreshEffectsDisplay();
+    }
 
     // Timer
     const duration = (this.enemyData.timerSeconds + (GameState.activeEffects.timerBonus ?? 0)) * 1000;
@@ -303,7 +325,7 @@ export default class BattleScene extends Phaser.Scene {
     this._showFeedback('⏱ Time\'s up!', 0xFF6633);
     this._damagePlayer();
 
-    this.time.delayedCall(1600, () => this._afterAnswer());
+    this.time.delayedCall(700, () => this._showExplanation(this.currentQuestion));
   }
 
   _selectAnswer(index) {
@@ -333,11 +355,22 @@ export default class BattleScene extends Phaser.Scene {
     this.streak++;
     let dmg = isFast ? 3 : 2;
     if (this.streak >= 3)             dmg += 1;           // streak bonus
-    if (GameState.activeEffects.doubleHit) { dmg *= 2; GameState.activeEffects.doubleHit = false; }
+    if (GameState.activeEffects.doubleHit) {
+      dmg *= 2;
+      GameState.activeEffects.doubleHit = false;
+      this._refreshEffectsDisplay();
+    }
     dmg = Math.round(dmg * GameState.mathPower);
 
     this.enemyHP = Math.max(0, this.enemyHP - dmg);
     this._updateHPBar(this.enemyHPBar, this.enemyHP);
+
+    // Lock the battle immediately if this hit killed the enemy — prevents any
+    // subsequent timer tick or stale callback from loading a new question.
+    if (this.enemyHP <= 0) {
+      this.battleOver = true;
+      if (this._timerEvent) this._timerEvent.remove();
+    }
 
     // Enemy bounce
     this.tweens.add({
@@ -350,7 +383,14 @@ export default class BattleScene extends Phaser.Scene {
     this._showFeedback(label, isFast ? 0xFFDD00 : 0x44FF44);
     this._updateStreakDisplay();
 
-    this.time.delayedCall(1200, () => this._afterAnswer());
+    // Use a longer pause on a kill so the player can see the enemy defeated
+    // before the victory overlay appears.  Call _endBattle directly so the
+    // battleOver guard in _afterAnswer doesn't swallow the victory.
+    if (this.enemyHP <= 0) {
+      this.time.delayedCall(1400, () => this._endBattle(true));
+    } else {
+      this.time.delayedCall(1200, () => this._afterAnswer());
+    }
   }
 
   _onWrong() {
@@ -359,12 +399,13 @@ export default class BattleScene extends Phaser.Scene {
     this._damagePlayer();
     this._showFeedback('✗ Wrong!', 0xFF4444);
 
-    this.time.delayedCall(1600, () => this._afterAnswer());
+    this.time.delayedCall(700, () => this._showExplanation(this.currentQuestion));
   }
 
   _damagePlayer() {
     if (GameState.activeEffects.shield) {
       GameState.activeEffects.shield = false;
+      this._refreshEffectsDisplay();
       this._showFeedback('💎 Shield blocked the hit!', 0xAADDFF);
       return;
     }
@@ -387,6 +428,137 @@ export default class BattleScene extends Phaser.Scene {
     if (this.enemyHP <= 0) { this._endBattle(true);  return; }
     if (this.playerHP <= 0) { this._endBattle(false); return; }
     this._nextQuestion();
+  }
+
+  // ── Inventory → battle effects ────────────────────────────────────────────
+
+  _applyInventoryEffects() {
+    const inv = GameState.inventory;
+    const fx  = GameState.activeEffects;
+
+    // Sardine: heal 2 HP (only useful below max; skip if already full)
+    if (inv.sardine > 0 && GameState.hp < GameState.maxHP) {
+      GameState.hp = Math.min(GameState.maxHP, GameState.hp + ITEMS.sardine.value);
+      GameState.useItem('sardine');
+    }
+
+    // Yarn Ball: +5s to battle timer
+    if (inv.yarn_ball > 0) {
+      fx.timerBonus = ITEMS.yarn_ball.value;
+      GameState.useItem('yarn_ball');
+    }
+
+    // Catnip: double damage on the very next correct answer
+    if (inv.catnip > 0) {
+      fx.doubleHit = true;
+      GameState.useItem('catnip');
+    }
+
+    // Lucky Collar: absorb one wrong hit
+    if (inv.lucky_collar > 0) {
+      fx.shield = true;
+      GameState.useItem('lucky_collar');
+    }
+
+    // Fish Fossil: 3 hint charges — each eliminates one wrong answer per question
+    if (inv.fish_fossil > 0) {
+      fx.hintCharges = ITEMS.fish_fossil.value;
+      GameState.useItem('fish_fossil');
+    }
+  }
+
+  // ── Effects HUD row ───────────────────────────────────────────────────────
+
+  _refreshEffectsDisplay() {
+    if (!this.effectsRow) return;
+    this.effectsRow.removeAll(true);
+
+    const fx   = GameState.activeEffects;
+    const tags = [];
+    if (fx.shield)          tags.push({ icon: '💎', label: 'Shield',              color: '#88CCFF' });
+    if (fx.doubleHit)       tags.push({ icon: '🌿', label: '2× Hit',              color: '#AAFFAA' });
+    if (fx.hintCharges > 0) tags.push({ icon: '🦴', label: `Hint ×${fx.hintCharges}`, color: '#FFDDAA' });
+    if (fx.timerBonus > 0)  tags.push({ icon: '🧶', label: `+${fx.timerBonus}s`,  color: '#DDAAFF' });
+
+    // Anchor badges under Mimi's HP bar (left side)
+    const W = this.cameras.main.width;
+    tags.forEach((tag, i) => {
+      const x = W * 0.04 + i * 76;
+      const y = 187;
+      this.effectsRow.add(
+        this.add.rectangle(x + 34, y, 68, 18, 0x000033, 0.88).setStrokeStyle(1, 0x446688),
+      );
+      this.effectsRow.add(
+        this.add.text(x + 34, y, `${tag.icon} ${tag.label}`, {
+          fontSize: '10px', color: tag.color, fontFamily: 'Arial', fontStyle: 'bold',
+        }).setOrigin(0.5),
+      );
+    });
+  }
+
+  // ── Explanation overlay (wrong answer / timeout) ──────────────────────────
+
+  _showExplanation(question) {
+    if (!question || this.battleOver) { this._afterAnswer(); return; }
+
+    const W   = this.cameras.main.width;
+    const H   = this.cameras.main.height;
+    const D   = 20;   // base depth
+    const explanation = getExplanation(question);
+    const ans = question.answerDisplay !== undefined
+      ? String(question.answerDisplay) : String(question.answer);
+
+    const overlay = [];
+    const add = obj => { overlay.push(obj); return obj; };
+
+    // Dim backdrop
+    add(this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.78).setDepth(D));
+
+    // Panel
+    add(this.add.rectangle(W / 2, H / 2 - 10, W * 0.82, 320, 0x080824)
+      .setStrokeStyle(2, 0xFFCC44).setDepth(D));
+
+    // Header: correct answer
+    add(this.add.text(W / 2, H * 0.20, `✓  Correct answer: ${ans}`, {
+      fontSize: '22px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 4,
+    }).setOrigin(0.5).setDepth(D + 1));
+
+    // Divider
+    const dg = add(this.add.graphics().setDepth(D + 1));
+    dg.lineStyle(1, 0x445588, 0.7);
+    dg.lineBetween(W * 0.14, H * 0.295, W * 0.86, H * 0.295);
+
+    // Explanation text
+    add(this.add.text(W / 2, H * 0.31, explanation, {
+      fontSize: '16px', color: '#DDEEFF', fontFamily: 'Arial',
+      align: 'center', lineSpacing: 5,
+      stroke: '#000000', strokeThickness: 2,
+      wordWrap: { width: W * 0.74 },
+    }).setOrigin(0.5, 0).setDepth(D + 1));
+
+    // "Got it!" button
+    const btnBg = add(this.add.rectangle(W / 2, H * 0.79, 210, 48, 0x0A2840)
+      .setStrokeStyle(2, 0x44AAFF)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(D + 1));
+    const btnTxt = add(this.add.text(W / 2, H * 0.79, 'Got it!  →', {
+      fontSize: '19px', color: '#88CCFF', fontFamily: 'Arial', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(D + 2));
+
+    const dismiss = () => {
+      // Remove keyboard listeners to avoid stale handlers
+      this.input.keyboard.off('keydown-ENTER', dismiss);
+      this.input.keyboard.off('keydown-SPACE', dismiss);
+      overlay.forEach(o => o.destroy());
+      this._afterAnswer();
+    };
+
+    btnBg.on('pointerover', () => { btnBg.setFillStyle(0x163E6A); btnTxt.setColor('#AADDFF'); });
+    btnBg.on('pointerout',  () => { btnBg.setFillStyle(0x0A2840); btnTxt.setColor('#88CCFF'); });
+    btnBg.on('pointerdown', dismiss);
+    this.input.keyboard.on('keydown-ENTER', dismiss);
+    this.input.keyboard.on('keydown-SPACE', dismiss);
   }
 
   // ── Feedback / streak display ─────────────────────────────────────────────

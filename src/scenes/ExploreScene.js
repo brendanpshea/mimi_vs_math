@@ -38,9 +38,10 @@ export default class ExploreScene extends Phaser.Scene {
     this.regionId     = data?.regionId ?? GameState.currentRegion;
     this.regionData   = REGIONS[this.regionId];
     this.battleResult = data?.battleResult ?? null;
-    // Position to restore Mimi to after returning from battle
-    this._returnX = data?.mimiX ?? null;
-    this._returnY = data?.mimiY ?? null;
+    // On defeat, always restart from the region spawn — never restore battle position
+    const isDefeat = data?.battleResult?.victory === false;
+    this._returnX = isDefeat ? null : (data?.mimiX ?? null);
+    this._returnY = isDefeat ? null : (data?.mimiY ?? null);
   }
 
   create() {
@@ -292,6 +293,9 @@ export default class ExploreScene extends Phaser.Scene {
       if (key !== undefined) {
         GameState.defeatEnemy(this.regionId, key);
       }
+    } else {
+      // Mimi was defeated — clear all enemies in this region so they respawn
+      GameState.clearRegionEnemies(this.regionId);
     }
   }
 
@@ -539,8 +543,9 @@ export default class ExploreScene extends Phaser.Scene {
   _startBossBattle() {
     if (this._bossBattleStarted) return;
     this._bossBattleStarted = true;
-    const bossData = ENEMIES[this.regionData.boss];
-    this.scene.start('BattleScene', {
+
+    const bossData   = ENEMIES[this.regionData.boss];
+    const battleData = {
       enemy:         bossData,
       enemyInstance: 'boss',
       regionId:      this.regionId,
@@ -551,7 +556,20 @@ export default class ExploreScene extends Phaser.Scene {
         mimiX:    this.mimi.x,
         mimiY:    this.mimi.y,
       },
-    });
+    };
+
+    // Show boss intro cutscene the first time only
+    const introSeen = GameState.bossIntroSeen.includes(this.regionId);
+    if (!introSeen && this.regionData.bossIntro?.length) {
+      this.scene.start('BossIntroScene', {
+        panels:    this.regionData.bossIntro,
+        regionId:  this.regionId,
+        nextScene: 'BattleScene',
+        nextData:  battleData,
+      });
+    } else {
+      this.scene.start('BattleScene', battleData);
+    }
   }
 
   //  NPC 

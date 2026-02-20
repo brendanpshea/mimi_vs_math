@@ -36,7 +36,7 @@ export default class TitleScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     // Tagline
-    this.add.text(W / 2, H * 0.61, 'A Math Adventure for Grades 1–7', {
+    this.add.text(W / 2, H * 0.61, 'A Math Adventure for Grades 1–5', {
       fontSize: '18px', color: '#AACCFF', fontFamily: 'Arial',
     }).setOrigin(0.5);
 
@@ -118,8 +118,7 @@ export default class TitleScene extends Phaser.Scene {
   }
 
   _newGame() {
-    GameState.reset();
-    this.scene.start('OverworldScene');
+    this.scene.start('StoryScene');
   }
 
   _continue() {

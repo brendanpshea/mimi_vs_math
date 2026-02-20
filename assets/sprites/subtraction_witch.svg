@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <!-- Hat brim -->
+  <ellipse cx="48" cy="20" rx="26" ry="6" fill="#1A0033"/>
+  <!-- Hat cone -->
+  <polygon points="48,2 30,20 66,20" fill="#220044"/>
+  <!-- Hat band -->
+  <rect x="30" y="17" width="36" height="5" fill="#440066" rx="1"/>
+  <!-- Stars on hat -->
+  <text x="38" y="14" font-size="8" fill="#FFDD44" font-family="Arial">★</text>
+  <text x="50" y="12" font-size="6" fill="#FFDD44" font-family="Arial">★</text>
+  <!-- Face -->
+  <ellipse cx="48" cy="34" rx="16" ry="18" fill="#CCEEAA"/>
+  <!-- Eyes -->
+  <circle cx="41" cy="30" r="4.5" fill="#220033"/>
+  <circle cx="55" cy="30" r="4.5" fill="#220033"/>
+  <circle cx="42" cy="29" r="1.5" fill="#AA44FF"/>
+  <circle cx="56" cy="29" r="1.5" fill="#AA44FF"/>
+  <!-- Nose (witchy) -->
+  <path d="M48,38 Q52,44 46,44" fill="#AABB88" stroke="#88AA66" stroke-width="1"/>
+  <!-- Wicked grin -->
+  <path d="M38,44 Q44,50 52,44 Q56,48 60,44" fill="none" stroke="#334422" stroke-width="2"/>
+  <!-- Warts -->
+  <circle cx="55" cy="41" r="2" fill="#99BB77"/>
+  <!-- Cape -->
+  <path d="M24,52 Q12,76 20,90 L48,78 L76,90 Q84,76 72,52 Z" fill="#220044"/>
+  <!-- Collar -->
+  <path d="M30,52 Q48,58 66,52" fill="none" stroke="#440066" stroke-width="3"/>
+  <!-- Body under cape -->
+  <ellipse cx="48" cy="60" rx="18" ry="12" fill="#330055"/>
+  <!-- Minus symbol wand -->
+  <line x1="76" y1="88" x2="78" y2="30" stroke="#662288" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="78" cy="26" r="10" fill="#8844AA" stroke="#FFDD44" stroke-width="2"/>
+  <rect x="71" y="23" width="14" height="4" fill="#FF4444" rx="2"/>
+  <text x="78" y="27" font-size="9" fill="white" text-anchor="middle" font-family="Arial" font-weight="bold">−</text>
+  <!-- Minus symbols floating -->
+  <text x="12" y="50" font-size="14" fill="#FF4444" opacity="0.7" font-family="Arial">−</text>
+  <text x="18" y="38" font-size="10" fill="#FF6666" opacity="0.5" font-family="Arial">−</text>
+</svg>

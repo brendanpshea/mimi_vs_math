@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28">
+  <!-- XP star -->
+  <polygon
+    points="14,2 17.5,10 26,11 20,17 22,26 14,21.5 6,26 8,17 2,11 10.5,10"
+    fill="#FFD700"
+    stroke="#CC9900"
+    stroke-width="1"
+  />
+  <!-- Inner highlight -->
+  <polygon
+    points="14,6 16.5,12 22,12.5 18,16 19.5,22 14,19 8.5,22 10,16 6,12.5 11.5,12"
+    fill="#FFE855"
+    opacity="0.7"
+  />
+  <!-- Centre sparkle -->
+  <circle cx="14" cy="14" r="2.5" fill="#FFF8CC"/>
+</svg>

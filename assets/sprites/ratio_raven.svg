@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Wings spread -->
+  <path d="M32,34 Q16,24 4,28 Q12,36 20,38 Z" fill="#1A1A22"/>
+  <path d="M32,34 Q48,24 60,28 Q52,36 44,38 Z" fill="#1A1A22"/>
+  <!-- Wing feather details left -->
+  <line x1="20" y1="38" x2="6"  y2="30" stroke="#333344" stroke-width="1"/>
+  <line x1="20" y1="38" x2="8"  y2="34" stroke="#333344" stroke-width="1"/>
+  <line x1="20" y1="38" x2="10" y2="38" stroke="#333344" stroke-width="1"/>
+  <!-- Wing feather details right -->
+  <line x1="44" y1="38" x2="58" y2="30" stroke="#333344" stroke-width="1"/>
+  <line x1="44" y1="38" x2="56" y2="34" stroke="#333344" stroke-width="1"/>
+  <line x1="44" y1="38" x2="54" y2="38" stroke="#333344" stroke-width="1"/>
+  <!-- Body -->
+  <ellipse cx="32" cy="46" rx="12" ry="14" fill="#222233"/>
+  <!-- Head -->
+  <circle cx="32" cy="28" r="14" fill="#222233"/>
+  <!-- Beak (sharp) -->
+  <polygon points="32,34 28,40 36,40" fill="#333366" stroke="#222244" stroke-width="1"/>
+  <line x1="28" y1="37" x2="36" y2="37" stroke="#444466" stroke-width="1"/>
+  <!-- Eyes (smart, observant) -->
+  <circle cx="25" cy="25" r="5.5" fill="#333344"/>
+  <circle cx="39" cy="25" r="5.5" fill="#333344"/>
+  <circle cx="25" cy="25" r="3.5" fill="#AA66FF"/>
+  <circle cx="39" cy="25" r="3.5" fill="#AA66FF"/>
+  <circle cx="26" cy="23.8" r="1.5" fill="white"/>
+  <circle cx="40" cy="23.8" r="1.5" fill="white"/>
+  <!-- Scales / balance held in talons -->
+  <!-- Scale beam -->
+  <line x1="18" y1="56" x2="46" y2="56" stroke="#DDAA44" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="32" y1="50" x2="32" y2="56" stroke="#DDAA44" stroke-width="2" stroke-linecap="round"/>
+  <!-- Left pan -->
+  <path d="M14,56 Q18,62 22,56" fill="none" stroke="#DDAA44" stroke-width="2"/>
+  <line x1="18" y1="56" x2="14" y2="56" stroke="#DDAA44" stroke-width="1.5"/>
+  <line x1="18" y1="56" x2="22" y2="56" stroke="#DDAA44" stroke-width="1.5"/>
+  <!-- Right pan (slightly lower = unbalanced ratio) -->
+  <path d="M42,58 Q46,64 50,58" fill="none" stroke="#DDAA44" stroke-width="2"/>
+  <line x1="46" y1="56" x2="42" y2="58" stroke="#DDAA44" stroke-width="1.5"/>
+  <line x1="46" y1="56" x2="50" y2="58" stroke="#DDAA44" stroke-width="1.5"/>
+  <!-- : ratio symbol on body -->
+  <circle cx="32" cy="44" r="2" fill="#7755AA"/>
+  <circle cx="32" cy="50" r="2" fill="#7755AA"/>
+  <!-- Crest feathers -->
+  <line x1="28" y1="15" x2="26" y2="8" stroke="#333344" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="32" y1="14" x2="32" y2="6" stroke="#333344" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="36" y1="15" x2="38" y2="8" stroke="#333344" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

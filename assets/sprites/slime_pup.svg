@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Slime body -->
+  <path d="M10,48 Q8,30 16,20 Q24,10 32,10 Q40,10 48,20 Q56,30 54,48 Q52,58 32,60 Q12,58 10,48 Z" fill="#55CC44"/>
+  <!-- Glossy highlight -->
+  <ellipse cx="22" cy="22" rx="8" ry="5" fill="#88EE77" opacity="0.6"/>
+  <!-- Drips at bottom -->
+  <ellipse cx="20" cy="60" rx="4" ry="6" fill="#55CC44"/>
+  <ellipse cx="44" cy="59" rx="3" ry="5" fill="#55CC44"/>
+  <!-- Eyes -->
+  <circle cx="25" cy="30" r="7" fill="white"/>
+  <circle cx="39" cy="30" r="7" fill="white"/>
+  <circle cx="26" cy="31" r="4.5" fill="#221100"/>
+  <circle cx="40" cy="31" r="4.5" fill="#221100"/>
+  <circle cx="27.5" cy="29.5" r="1.5" fill="white"/>
+  <circle cx="41.5" cy="29.5" r="1.5" fill="white"/>
+  <!-- Happy mouth -->
+  <path d="M24,42 Q32,50 40,42" fill="none" stroke="#338822" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Little nub antennae -->
+  <line x1="25" y1="14" x2="22" y2="6" stroke="#44BB33" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="39" y1="13" x2="42" y2="5" stroke="#44BB33" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="22" cy="5" r="3" fill="#AAFFAA"/>
+  <circle cx="42" cy="4" r="3" fill="#AAFFAA"/>
+</svg>

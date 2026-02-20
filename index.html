@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mimi vs. Math</title>
+  <meta name="description" content="Mimi the cat goes on Zelda-style adventures and battles enemies by answering math questions. Grades 1–7." />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Phaser mounts a <canvas> inside #game-container */
+    #game-container {
+      /* Phaser's Scale Manager handles sizing; this wrapper just centres it */
+      line-height: 0;
+    }
+
+    canvas {
+      display: block;
+      /* Crisp scaling for pixel-art mode (disable for smooth SVG rendering) */
+      image-rendering: auto;
+    }
+
+    /* Fallback message for very old browsers */
+    #no-webgl {
+      display: none;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+    }
+  </style>
+
+  <!--
+    importmap — maps the bare specifier 'phaser' to the Phaser 3 ESM CDN build.
+
+    TO SWITCH FROM SVG TO PNG ASSETS:
+      1. Edit src/config/AssetConfig.js and change ASSET_TYPE to 'png'.
+      2. Place PNG files at the same paths as the SVG files (same name, .png).
+      3. No changes to index.html are needed.
+  -->
+  <script type="importmap">
+    {
+      "imports": {
+        "phaser": "https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.esm.min.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="game-container"></div>
+  <div id="no-webgl">
+    <h2>⚠ WebGL not supported</h2>
+    <p>Please use a modern browser (Chrome, Firefox, Edge, Safari 16+) to play Mimi vs. Math.</p>
+  </div>
+
+  <!-- Entry point — loaded as ES module so relative imports work -->
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

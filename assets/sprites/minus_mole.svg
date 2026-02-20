@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Body -->
+  <ellipse cx="32" cy="46" rx="20" ry="16" fill="#886644"/>
+  <!-- Head -->
+  <circle cx="32" cy="28" r="16" fill="#886644"/>
+  <!-- Snout -->
+  <ellipse cx="32" cy="35" rx="8" ry="6" fill="#AA8866"/>
+  <circle cx="30" cy="34" r="2.5" fill="#442222"/>
+  <circle cx="34" cy="34" r="2.5" fill="#442222"/>
+  <!-- Eyes (small, beady) -->
+  <circle cx="25" cy="24" r="3" fill="#221100"/>
+  <circle cx="39" cy="24" r="3" fill="#221100"/>
+  <circle cx="25.8" cy="23.5" r="1" fill="white"/>
+  <circle cx="39.8" cy="23.5" r="1" fill="white"/>
+  <!-- Ears -->
+  <ellipse cx="20" cy="17" rx="5" ry="7" fill="#AA8866"/>
+  <ellipse cx="44" cy="17" rx="5" ry="7" fill="#AA8866"/>
+  <ellipse cx="20" cy="17" rx="3" ry="5" fill="#FFCCAA"/>
+  <ellipse cx="44" cy="17" rx="3" ry="5" fill="#FFCCAA"/>
+  <!-- Minus sign on back/belly -->
+  <rect x="20" y="43" width="24" height="6" fill="#CC2222" rx="3"/>
+  <rect x="22" y="45" width="20" height="2" fill="#FF4444" rx="1"/>
+  <!-- Digging claws -->
+  <line x1="14" y1="52" x2="10" y2="60" stroke="#664422" stroke-width="3" stroke-linecap="round"/>
+  <line x1="18" y1="54" x2="15" y2="62" stroke="#664422" stroke-width="3" stroke-linecap="round"/>
+  <line x1="50" y1="52" x2="54" y2="60" stroke="#664422" stroke-width="3" stroke-linecap="round"/>
+  <line x1="46" y1="54" x2="49" y2="62" stroke="#664422" stroke-width="3" stroke-linecap="round"/>
+  <!-- Dirt cloud -->
+  <circle cx="8"  cy="58" r="4" fill="#886644" opacity="0.5"/>
+  <circle cx="56" cy="58" r="4" fill="#886644" opacity="0.5"/>
+</svg>

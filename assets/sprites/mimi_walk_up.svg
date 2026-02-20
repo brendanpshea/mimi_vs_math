@@ -1,20 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Mimi walking UP (away from camera) - back view, right leg forward -->
-  <!-- Tail - raised/swishing while walking -->
-  <path d="M44,46 C60,36 64,22 56,16" fill="none" stroke="#DDDDCC" stroke-width="4" stroke-linecap="round"/>
-  <!-- Body -->
-  <ellipse cx="32" cy="46" rx="15" ry="12" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <!-- Legs - walking stride -->
-  <ellipse cx="24" cy="57" rx="4" ry="5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1" transform="rotate(10 24 57)"/>
-  <ellipse cx="40" cy="59" rx="4" ry="5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1" transform="rotate(-12 40 59)"/>
-  <!-- Paws -->
-  <ellipse cx="23" cy="62" rx="4.5" ry="2.5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <ellipse cx="42" cy="61" rx="4.5" ry="2.5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <!-- Head - back view -->
-  <circle cx="32" cy="24" r="16" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <!-- Ears from behind -->
-  <polygon points="18,15 13,3 25,10" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <polygon points="46,15 51,3 39,10" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <!-- Back of head fur detail -->
-  <path d="M20,30 Q32,35 44,30" fill="none" stroke="#CCCCBB" stroke-width="0.8"/>
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56">
+<!-- Mimi walk up frame A: back view, tail swings left, right leg forward -->
+<!-- Tail curves left -->
+<path d="M22,35 C12,28 6,36 10,45" fill="none" stroke="#505058" stroke-width="4" stroke-linecap="round"/>
+<path d="M22,35 C12,28 6,36 10,45" fill="none" stroke="#A8A8B4" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4,3"/>
+<!-- Body back view -->
+<ellipse cx="24" cy="34" rx="10" ry="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5"/>
+<path d="M15,28 Q17,34 15,40" fill="none" stroke="#505058" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+<path d="M33,28 Q31,34 33,40" fill="none" stroke="#505058" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+<!-- Bandana knot visible at back of neck -->
+<path d="M16,25 Q24,28 32,25 Q31,30 24,31 Q17,30 16,25 Z" fill="#DD2222" stroke="#991111" stroke-width="0.8"/>
+<path d="M32,25 L36,30 L30,29 Z" fill="#BB1111"/>
+<!-- Arms back view -->
+<ellipse cx="13.5" cy="33" rx="3.5" ry="7" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(-8,13.5,30)"/>
+<ellipse cx="34.5" cy="32" rx="3.5" ry="7" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(8,34.5,28)"/>
+<ellipse cx="12" cy="39" rx="4" ry="2.5" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
+<ellipse cx="36" cy="38" rx="4" ry="2.5" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
+<!-- Legs: right leg forward (appears on our left as she faces away) -->
+<ellipse cx="20" cy="45" rx="5.5" ry="6" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(-10,20,40)"/>
+<ellipse cx="28" cy="44" rx="5.5" ry="6" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(10,28,40)"/>
+<ellipse cx="19.5" cy="52.5" rx="6.5" ry="2.8" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
+<ellipse cx="28" cy="51" rx="6.5" ry="2.8" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
+<!-- Head back -->
+<circle cx="24" cy="13" r="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5"/>
+<!-- Ears from behind -->
+<polygon points="13,8 8,0 18,5" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="35,8 40,0 30,5" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" stroke-linejoin="round"/>
+<!-- Back of head tabby stripe -->
+<path d="M18,5 Q24,22 30,5" fill="none" stroke="#505058" stroke-width="2" opacity="0.45"/>
+<line x1="18" y1="12" x2="30" y2="12" stroke="#505058" stroke-width="1.5" opacity="0.3"/>
 </svg>

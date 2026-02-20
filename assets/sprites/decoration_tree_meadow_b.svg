@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40">
+  <!--
+    Meadow tree B (R1 Meadow Maze alternate)  same broad deciduous style,
+    clumps shifted, brighter highlights, tiny warmth in the sunlit clusters.
+  -->
+  <!-- Ground shadow -->
+  <ellipse cx="17" cy="38" rx="12" ry="2.5" fill="#1A2A00" opacity="0.35"/>
+  <!-- Trunk (slightly right of centre) -->
+  <rect x="14" y="27" width="5" height="8" rx="2" fill="#4A2A08"/>
+  <rect x="15" y="24" width="3" height="5" rx="1" fill="#5A3410"/>
+  <!-- Dark merge base -->
+  <circle cx="16" cy="17" r="16" fill="#1E3206"/>
+  <!-- Lower-left blob -->
+  <circle cx="10" cy="25" r="9"  fill="#366010"/>
+  <!-- Lower-right blob -->
+  <circle cx="22" cy="24" r="8"  fill="#3C6C12"/>
+  <!-- Right cluster extra volume -->
+  <circle cx="24" cy="18" r="7"  fill="#3E7012"/>
+  <!-- Main centre clump (slightly lower than tree_a for variety) -->
+  <circle cx="16" cy="15" r="12" fill="#4A8C16"/>
+  <!-- Sunlit upper-left -->
+  <circle cx="10" cy="10" r="6.5" fill="#68A81E"/>
+  <circle cx="8"  cy="8"  r="4"   fill="#88C826"/>
+  <!-- Bright highlights with slight warmth -->
+  <ellipse cx="7"  cy="7"  rx="2.5" ry="1.8" fill="#A0D830"/>
+  <ellipse cx="12" cy="6"  rx="1.8" ry="1.3" fill="#B0CC38" opacity="0.7"/>
+  <!-- Warm sunlit highlight (subtle yellow-lime) -->
+  <ellipse cx="9"  cy="6.5" rx="1.5" ry="1"  fill="#C8D840" opacity="0.45"/>
+  <!-- Under-canopy shadow -->
+  <ellipse cx="18" cy="23" rx="7" ry="4" fill="#162E06" opacity="0.5"/>
+</svg>

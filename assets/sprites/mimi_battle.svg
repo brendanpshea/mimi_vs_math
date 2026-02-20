@@ -1,37 +1,71 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
-  <!-- Body -->
-  <ellipse cx="48" cy="68" rx="24" ry="20" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1.5"/>
-  <!-- Head -->
-  <circle cx="48" cy="34" r="24" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1.5"/>
-  <!-- Ear left -->
-  <polygon points="28,22 22,5 38,16" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1.5"/>
-  <polygon points="29,21 24,8 36,16" fill="#FFCCDD"/>
-  <!-- Ear right -->
-  <polygon points="68,22 74,5 58,16" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1.5"/>
-  <polygon points="67,21 72,8 60,16" fill="#FFCCDD"/>
-  <!-- Eyes (determined battle look) -->
-  <ellipse cx="39" cy="33" rx="7" ry="7.5" fill="#2E8B57"/>
-  <ellipse cx="57" cy="33" rx="7" ry="7.5" fill="#2E8B57"/>
-  <!-- Focused pupils (narrowed) -->
-  <ellipse cx="39" cy="34" rx="2.5" ry="5" fill="#111"/>
-  <ellipse cx="57" cy="34" rx="2.5" ry="5" fill="#111"/>
-  <circle cx="41" cy="31" r="1.8" fill="white"/>
-  <circle cx="59" cy="31" r="1.8" fill="white"/>
-  <!-- Determined brow lines -->
-  <line x1="33" y1="26" x2="43" y2="29" stroke="#AA8888" stroke-width="2" stroke-linecap="round"/>
-  <line x1="63" y1="26" x2="53" y2="29" stroke="#AA8888" stroke-width="2" stroke-linecap="round"/>
-  <!-- Nose -->
-  <polygon points="48,43 44,46 52,46" fill="#FF99AA"/>
-  <!-- Smile (confident) -->
-  <path d="M44,46 Q48,51 52,46" fill="none" stroke="#CC7788" stroke-width="1.5"/>
-  <!-- Whiskers left -->
-  <line x1="36" y1="43" x2="10" y2="39" stroke="#AAAAAA" stroke-width="1"/>
-  <line x1="36" y1="47" x2="10" y2="51" stroke="#AAAAAA" stroke-width="1"/>
-  <!-- Whiskers right -->
-  <line x1="60" y1="43" x2="86" y2="39" stroke="#AAAAAA" stroke-width="1"/>
-  <line x1="60" y1="47" x2="86" y2="51" stroke="#AAAAAA" stroke-width="1"/>
-  <!-- Scarf / hero accessory -->
-  <path d="M28,54 Q48,60 68,54" fill="none" stroke="#FF4444" stroke-width="5" stroke-linecap="round"/>
-  <!-- Tail -->
-  <path d="M68,76 C82,68 90,80 84,88" fill="none" stroke="#DDDDCC" stroke-width="6" stroke-linecap="round"/>
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+<!-- Mimi battle sprite 96x96. Grey tabby hero, determined crouch.
+     Fur #A8A8B4  Stripe #505058  Belly #D0D0DC  Bandana #DD2222  Eye #44BB44 -->
+<!-- Tail -->
+<path d="M60,74 C76,66 82,80 74,90" fill="none" stroke="#505058" stroke-width="8" stroke-linecap="round"/>
+<path d="M60,74 C76,66 82,80 74,90" fill="none" stroke="#A8A8B4" stroke-width="5" stroke-linecap="round" stroke-dasharray="7,6"/>
+<!-- Body -->
+<ellipse cx="48" cy="64" rx="18" ry="20" fill="#A8A8B4" stroke="#2A2A36" stroke-width="2"/>
+<ellipse cx="48" cy="67" rx="10" ry="14" fill="#D0D0DC"/>
+<path d="M30,53 Q33,65 30,77" fill="none" stroke="#505058" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+<path d="M66,53 Q63,65 66,77" fill="none" stroke="#505058" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+<!-- Arms raised in battle pose -->
+<ellipse cx="27" cy="58" rx="6" ry="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" transform="rotate(-20,27,52)"/>
+<ellipse cx="69" cy="58" rx="6" ry="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" transform="rotate(20,69,52)"/>
+<ellipse cx="22" cy="70" rx="7" ry="4" fill="#888894" stroke="#2A2A36" stroke-width="1.5"/>
+<ellipse cx="74" cy="70" rx="7" ry="4" fill="#888894" stroke="#2A2A36" stroke-width="1.5"/>
+<line x1="17" y1="72" x2="17" y2="75" stroke="#505058" stroke-width="1.3"/>
+<line x1="22" y1="73" x2="22" y2="76" stroke="#505058" stroke-width="1.3"/>
+<line x1="27" y1="72" x2="27" y2="75" stroke="#505058" stroke-width="1.3"/>
+<line x1="69" y1="72" x2="69" y2="75" stroke="#505058" stroke-width="1.3"/>
+<line x1="74" y1="73" x2="74" y2="76" stroke="#505058" stroke-width="1.3"/>
+<line x1="79" y1="72" x2="79" y2="75" stroke="#505058" stroke-width="1.3"/>
+<!-- Bandana flowing -->
+<path d="M31,47 Q48,53 65,47 Q62,57 48,59 Q34,57 31,47 Z" fill="#DD2222" stroke="#991111" stroke-width="1"/>
+<path d="M31,47 Q48,52 65,47" fill="none" stroke="#FF5555" stroke-width="2" stroke-linecap="round"/>
+<path d="M31,47 L25,59 L33,56 Z" fill="#BB1111"/>
+<!-- Legs battle crouch -->
+<ellipse cx="36" cy="84" rx="9" ry="9" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" transform="rotate(-12,36,78)"/>
+<ellipse cx="60" cy="84" rx="9" ry="9" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" transform="rotate(12,60,78)"/>
+<ellipse cx="34" cy="93" rx="10" ry="4.5" fill="#888894" stroke="#2A2A36" stroke-width="1.5"/>
+<ellipse cx="62" cy="93" rx="10" ry="4.5" fill="#888894" stroke="#2A2A36" stroke-width="1.5"/>
+<line x1="26" y1="95" x2="26" y2="96" stroke="#505058" stroke-width="1.3"/>
+<line x1="34" y1="96" x2="34" y2="96" stroke="#505058" stroke-width="1.3"/>
+<line x1="42" y1="95" x2="42" y2="96" stroke="#505058" stroke-width="1.3"/>
+<line x1="54" y1="95" x2="54" y2="96" stroke="#505058" stroke-width="1.3"/>
+<line x1="62" y1="96" x2="62" y2="96" stroke="#505058" stroke-width="1.3"/>
+<line x1="70" y1="95" x2="70" y2="96" stroke="#505058" stroke-width="1.3"/>
+<!-- Head -->
+<circle cx="48" cy="28" r="20" fill="#A8A8B4" stroke="#2A2A36" stroke-width="2"/>
+<polygon points="26,17 18,0 37,12" fill="#A8A8B4" stroke="#2A2A36" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="70,17 78,0 59,12" fill="#A8A8B4" stroke="#2A2A36" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="27.5,16 21,3 36,12" fill="#FFAACC"/>
+<polygon points="68.5,16 75,3 60,12" fill="#FFAACC"/>
+<!-- Tabby M forehead -->
+<path d="M33,19 L38.5,13 L48,16.5 L57.5,13 L63,19" fill="none" stroke="#505058" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="48" y1="16.5" x2="48" y2="23" stroke="#505058" stroke-width="1.8" opacity="0.6"/>
+<!-- Cheek stripes -->
+<line x1="25" y1="33" x2="33" y2="32.5" stroke="#505058" stroke-width="2" opacity="0.5"/>
+<line x1="25" y1="37" x2="33" y2="36.5" stroke="#505058" stroke-width="1.5" opacity="0.35"/>
+<line x1="63" y1="32.5" x2="71" y2="33" stroke="#505058" stroke-width="2" opacity="0.5"/>
+<line x1="63" y1="36.5" x2="71" y2="37" stroke="#505058" stroke-width="1.5" opacity="0.35"/>
+<!-- Eyes battle-focused -->
+<ellipse cx="38" cy="29" rx="8" ry="7" fill="#44BB44" stroke="#226622" stroke-width="1.5"/>
+<ellipse cx="58" cy="29" rx="8" ry="7" fill="#44BB44" stroke="#226622" stroke-width="1.5"/>
+<!-- Narrow slit pupils -->
+<ellipse cx="38" cy="29" rx="2.5" ry="5.5" fill="#111120"/>
+<ellipse cx="58" cy="29" rx="2.5" ry="5.5" fill="#111120"/>
+<circle cx="41" cy="27" r="1.8" fill="white"/>
+<circle cx="61" cy="27" r="1.8" fill="white"/>
+<!-- Determined brows -->
+<path d="M29,22 Q38,26 43,24" fill="none" stroke="#505058" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>
+<path d="M67,22 Q58,26 53,24" fill="none" stroke="#505058" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>
+<!-- Nose + mouth -->
+<polygon points="48,37 45,40 51,40" fill="#FF7799"/>
+<path d="M45,40 Q48,44 51,40" fill="none" stroke="#CC3355" stroke-width="1.5" stroke-linecap="round"/>
+<!-- Whiskers -->
+<line x1="43" y1="38" x2="8"  y2="33" stroke="#888894" stroke-width="1.1"/>
+<line x1="43" y1="41" x2="8"  y2="48" stroke="#888894" stroke-width="1.1"/>
+<line x1="53" y1="38" x2="88" y2="33" stroke="#888894" stroke-width="1.1"/>
+<line x1="53" y1="41" x2="88" y2="48" stroke="#888894" stroke-width="1.1"/>
 </svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40">
+  <!--
+    Meadow tree A (R1 Meadow Maze)  broad deciduous crown, Zelda/FF style.
+    Three overlapping foliage clumps: top-centre dominant, lower-left, lower-right.
+    Yellow-green palette to distinguish from R0 pine trees.
+  -->
+  <!-- Ground shadow -->
+  <ellipse cx="16" cy="38" rx="12" ry="2.5" fill="#1A2A00" opacity="0.35"/>
+  <!-- Trunk (slightly left of centre) -->
+  <rect x="13" y="27" width="5" height="8" rx="2" fill="#4A2A08"/>
+  <rect x="14" y="24" width="3" height="5" rx="1" fill="#5A3410"/>
+  <!-- Dense dark merge base  ensures adjacent trees fuse at edges -->
+  <circle cx="16" cy="17" r="16" fill="#253A08"/>
+  <!-- Lower-right foliage blob -->
+  <circle cx="21" cy="24" r="9"  fill="#3A6A10"/>
+  <!-- Lower-left foliage blob -->
+  <circle cx="11" cy="23" r="9"  fill="#3E7012"/>
+  <!-- Main centre-top clump (dominant) -->
+  <circle cx="16" cy="13" r="12" fill="#4E8E18"/>
+  <!-- Sunlit areas (upper-left catches light) -->
+  <circle cx="11" cy="9"  r="7"  fill="#6AAC20"/>
+  <circle cx="9"  cy="7"  r="4.5" fill="#8AC828"/>
+  <!-- Bright highlights -->
+  <ellipse cx="8"  cy="6"  rx="2.5" ry="2" fill="#A0DC38"/>
+  <ellipse cx="13" cy="5"  rx="2"   ry="1.5" fill="#92D028" opacity="0.7"/>
+  <!-- Under-canopy shadow -->
+  <ellipse cx="18" cy="23" rx="8" ry="4" fill="#1C3808" opacity="0.5"/>
+</svg>

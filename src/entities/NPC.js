@@ -1,24 +1,21 @@
 /**
  * NPC — a friendly wandering NPC sprite placed in the exploration scene.
  *
- * Wanders gently near its spawn point and cycles between two walk-frame
- * textures for a simple animation effect.  Triggers a dialog callback when
- * Mimi overlaps the sprite.
+ * Unlike enemies the wizard roams the ENTIRE level — no home radius.
+ * World bounds (set by ExploreScene) act as the only walls.
  *
- * Wander behaviour mirrors Enemy.js but uses slower, calmer constants:
- *   - WANDER_RADIUS 120 px   (wider range than enemies)
- *   - WANDER_SPEED   30 px/s (leisurely stroll)
+ * Wander constants:
+ *   - WANDER_SPEED  30 px/s (leisurely stroll)
  *   - 40 % chance to pause on each think tick
  *
  * Animation:
  *   - Walk frames A/B cycle every FRAME_MS ms while moving.
- *   - Idle: gentle vertical bob tween (same as Enemy).
+ *   - Idle: gentle vertical bob tween.
  *   - Gentle side-sway while walking (SWAY_DEG 5).
  */
 import * as Phaser from 'phaser';
 
 // ── Wander constants ─────────────────────────────────────────────────────────
-const WANDER_RADIUS = 120;   // max px from home before forced turn-back
 const WANDER_SPEED  = 30;    // px / second while walking
 const THINK_MIN_MS  = 1600;  // shortest wait between direction picks
 const THINK_MAX_MS  = 3800;  // longest wait
@@ -57,6 +54,7 @@ export default class NPC {
     this.sprite = scene.physics.add.image(x, y, this._spriteKeyA);
     this.sprite.setImmovable(true);
     this.sprite.body.allowGravity = false;
+    this.sprite.setCollideWorldBounds(true);
     this.sprite.setDepth(8);
 
     // Walking sway tween — starts paused, resumed while moving
@@ -127,16 +125,10 @@ export default class NPC {
     this._startBob();
   }
 
-  /** AI tick: pick a direction, pause, or steer home. Re-schedules itself. */
+  /** AI tick: pick a random direction or pause. Re-schedules itself. */
   _think() {
-    const dx   = this._homeX - this.sprite.x;
-    const dy   = this._homeY - this.sprite.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    if (dist > WANDER_RADIUS * 0.75) {
-      this._setVelocityAngle(Math.atan2(dy, dx));
-    } else if (Math.random() < 0.40) {
-      // Pause more often than enemies — NPCs are unhurried
+    if (Math.random() < 0.40) {
+      // Pause more often than enemies — wizards are unhurried
       this._stopMoving();
     } else {
       this._setVelocityAngle(Math.random() * Math.PI * 2);
@@ -163,15 +155,10 @@ export default class NPC {
 
   /**
    * Called every frame by ExploreScene.update().
-   * Hard-clamps the NPC inside WANDER_RADIUS.
+   * No home-clamp — wizard roams freely within world bounds.
    */
   update() {
-    const dx   = this._homeX - this.sprite.x;
-    const dy   = this._homeY - this.sprite.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist > WANDER_RADIUS) {
-      this._setVelocityAngle(Math.atan2(dy, dx));
-    }
+    // Nothing to clamp — setCollideWorldBounds handles the walls.
   }
 
   /**

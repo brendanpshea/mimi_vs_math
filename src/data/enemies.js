@@ -309,10 +309,10 @@ const ENEMIES = {
     special: 'Ratio & proportion problems',
     color: 0x6644AA,
   },
-  professor_negativus: {
-    id: 'professor_negativus',
-    name: 'Professor Negativus',
-    spriteKey: 'professor_negativus',
+  fenwick: {
+    id: 'fenwick',
+    name: 'Fenwick the Sly Fox',
+    spriteKey: 'fenwick',
     region: 4,
     hp: 40,
     damage: 3,

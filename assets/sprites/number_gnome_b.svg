@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!--
+    Number Gnome — frame B (left leg forward, right leg back — walk cycle).
+    Only boots, legs, and body-lean differ from frame A.
+  -->
+  <!-- Ground shadow -->
+  <ellipse cx="30" cy="62" rx="16" ry="3" fill="#00000028"/>
+
+  <!-- Boots (left forward = lower, right back = higher) -->
+  <rect x="16" y="55" width="9"  height="9" rx="2" fill="#3A1A00" stroke="#111" stroke-width="1.5"/>
+  <rect x="35" y="52" width="9"  height="9" rx="2" fill="#3A1A00" stroke="#111" stroke-width="1.5"/>
+  <ellipse cx="20" cy="55" rx="3" ry="1.5" fill="#5A2E00"/>
+  <ellipse cx="39" cy="52" rx="3" ry="1.5" fill="#5A2E00"/>
+
+  <!-- Legs (left forward, right back) -->
+  <rect x="18" y="45" width="8" height="13" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <rect x="36" y="43" width="8" height="12" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+
+  <!-- Body — blocky dark leather armor -->
+  <rect x="14" y="31" width="33" height="17" rx="3" fill="#223311" stroke="#111" stroke-width="2"/>
+  <!-- Shoulder pauldrons -->
+  <rect x="11" y="31" width="8"  height="7" rx="2" fill="#2E4418" stroke="#111" stroke-width="1.5"/>
+  <rect x="44" y="31" width="8"  height="7" rx="2" fill="#2E4418" stroke="#111" stroke-width="1.5"/>
+  <!-- Armor rivets -->
+  <circle cx="20" cy="37" r="1.5" fill="#88AA44" stroke="#111" stroke-width="0.8"/>
+  <circle cx="30" cy="37" r="1.5" fill="#88AA44" stroke="#111" stroke-width="0.8"/>
+  <circle cx="40" cy="37" r="1.5" fill="#88AA44" stroke="#111" stroke-width="0.8"/>
+  <!-- Belly stripe seam -->
+  <line x1="14" y1="41" x2="47" y2="41" stroke="#111" stroke-width="1"/>
+
+  <!-- Arms -->
+  <rect x="5"  y="31" width="10" height="8" rx="3" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <rect x="48" y="31" width="10" height="8" rx="3" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <ellipse cx="9"  cy="42" rx="5" ry="4.5" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <ellipse cx="55" cy="40" rx="5" ry="4.5" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+
+  <!-- Math staff -->
+  <rect x="57" y="8" width="3.5" height="34" rx="1.5" fill="#6B3A10" stroke="#111" stroke-width="1"/>
+  <circle cx="58.5" cy="6" r="7" fill="#FFDD33" stroke="#111" stroke-width="1.5"/>
+  <rect x="55.5" y="4.5" width="6" height="3"   rx="0.5" fill="#111"/>
+  <rect x="57"   y="3"   width="3" height="6"   rx="0.5" fill="#111"/>
+
+  <!-- Neck -->
+  <rect x="26" y="22" width="10" height="11" rx="2" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+
+  <!-- Head -->
+  <rect x="18" y="8" width="27" height="18" rx="4" fill="#88AA44" stroke="#111" stroke-width="2"/>
+  <rect x="20" y="22" width="23" height="8"  rx="3" fill="#88AA44" stroke="#111" stroke-width="2"/>
+  <!-- Pointy ears -->
+  <polygon points="18,12 11,8 18,20"  fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <polygon points="45,12 52,8 45,20"  fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <polygon points="18,14 14,10 18,18" fill="#6A8833"/>
+  <polygon points="45,14 49,10 45,18" fill="#6A8833"/>
+  <!-- Angry brow -->
+  <line x1="20" y1="13" x2="28" y2="16" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="43" y1="13" x2="35" y2="16" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Eyes -->
+  <polygon points="21,16 28,15 28,21 21,20" fill="#EECC00" stroke="#111" stroke-width="1"/>
+  <polygon points="42,16 35,15 35,21 42,20" fill="#EECC00" stroke="#111" stroke-width="1"/>
+  <ellipse cx="25" cy="18" rx="2.2" ry="2.2" fill="#111"/>
+  <ellipse cx="38" cy="18" rx="2.2" ry="2.2" fill="#111"/>
+  <circle cx="26" cy="17" r="0.8" fill="white"/>
+  <circle cx="39" cy="17" r="0.8" fill="white"/>
+  <!-- Bulbous nose -->
+  <ellipse cx="31" cy="24" rx="4.5" ry="3.5" fill="#6A8833" stroke="#111" stroke-width="1"/>
+  <circle cx="30" cy="23" r="1.2" fill="#88AA44"/>
+  <!-- Mouth -->
+  <path d="M23,28 L23,26 L40,26 L40,28 Q31.5,33 23,28 Z" fill="#111"/>
+  <rect x="27" y="26" width="3.5" height="3.5" fill="white"/>
+  <rect x="32" y="26" width="3.5" height="3.5" fill="white"/>
+  <!-- Hood/cap -->
+  <polygon points="31.5,0 16,10 47,10" fill="#1A2200" stroke="#111" stroke-width="1.5"/>
+  <rect x="16" y="7" width="31" height="5" rx="1" fill="#243300" stroke="#111" stroke-width="1"/>
+  <line x1="20" y1="9" x2="43" y2="9" stroke="#3A5500" stroke-width="0.8" stroke-dasharray="2,2"/>
+</svg>

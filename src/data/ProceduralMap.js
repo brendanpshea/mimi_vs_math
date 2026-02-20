@@ -31,12 +31,20 @@ const CORRIDOR_HW = 2;   // corridor half-width: total width = 2*CORRIDOR_HW+1 =
 // ── Blocking tile constructor for each region ─────────────────────────────
 // One sprite per region theme — dense walls will cluster visually because
 // ExploreScene scales trees ×1.35, rocks ×1.20 (adjacent tiles merge).
+// Positional hash helper — deterministic A/B variant selection, no diagonal banding
+const _tileHash = (c, r) => ((Math.imul(c, 1073741827) ^ Math.imul(r, 2147483693)) >>> 0) % 2;
+
 const TILE_FN = [
-  (c, r) => ({ col: c, row: r, key: 'decoration_tree',   blocking: true }), // R0 Sunny Village
-  (c, r) => ({ col: c, row: r, key: 'decoration_tree',   blocking: true }), // R1 Meadow Maze
-  (c, r) => ({ col: c, row: r, key: 'decoration_rock',   blocking: true }), // R2 Desert Dunes
-  (c, r) => ({ col: c, row: r, key: 'decoration_icicle', blocking: true }), // R3 Frostbite Cavern
-  (c, r) => ({ col: c, row: r, key: 'decoration_pillar', blocking: true }), // R4 Shadow Castle
+  (c, r) => { const h = _tileHash(c, r);                                                           // R0 Sunny Village
+    return { col: c, row: r, key: h === 0 ? 'decoration_tree'         : 'decoration_tree_b',         blocking: true }; },
+  (c, r) => { const h = _tileHash(c, r);                                                           // R1 Meadow Maze
+    return { col: c, row: r, key: h === 0 ? 'decoration_tree_meadow'  : 'decoration_tree_meadow_b',  blocking: true }; },
+  (c, r) => { const h = _tileHash(c, r);                                                           // R2 Desert Dunes
+    return { col: c, row: r, key: h === 0 ? 'decoration_rock'         : 'decoration_rock_b',         blocking: true }; },
+  (c, r) => { const h = _tileHash(c, r);                                                           // R3 Frostbite Cavern
+    return { col: c, row: r, key: h === 0 ? 'decoration_icicle'       : 'decoration_icicle_b',       blocking: true }; },
+  (c, r) => { const h = _tileHash(c, r);                                                           // R4 Shadow Castle
+    return { col: c, row: r, key: h === 0 ? 'decoration_pillar'       : 'decoration_pillar_b',       blocking: true }; },
 ];
 
 // ── Non-blocking accent tile for open floor areas (null = no accents) ──────
@@ -45,7 +53,10 @@ const ACCENT_FN = [
   (c, r) => ({ col: c, row: r, key: 'decoration_mushroom', blocking: false }), // R1
   null,   // R2 — barren desert
   (c, r) => ({ col: c, row: r, key: 'decoration_snowpile', blocking: false }), // R3
-  null,   // R4 — bare castle stone
+  (c, r) => {                        // R4 — castle accents: gravestones + torches
+    const pick = ((Math.imul(c, 2654435761) ^ Math.imul(r, 2246822519)) >>> 0) % 2;
+    return { col: c, row: r, key: pick === 0 ? 'decoration_gravestone' : 'decoration_torch', blocking: false };
+  },
 ];
 
 // ── Public API ─────────────────────────────────────────────────────────────

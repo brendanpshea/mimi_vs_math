@@ -176,7 +176,7 @@ export default class StoryScene extends Phaser.Scene {
         duration: 1500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
       });
 
-      const fenwick = this.add.image(fenwickX, artY, 'professor_negativus')
+      const fenwick = this.add.image(fenwickX, artY, 'fenwick')
         .setDisplaySize(110, 110).setFlipX(true);
       this.tweens.add({
         targets: fenwick, y: artY - 10, angle: { from: -3, to: 3 },
@@ -199,7 +199,7 @@ export default class StoryScene extends Phaser.Scene {
       const mimiX    = W * 0.42;
       const fenwickX = W * 0.72;
 
-      const fenwick = this.add.image(fenwickX, artY + 10, 'professor_negativus')
+      const fenwick = this.add.image(fenwickX, artY + 10, 'fenwick')
         .setDisplaySize(80, 80).setAlpha(0.45).setTint(0x440022);
 
       const mimi = this.add.image(mimiX, artY, 'mimi').setScale(3.2);

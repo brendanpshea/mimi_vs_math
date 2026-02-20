@@ -1,0 +1,37 @@
+<svg width="32" height="48" viewBox="0 0 32 48" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    Icicle cluster B  four spikes, two tall outer + two short inner.
+    Wide ice-blue base mound ensures adjacent clusters merge visually.
+  -->
+  <!-- Ground shadow -->
+  <ellipse cx="16" cy="45" rx="14" ry="3.5" fill="#000000" opacity="0.18"/>
+  <!-- Wide merge base mound -->
+  <ellipse cx="16" cy="44" rx="15" ry="5"   fill="#7AA8C4" opacity="0.6"/>
+  <ellipse cx="16" cy="43" rx="12" ry="3"   fill="#C8E8FF" opacity="0.7"/>
+
+  <!-- FAR-LEFT spike (shorter, steeper lean) -->
+  <polygon points="5,28  2,44  11,44"  fill="#2A5870"/>
+  <polygon points="5,28  3,44  10,44" fill="#3E7898"/>
+  <line x1="5.5" y1="30" x2="5.2" y2="41" stroke="#99CCEA" stroke-width="0.8" opacity="0.65"/>
+
+  <!-- LEFT-CENTRE spike (tall, slight left lean) -->
+  <polygon points="12,8  8,44  17,44"  fill="#256090"/>
+  <polygon points="12,8  9.5,44  16,44" fill="#3A82B0"/>
+  <polygon points="12,8  11,44  14,44"  fill="#5AAACE"/>
+  <line x1="12" y1="10" x2="11.5" y2="41" stroke="#C0E8FF" stroke-width="1" opacity="0.6"/>
+  <polygon points="12,8 13,18 15,10" fill="#88CCEE" opacity="0.35"/>
+
+  <!-- RIGHT-CENTRE spike (medium) -->
+  <polygon points="21,14  17,44  25,44" fill="#2A5878"/>
+  <polygon points="21,14  18.5,44 24,44" fill="#3E80A8"/>
+  <line x1="21" y1="16" x2="21.3" y2="41" stroke="#A8DAFF" stroke-width="0.9" opacity="0.6"/>
+
+  <!-- FAR-RIGHT spike (shortest) -->
+  <polygon points="28,30  24,44  30,44" fill="#2A5260"/>
+  <polygon points="28,30  25,44  30,44" fill="#3A7890"/>
+  <line x1="28" y1="32" x2="27.8" y2="42" stroke="#88BBDD" stroke-width="0.7" opacity="0.6"/>
+
+  <!-- Top glint sparkles on two tallest tips -->
+  <ellipse cx="12" cy="8"  rx="1.5" ry="1" fill="#EAFAFF" opacity="0.85"/>
+  <ellipse cx="21" cy="14" rx="1.2" ry="0.8" fill="#EAFAFF" opacity="0.7"/>
+</svg>

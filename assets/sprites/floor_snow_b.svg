@@ -1,9 +1,15 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Snow B — small blue-gray ice patch, lower-left -->
-  <rect width="32" height="32" fill="#F0F8FF"/>
-  <!-- Small icy patch — cool tint, subtle -->
-  <ellipse cx="8" cy="24" rx="5" ry="3.5" fill="#A8C8E0" opacity="0.45"/>
-  <!-- Tiny sparkle, opposite corner -->
-  <line x1="24" y1="7"  x2="24" y2="10" stroke="#FFFFFF" stroke-width="1" opacity="0.8"/>
-  <line x1="22" y1="8.5"  x2="26" y2="8.5"  stroke="#FFFFFF" stroke-width="1" opacity="0.8"/>
+  <!-- Snow B  deep ice: darker blue tint, frosted window effect -->
+  <!-- Base: slightly more saturated icy blue -->
+  <rect width="32" height="32" fill="#B8D8EE"/>
+  <!-- Deep-ice "window"  darker oval hinting at depth below -->
+  <ellipse cx="14" cy="18" rx="9" ry="6" fill="#6EA8C8" opacity="0.40"/>
+  <!-- Inner depth spot -->
+  <ellipse cx="13" cy="18" rx="5" ry="3.5" fill="#4A88B0" opacity="0.25"/>
+  <!-- Single straight crack crossing the window, top-left to bottom-right -->
+  <line x1="3"  y1="8"  x2="22" y2="25" stroke="#8CC0D8" stroke-width="1.5" opacity="0.55"/>
+  <!-- Small lenticular sparkle, upper-right -->
+  <ellipse cx="25" cy="7" rx="3" ry="1.5" fill="#FFFFFF" opacity="0.55"/>
+  <!-- Frost edge: lighter strip along top -->
+  <rect x="0" y="0" width="32" height="5" fill="#E0F2FF" opacity="0.5"/>
 </svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 40">
+  <!-- decoration_torch  floor-standing iron torch, warm glow -->
+  <!-- Ground shadow -->
+  <ellipse cx="12" cy="39" rx="7" ry="2" fill="#000000" opacity="0.25"/>
+  <!-- Base plate (iron foot) -->
+  <rect x="6"  y="32" width="12" height="4"  fill="#302828" rx="1"/>
+  <rect x="8"  y="31" width="8"  height="2"  fill="#403838" rx="0.5"/>
+  <!-- Pole/shaft -->
+  <rect x="10" y="16" width="4"  height="16" fill="#3A3030"/>
+  <!-- Bevel on pole, left edge -->
+  <rect x="10" y="16" width="1"  height="16" fill="#4E4443" opacity="0.7"/>
+  <!-- Iron bowl/bracket at top of pole -->
+  <polygon points="7,20 17,20 15,15 9,15" fill="#282020"/>
+  <polygon points="8,19 16,19 14,15 10,15" fill="#3C3030"/>
+  <!-- Flame glow (soft large aura) -->
+  <ellipse cx="12" cy="11" rx="8" ry="8" fill="#FF8800" opacity="0.18"/>
+  <!-- Outer flame (orange) -->
+  <ellipse cx="12" cy="12" rx="5" ry="7" fill="#FF6600" opacity="0.75"/>
+  <!-- Mid flame (amber) -->
+  <ellipse cx="12" cy="11" rx="3.5" ry="5.5" fill="#FFAA00" opacity="0.85"/>
+  <!-- Inner flame (yellow-white core) -->
+  <ellipse cx="12" cy="10" rx="2"   ry="4"   fill="#FFEE88" opacity="0.9"/>
+  <!-- Bright tip spark -->
+  <ellipse cx="12" cy="7"  rx="1"   ry="1.5" fill="#FFFFFF"  opacity="0.7"/>
+</svg>

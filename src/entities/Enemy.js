@@ -2,7 +2,8 @@
  * Enemy — an enemy sprite placed in the exploration scene.
  *
  * Wanders randomly near its spawn point and plays idle/walk animations
- * through tween-based squash-sway.  Initiates a battle when Mimi touches it.
+ * via two-frame texture cycling (spriteKey / spriteKey_b) — same pattern
+ * as Mimi.js.  Initiates a battle when Mimi touches it.
  *
  * Wander behaviour:
  *   - Picks a random direction every THINK_MIN..THINK_MAX ms.
@@ -10,8 +11,9 @@
  *   - If it drifts beyond WANDER_RADIUS from home it immediately steers back.
  *
  * Animation:
- *   - Idle  : vertical bob tween (created/restarted from current y each stop).
- *   - Moving: side-sway tween (angle ±SWAY_DEG at SWAY_MS per half-cycle).
+ *   - Moving: alternates spriteKey / spriteKey_b every STEP_MS (walk/fly cycle).
+ *   - Idle  : locks to frame A (spriteKey) so monsters always rest in base pose.
+ *   - Side-sway tween still active while walking (removes when idle).
  */
 import * as Phaser from 'phaser';
 
@@ -22,8 +24,7 @@ const THINK_MIN_MS  = 1200; // shortest wait between direction decisions
 const THINK_MAX_MS  = 3000; // longest wait
 
 // ── Animation constants ───────────────────────────────────────────────────────
-const BOB_PX    = 6;   // vertical bob amplitude (px)
-const BOB_MS    = 800; // half-period of the idle bob
+const STEP_MS   = 200; // ms between walk-frame flips (A → B → A …)
 const SWAY_DEG  = 7;   // max rotation while walking (degrees)
 const SWAY_MS   = 210; // half-period of the sway rock
 
@@ -65,9 +66,14 @@ export default class Enemy {
       paused:   true,
     });
 
-    // Idle bob — created fresh at current position each time we stop
-    this._bobTween = null;
-    this._startBob();
+    // Two-frame walk cycle — flips between spriteKey and spriteKey_b
+    this._stepFrame = 0;
+    this._stepTimer = scene.time.addEvent({
+      delay:         STEP_MS,
+      callback:      this._onStep,
+      callbackScope: this,
+      loop:          true,
+    });
 
     // Stagger the first direction pick so all enemies don't move at once
     const firstDelay = Math.random() * THINK_MAX_MS;
@@ -78,29 +84,32 @@ export default class Enemy {
 
   // ── Private helpers ────────────────────────────────────────────────────────
 
-  /** Create a fresh bob tween anchored at the sprite's current y. */
-  _startBob() {
-    if (this._bobTween) {
-      this._bobTween.stop();
-      this._bobTween = null;
+  /**
+   * Called every STEP_MS by the step timer.
+   * Advances the walk frame while the body is moving; resets to frame A while idle.
+   */
+  _onStep() {
+    const body = this.sprite.body;
+    const isMoving = body &&
+      (Math.abs(body.velocity.x) > 1 || Math.abs(body.velocity.y) > 1);
+
+    if (isMoving) {
+      this._stepFrame = 1 - this._stepFrame;
+    } else {
+      this._stepFrame = 0;
     }
-    const baseY = this.sprite.y;
-    this._bobTween = this.scene.tweens.add({
-      targets:  this.sprite,
-      y:        baseY - BOB_PX,
-      duration: BOB_MS + Math.random() * 200,
-      yoyo:     true,
-      repeat:   -1,
-      ease:     'Sine.easeInOut',
-    });
+
+    const key = this._stepFrame === 1
+      ? `${this.data.spriteKey}_b`
+      : this.data.spriteKey;
+
+    if (this.scene.textures.exists(key)) {
+      this.sprite.setTexture(key);
+    }
   }
 
   /** Switch to moving-animation state. */
   _enterMoveAnim() {
-    if (this._bobTween) {
-      this._bobTween.stop();
-      this._bobTween = null;
-    }
     if (!this._swayTween.isPlaying()) {
       this._swayTween.resume();
     }
@@ -112,7 +121,6 @@ export default class Enemy {
       this._swayTween.pause();
       this.sprite.setAngle(0);
     }
-    this._startBob();
   }
 
   /** AI tick: pick a new direction (or pause). Re-schedules itself. */
@@ -184,7 +192,7 @@ export default class Enemy {
   /** Remove this enemy from the scene (after defeat). */
   destroy() {
     if (this._swayTween) this._swayTween.stop();
-    if (this._bobTween)  this._bobTween.stop();
+    if (this._stepTimer) this._stepTimer.remove(false);
     this.sprite.destroy();
   }
 

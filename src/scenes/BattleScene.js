@@ -592,11 +592,26 @@ export default class BattleScene extends Phaser.Scene {
 
   // ── End of battle ─────────────────────────────────────────────────────────
 
+  /** Hide all mid-battle question UI so the victory/defeat overlay is clean. */
+  _hideQuestionUI() {
+    this.questionText.setVisible(false);
+    this.answerButtons.forEach(btn => {
+      btn.bg.removeInteractive().setVisible(false);
+      btn.lbl.setVisible(false);
+      btn.numLbl.setVisible(false);
+    });
+    if (this.timerFill) this.timerFill.setVisible(false);
+    if (this.timerText) this.timerText.setVisible(false);
+    if (this.feedbackText) this.feedbackText.setAlpha(0);
+    if (this.streakText)   this.streakText.setAlpha(0);
+    if (this.effectsRow)   this.effectsRow.setVisible(false);
+  }
+
   _endBattle(victory) {
     this.battleOver = true;
     if (this._timerEvent) this._timerEvent.remove();
 
-    this.answerButtons.forEach(btn => btn.bg.removeInteractive());
+    this._hideQuestionUI();
 
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;

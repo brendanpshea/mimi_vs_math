@@ -260,7 +260,7 @@ const REGIONS = [
       { col: 57, row: 36, id: 'crystal_bat',   difficultyOverride: 3 },       // D3 decimals review
     ],
 
-    boss: 'professor_negativus',
+    boss: 'fenwick',
     bossName: 'Fenwick, the Sly Fox',
     description: 'Fenwick the Sly Fox lurks at the top of his Shadow Castle. Defeat his elite guards using order of operations, percentages, and ratios — then face him in the ultimate Grade 5 showdown to reclaim Mimi\'s yarn ball!',
     npcHint: 'Remember order of operations: multiplication before addition!',
@@ -268,7 +268,7 @@ const REGIONS = [
       {
         speaker:   'Fenwick the Sly Fox',
         side:      'right',
-        spriteKey: 'professor_negativus',
+        spriteKey: 'fenwick',
         nameColor: '#FF9944',
         bg:        0x080314,
         text:      'Well.  You actually made it.\nI designed those five kingdoms to be completely impassable.\nI am somewhere between impressed and professionally embarrassed.\n\nHow — HOW — did you get past the Diviner?\nHe\'s been doing that for centuries.',
@@ -284,7 +284,7 @@ const REGIONS = [
       {
         speaker:   'Fenwick the Sly Fox',
         side:      'right',
-        spriteKey: 'professor_negativus',
+        spriteKey: 'fenwick',
         nameColor: '#FF9944',
         bg:        0x0A0418,
         text:      'It\'s on my desk.  I\'ve been using it as a paperweight, actually.\nDo you have any idea how many forms the Shadow Empire\ngenerates per week?  It\'s unconscionable.\n\nRegardless.  We fight.  I\'ve rehearsed.\nIt\'ll be very dramatic.  Try to look surprised.',

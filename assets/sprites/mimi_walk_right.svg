@@ -1,39 +1,53 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Mimi walking RIGHT - side view facing right -->
-  <!-- Tail - curves up behind (on left side now) -->
-  <path d="M20,50 C6,46 0,34 6,26" fill="none" stroke="#DDDDCC" stroke-width="4" stroke-linecap="round"/>
-  <!-- Body -->
-  <ellipse cx="34" cy="44" rx="17" ry="11" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <!-- Back legs -->
-  <ellipse cx="24" cy="55" rx="3.5" ry="6" fill="#EEEEDD" stroke="#CCCCBB" stroke-width="1" transform="rotate(8 24 55)"/>
-  <ellipse cx="20" cy="54" rx="3.5" ry="5.5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1" transform="rotate(-10 20 54)"/>
-  <!-- Front legs -->
-  <ellipse cx="44" cy="56" rx="3.5" ry="6" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1" transform="rotate(-10 44 56)"/>
-  <ellipse cx="48" cy="55" rx="3.5" ry="5.5" fill="#EEEEDD" stroke="#CCCCBB" stroke-width="1" transform="rotate(8 48 55)"/>
-  <!-- Paws -->
-  <ellipse cx="23" cy="61" rx="4" ry="2.5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <ellipse cx="18" cy="60" rx="4" ry="2.5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <ellipse cx="46" cy="62" rx="4" ry="2.5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <ellipse cx="50" cy="61" rx="4" ry="2.5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <!-- Head - facing right -->
-  <circle cx="42" cy="22" r="15" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <!-- Right ear (front ear when facing right) -->
-  <polygon points="52,13 57,1 45,9" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <polygon points="51,12 55,4 47,9" fill="#FFCCDD"/>
-  <!-- Left ear (back ear) -->
-  <polygon points="36,12 31,1 42,8" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <polygon points="37,11 33,4 41,8" fill="#FFCCDD"/>
-  <!-- Eye (near side only) -->
-  <ellipse cx="48" cy="22" rx="4" ry="5" fill="#2E8B57"/>
-  <ellipse cx="48" cy="23" rx="2" ry="3.2" fill="#111"/>
-  <circle cx="49.5" cy="21" r="1.1" fill="white"/>
-  <!-- Nose -->
-  <polygon points="54,27 51.5,29.5 56.5,29.5" fill="#FF99AA"/>
-  <!-- Mouth -->
-  <path d="M51.5,29.5 Q54,32 56.5,29.5" fill="none" stroke="#CC7788" stroke-width="1"/>
-  <!-- Whiskers pointing right -->
-  <line x1="54" y1="27" x2="68" y2="24" stroke="#AAAAAA" stroke-width="0.8"/>
-  <line x1="54" y1="29" x2="68" y2="32" stroke="#AAAAAA" stroke-width="0.8"/>
-  <line x1="50" y1="27" x2="34" y2="25" stroke="#AAAAAA" stroke-width="0.8"/>
-  <line x1="50" y1="30" x2="34" y2="32" stroke="#AAAAAA" stroke-width="0.8"/>
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56">
+<!-- Mimi walk right frame A: side view facing right, front paw extended -->
+<!-- Tail up-left behind her -->
+<path d="M14,32 C4,22 1,30 6,42" fill="none" stroke="#505058" stroke-width="4" stroke-linecap="round"/>
+<path d="M14,32 C4,22 1,30 6,42" fill="none" stroke="#A8A8B4" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4,3"/>
+<!-- Body side view -->
+<ellipse cx="23" cy="34" rx="13" ry="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5"/>
+<!-- Belly patch -->
+<ellipse cx="27" cy="37" rx="7" ry="7" fill="#D0D0DC"/>
+<!-- Back stripe on flank -->
+<path d="M13,25 Q10,34 13,43" fill="none" stroke="#505058" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+<!-- Bandana side -->
+<path d="M20,25 Q28,29 36,26 Q35,31 28,32 Q21,31 20,25 Z" fill="#DD2222" stroke="#991111" stroke-width="0.8"/>
+<path d="M20,25 Q28,28 36,26" fill="none" stroke="#FF5555" stroke-width="1" stroke-linecap="round"/>
+<!-- Far front arm (static, slightly behind) -->
+<ellipse cx="30" cy="31" rx="3" ry="6" fill="#8C8CA0" stroke="#2A2A36" stroke-width="1" transform="rotate(5,30,27)"/>
+<ellipse cx="30.5" cy="37" rx="3.5" ry="2" fill="#707080" stroke="#2A2A36" stroke-width="0.8"/>
+<!-- Near front arm extended right -->
+<ellipse cx="41" cy="28" rx="3" ry="7" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(20,41,24)"/>
+<ellipse cx="44" cy="34.5" rx="4" ry="2.5" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
+<line x1="41" y1="36" x2="41" y2="38" stroke="#505058" stroke-width="1"/>
+<line x1="44" y1="36.5" x2="44" y2="38.5" stroke="#505058" stroke-width="1"/>
+<line x1="47" y1="36" x2="47" y2="38" stroke="#505058" stroke-width="1"/>
+<!-- Far back leg -->
+<ellipse cx="22" cy="46" rx="5" ry="5" fill="#8C8CA0" stroke="#2A2A36" stroke-width="1"/>
+<ellipse cx="21" cy="53" rx="6" ry="2.5" fill="#707080" stroke="#2A2A36" stroke-width="0.8"/>
+<!-- Near back leg forward -->
+<ellipse cx="18" cy="46" rx="5" ry="5.5" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(10,18,42)"/>
+<ellipse cx="18.5" cy="53.5" rx="6.5" ry="2.8" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
+<line x1="13.5" y1="55" x2="13.5" y2="55.5" stroke="#505058" stroke-width="1"/>
+<line x1="18.5" y1="55.5" x2="18.5" y2="56" stroke="#505058" stroke-width="1"/>
+<line x1="23.5" y1="55" x2="23.5" y2="55.5" stroke="#505058" stroke-width="1"/>
+<!-- Head side-right -->
+<circle cx="34" cy="14" r="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5"/>
+<!-- Right ear (front ear) -->
+<polygon points="42,8 47,0 36,4" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="41,7.5 45,1 36,4.5" fill="#FFAACC"/>
+<!-- Left ear (back, partially hidden) -->
+<polygon points="29,6 27,-1 22,3" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" stroke-linejoin="round"/>
+<!-- Tabby M forehead -->
+<path d="M26,7 L30,3 L34,5 L38,3 L42,7" fill="none" stroke="#505058" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<!-- One eye visible (right/near eye) -->
+<ellipse cx="38" cy="16" rx="4" ry="3.5" fill="#44BB44" stroke="#226622" stroke-width="1.2"/>
+<ellipse cx="38" cy="16" rx="1.3" ry="2.8" fill="#111120"/>
+<circle cx="36.5" cy="15" r="1" fill="white"/>
+<!-- Nose + mouth on right side -->
+<polygon points="44,19 42,21.5 45,21.5" fill="#FF7799"/>
+<path d="M42,21.5 Q43.5,23.5 45,21.5" fill="none" stroke="#CC3355" stroke-width="0.9" stroke-linecap="round"/>
+<!-- Whiskers pointing right -->
+<line x1="44" y1="19" x2="53" y2="17" stroke="#888894" stroke-width="0.8"/>
+<line x1="44" y1="21" x2="53" y2="23" stroke="#888894" stroke-width="0.8"/>
+<line x1="40" y1="19" x2="51" y2="16" stroke="#888894" stroke-width="0.7"/>
 </svg>

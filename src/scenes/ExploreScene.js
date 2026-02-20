@@ -213,9 +213,17 @@ export default class ExploreScene extends Phaser.Scene {
 
     // --- Per-type scale factors (make clusters merge visually) -------------
     const SCALES = {
-      decoration_tree:      1.35,
-      decoration_rock:      1.20,
-      decoration_mushroom:  1.15,
+      decoration_tree:          1.35,
+      decoration_tree_b:        1.35,
+      decoration_tree_meadow:   1.35,
+      decoration_tree_meadow_b: 1.35,
+      decoration_rock:          1.20,
+      decoration_rock_b:        1.20,
+      decoration_mushroom:      1.15,
+      decoration_icicle:        1.25,
+      decoration_icicle_b:      1.25,
+      decoration_pillar:        1.15,
+      decoration_pillar_b:      1.15,
     };
 
     for (const item of deduped) {

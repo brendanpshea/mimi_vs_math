@@ -1,7 +1,19 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Stone C — same flagstone, small dark chip lower-right, well inset -->
-  <rect width="32" height="32" fill="#5A5268"/>
-  <ellipse cx="17" cy="16" rx="10" ry="9" fill="#6E6980" opacity="0.22"/>
-  <!-- Tiny dark chip / spall — all edges ≥6 px away -->
-  <ellipse cx="23" cy="23" rx="3" ry="2" fill="#342E3E" opacity="0.55"/>
+  <!-- Stone C  staggered brick rows: 3 rows with offset joints -->
+  <!-- Mortar base -->
+  <rect width="32" height="32" fill="#28232E"/>
+  <!-- Row 1: left 2/3 brick + right 1/3 brick (offset joint) -->
+  <rect x="1"  y="1"  width="18" height="9"  fill="#5A5268" rx="0.5"/>
+  <rect x="21" y="1"  width="10" height="9"  fill="#524C60" rx="0.5"/>
+  <!-- Row 2: right-shifted  short left stub + full right brick -->
+  <rect x="1"  y="12" width="8"  height="9"  fill="#564E66" rx="0.5"/>
+  <rect x="11" y="12" width="20" height="9"  fill="#5A5268" rx="0.5"/>
+  <!-- Row 3: offset back like row 1 (but different proportions) -->
+  <rect x="1"  y="23" width="13" height="8"  fill="#504A5E" rx="0.5"/>
+  <rect x="16" y="23" width="15" height="8"  fill="#5E5870" rx="0.5"/>
+  <!-- Worn chip on row 2 right brick -->
+  <ellipse cx="22" cy="17" rx="2.5" ry="1.5" fill="#322C3C" opacity="0.65"/>
+  <!-- Row highlights -->
+  <line x1="1"  y1="1"  x2="18" y2="1"  stroke="#6A6478" stroke-width="1" opacity="0.4"/>
+  <line x1="21" y1="1"  x2="30" y2="1"  stroke="#706A80" stroke-width="1" opacity="0.4"/>
 </svg>

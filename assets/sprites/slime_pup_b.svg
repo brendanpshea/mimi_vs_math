@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!--
+    Slime Pup — frame B (blob squish/lean cycle — body leans LEFT, drips shift).
+    Eyes and teeth are identical; blob outline shifts.
+  -->
+  <!-- Acid pool shadow -->
+  <ellipse cx="32" cy="60" rx="22" ry="5" fill="#2A7000" opacity="0.35"/>
+
+  <!-- Drip tendrils (shifted left in frame B) -->
+  <ellipse cx="14" cy="57" rx="4.5" ry="7" fill="#338A1A" stroke="#0A1A00" stroke-width="1.2"/>
+  <ellipse cx="26" cy="60" rx="3.5" ry="6" fill="#338A1A" stroke="#0A1A00" stroke-width="1.2"/>
+  <ellipse cx="40" cy="58" rx="4"   ry="7" fill="#338A1A" stroke="#0A1A00" stroke-width="1.2"/>
+
+  <!-- ── MAIN BODY (leaned/squished left in phase B) ── -->
+  <path d="M6,44 Q2,28 8,16 Q14,6 26,4 Q37,2 46,8 Q58,14 60,26 Q64,40 58,50 Q52,60 30,62 Q12,60 6,44 Z"
+        fill="#338A1A" stroke="#0A1A00" stroke-width="2.2"/>
+  <!-- Texture patches -->
+  <ellipse cx="16" cy="32" rx="7" ry="10" fill="#2A7010" opacity="0.45"/>
+  <ellipse cx="42" cy="26" rx="6" ry="8"  fill="#2A7010" opacity="0.35"/>
+  <ellipse cx="34" cy="46" rx="5" ry="6"  fill="#2A7010" opacity="0.30"/>
+  <!-- Glossy highlight -->
+  <ellipse cx="20" cy="14" rx="10" ry="6" fill="#66DD33" opacity="0.40"/>
+
+  <!-- Antennae (shifted left with body) -->
+  <path d="M20,6 C16,0 12,0 10,2" fill="none" stroke="#0A1A00" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M34,5 C38,0 42,0 44,2" fill="none" stroke="#0A1A00" stroke-width="2.5" stroke-linecap="round"/>
+  <ellipse cx="10" cy="3" rx="3.5" ry="3" fill="#AAFF44" stroke="#0A1A00" stroke-width="1.2"/>
+  <ellipse cx="44" cy="3" rx="3.5" ry="3" fill="#AAFF44" stroke="#0A1A00" stroke-width="1.2"/>
+  <circle  cx="10" cy="3" r="1.5"          fill="#DDFF88"/>
+  <circle  cx="44" cy="3" r="1.5"          fill="#DDFF88"/>
+
+  <!-- Eyes (shifted left with body lean) -->
+  <ellipse cx="19" cy="27" rx="9" ry="8" fill="#0A1A00" stroke="#0A1A00" stroke-width="1"/>
+  <ellipse cx="38" cy="27" rx="9" ry="8" fill="#0A1A00" stroke="#0A1A00" stroke-width="1"/>
+  <ellipse cx="19" cy="27" rx="6"   ry="5.5" fill="#FF7700"/>
+  <ellipse cx="38" cy="27" rx="6"   ry="5.5" fill="#FF7700"/>
+  <ellipse cx="19" cy="27" rx="1.5" ry="4"   fill="#0A1A00"/>
+  <ellipse cx="38" cy="27" rx="1.5" ry="4"   fill="#0A1A00"/>
+  <circle cx="21" cy="24.5" r="2" fill="#FFEE44" opacity="0.7"/>
+  <circle cx="40" cy="24.5" r="2" fill="#FFEE44" opacity="0.7"/>
+  <!-- Angry brows -->
+  <path d="M11,21 L19,24" stroke="#0A1A00" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M46,21 L38,24" stroke="#0A1A00" stroke-width="2.8" stroke-linecap="round"/>
+
+  <!-- Mouth -->
+  <path d="M15,41 Q28,50 43,41" fill="#1A5A08" stroke="#0A1A00" stroke-width="1.5"/>
+  <polygon points="17,41 19,37 21,41" fill="white" stroke="#0A1A00" stroke-width="0.8"/>
+  <polygon points="22,41 24,35 26,41" fill="white" stroke="#0A1A00" stroke-width="0.8"/>
+  <polygon points="27,42 29,36 31,42" fill="white" stroke="#0A1A00" stroke-width="0.8"/>
+  <polygon points="32,41 34,35 36,41" fill="white" stroke="#0A1A00" stroke-width="0.8"/>
+  <polygon points="37,41 39,37 41,41" fill="white" stroke="#0A1A00" stroke-width="0.8"/>
+  <!-- Drool drips -->
+  <path d="M22,50 Q21,56 20,58" fill="none" stroke="#66DD33" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <path d="M32,52 Q32,58 31,62" fill="none" stroke="#66DD33" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+</svg>

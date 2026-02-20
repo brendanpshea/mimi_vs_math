@@ -1,36 +1,59 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Mimi walking DOWN (toward camera) - front view, RIGHT leg forward (frame B) -->
-  <!-- Tail -->
-  <path d="M46,50 C56,44 62,52 56,58" fill="none" stroke="#DDDDCC" stroke-width="4" stroke-linecap="round"/>
-  <!-- Body -->
-  <ellipse cx="32" cy="46" rx="15" ry="12" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <!-- Legs - walking: right leg forward, left leg back -->
-  <ellipse cx="24" cy="57" rx="4" ry="5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1" transform="rotate(12 24 57)"/>
-  <ellipse cx="40" cy="59" rx="4" ry="5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1" transform="rotate(-10 40 59)"/>
-  <!-- Paws -->
-  <ellipse cx="25" cy="62" rx="4.5" ry="2.5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <ellipse cx="39" cy="61" rx="4.5" ry="2.5" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <!-- Head -->
-  <circle cx="32" cy="24" r="16" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <!-- Ears -->
-  <polygon points="18,15 13,3 25,10" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <polygon points="19,14 15,6 23,10" fill="#FFCCDD"/>
-  <polygon points="46,15 51,3 39,10" fill="#F5F5F0" stroke="#CCCCBB" stroke-width="1"/>
-  <polygon points="45,14 49,6 41,10" fill="#FFCCDD"/>
-  <!-- Eyes -->
-  <ellipse cx="26" cy="23" rx="4.5" ry="5.5" fill="#2E8B57"/>
-  <ellipse cx="38" cy="23" rx="4.5" ry="5.5" fill="#2E8B57"/>
-  <ellipse cx="26" cy="24" rx="2.5" ry="3.5" fill="#111"/>
-  <ellipse cx="38" cy="24" rx="2.5" ry="3.5" fill="#111"/>
-  <circle cx="27.5" cy="22" r="1.2" fill="white"/>
-  <circle cx="39.5" cy="22" r="1.2" fill="white"/>
-  <!-- Nose -->
-  <polygon points="32,29 29.5,31.5 34.5,31.5" fill="#FF99AA"/>
-  <!-- Mouth -->
-  <path d="M29.5,31.5 Q32,34.5 34.5,31.5" fill="none" stroke="#CC7788" stroke-width="1"/>
-  <!-- Whiskers -->
-  <line x1="24" y1="29" x2="7"  y2="26" stroke="#AAAAAA" stroke-width="0.8"/>
-  <line x1="24" y1="31" x2="7"  y2="34" stroke="#AAAAAA" stroke-width="0.8"/>
-  <line x1="40" y1="29" x2="57" y2="26" stroke="#AAAAAA" stroke-width="0.8"/>
-  <line x1="40" y1="31" x2="57" y2="34" stroke="#AAAAAA" stroke-width="0.8"/>
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56">
+<!-- Mimi walk down frame B: front view, right leg forward left leg back -->
+<!-- Tail -->
+<path d="M16,36 C8,30 4,38 8,46" fill="none" stroke="#505058" stroke-width="4" stroke-linecap="round"/>
+<path d="M16,36 C8,30 4,38 8,46" fill="none" stroke="#A8A8B4" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4,3"/>
+<!-- Body -->
+<ellipse cx="24" cy="34" rx="10" ry="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5"/>
+<ellipse cx="24" cy="36" rx="5.5" ry="7.5" fill="#D0D0DC"/>
+<path d="M14.5,28 Q16,34 14.5,40" fill="none" stroke="#505058" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+<path d="M33.5,28 Q32,34 33.5,40" fill="none" stroke="#505058" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+<!-- Arms counter-swing: left arm forward -->
+<ellipse cx="13.5" cy="32" rx="3.5" ry="7" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(12,13.5,28)"/>
+<ellipse cx="34.5" cy="33" rx="3.5" ry="7" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(-8,34.5,30)"/>
+<ellipse cx="12.5" cy="37.5" rx="4" ry="2.5" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
+<ellipse cx="36" cy="39" rx="4" ry="2.5" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
+<line x1="9"  y1="39" x2="9"  y2="41.5" stroke="#505058" stroke-width="1"/>
+<line x1="12" y1="40" x2="12" y2="42.5" stroke="#505058" stroke-width="1"/>
+<line x1="15" y1="39" x2="15" y2="41.5" stroke="#505058" stroke-width="1"/>
+<line x1="32" y1="40.5" x2="32" y2="43" stroke="#505058" stroke-width="1"/>
+<line x1="35" y1="41.5" x2="35" y2="44" stroke="#505058" stroke-width="1"/>
+<line x1="38" y1="40.5" x2="38" y2="43" stroke="#505058" stroke-width="1"/>
+<!-- Bandana -->
+<path d="M14.5,24 Q24,28 33.5,24 Q32,30 24,31 Q16,30 14.5,24 Z" fill="#DD2222" stroke="#991111" stroke-width="0.8"/>
+<path d="M14.5,24 Q24,27 33.5,24" fill="none" stroke="#FF5555" stroke-width="1.2" stroke-linecap="round"/>
+<path d="M14.5,24 L11,30 L16,28.5 Z" fill="#BB1111"/>
+<!-- Legs: right leg forward, left leg back -->
+<ellipse cx="20" cy="44" rx="5.5" ry="6" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(10,20,40)"/>
+<ellipse cx="28" cy="45" rx="5.5" ry="6" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(-10,28,40)"/>
+<ellipse cx="20" cy="51" rx="6.5" ry="2.8" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
+<ellipse cx="28.5" cy="52.5" rx="6.5" ry="2.8" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
+<line x1="15" y1="52" x2="15" y2="53.5" stroke="#505058" stroke-width="1"/>
+<line x1="20" y1="53" x2="20" y2="54.5" stroke="#505058" stroke-width="1"/>
+<line x1="25" y1="52" x2="25" y2="53.5" stroke="#505058" stroke-width="1"/>
+<line x1="23.5" y1="53.5" x2="23.5" y2="55" stroke="#505058" stroke-width="1"/>
+<line x1="28.5" y1="54.5" x2="28.5" y2="55.5" stroke="#505058" stroke-width="1"/>
+<line x1="33.5" y1="53.5" x2="33.5" y2="55" stroke="#505058" stroke-width="1"/>
+<!-- Head (same as frame A) -->
+<circle cx="24" cy="13" r="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5"/>
+<polygon points="13,8 8,0 18,5" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="35,8 40,0 30,5" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="13.5,7.5 9,1 18,5.5" fill="#FFAACC"/>
+<polygon points="34.5,7.5 39,1 30,5.5" fill="#FFAACC"/>
+<path d="M16,8 L19.5,4 L24,6.5 L28.5,4 L32,8" fill="none" stroke="#505058" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="24" y1="6.5" x2="24" y2="10" stroke="#505058" stroke-width="1.2" opacity="0.6"/>
+<line x1="11" y1="16" x2="16" y2="15.5" stroke="#505058" stroke-width="1.5" opacity="0.5"/>
+<line x1="32" y1="15.5" x2="37" y2="16" stroke="#505058" stroke-width="1.5" opacity="0.5"/>
+<ellipse cx="19" cy="14" rx="4.5" ry="4" fill="#44BB44" stroke="#226622" stroke-width="1.2"/>
+<ellipse cx="29" cy="14" rx="4.5" ry="4" fill="#44BB44" stroke="#226622" stroke-width="1.2"/>
+<ellipse cx="19" cy="14" rx="1.5" ry="3.2" fill="#111120"/>
+<ellipse cx="29" cy="14" rx="1.5" ry="3.2" fill="#111120"/>
+<circle cx="20.5" cy="13" r="1.2" fill="white"/>
+<circle cx="30.5" cy="13" r="1.2" fill="white"/>
+<polygon points="24,19 22,21 26,21" fill="#FF7799"/>
+<path d="M22,21 Q24,23.5 26,21" fill="none" stroke="#CC3355" stroke-width="1" stroke-linecap="round"/>
+<line x1="21" y1="19.5" x2="4"  y2="17" stroke="#888894" stroke-width="0.8"/>
+<line x1="21" y1="21"   x2="4"  y2="24" stroke="#888894" stroke-width="0.8"/>
+<line x1="27" y1="19.5" x2="44" y2="17" stroke="#888894" stroke-width="0.8"/>
+<line x1="27" y1="21"   x2="44" y2="24" stroke="#888894" stroke-width="0.8"/>
 </svg>

@@ -1,31 +1,38 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 40">
-  <!-- shadow -->
-  <ellipse cx="12" cy="39" rx="9" ry="2" fill="#000" opacity="0.3"/>
-  <!-- base plinth  dark outline -->
-  <rect x="3"  y="33" width="18" height="6" fill="#2A2A34" rx="1"/>
-  <!-- base plinth  light top -->
-  <rect x="4"  y="33" width="16" height="2" fill="#545462"/>
-  <rect x="3"  y="35" width="18" height="4" fill="#3C3C48"/>
-  <!-- column shaft  dark bevel -->
-  <rect x="5"  y="9"  width="14" height="25" fill="#2E2E38"/>
-  <!-- column shaft  main face -->
-  <rect x="6"  y="9"  width="12" height="25" fill="#484858"/>
-  <!-- left highlight strip -->
-  <rect x="6.5" y="10" width="3.5" height="23" fill="#5C5C6E" opacity="0.8"/>
-  <!-- right shadow strip -->
-  <rect x="15"  y="9"  width="2"   height="25" fill="#222230" opacity="0.7"/>
-  <!-- fluting grooves -->
-  <line x1="10" y1="9"  x2="10" y2="34" stroke="#242434" stroke-width="0.8" opacity="0.6"/>
-  <line x1="14" y1="9"  x2="14" y2="34" stroke="#242434" stroke-width="0.8" opacity="0.6"/>
-  <!-- capital (top)  dark outline -->
-  <rect x="3"  y="6"  width="18" height="4" fill="#2A2A34" rx="1"/>
-  <rect x="4"  y="6"  width="16" height="2" fill="#545462"/>
-  <rect x="3"  y="8"  width="18" height="2" fill="#3C3C48"/>
-  <!-- broken top / jagged edge -->
-  <polygon points="5,6 9,1 12,4 16,0 20,6" fill="#2E2E38"/>
-  <polygon points="9,1 12,4 10,2" fill="#1A1A22" opacity="0.7"/>
-  <!-- moss patch -->
-  <rect x="5" y="24" width="5" height="4" fill="#1E3010" opacity="0.55" rx="1"/>
-  <!-- crack -->
-  <path d="M11,16 L12.5,22 L11.5,28" stroke="#1A1A22" stroke-width="1" fill="none" opacity="0.8"/>
+  <!--
+    Shadow Castle pillar  dark obsidian stone.
+    Wide near-black base fill so adjacent pillars merge into a solid wall/cluster.
+    Gold accent at capital for contrast vs the grey-purple floor.
+  -->
+  <!-- Wide merge base (near-black)  extends to tile edges so adjacent pillars fuse -->
+  <ellipse cx="12" cy="38" rx="12" ry="5" fill="#08060C"/>
+  <!-- Ground shadow -->
+  <ellipse cx="12" cy="39.5" rx="10" ry="1.5" fill="#000000" opacity="0.4"/>
+  <!-- Base plinth  near-black charcoal -->
+  <rect x="2"  y="32" width="20" height="6" fill="#0E0B16" rx="1"/>
+  <!-- Plinth top bevel (faint silver) -->
+  <rect x="3"  y="32" width="18" height="1.5" fill="#2A2438" opacity="0.9"/>
+  <!-- Shaft dark outer -->
+  <rect x="4"  y="8"  width="16" height="25" fill="#0E0A14"/>
+  <!-- Shaft main face  very dark charcoal, clearly darker than #5A5268 floor -->
+  <rect x="5"  y="8"  width="14" height="25" fill="#1A1525"/>
+  <!-- Left highlight strip (faint cool silver) -->
+  <rect x="5.5" y="9" width="3.5" height="23" fill="#3A3250" opacity="0.7"/>
+  <!-- Right deep shadow strip -->
+  <rect x="16"  y="8" width="2"   height="25" fill="#050308" opacity="0.9"/>
+  <!-- Fluting grooves -->
+  <line x1="10" y1="8"  x2="10" y2="33" stroke="#080610" stroke-width="0.8" opacity="0.8"/>
+  <line x1="14" y1="8"  x2="14" y2="33" stroke="#080610" stroke-width="0.8" opacity="0.8"/>
+  <!-- Gold accent band just below capital  warm contrast against dark stone -->
+  <rect x="4" y="10" width="16" height="2.5" fill="#8C7020"/>
+  <rect x="4" y="10" width="16" height="1"   fill="#C4A830" opacity="0.7"/>
+  <!-- Capital dark outer -->
+  <rect x="2"  y="5"  width="20" height="4"  fill="#0E0B16" rx="1"/>
+  <rect x="3"  y="5"  width="18" height="1.5" fill="#2A2438" opacity="0.9"/>
+  <rect x="2"  y="7"  width="20" height="2"  fill="#14101E"/>
+  <!-- Broken/jagged top  obsidian shards -->
+  <polygon points="4,5 8,0 11,3 15,-1 20,5" fill="#0E0A14"/>
+  <polygon points="8,0 11,3 9,1.5" fill="#050308" opacity="0.8"/>
+  <!-- Worn crack down shaft -->
+  <path d="M12,13 L13,19 L12,26" stroke="#050308" stroke-width="1" fill="none" opacity="0.9"/>
 </svg>

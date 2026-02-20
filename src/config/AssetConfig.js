@@ -63,7 +63,30 @@ export const SPRITE_DEFS = [
   { key: 'shadow_knight',         file: 'shadow_knight',         size: 64 },
   { key: 'ratio_raven',           file: 'ratio_raven',           size: 64 },
   { key: 'percent_wraith',        file: 'percent_wraith',        size: 64 },
-  { key: 'professor_negativus',   file: 'professor_negativus',   size: 96 },
+  { key: 'professor_negativus',   file: 'professor_negativus',   size: 96 }, // legacy (unused in gameplay)
+  { key: 'fenwick',               file: 'fenwick',               size: 96 },
+  { key: 'fenwick_b',             file: 'fenwick_b',             size: 96 },
+
+  // Frame-B walk/fly sprites (cycled by Enemy.js step timer)
+  { key: 'counting_caterpillar_b', file: 'counting_caterpillar_b', size: 64 },
+  { key: 'number_gnome_b',         file: 'number_gnome_b',         size: 64 },
+  { key: 'minus_mole_b',           file: 'minus_mole_b',           size: 64 },
+  { key: 'subtraction_witch_b',    file: 'subtraction_witch_b',    size: 96 },
+  { key: 'slime_pup_b',            file: 'slime_pup_b',            size: 64 },
+  { key: 'cactus_sprite_b',        file: 'cactus_sprite_b',        size: 64 },
+  { key: 'cloud_bully_b',          file: 'cloud_bully_b',          size: 64 },
+  { key: 'count_multiplico_b',     file: 'count_multiplico_b',     size: 96 },
+  { key: 'sand_scarab_b',          file: 'sand_scarab_b',          size: 64 },
+  { key: 'mummy_cat_b',            file: 'mummy_cat_b',            size: 64 },
+  { key: 'mirage_fox_b',           file: 'mirage_fox_b',           size: 64 },
+  { key: 'the_diviner_b',          file: 'the_diviner_b',          size: 96 },
+  { key: 'ice_frog_b',             file: 'ice_frog_b',             size: 64 },
+  { key: 'snow_golem_b',           file: 'snow_golem_b',           size: 64 },
+  { key: 'crystal_bat_b',          file: 'crystal_bat_b',          size: 64 },
+  { key: 'glacius_b',              file: 'glacius_b',              size: 96 },
+  { key: 'ratio_raven_b',          file: 'ratio_raven_b',          size: 64 },
+  { key: 'percent_wraith_b',       file: 'percent_wraith_b',       size: 64 },
+  { key: 'shadow_knight_b',        file: 'shadow_knight_b',        size: 64 },
 ];
 
 /**
@@ -97,16 +120,23 @@ export const TERRAIN_DEFS = [
   { key: 'wall_ice',    file: 'wall_ice',    size: 32 },
   
   // Decorations
-  { key: 'decoration_tree',        file: 'decoration_tree',        size: { width: 32, height: 48 } },
-  { key: 'decoration_rock',        file: 'decoration_rock',        size: 32 },
+  { key: 'decoration_tree',          file: 'decoration_tree',          size: { width: 32, height: 48 } },
+  { key: 'decoration_tree_b',         file: 'decoration_tree_b',         size: { width: 32, height: 48 } },
+  { key: 'decoration_tree_meadow',    file: 'decoration_tree_meadow',    size: { width: 32, height: 48 } },
+  { key: 'decoration_tree_meadow_b',  file: 'decoration_tree_meadow_b',  size: { width: 32, height: 48 } },
+  { key: 'decoration_rock',           file: 'decoration_rock',           size: 32 },
+  { key: 'decoration_rock_b',         file: 'decoration_rock_b',         size: 32 },
   { key: 'decoration_cactus',      file: 'decoration_cactus',      size: { width: 32, height: 48 } },
   { key: 'decoration_flower',      file: 'decoration_flower',      size: 32 },
   { key: 'decoration_mushroom',    file: 'decoration_mushroom',    size: 32 },
   { key: 'decoration_palmtree',    file: 'decoration_palmtree',    size: { width: 32, height: 48 } },
   { key: 'decoration_icicle',      file: 'decoration_icicle',      size: { width: 32, height: 48 } },
+  { key: 'decoration_icicle_b',    file: 'decoration_icicle_b',    size: { width: 32, height: 48 } },
   { key: 'decoration_snowpile',    file: 'decoration_snowpile',    size: { width: 32, height: 16 } },
   { key: 'decoration_pillar',      file: 'decoration_pillar',      size: { width: 24, height: 40 } },
+  { key: 'decoration_pillar_b',    file: 'decoration_pillar_b',    size: { width: 24, height: 40 } },
   { key: 'decoration_gravestone',  file: 'decoration_gravestone',  size: { width: 24, height: 32 } },
+  { key: 'decoration_torch',        file: 'decoration_torch',        size: { width: 24, height: 40 } },
   
   // NPCs (A = idle/stand, B = walk frame — cycled by NPC.js step timer)
   { key: 'npc_wizard',   file: 'npc_wizard',   size: { width: 48, height: 56 } },

@@ -1,67 +1,61 @@
-<svg width="48" height="56" viewBox="0 0 48 56" xmlns="http://www.w3.org/2000/svg">
-  <!--
-    NPC Wizard — walk frame B.
-    Key differences from frame A:
-      • Staff tilted forward (toward viewer) by ~15 degrees.
-      • Left arm extended more forward.
-      • Robe hem shifted right to imply right-foot stride.
-      • Head/hat leaning 3 degrees right.
-    Cycles with npc_wizard.svg every ~450 ms for gentle walk animation.
-  -->
-
-  <!-- Shadow -->
-  <ellipse cx="25" cy="52" rx="12" ry="3" fill="#000000" opacity="0.2"/>
-
-  <!-- Robe base ellipse (slightly shifted right for stride) -->
-  <ellipse cx="25" cy="42" rx="14" ry="10" fill="#4A5FA8"/>
-
-  <!-- Body/robe — hem shifted right 2 px to imply stride -->
-  <path d="M14,30 Q9,38 13,43 L37,43 Q40,38 34,30 Z" fill="#5A70C8"/>
-
-  <!-- Belt -->
-  <ellipse cx="24" cy="30" rx="10" ry="2.5" fill="#8B7355"/>
-  <circle  cx="24" cy="30" r="1.5" fill="#FFD700"/>
-
-  <!-- Head + hat group — lean 3° right -->
-  <g transform="rotate(3, 24, 14)">
-    <!-- Head -->
-    <circle cx="24" cy="18" r="9" fill="#FFD4A3"/>
-
-    <!-- Wizard hat -->
-    <path d="M18,16 L24,4 L30,16 Q28,18 24,18 Q20,18 18,16 Z" fill="#4A5FA8"/>
-    <ellipse cx="24" cy="16" rx="8" ry="2" fill="#5A70C8"/>
-
-    <!-- Hat decorations -->
-    <circle cx="22" cy="10" r="1.2" fill="#FFD700" opacity="0.8"/>
-    <path d="M26,11 L26.8,11.5 L27,12.5 L26,12 L25,12.5 L25.2,11.5 Z" fill="#FFD700" opacity="0.8"/>
-
-    <!-- Eyes -->
-    <circle cx="21" cy="18" r="1.5" fill="#2C3E50"/>
-    <circle cx="27" cy="18" r="1.5" fill="#2C3E50"/>
-    <circle cx="21.5" cy="17.5" r="0.6" fill="#FFFFFF"/>
-    <circle cx="27.5" cy="17.5" r="0.6" fill="#FFFFFF"/>
-
-    <!-- Smile -->
-    <path d="M21,22 Q24,24 27,22" stroke="#8B6B4A" stroke-width="1" fill="none" stroke-linecap="round"/>
-
-    <!-- Beard -->
-    <path d="M18,22 Q20,26 24,27 Q28,26 30,22" fill="#D4D4D4"/>
-    <ellipse cx="24" cy="25" rx="4" ry="3" fill="#E8E8E8"/>
-  </g>
-
-  <!-- Left arm/sleeve — rotated more forward for stride -->
-  <ellipse cx="14" cy="34" rx="4" ry="6" fill="#5A70C8" transform="rotate(-38 14 34)"/>
-
-  <!-- Right arm/sleeve — back slightly -->
-  <ellipse cx="34" cy="34" rx="4" ry="6" fill="#5A70C8" transform="rotate(18 34 34)"/>
-
-  <!-- Hands -->
-  <circle cx="11" cy="37" r="2.5" fill="#FFD4A3"/>
-  <circle cx="36" cy="39" r="2.5" fill="#FFD4A3"/>
-
-  <!-- Staff (tilted forward ~15° from A frame — orb moves to right and up) -->
-  <line x1="11" y1="37" x2="13" y2="10"
-        stroke="#8B6B4A" stroke-width="2" stroke-linecap="round"/>
-  <circle cx="13" cy="8" r="2.5" fill="#9966FF" opacity="0.7"/>
-  <circle cx="13" cy="8" r="1.5" fill="#CC99FF" opacity="0.9"/>
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56">
+<!-- Wizard NPC walk frame B: staff tilted forward, right foot step, slight lean left -->
+<!-- Staff tilted forward -->
+<line x1="34" y1="4" x2="29" y2="52" stroke="#5A4020" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="35" cy="6" r="5.5" fill="#CC88FF" stroke="#8840AA" stroke-width="1.5"/>
+<circle cx="35" cy="6" r="3" fill="#EEB8FF" opacity="0.6"/>
+<circle cx="36.5" cy="4.5" r="1.2" fill="white" opacity="0.8"/>
+<!-- Robe body, slight lean: shifted left -->
+<path d="M9,28 Q6,42 9,56 L35,56 Q39,42 38,28 Z" fill="#4A5FA8" stroke="#1E1E2C" stroke-width="1.5"/>
+<path d="M17,28 Q15,42 16,56" fill="none" stroke="#5A70C8" stroke-width="2" opacity="0.6"/>
+<path d="M9,50 Q23,47 37,50" fill="none" stroke="#8890D0" stroke-width="1" stroke-dasharray="3,2"/>
+<!-- Sleeves -->
+<ellipse cx="9" cy="36" rx="5" ry="9" fill="#4A5FA8" stroke="#1E1E2C" stroke-width="1.2" transform="rotate(15,9,30)"/>
+<ellipse cx="37" cy="36" rx="5" ry="9" fill="#4A5FA8" stroke="#1E1E2C" stroke-width="1.2" transform="rotate(-5,37,30)"/>
+<!-- Paw left raised slightly -->
+<ellipse cx="7" cy="43" rx="5" ry="3" fill="#E8E8F0" stroke="#1E1E2C" stroke-width="1"/>
+<line x1="4"  y1="45" x2="4"  y2="47" stroke="#707080" stroke-width="1"/>
+<line x1="7"  y1="46" x2="7"  y2="48" stroke="#707080" stroke-width="1"/>
+<line x1="10" y1="45" x2="10" y2="47" stroke="#707080" stroke-width="1"/>
+<!-- Paw right on staff -->
+<ellipse cx="33" cy="44" rx="4.5" ry="3" fill="#E8E8F0" stroke="#1E1E2C" stroke-width="1"/>
+<!-- Feet walk step: right foot forward -->
+<ellipse cx="14" cy="53" rx="6" ry="3" fill="#3A4F98" stroke="#1E1E2C" stroke-width="1"/>
+<ellipse cx="30" cy="55" rx="6.5" ry="3" fill="#3A4F98" stroke="#1E1E2C" stroke-width="1"/>
+<!-- Collar -->
+<path d="M12,29 Q23,25 34,29" fill="none" stroke="#8890D0" stroke-width="2"/>
+<!-- Head slight lean left -->
+<circle cx="23" cy="19" r="12" fill="#E8E8F0" stroke="#1E1E2C" stroke-width="1.5" transform="rotate(-5,23,28)"/>
+<!-- Ears -->
+<polygon points="13,11 9,4 17,8" fill="#E8E8F0" stroke="#1E1E2C" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="13.5,11 10,5 17,8.5" fill="#FFAACC"/>
+<polygon points="33,11 37,4 29,8" fill="#E8E8F0" stroke="#1E1E2C" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="32.5,11 36,5 29,8.5" fill="#FFAACC"/>
+<!-- Hat band -->
+<rect x="10" y="11" width="26" height="4" rx="2" fill="#3848B8" stroke="#1E1E2C" stroke-width="1" transform="rotate(-5,23,28)"/>
+<!-- Hat tower -->
+<polygon points="10,12 22,-1 35,12" fill="#2832A0" stroke="#1E1E2C" stroke-width="1.5"/>
+<polygon points="22,-1 23.2,2 26,2 24,4 24.8,7 22,5 19.2,7 20,4 18,2 20.8,2" fill="#8890D0" opacity="0.8"/>
+<!-- Beard (same) -->
+<path d="M13,26 Q9,32 11,40 Q17,44 23,45 Q29,44 35,40 Q37,32 33,26 Q28,23 23,24 Q18,23 13,26 Z" fill="#F0F0F8" stroke="#B0B0C8" stroke-width="0.8"/>
+<path d="M17,28 Q16,35 17,42" fill="none" stroke="#C8C8DC" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+<path d="M23,27 Q22,35 23,44" fill="none" stroke="#C8C8DC" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+<path d="M29,28 Q30,35 29,42" fill="none" stroke="#C8C8DC" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+<!-- Eyes -->
+<ellipse cx="18" cy="21" rx="4" ry="3.5" fill="#DDAA44" stroke="#886622" stroke-width="1.2"/>
+<ellipse cx="28" cy="21" rx="4" ry="3.5" fill="#DDAA44" stroke="#886622" stroke-width="1.2"/>
+<ellipse cx="18" cy="21" rx="1.2" ry="2.8" fill="#1E1E2C"/>
+<ellipse cx="28" cy="21" rx="1.2" ry="2.8" fill="#1E1E2C"/>
+<circle cx="19" cy="20" r="1" fill="white"/>
+<circle cx="29" cy="20" r="1" fill="white"/>
+<!-- Bushy brows -->
+<path d="M13,17 Q18,15 21,18" fill="none" stroke="#B0B0C8" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M25,18 Q28,15 33,17" fill="none" stroke="#B0B0C8" stroke-width="2.5" stroke-linecap="round"/>
+<!-- Nose -->
+<polygon points="23,25 21.5,27 24.5,27" fill="#D088AA"/>
+<!-- Whiskers -->
+<line x1="20" y1="26" x2="3"  y2="24" stroke="#C0C0D0" stroke-width="0.7" opacity="0.6"/>
+<line x1="20" y1="28" x2="3"  y2="30" stroke="#C0C0D0" stroke-width="0.7" opacity="0.6"/>
+<line x1="26" y1="26" x2="43" y2="24" stroke="#C0C0D0" stroke-width="0.7" opacity="0.6"/>
+<line x1="26" y1="28" x2="43" y2="30" stroke="#C0C0D0" stroke-width="0.7" opacity="0.6"/>
 </svg>

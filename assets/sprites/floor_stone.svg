@@ -1,6 +1,18 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Stone A — smooth dark flagstone with faint centre-slab highlight -->
-  <rect width="32" height="32" fill="#5A5268"/>
-  <!-- Very subtle broad oval suggesting one large stone face — all sides ≥7 px inset -->
-  <ellipse cx="17" cy="16" rx="10" ry="9" fill="#6E6980" opacity="0.22"/>
+  <!-- Stone A  dungeon flagstone: dark mortar base + 3 stone slab faces -->
+  <!-- Mortar/grout base -->
+  <rect width="32" height="32" fill="#28232E"/>
+  <!-- Top-left slab -->
+  <rect x="1" y="1" width="12" height="14" fill="#5A5268" rx="0.5"/>
+  <!-- Top-right slab (slightly cooler tone) -->
+  <rect x="15" y="1" width="16" height="14" fill="#524C60" rx="0.5"/>
+  <!-- Bottom full-width slab (slightly lighter) -->
+  <rect x="1" y="17" width="30" height="14" fill="#5E5870" rx="0.5"/>
+  <!-- Bevel highlights (top/left edge of each slab) -->
+  <line x1="1"  y1="1"  x2="12" y2="1"  stroke="#706A80" stroke-width="1" opacity="0.55"/>
+  <line x1="1"  y1="1"  x2="1"  y2="14" stroke="#706A80" stroke-width="1" opacity="0.55"/>
+  <line x1="15" y1="1"  x2="30" y2="1"  stroke="#6A6478" stroke-width="1" opacity="0.45"/>
+  <line x1="1"  y1="17" x2="1"  y2="30" stroke="#706A80" stroke-width="1" opacity="0.45"/>
+  <!-- Shadow edge (right/bottom of top-left slab only) -->
+  <line x1="12" y1="1"  x2="12" y2="14" stroke="#1E1A28" stroke-width="1" opacity="0.5"/>
 </svg>

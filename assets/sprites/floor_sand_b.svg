@@ -1,0 +1,9 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sand B — two small pebbles, lower-right corner -->
+  <rect width="32" height="32" fill="#E8D4A0"/>
+  <!-- Two pebbles — small, noticeable but not overwhelming -->
+  <circle cx="23" cy="24" r="2.2" fill="#907030" opacity="0.65"/>
+  <circle cx="27" cy="22" r="1.6" fill="#A08040" opacity="0.60"/>
+  <!-- Same soft ripple as A for continuity -->
+  <path d="M3,16 Q10,14 18,16 Q25,18 29,16" stroke="#C8B070" stroke-width="1" fill="none" opacity="0.4"/>
+</svg>

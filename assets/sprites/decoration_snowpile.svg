@@ -1,0 +1,18 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- base shadow -->
+  <ellipse cx="16" cy="31" rx="14" ry="2" fill="#5588AA" opacity="0.28"/>
+  <!-- outer dark mound (fills full tile width for clustering) -->
+  <ellipse cx="16" cy="22" rx="16" ry="11" fill="#8AAABB"/>
+  <!-- side bumps -->
+  <ellipse cx="5"  cy="24" rx="8"  ry="7.5" fill="#AACCDD"/>
+  <ellipse cx="27" cy="24" rx="8"  ry="7.5" fill="#AACCDD"/>
+  <!-- main mound body -->
+  <ellipse cx="16" cy="21" rx="13" ry="9.5" fill="#C8E0EC"/>
+  <!-- top highlight -->
+  <ellipse cx="12" cy="18" rx="6"  ry="3.5" fill="#E6F2F8"/>
+  <ellipse cx="22" cy="20" rx="3.5" ry="2.2" fill="#E6F2F8"/>
+  <!-- sparkle dots -->
+  <circle cx="9"  cy="19" r="1.0" fill="#FFFFFF"/>
+  <circle cx="20" cy="17" r="0.8" fill="#FFFFFF"/>
+  <circle cx="27" cy="22" r="1.0" fill="#FFFFFF"/>
+</svg>

@@ -1,0 +1,31 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Ice wall tile -->
+  <rect width="32" height="32" fill="#B0D8E8"/>
+  
+  <!-- Ice block pattern -->
+  <rect x="0" y="0" width="32" height="32" fill="url(#iceGradient)"/>
+  
+  <defs>
+    <linearGradient id="iceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D0F0FF;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#B0D8E8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#90C0D8;stop-opacity:0.9" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Ice cracks -->
+  <path d="M0,8 L10,12 L8,16 L0,14 Z" fill="#A0C8D8" opacity="0.3"/>
+  <path d="M16,4 L24,8 L20,14 L16,10 Z" fill="#A0C8D8" opacity="0.25"/>
+  <path d="M28,18 L32,24 L26,28 L24,22 Z" fill="#A0C8D8" opacity="0.3"/>
+  
+  <!-- Ice highlights -->
+  <circle cx="8" cy="8" r="2" fill="#FFFFFF" opacity="0.4"/>
+  <circle cx="22" cy="6" r="1.5" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="12" cy="20" r="1.8" fill="#FFFFFF" opacity="0.4"/>
+  <circle cx="26" cy="26" r="1.6" fill="#FFFFFF" opacity="0.38"/>
+  
+  <!-- Frost patterns -->
+  <path d="M16,16 L18,14 L20,16 L18,18 Z" stroke="#FFFFFF" stroke-width="0.5" fill="none" opacity="0.5"/>
+  <line x1="16" y1="16" x2="20" y2="16" stroke="#FFFFFF" stroke-width="0.3" opacity="0.4"/>
+  <line x1="18" y1="14" x2="18" y2="18" stroke="#FFFFFF" stroke-width="0.3" opacity="0.4"/>
+</svg>

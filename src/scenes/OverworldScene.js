@@ -4,6 +4,7 @@
  * Shows five region nodes arranged on a stylised map.
  * Defeated-boss regions are highlighted; locked regions are greyed out.
  */
+import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
 import REGIONS   from '../data/regions.js';
 

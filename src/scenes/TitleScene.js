@@ -1,7 +1,9 @@
 /**
  * TitleScene — animated title screen with New Game / Continue buttons.
  */
+import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
+import REGIONS   from '../data/regions.js';
 
 const TITLE_COLOR = '#FFD700';
 const BG_COLOR    = 0x0D0D2A;
@@ -38,15 +40,46 @@ export default class TitleScene extends Phaser.Scene {
       fontSize: '18px', color: '#AACCFF', fontFamily: 'Arial',
     }).setOrigin(0.5);
 
-    // Buttons
+    // Main buttons
     const hasSave = !!localStorage.getItem('mimi_vs_math_save');
-    this._makeButton(W / 2, H * 0.73, '⭐  New Game', () => this._newGame());
+    this._makeButton(W / 2, H * 0.72, '⭐  New Game', () => this._newGame());
     if (hasSave) {
-      this._makeButton(W / 2, H * 0.83, '▶  Continue', () => this._continue());
+      this._makeButton(W / 2, H * 0.81, '▶  Continue', () => this._continue());
     }
 
+    // ── World Select ──────────────────────────────────────────────────────
+    this.add.text(W / 2, H * 0.895, 'Jump to World:', {
+      fontSize: '13px', color: '#AAAACC', fontFamily: 'Arial',
+    }).setOrigin(0.5);
+
+    const btnW   = 130;
+    const btnH   = 32;
+    const gap    = 10;
+    const totalW = REGIONS.length * btnW + (REGIONS.length - 1) * gap;
+    const startX = (W - totalW) / 2 + btnW / 2;
+
+    REGIONS.forEach((region, i) => {
+      const bx = startX + i * (btnW + gap);
+      const by = H * 0.945;
+
+      const bg = this.add.rectangle(bx, by, btnW, btnH, 0x1A2A4A)
+        .setInteractive({ useHandCursor: true })
+        .setStrokeStyle(1, 0x334466);
+
+      this.add.text(bx, by - 6, `${i + 1}. ${region.name}`, {
+        fontSize: '9px', color: '#CCDDFF', fontFamily: 'Arial', fontStyle: 'bold',
+      }).setOrigin(0.5);
+      this.add.text(bx, by + 6, region.subtitle.split('·')[0].trim(), {
+        fontSize: '8px', color: '#7799BB', fontFamily: 'Arial',
+      }).setOrigin(0.5);
+
+      bg.on('pointerover', () => bg.setFillStyle(0x2A4080));
+      bg.on('pointerout',  () => bg.setFillStyle(0x1A2A4A));
+      bg.on('pointerdown', () => this._jumpToWorld(i));
+    });
+
     // Footer
-    this.add.text(W / 2, H - 16, 'WASD / Arrow keys to move  ·  Space to interact  ·  Esc to pause', {
+    this.add.text(W / 2, H - 4, 'WASD / Arrow keys to move  ·  Space to interact  ·  Esc to pause', {
       fontSize: '11px', color: '#556688', fontFamily: 'Arial',
     }).setOrigin(0.5, 1);
 
@@ -92,5 +125,12 @@ export default class TitleScene extends Phaser.Scene {
   _continue() {
     GameState.load();
     this.scene.start('OverworldScene');
+  }
+
+  /** Skip straight to a specific world (useful for testing and replaying). */
+  _jumpToWorld(regionId) {
+    GameState.load();
+    GameState.currentRegion = regionId;
+    this.scene.start('ExploreScene', { regionId });
   }
 }

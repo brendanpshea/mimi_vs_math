@@ -74,11 +74,29 @@ const FRACTION_POOL = [
   '1',   '2',   '3',   '0',   '1/8', '1/10',
 ];
 
-const DECIMAL_POOL = ['0.1', '0.2', '0.25', '0.3', '0.4', '0.5', '0.6', '0.75', '0.8', '0.9', '1.0'];
+const DECIMAL_POOL = [
+  '0.1', '0.2', '0.25', '0.3', '0.4', '0.5',
+  '0.6', '0.7', '0.75', '0.8', '0.9',
+  '1.0', '1.1', '1.2', '1.3', '1.4', '1.5',
+  '1.6', '1.7', '1.8', '1.9',
+  '2.0', '2.1', '2.2', '2.3', '2.4', '2.5',
+  '2.7', '2.8', '3.0', '3.2', '3.5', '4.0', '4.5',
+];
 
 function fractionDistractors(correct) {
   const pool = correct.includes('.') ? DECIMAL_POOL : FRACTION_POOL;
-  return shuffle(pool.filter(v => v !== correct)).slice(0, 3);
+  const without = pool.filter(v => v !== correct);
+
+  // For decimal answers, prefer pool entries numerically close to the correct value
+  if (correct.includes('.') && !correct.includes('/')) {
+    const cv = parseFloat(correct);
+    const sorted = without
+      .map(v => ({ v, d: Math.abs(parseFloat(v) - cv) }))
+      .sort((a, b) => a.d - b.d);
+    return sorted.slice(0, 3).map(e => e.v);
+  }
+
+  return shuffle(without).slice(0, 3);
 }
 
 // ── Public API ────────────────────────────────────────────────────────────────

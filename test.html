@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mimi vs. Math - Automated Tests</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #1a1a2e;
+      color: #eee;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 { color: #FFD700; }
+    .test-container {
+      background: #16213e;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border-left: 4px solid #555;
+    }
+    .test-container.pass {
+      border-left-color: #4CAF50;
+    }
+    .test-container.fail {
+      border-left-color: #f44336;
+    }
+    .test-container.running {
+      border-left-color: #FFA500;
+    }
+    .test-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .test-result {
+      margin-left: 20px;
+      font-size: 14px;
+    }
+    .pass { color: #4CAF50; }
+    .fail { color: #f44336; }
+    .info { color: #2196F3; }
+    pre {
+      background: #0f0f1e;
+      padding: 10px;
+      border-radius: 3px;
+      overflow-x: auto;
+    }
+    #game-container {
+      margin-top: 20px;
+      border: 2px solid #444;
+    }
+    #summary {
+      background: #16213e;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+      font-size: 18px;
+    }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "phaser": "https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.esm.min.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>🐱 Mimi vs. Math - Automated Test Suite</h1>
+  <div id="summary">Running tests...</div>
+  <div id="test-results"></div>
+  <div id="game-container"></div>
+
+  <script type="module">
+    import * as Phaser from 'phaser';
+
+    const results = [];
+    const testContainer = document.getElementById('test-results');
+    const summaryDiv = document.getElementById('summary');
+
+    function addTest(name, status, details = '') {
+      results.push({ name, status });
+      const div = document.createElement('div');
+      div.className = `test-container ${status}`;
+      div.innerHTML = `
+        <div class="test-title">${status === 'pass' ? '✓' : status === 'fail' ? '✗' : '⏳'} ${name}</div>
+        <div class="test-result ${status}">${details}</div>
+      `;
+      testContainer.appendChild(div);
+    }
+
+    function updateSummary() {
+      const passed = results.filter(r => r.status === 'pass').length;
+      const failed = results.filter(r => r.status === 'fail').length;
+      const total = results.length;
+      
+      summaryDiv.innerHTML = `
+        <strong>Test Results:</strong> ${passed}/${total} passed, ${failed} failed
+        ${failed === 0 ? '<span class="pass"> ✓ All tests passed!</span>' : '<span class="fail"> ✗ Some tests failed</span>'}
+      `;
+    }
+
+    async function runTests() {
+      // Test 1: Phaser import
+      try {
+        if (typeof Phaser !== 'undefined' && Phaser.VERSION) {
+          addTest('Phaser Library Import', 'pass', `Phaser version ${Phaser.VERSION} loaded successfully`);
+        } else {
+          addTest('Phaser Library Import', 'fail', 'Phaser object is undefined or missing VERSION');
+        }
+      } catch (e) {
+        addTest('Phaser Library Import', 'fail', e.message);
+      }
+
+      // Test 2: Scene imports
+      try {
+        const BootScene = await import('./src/scenes/BootScene.js');
+        const TitleScene = await import('./src/scenes/TitleScene.js');
+        const OverworldScene = await import('./src/scenes/OverworldScene.js');
+        const ExploreScene = await import('./src/scenes/ExploreScene.js');
+        const BattleScene = await import('./src/scenes/BattleScene.js');
+        
+        const scenes = [BootScene, TitleScene, OverworldScene, ExploreScene, BattleScene];
+        const sceneNames = ['BootScene', 'TitleScene', 'OverworldScene', 'ExploreScene', 'BattleScene'];
+        
+        let allValid = true;
+        let details = '';
+        
+        scenes.forEach((scene, i) => {
+          if (!scene.default) {
+            allValid = false;
+            details += `${sceneNames[i]}: Missing default export\n`;
+          } else if (typeof scene.default !== 'function') {
+            allValid = false;
+            details += `${sceneNames[i]}: Default export is not a class/function\n`;
+          }
+        });
+        
+        if (allValid) {
+          addTest('Scene Module Imports', 'pass', `All 5 scene modules imported successfully`);
+        } else {
+          addTest('Scene Module Imports', 'fail', details);
+        }
+      } catch (e) {
+        addTest('Scene Module Imports', 'fail', e.message);
+      }
+
+      // Test 3: Entity imports
+      try {
+        const Mimi = await import('./src/entities/Mimi.js');
+        const Enemy = await import('./src/entities/Enemy.js');
+        
+        if (Mimi.default && Enemy.default) {
+          addTest('Entity Module Imports', 'pass', 'Mimi and Enemy classes imported successfully');
+        } else {
+          addTest('Entity Module Imports', 'fail', 'Missing default exports');
+        }
+      } catch (e) {
+        addTest('Entity Module Imports', 'fail', e.message);
+      }
+
+      // Test 4: Config imports
+      try {
+        const GameState = await import('./src/config/GameState.js');
+        const AssetConfig = await import('./src/config/AssetConfig.js');
+        
+        if (GameState.default && AssetConfig.loadAllAssets) {
+          addTest('Config Module Imports', 'pass', 'GameState and AssetConfig imported successfully');
+        } else {
+          addTest('Config Module Imports', 'fail', 'Missing expected exports');
+        }
+      } catch (e) {
+        addTest('Config Module Imports', 'fail', e.message);
+      }
+
+      // Test 5: Data imports
+      try {
+        const enemies = await import('./src/data/enemies.js');
+        const items = await import('./src/data/items.js');
+        const regions = await import('./src/data/regions.js');
+        
+        if (enemies.default && items.default && regions.default) {
+          addTest('Data Module Imports', 'pass', `Loaded ${enemies.default.length} enemies, ${items.default.length} items, ${regions.default.length} regions`);
+        } else {
+          addTest('Data Module Imports', 'fail', 'Missing default exports from data modules');
+        }
+      } catch (e) {
+        addTest('Data Module Imports', 'fail', e.message);
+      }
+
+      // Test 6: UI imports
+      try {
+        const HUD = await import('./src/ui/HUD.js');
+        const DialogBox = await import('./src/ui/DialogBox.js');
+        
+        if (HUD.default && DialogBox.default) {
+          addTest('UI Module Imports', 'pass', 'HUD and DialogBox classes imported successfully');
+        } else {
+          addTest('UI Module Imports', 'fail', 'Missing default exports');
+        }
+      } catch (e) {
+        addTest('UI Module Imports', 'fail', e.message);
+      }
+
+      // Test 7: Math modules
+      try {
+        const QuestionBank = await import('./src/math/QuestionBank.js');
+        const Distractors = await import('./src/math/Distractors.js');
+        
+        if (QuestionBank.generateQuestion && Distractors.generateDistractors) {
+          addTest('Math Module Imports', 'pass', 'QuestionBank and Distractors loaded with expected functions');
+        } else {
+          addTest('Math Module Imports', 'fail', 'Missing expected exports');
+        }
+      } catch (e) {
+        addTest('Math Module Imports', 'fail', e.message);
+      }
+
+      // Test 20: Phaser Game Initialization
+      try {
+        const BootScene = (await import('./src/scenes/BootScene.js')).default;
+        const TitleScene = (await import('./src/scenes/TitleScene.js')).default;
+        
+        const config = {
+          type: Phaser.AUTO,
+          width: 800,
+          height: 600,
+          parent: 'game-container',
+          backgroundColor: '#0D0D2A',
+          physics: {
+            default: 'arcade',
+            arcade: { gravity: { y: 0 }, debug: false },
+          },
+          scene: [BootScene, TitleScene],
+        };
+        
+        const game = new Phaser.Game(config);
+        
+        if (game && game.scene) {
+          addTest('Phaser Game Initialization', 'pass', 'Game instance created successfully');
+          
+          // Test 21: Scene management
+          setTimeout(() => {
+            try {
+              const sceneManager = game.scene;
+              const bootScene = sceneManager.getScene('BootScene');
+              
+              if (bootScene) {
+                addTest('Scene Registration', 'pass', 'BootScene registered and retrievable');
+              } else {
+                addTest('Scene Registration', 'fail', 'BootScene not found in scene manager');
+              }
+              updateSummary();
+            } catch (e) {
+              addTest('Scene Registration', 'fail', e.message);
+              updateSummary();
+            }
+          }, 1000);
+
+          // Test 22: Input system
+          setTimeout(() => {
+            try {
+              const activeScene = game.scene.scenes[0];
+              if (activeScene && activeScene.input && activeScene.input.keyboard) {
+                addTest('Input System', 'pass', 'Keyboard input system initialized');
+              } else {
+                addTest('Input System', 'fail', 'Input system not available');
+              }
+              updateSummary();
+            } catch (e) {
+              addTest('Input System', 'fail', e.message);
+              updateSummary();
+            }
+          }, 1500);
+
+        } else {
+          addTest('Phaser Game Initialization', 'fail', 'Game instance is invalid');
+        }
+      } catch (e) {
+        addTest('Phaser Game Initialization', 'fail', e.message);
+      }
+
+      // Test 11: Asset Config - Mimi Animation Sprites
+      try {
+        const AssetConfig = await import('./src/config/AssetConfig.js');
+        
+        const mimiSprites = AssetConfig.SPRITE_DEFS.filter(def => def.key.startsWith('mimi'));
+        const expectedMimiSprites = ['mimi', 'mimi_battle', 'mimi_walk_down', 'mimi_walk_up', 'mimi_walk_left', 'mimi_walk_right'];
+        
+        const foundKeys = mimiSprites.map(s => s.key);
+        const allPresent = expectedMimiSprites.every(key => foundKeys.includes(key));
+        
+        if (allPresent) {
+          addTest('Mimi Animation Sprites Config', 'pass', `All 6 Mimi sprites defined: ${foundKeys.join(', ')}`);
+        } else {
+          const missing = expectedMimiSprites.filter(key => !foundKeys.includes(key));
+          addTest('Mimi Animation Sprites Config', 'fail', `Missing sprites: ${missing.join(', ')}`);
+        }
+      } catch (e) {
+        addTest('Mimi Animation Sprites Config', 'fail', e.message);
+      }
+
+      // Test 12: Asset Config - Battle Backdrops
+      try {
+        const AssetConfig = await import('./src/config/AssetConfig.js');
+        
+        if (AssetConfig.BACKDROP_DEFS) {
+          const expectedBackdrops = ['backdrop_village', 'backdrop_meadow', 'backdrop_desert', 'backdrop_ice', 'backdrop_shadow'];
+          const foundBackdrops = AssetConfig.BACKDROP_DEFS.map(b => b.key);
+          
+          const allPresent = expectedBackdrops.every(key => foundBackdrops.includes(key));
+          
+          if (allPresent && AssetConfig.BACKDROP_DEFS.length === 5) {
+            addTest('Battle Backdrop Config', 'pass', `All 5 backdrops defined: ${foundBackdrops.join(', ')}`);
+          } else {
+            addTest('Battle Backdrop Config', 'fail', `Expected 5 backdrops, found ${AssetConfig.BACKDROP_DEFS.length}`);
+          }
+        } else {
+          addTest('Battle Backdrop Config', 'fail', 'BACKDROP_DEFS not exported from AssetConfig');
+        }
+      } catch (e) {
+        addTest('Battle Backdrop Config', 'fail', e.message);
+      }
+
+      // Test 13: Asset Config - Backdrops in loadAllAssets
+      try {
+        const AssetConfigModule = await import('./src/config/AssetConfig.js');
+        const sourceCode = await (await fetch('./src/config/AssetConfig.js')).text();
+        
+        const hasBackdropLoop = sourceCode.includes('BACKDROP_DEFS') && 
+                                sourceCode.includes('for (const def of BACKDROP_DEFS)');
+        
+        if (hasBackdropLoop) {
+          addTest('Backdrop Loading in loadAllAssets', 'pass', 'loadAllAssets includes BACKDROP_DEFS loop');
+        } else {
+          addTest('Backdrop Loading in loadAllAssets', 'fail', 'BACKDROP_DEFS not included in loadAllAssets function');
+        }
+      } catch (e) {
+        addTest('Backdrop Loading in loadAllAssets', 'fail', e.message);
+      }
+
+      // Test 14: Enemy class - HP bars removed
+      try {
+        const sourceCode = await (await fetch('./src/entities/Enemy.js')).text();
+        
+        const hasHPBarCode = sourceCode.includes('_hpBg') || sourceCode.includes('_hpBar');
+        
+        if (!hasHPBarCode) {
+          addTest('Enemy HP Bars Removed', 'pass', 'HP bar code removed from Enemy.js');
+        } else {
+          addTest('Enemy HP Bars Removed', 'fail', 'HP bar references still present in Enemy.js');
+        }
+      } catch (e) {
+        addTest('Enemy HP Bars Removed', 'fail', e.message);
+      }
+
+      // Test 15: Mimi animation logic
+      try {
+        const sourceCode = await (await fetch('./src/entities/Mimi.js')).text();
+        
+        const hasWalkTextures = sourceCode.includes('mimi_walk_left') && 
+                                 sourceCode.includes('mimi_walk_right') &&
+                                 sourceCode.includes('mimi_walk_up') &&
+                                 sourceCode.includes('mimi_walk_down');
+        
+        const hasDirectionLogic = sourceCode.includes('Math.abs(vx)') && 
+                                  sourceCode.includes('Math.abs(vy)');
+        
+        if (hasWalkTextures && hasDirectionLogic) {
+          addTest('Mimi Animation Logic', 'pass', 'Animation switching logic implemented with directional sprites');
+        } else {
+          let details = '';
+          if (!hasWalkTextures) details += 'Missing walk texture references. ';
+          if (!hasDirectionLogic) details += 'Missing directional movement logic.';
+          addTest('Mimi Animation Logic', 'fail', details);
+        }
+      } catch (e) {
+        addTest('Mimi Animation Logic', 'fail', e.message);
+      }
+
+      // Test 16: BattleScene backdrop implementation
+      try {
+        const sourceCode = await (await fetch('./src/scenes/BattleScene.js')).text();
+        
+        const hasBackdropArray = sourceCode.includes('backdrop_village') && 
+                                 sourceCode.includes('backdrop_shadow');
+        
+        const hasRegionMapping = sourceCode.includes('backdropKeys[this.regionId]');
+        
+        if (hasBackdropArray && hasRegionMapping) {
+          addTest('BattleScene Backdrop Logic', 'pass', 'Backdrop rendering logic implemented with region mapping');
+        } else {
+          let details = '';
+          if (!hasBackdropArray) details += 'Missing backdrop key array. ';
+          if (!hasRegionMapping) details += 'Missing regionId to backdrop mapping.';
+          addTest('BattleScene Backdrop Logic', 'fail', details);
+        }
+      } catch (e) {
+        addTest('BattleScene Backdrop Logic', 'fail', e.message);
+      }
+
+      // Test 17: SVG file existence - Mimi animations
+      try {
+        const files = ['mimi_walk_down.svg', 'mimi_walk_up.svg', 'mimi_walk_left.svg', 'mimi_walk_right.svg'];
+        const results = await Promise.all(
+          files.map(file => 
+            fetch(`./assets/sprites/${file}`, { method: 'HEAD' })
+              .then(r => ({ file, exists: r.ok }))
+              .catch(() => ({ file, exists: false }))
+          )
+        );
+        
+        const allExist = results.every(r => r.exists);
+        const missing = results.filter(r => !r.exists).map(r => r.file);
+        
+        if (allExist) {
+          addTest('Mimi Animation SVG Files', 'pass', 'All 4 walking animation SVG files exist');
+        } else {
+          addTest('Mimi Animation SVG Files', 'fail', `Missing files: ${missing.join(', ')}`);
+        }
+      } catch (e) {
+        addTest('Mimi Animation SVG Files', 'fail', e.message);
+      }
+
+      // Test 18: SVG file existence - Backdrops
+      try {
+        const files = ['backdrop_village.svg', 'backdrop_meadow.svg', 'backdrop_desert.svg', 'backdrop_ice.svg', 'backdrop_shadow.svg'];
+        const results = await Promise.all(
+          files.map(file => 
+            fetch(`./assets/sprites/${file}`, { method: 'HEAD' })
+              .then(r => ({ file, exists: r.ok }))
+              .catch(() => ({ file, exists: false }))
+          )
+        );
+        
+        const allExist = results.every(r => r.exists);
+        const missing = results.filter(r => !r.exists).map(r => r.file);
+        
+        if (allExist) {
+          addTest('Battle Backdrop SVG Files', 'pass', 'All 5 backdrop SVG files exist');
+        } else {
+          addTest('Battle Backdrop SVG Files', 'fail', `Missing files: ${missing.join(', ')}`);
+        }
+      } catch (e) {
+        addTest('Battle Backdrop SVG Files', 'fail', e.message);
+      }
+
+      // Test 19: Mimi movement test (simulated)
+      try {
+        const Mimi = (await import('./src/entities/Mimi.js')).default;
+        
+        // Create a mock scene object
+        const mockScene = {
+          physics: {
+            add: {
+              image: (x, y, key) => ({
+                x, y, key,
+                setDepth: function() { return this; },
+                setCollideWorldBounds: function() { return this; },
+                setVelocity: function(vx, vy) { 
+                  this.velocityX = vx; 
+                  this.velocityY = vy; 
+                  return this; 
+                },
+                setTexture: function(texture) {
+                  this.currentTexture = texture;
+                  return this;
+                }
+              })
+            }
+          },
+          tweens: {
+            add: () => ({ pause: () => {}, stop: () => {}, isPlaying: () => false })
+          },
+          input: {
+            keyboard: {
+              createCursorKeys: () => ({
+                up: { isDown: false },
+                down: { isDown: false },
+                left: { isDown: false },
+                right: { isDown: false }
+              }),
+              addKey: (keyCode) => ({ isDown: false })
+            }
+          },
+          textures: {
+            exists: (key) => true // Mock: all textures exist
+          }
+        };
+        
+        const mimi = new Mimi(mockScene, 100, 100);
+        
+        if (mimi && mimi.sprite && typeof mimi.update === 'function') {
+          // Simulate key press
+          mimi.cursors.up.isDown = true;
+          mimi.update();
+          
+          if (mimi.sprite.velocityY === -160) {
+            addTest('Mimi Movement Logic', 'pass', 'Mimi responds to up key with correct velocity (-160)');
+          } else {
+            addTest('Mimi Movement Logic', 'fail', `Expected Y velocity -160, got ${mimi.sprite.velocityY}`);
+          }
+        } else {
+          addTest('Mimi Movement Logic', 'fail', 'Mimi instance missing expected properties');
+        }
+      } catch (e) {
+        addTest('Mimi Movement Logic', 'fail', e.message);
+      }
+
+      updateSummary();
+    }
+
+    runTests();
+  </script>
+</body>
+</html>

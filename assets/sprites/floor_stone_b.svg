@@ -1,0 +1,11 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stone B — same mortar grid, tiny moss dot in one block -->
+  <rect width="32" height="32" fill="#8B8B8B"/>
+  <!-- Same mortar pattern as A -->
+  <line x1="0"  y1="16" x2="32" y2="16" stroke="#606060" stroke-width="1.5" opacity="0.6"/>
+  <line x1="16" y1="0"  x2="16" y2="16" stroke="#606060" stroke-width="1.5" opacity="0.6"/>
+  <line x1="8"  y1="16" x2="8"  y2="32" stroke="#606060" stroke-width="1.5" opacity="0.55"/>
+  <line x1="24" y1="16" x2="24" y2="32" stroke="#606060" stroke-width="1.5" opacity="0.55"/>
+  <!-- Tiny moss dot, upper-right block only -->
+  <circle cx="24" cy="8" r="2.5" fill="#4A8A30" opacity="0.55"/>
+</svg>

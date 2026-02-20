@@ -1,0 +1,18 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40">
+  <!-- ground shadow -->
+  <ellipse cx="16" cy="38" rx="11" ry="2.5" fill="#0A2200" opacity="0.35"/>
+  <!-- trunk -->
+  <rect x="13" y="28" width="5" height="7" rx="2" fill="#3D1F00"/>
+  <!-- canopy base fills entire tile  no gap border with neighbours -->
+  <circle cx="16" cy="17" r="16" fill="#14400A"/>
+  <!-- main canopy -->
+  <circle cx="16" cy="16" r="14" fill="#2A780C"/>
+  <!-- mid lighter tone -->
+  <circle cx="15" cy="15" r="12" fill="#389814"/>
+  <!-- highlight cluster upper-left (sunlit side) -->
+  <ellipse cx="10" cy="9"   rx="7.5" ry="6.5" fill="#50BE1E"/>
+  <ellipse cx="8"  cy="7.5" rx="4.5" ry="3.5" fill="#68D828"/>
+  <ellipse cx="6.5" cy="6"  rx="2.5" ry="2"   fill="#7EEE3A"/>
+  <!-- subtle inner-shadow at bottom of canopy for depth -->
+  <ellipse cx="18" cy="24" rx="8" ry="4" fill="#1A5208" opacity="0.55"/>
+</svg>

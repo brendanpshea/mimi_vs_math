@@ -5,6 +5,7 @@
  *
  * Call update() each frame so the XP bar stays current.
  */
+import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
 
 const HEART_COLOR   = 0xFF4466;

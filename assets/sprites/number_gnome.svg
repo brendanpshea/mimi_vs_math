@@ -1,31 +1,92 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Hat -->
-  <polygon points="32,2 20,22 44,22" fill="#CC3300"/>
-  <rect x="18" y="22" width="28" height="5" fill="#AA2200"/>
-  <!-- Head -->
-  <circle cx="32" cy="34" r="11" fill="#FFCCAA"/>
-  <!-- Eyes -->
-  <circle cx="28" cy="32" r="2.5" fill="#442200"/>
-  <circle cx="36" cy="32" r="2.5" fill="#442200"/>
-  <circle cx="29" cy="31.5" r="0.8" fill="white"/>
-  <circle cx="37" cy="31.5" r="0.8" fill="white"/>
-  <!-- Cheeks -->
-  <circle cx="24" cy="36" r="3" fill="#FF9966" opacity="0.6"/>
-  <circle cx="40" cy="36" r="3" fill="#FF9966" opacity="0.6"/>
-  <!-- Nose -->
-  <ellipse cx="32" cy="36" rx="3" ry="2.5" fill="#FFAA88"/>
-  <!-- Smile -->
-  <path d="M28,39 Q32,43 36,39" fill="none" stroke="#AA6633" stroke-width="1.5"/>
-  <!-- Beard -->
-  <path d="M22,42 Q32,56 42,42" fill="#DDDDCC"/>
-  <!-- Body -->
-  <ellipse cx="32" cy="54" rx="12" ry="9" fill="#446644"/>
-  <!-- Belt with number buckle -->
-  <rect x="23" y="50" width="18" height="5" fill="#663300" rx="1"/>
-  <rect x="29" y="50" width="6" height="5" fill="#FFDD44" rx="1"/>
-  <text x="32" y="55" font-size="5" fill="#222" text-anchor="middle" font-family="Arial" font-weight="bold">+</text>
-  <!-- Staff -->
-  <line x1="50" y1="58" x2="50" y2="20" stroke="#885533" stroke-width="3" stroke-linecap="round"/>
-  <circle cx="50" cy="17" r="6" fill="#FFDD44" stroke="#CC9900" stroke-width="1.5"/>
-  <text x="50" y="20" font-size="8" fill="#442200" text-anchor="middle" font-family="Arial" font-weight="bold">7</text>
+  <!--
+    Number Gnome — redesigned as a Zelda/FF-style goblin grunt.
+    TINT ZONE: skin fill (#88AA44 goblin green) responds to setTint().
+    Outlines (#111), armor (#223311), and eye pupils are tint-immune.
+  -->
+  <!-- Ground shadow -->
+  <ellipse cx="30" cy="62" rx="16" ry="3" fill="#00000028"/>
+
+  <!-- Boots -->
+  <rect x="18" y="54" width="9"  height="9" rx="2" fill="#3A1A00" stroke="#111" stroke-width="1.5"/>
+  <rect x="34" y="54" width="9"  height="9" rx="2" fill="#3A1A00" stroke="#111" stroke-width="1.5"/>
+  <!-- Boot toe highlight -->
+  <ellipse cx="22" cy="54" rx="3" ry="1.5" fill="#5A2E00"/>
+  <ellipse cx="38" cy="54" rx="3" ry="1.5" fill="#5A2E00"/>
+
+  <!-- Legs -->
+  <rect x="20" y="45" width="8" height="12" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <rect x="35" y="45" width="8" height="12" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+
+  <!-- Body — blocky dark leather armor -->
+  <rect x="14" y="31" width="33" height="17" rx="3" fill="#223311" stroke="#111" stroke-width="2"/>
+  <!-- Shoulder pauldrons -->
+  <rect x="11" y="31" width="8"  height="7" rx="2" fill="#2E4418" stroke="#111" stroke-width="1.5"/>
+  <rect x="44" y="31" width="8"  height="7" rx="2" fill="#2E4418" stroke="#111" stroke-width="1.5"/>
+  <!-- Armor rivets -->
+  <circle cx="20" cy="37" r="1.5" fill="#88AA44" stroke="#111" stroke-width="0.8"/>
+  <circle cx="30" cy="37" r="1.5" fill="#88AA44" stroke="#111" stroke-width="0.8"/>
+  <circle cx="40" cy="37" r="1.5" fill="#88AA44" stroke="#111" stroke-width="0.8"/>
+  <!-- Belly stripe seam -->
+  <line x1="14" y1="41" x2="47" y2="41" stroke="#111" stroke-width="1"/>
+
+  <!-- Arms -->
+  <rect x="5"  y="31" width="10" height="8" rx="3" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <rect x="48" y="31" width="10" height="8" rx="3" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <!-- Fists -->
+  <ellipse cx="9"  cy="42" rx="5" ry="4.5" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <ellipse cx="55" cy="40" rx="5" ry="4.5" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+
+  <!-- Math staff held in right fist -->
+  <rect x="57" y="8" width="3.5" height="34" rx="1.5" fill="#6B3A10" stroke="#111" stroke-width="1"/>
+  <!-- Staff orb -->
+  <circle cx="58.5" cy="6" r="7" fill="#FFDD33" stroke="#111" stroke-width="1.5"/>
+  <!-- Plus symbol on orb -->
+  <rect x="55.5" y="4.5" width="6" height="3"   rx="0.5" fill="#111"/>
+  <rect x="57"   y="3"   width="3" height="6"   rx="0.5" fill="#111"/>
+
+  <!-- Neck -->
+  <rect x="26" y="22" width="10" height="11" rx="2" fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+
+  <!-- Head — blocky goblin skull -->
+  <rect x="18" y="8" width="27" height="18" rx="4" fill="#88AA44" stroke="#111" stroke-width="2"/>
+  <!-- Jaw — slightly wider and lower -->
+  <rect x="20" y="22" width="23" height="8"  rx="3" fill="#88AA44" stroke="#111" stroke-width="2"/>
+
+  <!-- Pointy ears -->
+  <polygon points="18,12 11,8 18,20"  fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <polygon points="45,12 52,8 45,20"  fill="#88AA44" stroke="#111" stroke-width="1.5"/>
+  <!-- Inner ear shadow -->
+  <polygon points="18,14 14,10 18,18" fill="#6A8833"/>
+  <polygon points="45,14 49,10 45,18" fill="#6A8833"/>
+
+  <!-- Angry brow (slanted inward) -->
+  <line x1="20" y1="13" x2="28" y2="16" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="43" y1="13" x2="35" y2="16" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Eyes — angular yellow with dark pupils -->
+  <polygon points="21,16 28,15 28,21 21,20" fill="#EECC00" stroke="#111" stroke-width="1"/>
+  <polygon points="42,16 35,15 35,21 42,20" fill="#EECC00" stroke="#111" stroke-width="1"/>
+  <ellipse cx="25" cy="18" rx="2.2" ry="2.2" fill="#111"/>
+  <ellipse cx="38" cy="18" rx="2.2" ry="2.2" fill="#111"/>
+  <!-- Eye glint -->
+  <circle cx="26" cy="17" r="0.8" fill="white"/>
+  <circle cx="39" cy="17" r="0.8" fill="white"/>
+
+  <!-- Bulbous goblin nose -->
+  <ellipse cx="31" cy="24" rx="4.5" ry="3.5" fill="#6A8833" stroke="#111" stroke-width="1"/>
+  <!-- Nose highlight -->
+  <circle cx="30" cy="23" r="1.2" fill="#88AA44"/>
+
+  <!-- Scowling mouth with teeth -->
+  <path d="M23,28 L23,26 L40,26 L40,28 Q31.5,33 23,28 Z" fill="#111"/>
+  <rect x="27" y="26" width="3.5" height="3.5" fill="white"/>
+  <rect x="32" y="26" width="3.5" height="3.5" fill="white"/>
+
+  <!-- Dark pointed hood/cap -->
+  <polygon points="31.5,0 16,10 47,10" fill="#1A2200" stroke="#111" stroke-width="1.5"/>
+  <rect x="16" y="7" width="31" height="5" rx="1" fill="#243300" stroke="#111" stroke-width="1"/>
+  <!-- Hood band stitch detail -->
+  <line x1="20" y1="9" x2="43" y2="9" stroke="#3A5500" stroke-width="0.8" stroke-dasharray="2,2"/>
 </svg>
+

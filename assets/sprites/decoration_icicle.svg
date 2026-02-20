@@ -1,0 +1,47 @@
+<svg width="32" height="48" viewBox="0 0 32 48" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    Ice stalagmite cluster — three crystalline spikes rising from the ground.
+    Placed like a tree/rock: base at bottom of canvas, tips pointing up.
+    Size 32×48 matches decoration_tree so the depth system treats them the same.
+  -->
+
+  <!-- Ground shadow ellipse -->
+  <ellipse cx="16" cy="45" rx="13" ry="3.5" fill="#000000" opacity="0.2"/>
+
+  <!-- Icy snow base mound -->
+  <ellipse cx="16" cy="44" rx="13" ry="4" fill="#A8C8E0" opacity="0.7"/>
+  <ellipse cx="16" cy="43" rx="10" ry="2.5" fill="#D4EEFF" opacity="0.75"/>
+
+  <!-- LEFT spike (shorter, leans slightly left) -->
+  <!-- Outer body -->
+  <polygon points="7,20  4,44  13,44"  fill="#2E6080"/>
+  <!-- Mid layer -->
+  <polygon points="7,20  5.5,44  12,44" fill="#4A90B8"/>
+  <!-- Highlight streak -->
+  <line x1="7.5" y1="22" x2="7.2" y2="41" stroke="#AADDFF" stroke-width="0.9" opacity="0.7"/>
+  <!-- Facet sheen -->
+  <polygon points="7,20  8,28  9.5,22" fill="#88CCEE" opacity="0.4"/>
+
+  <!-- RIGHT spike (medium height, slight right lean) -->
+  <polygon points="24,16  20,44  28,44"  fill="#2A5870"/>
+  <polygon points="24,16  21,44  27,44" fill="#4080A8"/>
+  <line x1="23.5" y1="18" x2="23.8" y2="41" stroke="#99CCEE" stroke-width="0.9" opacity="0.65"/>
+  <polygon points="24,16  25,25  26.5,19" fill="#77BBDD" opacity="0.4"/>
+
+  <!-- CENTRE spike (tallest, dominant feature) -->
+  <polygon points="16,5   11,44  21,44"  fill="#256090"/>
+  <!-- Mid ice layer -->
+  <polygon points="16,5   12.5,44  19.5,44" fill="#3A80B0"/>
+  <!-- Inner bright ice core -->
+  <polygon points="16,5   14,44   18,44"   fill="#6AAED8"/>
+  <!-- Central highlight streak -->
+  <line x1="16" y1="7" x2="16" y2="41" stroke="#C8EAFF" stroke-width="1" opacity="0.65"/>
+  <!-- Two crystalline facet planes -->
+  <polygon points="16,5   17,16  20,8"    fill="#99CCEE" opacity="0.35"/>
+  <polygon points="16,5   15,16  12,8"    fill="#AADDFF" opacity="0.3"/>
+
+  <!-- Drip/melt dots at tips -->
+  <circle cx="16"  cy="6"  r="0.9" fill="#E8F6FF" opacity="0.9"/>
+  <circle cx="7"   cy="21" r="0.7" fill="#CCEEFF" opacity="0.8"/>
+  <circle cx="24"  cy="17" r="0.7" fill="#CCEEFF" opacity="0.8"/>
+</svg>

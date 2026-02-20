@@ -1,0 +1,9 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Grass C — two tiny weed blades, lower-right -->
+  <rect width="32" height="32" fill="#5FA827"/>
+  <!-- Two short pale weed blades (subtle, not dominant) -->
+  <line x1="24" y1="26" x2="22" y2="22" stroke="#368010" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="24" y1="26" x2="26" y2="21" stroke="#3A8818" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+  <!-- Faint lighter patch, upper area -->
+  <ellipse cx="12" cy="8" rx="6" ry="4" fill="#6FC830" opacity="0.14"/>
+</svg>

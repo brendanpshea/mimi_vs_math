@@ -5,7 +5,7 @@
  * 'phaser' to the CDN ESM build. All other source files are also
  * ES modules and are imported relative to this file.
  */
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 
 import BootScene     from './scenes/BootScene.js';
 import TitleScene    from './scenes/TitleScene.js';

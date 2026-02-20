@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <!-- Desert Dunes Backdrop - Sandy desert with pyramids -->
+  
+  <defs>
+    <linearGradient id="skyDesert" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFB84D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFE4B5;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="sun">
+      <stop offset="0%" style="stop-color:#FFEE44;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FFB84D;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Sky -->
+  <rect width="800" height="420" fill="url(#skyDesert)"/>
+  
+  <!-- Harsh sun -->
+  <circle cx="650" cy="120" r="60" fill="url(#sun)"/>
+  <circle cx="650" cy="120" r="35" fill="#FFEE44"/>
+  
+  <!-- Distant pyramids (silhouette) -->
+  <polygon points="200,350 280,250 360,350" fill="#C8943C" opacity="0.4"/>
+  <polygon points="500,370 600,240 700,370" fill="#C8943C" opacity="0.3"/>
+  
+  <!-- Sand dunes - layered -->
+  <ellipse cx="200" cy="480" rx="250" ry="100" fill="#E4B563"/>
+  <ellipse cx="500" cy="500" rx="300" ry="120" fill="#D4A044"/>
+  <ellipse cx="700" cy="490" rx="200" ry="90" fill="#E4B563"/>
+  
+  <!-- Foreground sand -->
+  <rect y="420" width="800" height="180" fill="#D4A044"/>
+  
+  <!-- Sand ripple details -->
+  <path d="M 0 450 Q 100 445 200 450 T 400 450 T 600 450 T 800 450" stroke="#C89034" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <path d="M 0 480 Q 150 475 300 480 T 600 480 T 800 480" stroke="#B88024" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M 0 520 Q 120 515 240 520 T 480 520 T 800 520" stroke="#A87014" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M 0 560 Q 200 555 400 560 T 800 560" stroke="#987004" stroke-width="1.5" fill="none" opacity="0.3"/>
+</svg>

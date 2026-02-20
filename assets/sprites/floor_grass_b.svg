@@ -1,0 +1,8 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Grass B — small dirt smudge, upper-left corner -->
+  <rect width="32" height="32" fill="#5FA827"/>
+  <!-- Small bare-dirt smudge — noticeable but not dominant -->
+  <ellipse cx="7" cy="7" rx="4.5" ry="3" fill="#7A5010" opacity="0.50"/>
+  <!-- Faint green variation, opposite corner -->
+  <ellipse cx="26" cy="26" rx="5" ry="4" fill="#4A8A1E" opacity="0.16"/>
+</svg>

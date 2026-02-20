@@ -1,0 +1,412 @@
+/**
+ * maps.js — Hand-designed decoration layouts for each ExploreScene region.
+ *
+ * World: 70 × 50 tiles (T = 32 px). Border WALL = 2 tiles on every side.
+ * Walkable area: cols 2–67, rows 2–47.
+ *
+ * ── Shared map skeleton (all five regions) ───────────────────────────────
+ *
+ *  NORTH ZONE  rows  3–14
+ *    E1 (col 20, row 10)   E2 (col 52, row  9)   BOSS (col 66, row  5)
+ *
+ *  ═══ Wall A  rows 15–16 ═══ GAP cols  9–12 (NW passage) ═══
+ *                             GAP cols 41–44 (NE passage / boss approach)
+ *                             OPEN cols 63–67 (boss corridor, always clear)
+ *
+ *  MID ZONE    rows 17–30
+ *    MIMI_START (col 4, row 23)   NPC (col 6, row 26)   E4 (col 44, row 23)
+ *    East edge wall at col 62, rows 17–29 seals the zone
+ *    (player reaches E4 then exits north via the Wall A gap at cols 41-44)
+ *
+ *  ═══ Wall B  rows 31–32 ═══ OPEN cols  3– 8 (left always clear) ═══
+ *                              GAP cols 33–36 (mid-south connector)
+ *                              OPEN cols 56–67 (east chest corridor)
+ *                              Wall B spans cols 9–32 and cols 37–55
+ *
+ *  SOUTH ZONE  rows 33–46
+ *    E5 (col 14, row 37)  E3 (col 30, row 37)  E6 (col 57, row 36)
+ *    CHEST (col 65, row 44)   SW cul-de-sac cols 3–8   SE pocket cols 60–67
+ *
+ * The clearance guard in ExploreScene automatically removes decorations
+ * within ±3 tiles of every key position, creating natural glades.
+ *
+ * ── Each entry ────────────────────────────────────────────────────────────
+ *   { col, row, key: string, blocking: boolean }
+ */
+
+// ── Compact tile constructors ─────────────────────────────────────────────
+const T  = (c, r) => ({ col: c, row: r, key: 'decoration_tree',       blocking: true  });
+const R  = (c, r) => ({ col: c, row: r, key: 'decoration_rock',       blocking: true  });
+const F  = (c, r) => ({ col: c, row: r, key: 'decoration_flower',     blocking: false });
+const M  = (c, r) => ({ col: c, row: r, key: 'decoration_mushroom',   blocking: false });
+const Ca = (c, r) => ({ col: c, row: r, key: 'decoration_cactus',     blocking: true  });
+const Pa = (c, r) => ({ col: c, row: r, key: 'decoration_palmtree',   blocking: true  });
+const Ic = (c, r) => ({ col: c, row: r, key: 'decoration_icicle',     blocking: true  });
+const Sn = (c, r) => ({ col: c, row: r, key: 'decoration_snowpile',   blocking: false });
+const Pi = (c, r) => ({ col: c, row: r, key: 'decoration_pillar',     blocking: true  });
+const Gr = (c, r) => ({ col: c, row: r, key: 'decoration_gravestone', blocking: true  });
+
+// ── Layout generation helpers ─────────────────────────────────────────────
+
+/** Dense horizontal wall — every tile from c1 to c2 on given row. */
+const hLine = (fn, row, c1, c2) => {
+  const a = [];
+  for (let c = c1; c <= c2; c++) a.push(fn(c, row));
+  return a;
+};
+
+/** Dense vertical wall — every tile from r1 to r2 on given col. */
+const vLine = (fn, col, r1, r2) => {
+  const a = [];
+  for (let r = r1; r <= r2; r++) a.push(fn(col, r));
+  return a;
+};
+
+/**
+ * Staggered fill — places a decoration every 2 tiles in a rect,
+ * alternating column offset each row for a natural scattered look.
+ * The clearance guard will punch glades around enemy/NPC/boss/chest tiles.
+ */
+const fill = (fn, c1, r1, c2, r2) => {
+  const a = [];
+  for (let r = r1; r <= r2; r++) {
+    for (let c = c1 + (r & 1); c <= c2; c += 2) a.push(fn(c, r));
+  }
+  return a;
+};
+
+// ── Shared wall layout (identical gap positions across all regions) ────────
+
+/**
+ * Wall A — divides NORTH ZONE from MID ZONE.
+ * Rows 15–16; two segments with gaps for the NW and NE passages.
+ */
+const wallA = fn => [
+  // Segment 1: cols 13–40  (GAP: cols 9–12 = NW passage into north zone)
+  ...hLine(fn, 15, 13, 40), ...hLine(fn, 16, 13, 40),
+  // Segment 2: cols 45–62  (GAP: cols 41–44 = NE passage / boss approach)
+  ...hLine(fn, 15, 45, 62), ...hLine(fn, 16, 45, 62),
+  // cols 63–67 always open (boss corridor)
+];
+
+/**
+ * Wall B — divides MID ZONE from SOUTH ZONE.
+ * Rows 31–32; two segments.  Left side (cols 3–8) always open.
+ */
+const wallB = fn => [
+  // Segment 1: cols 9–32  (GAP: cols 33–36 = mid-south connector)
+  ...hLine(fn, 31, 9, 32), ...hLine(fn, 32, 9, 32),
+  // Segment 2: cols 37–55  (cols 56–67 open → east chest corridor)
+  ...hLine(fn, 31, 37, 55), ...hLine(fn, 32, 37, 55),
+];
+
+// ── Region 0 — Sunny Village ──────────────────────────────────────────────
+// Lush meadow divided into three zones by two tree-wall bands.
+// The NW corner is a dead-end forest cul-de-sac for exploration.
+// Flowers dot the clearings; the SE meadow leads to the chest.
+const R0 = [
+  // ── Structural tree walls ────────────────────────────────────────────
+  ...wallA(T),
+  ...wallB(T),
+
+  // East edge of mid zone (seals right side; player exits via Wall A gap)
+  ...vLine(T, 62, 17, 29),
+
+  // ── NW dead-end cul-de-sac (cols 3–8, rows 3–13) ────────────────────
+  // Dense cluster — optional exploration; entered from Wall A gap at cols 9-12
+  ...fill(T, 3, 3, 8, 13),
+
+  // ── North zone forest fill (clearance guard auto-clears E1/E2 glades) ─
+  ...hLine(T,  3, 13, 18),                   // top row west fringe
+  ...hLine(T,  4, 13, 18),
+  ...fill(T, 24, 3, 48, 13),                 // inter-glade forest (E1–E2 corridor)
+  ...hLine(T,  3, 56, 62),                   // top row east fringe
+  ...hLine(T,  4, 56, 62),
+
+  // Flowers in E1 and E2 glades (positions adjacent to clearance zones)
+  F(24,10), F(24,12), F(16,10), F(16,12),    // around E1
+  F(48, 9), F(48,11), F(56, 9), F(56,11),    // around E2
+  F(63,10), F(64, 8), F(65,11),              // boss corridor accent
+
+  // ── Mid zone atmosphere ──────────────────────────────────────────────
+  F( 9,22), F(11,20), F( 8,28), F(10,29),   // near player start
+  T(35,20), T(37,22), T(35,27), T(37,29),   // loose trees mid-left
+  T(50,17), T(52,19), T(50,25), T(52,27), T(55,20), T(55,28),
+
+  // ── South zone ───────────────────────────────────────────────────────
+  ...hLine(T, 46, 3, 66),                    // south border tree row
+
+  // SW pocket cul-de-sac (cols 3-8, dense forest)
+  ...fill(T, 3, 33, 8, 45),
+
+  // Flowers scattered through south zone open meadow
+  F( 3,35), F( 5,37), F(10,35), F(12,37), F(12,34),
+  F(22,35), F(24,34), F(26,36),
+  F(38,35), F(40,34), F(42,36),
+
+  // SE meadow pocket — left border wall only; entrance via cols 61–67 from
+  // the east corridor.  Clearance guard around E6 (col 57, row 36) also
+  // naturally opens col 60 at rows 33–39; clearance guard around chest
+  // opens the glade interior around the chest tile.
+  ...vLine(T, 60, 36, 45),                   // west wall of SE pocket
+  F(61,36), F(63,37), F(62,40), F(64,42),    // scattered meadow accents inside
+  F(56,35), F(58,34), F(59,37),
+];
+
+// ── Region 1 — Meadow Maze ───────────────────────────────────────────────
+// Same two-wall skeleton but the mid zone gets extra tree rows that create
+// a maze feel with deliberate gaps.  Mushrooms mark safe alcoves.
+const R1 = [
+  // ── Structural tree walls ────────────────────────────────────────────
+  ...wallA(T),
+  ...wallB(T),
+  ...vLine(T, 62, 17, 29),
+
+  // ── NW dead-end ──────────────────────────────────────────────────────
+  ...fill(T, 3, 3, 8, 13),
+
+  // ── North zone forest + mushroom glades ──────────────────────────────
+  ...hLine(T,  3, 13, 18),
+  ...hLine(T,  4, 13, 18),
+  ...fill(T, 24, 3, 48, 13),
+  ...hLine(T,  3, 56, 62),
+  ...hLine(T,  4, 56, 62),
+
+  M(24,10), M(24,12), M(16, 9),              // around E1
+  M(48, 9), M(48,11), M(56, 9), M(56,11),   // around E2
+
+  // ── Mid zone maze walls ───────────────────────────────────────────────
+  // Extra horizontal barrier row 22–23, cols 13–30  (gap at 31+, connects east)
+  ...hLine(T, 22, 13, 30),
+  ...hLine(T, 23, 13, 30),
+  // Vertical stub forming a pocket: col 55, rows 17–21
+  ...vLine(T, 55, 17, 21),
+
+  // Mushroom rest spots in mid zone alcoves
+  M( 9,20), M(11,22), M( 9,28), M(11,29),
+  M(33,18), M(35,17), M(38,19),
+  M(50,24), M(52,26), M(57,22), M(57,28),
+  T(37,22), T(37,24), T(50,22), T(50,24),
+  T(50,17), T(52,19), T(55,24), T(55,28),
+
+  // ── South zone ───────────────────────────────────────────────────────
+  ...hLine(T, 46, 3, 66),
+  ...fill(T, 3, 33, 8, 45),
+  M( 3,35), M( 5,37), M(10,35), M(12,37),
+  M(22,35), M(24,34), M(26,36),
+  M(38,35), M(40,34), M(42,36),
+  // SE maze pocket — left border wall only; open entrance from cols 61–67
+  ...vLine(T, 60, 36, 45),                   // west wall of SE pocket
+  M(61,36), M(63,37), M(62,40), M(64,42),    // mushroom accents inside
+  M(56,35), M(58,34), M(59,37),
+];
+
+// ── Region 2 — Desert Dunes ──────────────────────────────────────────────
+// Rocky canyon corridors.  ROCK walls form continuous canyon rims —
+// NOT scattered pebbles.  Cactus lines act as soft internal dividers.
+// A palm oasis fills the SE pocket near the chest.
+const R2 = [
+  // ── Canyon walls (solid rock lines) ──────────────────────────────────
+  ...wallA(R),
+  ...wallB(R),
+  ...vLine(R, 62, 17, 29),
+
+  // ── NW rocky dead-end ────────────────────────────────────────────────
+  ...fill(R, 3, 3, 8, 13),
+
+  // ── North zone canyon rim & scattered boulders ────────────────────────
+  ...hLine(R,  3, 13, 18),
+  ...hLine(R,  4, 13, 18),
+  ...hLine(R,  3, 56, 62),
+  ...hLine(R,  4, 56, 62),
+  // Boulders between E1 and E2 glades
+  R(25, 4), R(27, 6), R(30, 4), R(33, 6), R(36, 4), R(39, 6),
+  R(27,11), R(30,13), R(33,11), R(36,13), R(42,11), R(44,13),
+
+  // ── Mid zone cactus barriers ──────────────────────────────────────────
+  // Each line is a continuous run of adjacent cacti — forms a real barrier
+  // with deliberate passable ends (never closes the corridor fully)
+  ...vLine(Ca, 13, 18, 24),                  // west-side cactus wall col 13
+  ...vLine(Ca, 26, 17, 23),                  // inner divider col 26
+  ...vLine(Ca, 36, 24, 29),                  // inner divider col 36
+  ...vLine(Ca, 50, 17, 21),                  // east area col 50
+  ...vLine(Ca, 55, 24, 28),                  // east area col 55
+
+  // Loose boulders for texture
+  R(35,20), R(37,22), R(50,22), R(52,20), R(55,20), R(55,28),
+
+  // ── South zone canyon + palm oasis ───────────────────────────────────
+  ...hLine(R, 46, 3, 66),
+  ...fill(R, 3, 33, 8, 45),                  // rocky SW pocket
+
+  // Canyon boulders across south zone
+  R( 3,35), R( 5,37), R(10,35), R(12,37),
+  R(22,35), R(24,34), R(26,36),
+  R(38,35), R(40,34), R(42,36),
+
+  // Palm oasis SE pocket (around chest; clearance guard opens chest glade)
+  Pa(60,36), Pa(62,36), Pa(64,36),
+  Pa(61,38), Pa(63,38),
+  Pa(60,40), Pa(62,40), Pa(64,40),
+  Pa(61,42), Pa(63,42),
+];
+
+// ── Region 3 — Frostbite Cavern ──────────────────────────────────────────
+// Underground ice cave.  Icicle banks form the main corridor walls.
+// Rock pillars dot the cave floor.  Snow drifts fill alcoves.
+const R3 = [
+  // ── Icicle corridor walls ─────────────────────────────────────────────
+  ...wallA(Ic),
+  ...wallB(Ic),
+  ...vLine(Ic, 62, 17, 29),
+
+  // ── NW ice-boulder blockage ───────────────────────────────────────────
+  ...fill(R, 3, 3, 8, 13),
+
+  // ── North zone cave ceiling icicles & rock pillars ────────────────────
+  ...hLine(Ic,  3, 13, 18),
+  ...hLine(Ic,  4, 13, 18),
+  ...hLine(Ic,  3, 56, 62),
+  ...hLine(Ic,  4, 56, 62),
+
+  // Rock pillar pairs between E1 and E2
+  R(25, 4), R(27, 6), R(30, 4), R(33, 6), R(36, 4), R(39, 6),
+  R(27,11), R(30,13), R(33,11), R(36,13), R(42,11),
+
+  // Snow drifts near glades
+  Sn(24,10), Sn(16, 9), Sn(48, 9), Sn(56, 9), Sn(56,11),
+
+  // ── Mid zone pillar grid + snow ───────────────────────────────────────
+  R(13,18), R(13,22), R(13,26),
+  R(26,18), R(26,22), R(26,26),
+  R(36,17), R(36,21), R(36,25), R(36,29),
+  R(50,17), R(50,21), R(50,25), R(50,29),
+  R(55,20), R(55,24), R(55,28),
+
+  Sn( 9,20), Sn(11,22), Sn( 9,28), Sn(11,29),
+  Sn(33,18), Sn(35,20), Sn(38,18), Sn(37,27),
+
+  // ── South zone ────────────────────────────────────────────────────────
+  ...hLine(Ic, 46, 3, 66),
+  ...fill(R, 3, 33, 8, 45),                  // rocky SW pocket
+
+  Sn( 3,35), Sn( 5,37), Sn(10,35), Sn(12,37),
+  R(22,35), R(24,34), R(26,36),
+  Sn(38,35), Sn(40,34), Sn(42,36),
+
+  // Icicle SE pocket — left border wall; open entrance from cols 61–67
+  ...vLine(Ic, 60, 36, 45),                  // west wall of SE pocket
+  Sn(61,37), Sn(63,39), Sn(62,41),           // snow accents inside
+  Sn(56,35), Sn(58,34),
+];
+
+// ── Region 4 — Shadow Castle ─────────────────────────────────────────────
+// Dark stone halls with rows of stone pillars lining the corridors.
+// A graveyard fills the south zone.  Rubble rocks accent every area.
+const R4 = [
+  // ── Castle rock walls ─────────────────────────────────────────────────
+  ...wallA(R),
+  ...wallB(R),
+  ...vLine(R, 62, 17, 29),
+
+  // ── NW ruined tower ───────────────────────────────────────────────────
+  ...fill(R, 3, 3, 8, 13),
+
+  // ── North zone hall: pillar pairs + rubble ────────────────────────────
+  ...hLine(R,  3, 13, 18),
+  ...hLine(R,  4, 13, 18),
+  ...hLine(R,  3, 56, 62),
+  ...hLine(R,  4, 56, 62),
+
+  Pi(25, 4), Pi(27, 6), Pi(30, 4), Pi(33, 6), Pi(36, 4), Pi(39, 6),
+  Pi(27,11), Pi(30,13), Pi(33,11), Pi(36,13), Pi(42,11),
+  R(26, 5), R(28, 7), R(31, 5), R(34, 7), R(37, 5),
+
+  // ── Mid zone great hall: paired pillar rows ────────────────────────────
+  Pi(13,18), Pi(13,22), Pi(13,26), Pi(13,29),
+  Pi(26,17), Pi(26,21), Pi(26,25), Pi(26,29),
+  Pi(38,18), Pi(38,22), Pi(38,26),
+  Pi(56,17), Pi(56,21), Pi(56,25), Pi(56,29),
+  Pi(61,18), Pi(61,22), Pi(61,26),
+
+  // Rubble between pillars
+  R(14,20), R(15,21), R(27,19), R(28,20), R(27,23), R(28,24),
+  R(39,20), R(40,21), R(57,19), R(58,20), R(57,23), R(58,24),
+
+  // ── South zone graveyard ──────────────────────────────────────────────
+  ...hLine(R, 46, 3, 66),
+  ...fill(R, 3, 33, 8, 45),                  // rocky SW ruin pocket
+
+  // Gravestone rows (clearance guard opens glades around E3/E5/E6)
+  Gr( 3,34), Gr( 6,34), Gr( 9,34),
+  Gr(22,34), Gr(25,34),
+  Gr(38,34), Gr(41,34), Gr(44,34), Gr(47,34), Gr(50,34), Gr(53,34),
+
+  Gr( 3,38), Gr( 6,38), Gr( 9,38),
+  Gr(22,38), Gr(25,38), Gr(28,38),
+  Gr(38,40), Gr(41,40), Gr(44,40), Gr(47,40), Gr(50,40),
+
+  Gr( 3,43), Gr( 6,43), Gr( 9,43), Gr(12,43), Gr(15,43),
+  Gr(22,43), Gr(25,43), Gr(28,43),
+  Gr(38,43), Gr(41,43), Gr(44,43), Gr(47,43),
+
+  R( 4,36), R( 7,36), R(10,36), R(23,36), R(26,36),
+  R(39,36), R(42,36), R(45,36), R(48,36),
+
+  // Pillar SE pocket — left border wall; open entrance from cols 61–67
+  ...vLine(Pi, 60, 36, 45),                  // west wall of SE pocket
+  Pi(62,38), Pi(64,38), Pi(62,42), Pi(64,41),// pillars framing glade interior
+  R(61,37), R(63,40),                        // rubble accents
+];
+
+// ── Export ────────────────────────────────────────────────────────────────
+const MAPS = [R0, R1, R2, R3, R4];
+export default MAPS;
+
+// ── Walkability grid ──────────────────────────────────────────────────────
+/**
+ * Build a Set of blocked tile keys ("col,row") from a decoration array,
+ * applying the same clearance guard ExploreScene uses at runtime.
+ *
+ * @param {Array}  decorations  - Region decoration array from MAPS[id]
+ * @param {Array}  keyPositions - [{col,row}] key game positions (mimiStart,
+ *                                chestTile, bossTile, npcTile, enemySpawns)
+ * @returns {Set<string>}       - Set of "col,row" strings that are blocked
+ */
+export function buildWalkGrid(decorations, keyPositions = []) {
+  const COLS   = 70;
+  const ROWS   = 50;
+  const CLEAR_R = 3;  // mirrors ExploreScene._addDecorations constant
+
+  const blocked = new Set();
+
+  // Border walls — 2-tile frame on every side (same as _drawRoom tileSprite)
+  for (let c = 0; c < COLS; c++) {
+    blocked.add(`${c},0`);  blocked.add(`${c},1`);
+    blocked.add(`${c},48`); blocked.add(`${c},49`);
+  }
+  for (let r = 0; r < ROWS; r++) {
+    blocked.add(`0,${r}`);  blocked.add(`1,${r}`);
+    blocked.add(`68,${r}`); blocked.add(`69,${r}`);
+  }
+
+  // Clearance guard — mirrors ExploreScene isClear()
+  const isClear = (col, row) =>
+    keyPositions.every(
+      p => Math.abs(col - p.col) > CLEAR_R || Math.abs(row - p.row) > CLEAR_R,
+    );
+
+  // Blocking decorations (deduped: first item wins)
+  const seen = new Set();
+  for (const item of decorations) {
+    if (!item.blocking) continue;
+    if (!isClear(item.col, item.row)) continue;  // clearance guard
+    const k = `${item.col},${item.row}`;
+    if (!seen.has(k)) {
+      seen.add(k);
+      blocked.add(k);
+    }
+  }
+
+  return blocked;
+}

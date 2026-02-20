@@ -11,6 +11,7 @@
  *   returnData:    object  – data forwarded to returnScene
  * }
  */
+import * as Phaser from 'phaser';
 import GameState        from '../config/GameState.js';
 import { generateQuestion } from '../math/QuestionBank.js';
 import { getChoices }       from '../math/Distractors.js';
@@ -67,18 +68,35 @@ export default class BattleScene extends Phaser.Scene {
   // ── Background ────────────────────────────────────────────────────────────
 
   _drawBackground(W, H) {
-    // Dark blue backdrop with region-tinted accent
-    this.add.rectangle(W / 2, H / 2, W, H, 0x0A0A20);
-    const gfx = this.add.graphics();
-    // Subtle diagonal lines
-    gfx.lineStyle(1, 0x1A1A40, 1);
-    for (let i = -H; i < W + H; i += 30) {
-      gfx.lineBetween(i, 0, i + H, H);
+    // Map regionId to backdrop
+    const backdropKeys = [
+      'backdrop_village',  // Region 0
+      'backdrop_meadow',   // Region 1
+      'backdrop_desert',   // Region 2
+      'backdrop_ice',      // Region 3
+      'backdrop_shadow',   // Region 4
+    ];
+    
+    const backdropKey = backdropKeys[this.regionId] ?? 'backdrop_village';
+    
+    // Display Full-screen backdrop
+    if (this.textures.exists(backdropKey)) {
+      this.add.image(W / 2, H / 2, backdropKey).setDisplaySize(W, H).setDepth(0);
+    } else {
+      // Fallback if backdrop not loaded
+      console.warn(`Backdrop ${backdropKey} not found, using solid color`);
+      this.add.rectangle(W / 2, H / 2, W, H, 0x0A0A20).setDepth(0);
     }
+    
+    // Add subtle overlay for UI readability
+    this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.15).setDepth(1);
+    
     // Separator lines
-    gfx.lineStyle(2, 0x334488, 1);
+    const gfx = this.add.graphics();
+    gfx.lineStyle(2, 0xFFFFFF, 0.2);
     gfx.lineBetween(0, 160, W, 160);
     gfx.lineBetween(0, H - 110, W, H - 110);
+    gfx.setDepth(2);
   }
 
   // ── Layout ────────────────────────────────────────────────────────────────
@@ -210,7 +228,13 @@ export default class BattleScene extends Phaser.Scene {
     this.answering = false;
     this.questionIdx++;
 
-    const q = generateQuestion(this.enemyData.mathTopic, this.enemyData.difficulty ?? 1);
+    // Boss battles pick randomly from all region topics; regular enemies use their
+    // specific topic.  Difficulty stays at the enemy's level (bosses use D1 so
+    // questions are fair even with many HP).
+    const difficulty = this.isBoss ? 1 : (this.enemyData.difficulty ?? 1);
+    const topics     = this.enemyData.mathTopics ?? [this.enemyData.mathTopic];
+    const topic      = topics[Math.floor(Math.random() * topics.length)];
+    const q = generateQuestion(topic, difficulty);
     this.currentChoices = getChoices(q);
 
     this.questionText.setText(q.text);
@@ -423,17 +447,32 @@ export default class BattleScene extends Phaser.Scene {
         this.add.text(W / 2, H / 2 + (levelUp ? 44 : 20), `🔥 Incredible ${this.streak}-streak!`, TEXT_STYLE(16, '#FF9900')).setOrigin(0.5);
       }
 
+      // Boss victory message
+      if (this.isBoss) {
+        const yPos = H / 2 + (this.streak >= 5 ? 70 : (levelUp ? 50 : 35));
+        this.add.text(W / 2, yPos, 'The path to the next region is open!', TEXT_STYLE(14, '#88FFAA')).setOrigin(0.5);
+      }
+
       this._makeContinueButton(W, H, 'Continue →', () => {
         GameState.save();
-        this.scene.start(this.returnScene, {
-          ...this.returnData,
-          battleResult: {
-            victory:       true,
-            enemyInstance: this.enemyInstance,
-            isBoss:        this.isBoss,
-            leveledUp:     levelUp,
-          },
-        });
+        
+        // Boss victory → go directly to overworld
+        if (this.isBoss) {
+          GameState.defeatBoss(this.regionId);
+          GameState.save();
+          this.scene.start('OverworldScene', { bossDefeated: true, regionId: this.regionId });
+        } else {
+          // Regular enemy → return to exploration
+          this.scene.start(this.returnScene, {
+            ...this.returnData,
+            battleResult: {
+              victory:       true,
+              enemyInstance: this.enemyInstance,
+              isBoss:        this.isBoss,
+              leveledUp:     levelUp,
+            },
+          });
+        }
       });
 
     } else {

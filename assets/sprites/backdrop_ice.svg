@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <!-- Frostbite Cavern Backdrop - Icy cave interior -->
+  
+  <defs>
+    <linearGradient id="iceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A6B88;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2A3B48;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="iceGlow">
+      <stop offset="0%" style="stop-color:#B8E8FF;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#4A6B88;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Dark cave background -->
+  <rect width="800" height="600" fill="url(#iceGradient)"/>
+  
+  <!-- Glowing ice crystals in background -->
+  <circle cx="150" cy="150" r="80" fill="url(#iceGlow)"/>
+  <circle cx="650" cy="200" r="100" fill="url(#iceGlow)"/>
+  <circle cx="400" cy="100" r="60" fill="url(#iceGlow)"/>
+  
+  <!-- Icicles from ceiling -->
+  <polygon points="100,0 110,80 90,80" fill="#A8D8EA" opacity="0.7"/>
+  <polygon points="250,0 262,120 238,120" fill="#C8E8FA" opacity="0.6"/>
+  <polygon points="420,0 435,100 405,100" fill="#A8D8EA" opacity="0.7"/>
+  <polygon points="580,0 590,90 570,90" fill="#B8E8FA" opacity="0.65"/>
+  <polygon points="720,0 732,110 708,110" fill="#A8D8EA" opacity="0.6"/>
+  
+  <!-- Ice formations (stalagmites) on ground -->
+  <polygon points="180,600 200,520 220,600" fill="#88C8DD" opacity="0.6"/>
+  <polygon points="350,600 375,490 400,600" fill="#99D8EE" opacity="0.7"/>
+  <polygon points="550,600 570,530 590,600" fill="#88C8DD" opacity="0.65"/>
+  <polygon points="700,600 715,510 730,600" fill="#78B8CD" opacity="0.6"/>
+  
+  <!-- Snow/ice covered floor -->
+  <ellipse cx="400" cy="550" rx="400" ry="50" fill="#B8D8EA" opacity="0.3"/>
+  
+  <!-- Sparkles (ice crystals in air) -->
+  <circle cx="200" cy="250" r="2" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="450" cy="300" r="2.5" fill="#FFFFFF" opacity="0.9"/>
+  <circle cx="600" cy="220" r="2" fill="#FFFFFF" opacity="0.7"/>
+  <circle cx="320" cy="380" r="2" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="680" cy="340" r="2.5" fill="#FFFFFF" opacity="0.9"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sand A — clean base, single gentle ripple -->
+  <rect width="32" height="32" fill="#E8D4A0"/>
+  <!-- One soft ripple line across the middle -->
+  <path d="M3,16 Q10,14 18,16 Q25,18 29,16" stroke="#C8B070" stroke-width="1" fill="none" opacity="0.5"/>
+  <!-- Tiny highlight -->
+  <circle cx="8" cy="8" r="1" fill="#F4E0B0" opacity="0.4"/>
+</svg>

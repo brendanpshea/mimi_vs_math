@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- grass base -->
+  <ellipse cx="16" cy="28" rx="12" ry="3" fill="#2A6A10" opacity="0.5"/>
+  <!-- stems -->
+  <line x1="8"  y1="27" x2="8"  y2="20" stroke="#3A8018" stroke-width="1.5"/>
+  <line x1="16" y1="27" x2="16" y2="17" stroke="#3A8018" stroke-width="1.5"/>
+  <line x1="24" y1="27" x2="24" y2="19" stroke="#3A8018" stroke-width="1.5"/>
+  <!-- tiny leaves -->
+  <ellipse cx="5.5" cy="24" rx="2.5" ry="1.2" fill="#2A6A10" transform="rotate(-45 5.5 24)"/>
+  <ellipse cx="26.5" cy="22" rx="2.5" ry="1.2" fill="#2A6A10" transform="rotate(45 26.5 22)"/>
+  <!-- left: yellow 4-petal daisy -->
+  <circle cx="6"  cy="20" r="2.2" fill="#FFE828"/>
+  <circle cx="10" cy="20" r="2.2" fill="#FFE828"/>
+  <circle cx="8"  cy="18" r="2.2" fill="#FFE828"/>
+  <circle cx="8"  cy="22" r="2.2" fill="#FFE828"/>
+  <circle cx="8"  cy="20" r="2.8" fill="#FFF480"/>
+  <circle cx="8"  cy="20" r="1.1" fill="#CC9900"/>
+  <!-- centre: pink -->
+  <circle cx="14" cy="17" r="2.2" fill="#FF70B8"/>
+  <circle cx="18" cy="17" r="2.2" fill="#FF70B8"/>
+  <circle cx="16" cy="15" r="2.2" fill="#FF70B8"/>
+  <circle cx="16" cy="19" r="2.2" fill="#FF70B8"/>
+  <circle cx="16" cy="17" r="2.6" fill="#FFAADD"/>
+  <circle cx="16" cy="17" r="1.0" fill="#BB1166"/>
+  <!-- right: white -->
+  <circle cx="22" cy="19" r="2.0" fill="#EEEEEE"/>
+  <circle cx="26" cy="19" r="2.0" fill="#EEEEEE"/>
+  <circle cx="24" cy="17" r="2.0" fill="#EEEEEE"/>
+  <circle cx="24" cy="21" r="2.0" fill="#EEEEEE"/>
+  <circle cx="24" cy="19" r="2.4" fill="#FFFFFF"/>
+  <circle cx="24" cy="19" r="1.0" fill="#FFAA00"/>
+</svg>

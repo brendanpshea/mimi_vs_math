@@ -1,0 +1,28 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Brick wall tile -->
+  <rect width="32" height="32" fill="#8B4513"/>
+  
+  <!-- Brick pattern -->
+  <!-- Row 1 -->
+  <rect x="0" y="0" width="15" height="7" fill="#A0522D" stroke="#6B3410" stroke-width="0.5"/>
+  <rect x="16" y="0" width="16" height="7" fill="#A0522D" stroke="#6B3410" stroke-width="0.5"/>
+  
+  <!-- Row 2 (offset) -->
+  <rect x="-8" y="8" width="15" height="7" fill="#9B4F28" stroke="#6B3410" stroke-width="0.5"/>
+  <rect x="8" y="8" width="15" height="7" fill="#9B4F28" stroke="#6B3410" stroke-width="0.5"/>
+  <rect x="24" y="8" width="16" height="7" fill="#9B4F28" stroke="#6B3410" stroke-width="0.5"/>
+  
+  <!-- Row 3 -->
+  <rect x="0" y="16" width="15" height="7" fill="#A0522D" stroke="#6B3410" stroke-width="0.5"/>
+  <rect x="16" y="16" width="16" height="7" fill="#A0522D" stroke="#6B3410" stroke-width="0.5"/>
+  
+  <!-- Row 4 (offset) -->
+  <rect x="-8" y="24" width="15" height="8" fill="#9B4F28" stroke="#6B3410" stroke-width="0.5"/>
+  <rect x="8" y="24" width="15" height="8" fill="#9B4F28" stroke="#6B3410" stroke-width="0.5"/>
+  <rect x="24" y="24" width="16" height="8" fill="#9B4F28" stroke="#6B3410" stroke-width="0.5"/>
+  
+  <!-- Mortar highlights -->
+  <line x1="0" y1="7.5" x2="32" y2="7.5" stroke="#7B4012" stroke-width="0.3" opacity="0.5"/>
+  <line x1="0" y1="15.5" x2="32" y2="15.5" stroke="#7B4012" stroke-width="0.3" opacity="0.5"/>
+  <line x1="0" y1="23.5" x2="32" y2="23.5" stroke="#7B4012" stroke-width="0.3" opacity="0.5"/>
+</svg>

@@ -1,175 +1,261 @@
 /**
- * ExploreScene — top-down room exploration for a single region.
+ * ExploreScene  scrolling top-down world exploration.
  *
- * Layout per region:
- *   • Floor + wall border drawn via Phaser Graphics
- *   • 3 roaming enemy sprites (static physics); touching one starts a battle
- *   • 1 NPC with a hint
- *   • 1 treasure chest (awards a random item)
- *   • Boss door in the top-right corner — opens when all 3 enemies are defeated
+ * Zelda / FF style: world is larger than the viewport; the camera follows
+ * Mimi.  All HUD elements use setScrollFactor(0) in their own classes, so
+ * they stay fixed to the screen automatically.
  *
  * Scene data expected:  { regionId: number }
- * Returns to OverworldScene (boss cleared) or stays in region otherwise.
  */
+import * as Phaser from 'phaser';
 import GameState   from '../config/GameState.js';
 import REGIONS     from '../data/regions.js';
 import ENEMIES     from '../data/enemies.js';
+import MAPS        from '../data/maps.js';
 import Mimi        from '../entities/Mimi.js';
 import Enemy       from '../entities/Enemy.js';
+import NPC         from '../entities/NPC.js';
 import HUD         from '../ui/HUD.js';
 import DialogBox   from '../ui/DialogBox.js';
 
-// Tile size and room dimensions
-const T  = 32;     // tile size px
-const RW = 24;     // room width  in tiles
-const RH = 17;     // room height in tiles
-const WALL = 2;    // wall thickness in tiles
+//  World constants 
+const T     = 32;    // tile size in pixels
+const MAP_W = 70;    // map width  in tiles  (~4 screens wide)
+const MAP_H = 50;    // map height in tiles  (~3 screens tall)
+const WALL  = 2;     // border wall thickness in tiles
 
-// Convert tile coords to pixel coords (top-left of canvas is 0,0)
-const tx = col  => col * T + T / 2;
-const ty = row  => row * T + T / 2 + 60;   // +60 for HUD
+// World-space pixel helpers (no HUD offset  camera handles that)
+const tx = col => col * T + T / 2;
+const ty = row => row * T + T / 2;
 
-// Enemy starting positions (tile coords, excluding HUD offset handled by ty)
-const ENEMY_TILES = [
-  { col: 6,  row: 6  },
-  { col: 18, row: 4  },
-  { col: 10, row: 12 },
-];
-const NPC_TILE    = { col: 4,  row: 12 };
-const CHEST_TILE  = { col: 20, row: 12 };
-const BOSS_TILE   = { col: 22, row: 2  };
-const MIMI_START  = { col: 3,  row: 8  };
+// Key positions are now per-region — read from regionData.mimiStart / .npcTile / .chestTile / .bossTile / .enemySpawns
 
 export default class ExploreScene extends Phaser.Scene {
   constructor() { super({ key: 'ExploreScene' }); }
 
   init(data) {
-    this.regionId   = data?.regionId ?? GameState.currentRegion;
-    this.regionData = REGIONS[this.regionId];
-    // If returning from a battle, process the result
+    this.regionId     = data?.regionId ?? GameState.currentRegion;
+    this.regionData   = REGIONS[this.regionId];
     this.battleResult = data?.battleResult ?? null;
+    // Position to restore Mimi to after returning from battle
+    this._returnX = data?.mimiX ?? null;
+    this._returnY = data?.mimiY ?? null;
   }
 
   create() {
-    const W = this.cameras.main.width;
-    const H = this.cameras.main.height;
-
-    this._drawRoom(W, H);
+    // World geometry
+    this._drawRoom();
     this._addDecorations();
 
-    // Create Mimi
-    this.mimi = new Mimi(this, tx(MIMI_START.col), ty(MIMI_START.row));
+    // Compute whether THIS battle just cleared the last enemy, BEFORE recording
+    // the defeat in GameState.  If we wait until after _processBattleResult the
+    // door setup already sees n===0 so the "just unlocked" flag would always be
+    // false.  The test file (test_unlock.mjs) validates this formula.
+    this._preBattleAllClear = false;
+    if (this.battleResult?.victory && !this.battleResult?.isBoss) {
+      const inst = this.battleResult.enemyInstance;
+      this._preBattleAllClear = this.regionData.enemySpawns.every((spawn, i) => {
+        const key = spawn.id + i;
+        return key === inst || GameState.isEnemyDefeated(this.regionId, key);
+      });
+    }
+
+    // Apply battle result before creating enemies (so defeated ones are skipped)
+    if (this.battleResult) {
+      this._processBattleResult();
+    }
+
+    // Player — restore battle-exit position if available, otherwise use spawn
+    const startX = this._returnX ?? tx(this.regionData.mimiStart.col);
+    const startY = this._returnY ?? ty(this.regionData.mimiStart.row);
+    this.mimi = new Mimi(this, startX, startY);
     this.physics.world.setBounds(
-      WALL * T, 60 + WALL * T,
-      (RW - WALL * 2) * T, (RH - WALL * 2) * T,
+      WALL * T, WALL * T,
+      (MAP_W - WALL * 2) * T,
+      (MAP_H - WALL * 2) * T,
     );
     this.mimi.sprite.setCollideWorldBounds(true);
-    // Add wall collider now that both mimi and walls exist
     this.physics.add.collider(this.mimi.sprite, this._walls);
+    this.physics.add.collider(this.mimi.sprite, this._decorObstacles);
 
-    // Enemies
+    // Camera follows Mimi with slight lerp (Zelda feel)
+    this.cameras.main.setBounds(0, 0, MAP_W * T, MAP_H * T);
+    this.cameras.main.startFollow(this.mimi.sprite, true, 0.12, 0.12);
+
+    // Game objects
     this._setupEnemies();
-
-    // NPC
     this._setupNPC();
-
-    // Chest
     this._setupChest();
-
-    // Boss door
     this._setupBossDoor();
 
-    // HUD
-    this.hud = new HUD(this, this.regionData.name);
-
-    // Dialog box
+    // UI (scrollFactor(0) set inside these classes)
+    this.hud    = new HUD(this, this.regionData.name);
     this.dialog = new DialogBox(this);
 
-    // Pause key
     this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
-    // Handle any pending battle result
     if (this.battleResult) {
-      this.time.delayedCall(200, () => this._handleBattleResult());
+      this.hud.refresh();
+    }
+    if (this.battleResult) {
+      this.time.delayedCall(200, () => this._showBattleMessages());
     }
   }
 
-  // ── Room drawing ─────────────────────────────────────────────────────────
+  //  Room drawing 
 
-  _drawRoom(W, H) {
-    const { floorColor, wallColor } = this.regionData;
+  _drawRoom() {
+    const { floorColor, wallColor, floorTile, wallTile } = this.regionData;
+    const worldW = MAP_W * T;
+    const worldH = MAP_H * T;
 
-    // HUD bar area
-    this.add.rectangle(W / 2, 30, W, 60, 0x000000, 0.5).setDepth(50);
-
-    // Floor
-    this.add.rectangle(
-      (RW / 2) * T, 60 + (RH / 2) * T,
-      RW * T, RH * T,
-      floorColor,
-    );
-
-    // Walls (top, bottom, left, right)
-    const wallRects = [
-      { x: RW / 2 * T,      y: 60 + WALL / 2 * T,       w: RW * T,      h: WALL * T },
-      { x: RW / 2 * T,      y: 60 + (RH - WALL / 2) * T, w: RW * T,      h: WALL * T },
-      { x: WALL / 2 * T,    y: 60 + RH / 2 * T,          w: WALL * T,    h: RH * T   },
-      { x: (RW - WALL / 2) * T, y: 60 + RH / 2 * T,      w: WALL * T,    h: RH * T   },
-    ];
-
-    const wallGfx = this.add.graphics();
-    for (const r of wallRects) {
-      wallGfx.fillStyle(wallColor);
-      wallGfx.fillRect(r.x - r.w / 2, r.y - r.h / 2, r.w, r.h);
+    // Tiled floor — randomised multi-variant grid for a 'bathroom tile' look.
+    // Each cell independently draws the A (60%), B (25%), or C (15%) variant.
+    if (floorTile && this.textures.exists(floorTile)) {
+      const FLOOR_VARIANTS = {
+        floor_grass: ['floor_grass', 'floor_grass_b', 'floor_grass_c'],
+        floor_sand:  ['floor_sand',  'floor_sand_b',  'floor_sand_c' ],
+        floor_snow:  ['floor_snow',  'floor_snow_b',  'floor_snow_c' ],
+        floor_stone: ['floor_stone', 'floor_stone_b', 'floor_stone_c'],
+      };
+      const pool = FLOOR_VARIANTS[floorTile] ?? [floorTile];
+      const pickVariant = () => {
+        const r = Math.random();
+        if (r < 0.60) return pool[0];
+        if (r < 0.85) return pool[1];
+        return pool[2];
+      };
+      for (let row = 0; row < MAP_H; row++) {
+        for (let col = 0; col < MAP_W; col++) {
+          const variant = pickVariant();
+          const key = this.textures.exists(variant) ? variant : pool[0];
+          this.add.image(col * T + T / 2, row * T + T / 2, key).setDepth(0);
+        }
+      }
+    } else {
+      this.add.rectangle(worldW / 2, worldH / 2, worldW, worldH, floorColor).setDepth(0);
     }
 
-    // Static physics walls
+    // Border wall rects
+    const wallRects = [
+      { x: worldW / 2,             y: WALL * T / 2,            w: worldW,   h: WALL * T  },
+      { x: worldW / 2,             y: worldH - WALL * T / 2,   w: worldW,   h: WALL * T  },
+      { x: WALL * T / 2,           y: worldH / 2,              w: WALL * T, h: worldH    },
+      { x: worldW - WALL * T / 2,  y: worldH / 2,              w: WALL * T, h: worldH    },
+    ];
+
+    if (wallTile && this.textures.exists(wallTile)) {
+      for (const r of wallRects) {
+        this.add.tileSprite(r.x, r.y, r.w, r.h, wallTile).setDepth(1);
+      }
+    } else {
+      const g = this.add.graphics().setDepth(1);
+      for (const r of wallRects) {
+        g.fillStyle(wallColor);
+        g.fillRect(r.x - r.w / 2, r.y - r.h / 2, r.w, r.h);
+      }
+    }
+
+    // Invisible static bodies for wall collision
     this._walls = this.physics.add.staticGroup();
     for (const r of wallRects) {
-      const rect = this.add.rectangle(r.x, r.y, r.w, r.h, wallColor, 0);
+      const rect = this.add.rectangle(r.x, r.y, r.w, r.h, 0, 0);
       this.physics.add.existing(rect, true);
       this._walls.add(rect);
     }
-    // Collider with Mimi added in create() after Mimi is instantiated
   }
 
+  // ── Decorations ───────────────────────────────────────────────────────────
+
+  /**
+   * Place hand-designed decorations from maps.js.
+   *
+   * - Runtime clearance guard: skips any item that lands within CLEAR_R tiles
+   *   of a key game position (Mimi spawn, NPC, enemies, chest, boss).  This
+   *   is a safety net on top of the hand-designed layouts so enemies / NPCs
+   *   can never be obscured or physically blocked by a decoration.
+   * - Deduplicates same-tile positions so rocks and trees never stack.
+   * - Per-type scale factors make adjacent same-type items overlap and merge
+   *   into clusters (trees 1.35×, rocks 1.20×, mushrooms 1.15×).
+   * - Blocking decorations get a slim static physics body at their base.
+   */
   _addDecorations() {
-    // A few simple decorative elements (trees/rocks) depending on region
-    const { accentColor } = this.regionData;
-    const gfx = this.add.graphics();
-    const spots = [
-      { col: 8, row: 3 }, { col: 15, row: 3 }, { col: 6, row: 14 },
-      { col: 20, row: 6 }, { col: 12, row: 14 },
+    this._decorObstacles = this.physics.add.staticGroup();
+    const layout = MAPS[this.regionId];
+    if (!layout || layout.length === 0) return;
+
+    // --- Clearance guard ---------------------------------------------------
+    const CLEAR_R = 3;  // tile radius to keep clear around key positions
+    const keyPositions = [
+      this.regionData.mimiStart,
+      this.regionData.npcTile,
+      this.regionData.chestTile,
+      this.regionData.bossTile,
+      ...this.regionData.enemySpawns.map(s => ({ col: s.col, row: s.row })),
     ];
-    for (const s of spots) {
-      const px = tx(s.col);
-      const py = ty(s.row);
-      // Tree trunk
-      gfx.fillStyle(0x8B6B4A);
-      gfx.fillRect(px - 4, py, 8, 12);
-      // Foliage
-      gfx.fillStyle(accentColor);
-      gfx.fillCircle(px, py - 4, 14);
+    const isClear = (col, row) => keyPositions.every(
+      p => Math.abs(col - p.col) > CLEAR_R || Math.abs(row - p.row) > CLEAR_R,
+    );
+
+    // --- Deduplication: first item wins at each tile -----------------------
+    const occupied = new Set();
+    const deduped  = [];
+    for (const item of layout) {
+      if (!isClear(item.col, item.row)) continue;  // too close to a key pos
+      const tileKey = `${item.col},${item.row}`;
+      if (!occupied.has(tileKey)) {
+        occupied.add(tileKey);
+        deduped.push(item);
+      }
+    }
+
+    // --- Per-type scale factors (make clusters merge visually) -------------
+    const SCALES = {
+      decoration_tree:      1.35,
+      decoration_rock:      1.20,
+      decoration_mushroom:  1.15,
+    };
+
+    for (const item of deduped) {
+      if (!this.textures.exists(item.key)) continue;
+
+      const px    = tx(item.col);
+      const py    = ty(item.row);
+      const scale = SCALES[item.key] ?? 1.0;
+
+      // y-sort depth so objects lower on screen render in front
+      const depth = 3 + (item.row / MAP_H) * 6;
+      this.add.image(px, py, item.key).setDepth(depth).setScale(scale);
+
+      if (item.blocking) {
+        const hitW = T * 0.75;
+        const hitH = T * 0.35;
+        const body = this.add.rectangle(px, py + T * 0.25, hitW, hitH, 0, 0);
+        this.physics.add.existing(body, true);
+        this._decorObstacles.add(body);
+      }
     }
   }
 
-  // ── Enemies ───────────────────────────────────────────────────────────────
+  //  Enemies 
 
   _setupEnemies() {
-    this._enemies     = [];
-    this._liveCount   = 0;
-    const enemyKeys   = this.regionData.enemies;
+    this._enemies   = [];
+    this._liveCount = 0;
 
-    ENEMY_TILES.forEach((tile, i) => {
-      const key  = enemyKeys[i % enemyKeys.length];
-      const data = ENEMIES[key];
+    this.regionData.enemySpawns.forEach((spawn, i) => {
+      const instanceKey = spawn.id + i;
+      if (GameState.isEnemyDefeated(this.regionId, instanceKey)) return;
 
-      // Skip if already defeated in this save
-      if (GameState.isEnemyDefeated(this.regionId, key + i)) return;
+      // difficultyOverride lets earlier enemies reappear as harder review enemies
+      const base = ENEMIES[spawn.id];
+      const data = spawn.difficultyOverride
+        ? { ...base, difficulty: spawn.difficultyOverride }
+        : base;
 
       const enemy = new Enemy(
-        this, tx(tile.col), ty(tile.row), data,
-        (d) => this._startBattle(d, key + i),
+        this, tx(spawn.col), ty(spawn.row), data,
+        (d) => this._startBattle(d, instanceKey),
       );
       enemy.registerOverlap(this.mimi.sprite);
       this._enemies.push(enemy);
@@ -179,161 +265,320 @@ export default class ExploreScene extends Phaser.Scene {
 
   _startBattle(enemyData, instanceKey) {
     this.scene.start('BattleScene', {
-      enemy:        enemyData,
+      enemy:         enemyData,
       enemyInstance: instanceKey,
-      regionId:     this.regionId,
-      isBoss:       false,
-      returnScene:  'ExploreScene',
-      returnData:   { regionId: this.regionId },
+      regionId:      this.regionId,
+      isBoss:        false,
+      returnScene:   'ExploreScene',
+      returnData:    {
+        regionId: this.regionId,
+        mimiX:    this.mimi.x,
+        mimiY:    this.mimi.y,
+      },
     });
   }
 
   _handleBattleResult() {
+    this._processBattleResult();
+    this._showBattleMessages();
+  }
+
+  _processBattleResult() {
     const { battleResult } = this;
     if (!battleResult) return;
-
     if (battleResult.victory) {
       const key = battleResult.enemyInstance;
       if (key !== undefined) {
         GameState.defeatEnemy(this.regionId, key);
-        this._liveCount = Math.max(0, this._liveCount - 1);
-      }
-
-      if (battleResult.isBoss) {
-        // Boss beaten → return to overworld
-        GameState.defeatBoss(this.regionId);
-        this.time.delayedCall(300, () => {
-          this.dialog.show(
-            `You defeated ${this.regionData.bossName}!\n\nThe path to the next region is now open!`,
-            () => this.scene.start('OverworldScene', { bossDefeated: true, regionId: this.regionId }),
-            '🎉 Victory!',
-          );
-        });
-      } else {
-        this._checkBossDoor();
-      }
-
-      // Level-up notification
-      if (battleResult.leveledUp) {
-        this.time.delayedCall(600, () => {
-          this.dialog.show(
-            `Level Up! Mimi is now Level ${GameState.level}.\nMath Power increased!`,
-            null, '⭐ Level Up!',
-          );
-        });
       }
     }
-
-    // HP sync
-    this.hud.refresh();
   }
 
-  // ── Boss door ─────────────────────────────────────────────────────────────
+  _showBattleMessages() {
+    const { battleResult } = this;
+    if (!battleResult || !battleResult.victory) return;
 
-  _setupBossDoor() {
-    const px = tx(BOSS_TILE.col);
-    const py = ty(BOSS_TILE.row);
-    const gfx = this.add.graphics();
+    // _preBattleAllClear was computed in create() BEFORE _processBattleResult(),
+    // so it is true only when THIS battle defeated the final enemy.
+    // We also guard against the boss already being defeated (re-entry).
+    const justUnlocked =
+      this._preBattleAllClear && !GameState.hasDefeatedBoss(this.regionId);
 
-    // Draw door graphic
-    gfx.fillStyle(0x442266);
-    gfx.fillRect(px - 20, py - 28, 40, 56);
-    gfx.fillStyle(0x6633AA);
-    gfx.fillRect(px - 14, py - 28, 28, 56);
-    gfx.lineStyle(2, 0xFFDD44, 1);
-    gfx.strokeRect(px - 14, py - 28, 28, 56);
-
-    // Padlock symbol (shown while locked)
-    this._bossLockText = this.add.text(px, py, '🔒', { fontSize: '22px' }).setOrigin(0.5).setDepth(10);
-
-    this._bossLabel = this.add.text(px, py + 34, `Boss:\n${this.regionData.bossName}`, {
-      fontSize: '10px', color: '#FF99FF', fontFamily: 'Arial', align: 'center',
-      stroke: '#000', strokeThickness: 2,
-    }).setOrigin(0.5, 0).setDepth(10);
-
-    // Boss door overlap zone
-    this._bossDoorZone = this.add.zone(px, py, 40, 56).setDepth(5);
-    this.physics.world.enable(this._bossDoorZone);
-    this._bossDoorZone.body.setAllowGravity(false);
-    this._bossDoorZone.body.setImmovable(true);
-
-    this._bossOpen = GameState.hasDefeatedBoss(this.regionId);
+    // Redraw door now that state is final
     this._checkBossDoor();
 
-    // Overlap check for entering boss fight
-    this.physics.add.overlap(this.mimi.sprite, this._bossDoorZone, () => {
-      if (this._bossOpen) this._startBossBattle();
-    });
+    if (justUnlocked) {
+      this.dialog.show(
+        `All enemies defeated!\nThe boss seal is broken — enter when ready.`,
+        battleResult.leveledUp
+          ? () => this.time.delayedCall(400, () => {
+              this.dialog.show(
+                `Level Up! Mimi is now Level ${GameState.level}.\nMath Power increased!`,
+                null, '\u2B50 Level Up!',
+              );
+            })
+          : null,
+        '\u2728 Seal Broken!',
+      );
+    } else if (battleResult.leveledUp) {
+      this.time.delayedCall(400, () => {
+        this.dialog.show(
+          `Level Up! Mimi is now Level ${GameState.level}.\nMath Power increased!`,
+          null, '\u2B50 Level Up!',
+        );
+      });
+    }
   }
 
-  _checkBossDoor() {
-    // Open door only when all enemies in the region are defeated
-    const allCleared = ENEMY_TILES.every((tile, i) => {
-      const key = this.regionData.enemies[i % this.regionData.enemies.length] + i;
-      return GameState.isEnemyDefeated(this.regionId, key);
-    });
+  //  Boss door 
 
-    this._bossOpen = allCleared || GameState.hasDefeatedBoss(this.regionId);
+  /**
+   * Draws an ornate stone-arch boss door.
+   *
+   * Physics design (no overlap/blocker conflict):
+   *  LOCKED  – a static body in its own group (_doorGroup) blocks Mimi.
+   *             A collider callback on that group fires the locked dialog.
+   *  OPEN    – the static body is disabled; update() does a distance check
+   *             and fires _startBossBattle when Mimi is close enough.
+   *             This avoids fighting between overlap zones and blockers.
+   */
+  _setupBossDoor() {
+    const px = tx(this.regionData.bossTile.col);
+    const py = ty(this.regionData.bossTile.row);
+
+    // Dimensions
+    const DW       = 56;
+    const DH       = 68;
+    const PILLAR_W = 12;
+    const OPEN_W   = DW - PILLAR_W * 2;
+    const OPEN_H   = DH - 6;
+    const ARCH_R   = OPEN_W / 2 + 2;
+    const archCY   = py - DH / 2 + ARCH_R;
+    const openX    = px - OPEN_W / 2;
+    const openTopY = py - DH / 2 + 6;
+
+    // ── Static stone frame (never changes) ────────────────────────────────
+    const frame = this.add.graphics().setDepth(4);
+
+    frame.fillStyle(0x000000, 0.3);
+    frame.fillEllipse(px, py + DH / 2 + 3, DW + 12, 8);
+
+    frame.fillStyle(0x1E1E26);
+    frame.fillRect(px - DW / 2 - 3, py + DH / 2 - 8, DW + 6, 12);
+    frame.fillStyle(0x3E3E4E);
+    frame.fillRect(px - DW / 2 - 3, py + DH / 2 - 8, DW + 6, 4);
+
+    const lpx = px - DW / 2;
+    frame.fillStyle(0x1E1E26);
+    frame.fillRect(lpx - 3, py - DH / 2 - 3, PILLAR_W + 3, DH + 3);
+    frame.fillStyle(0x3C3C4C);
+    frame.fillRect(lpx, py - DH / 2, PILLAR_W, DH);
+    frame.fillStyle(0x545468, 0.85);
+    frame.fillRect(lpx + 1, py - DH / 2, 3, DH);
+    frame.fillStyle(0x18181E, 0.7);
+    frame.fillRect(lpx + PILLAR_W - 3, py - DH / 2, 3, DH);
+    frame.lineStyle(1, 0x14141A, 0.55);
+    for (let sy = py - DH / 2; sy < py + DH / 2; sy += 10) {
+      frame.lineBetween(lpx, sy, lpx + PILLAR_W, sy);
+    }
+
+    const rpx = px + DW / 2 - PILLAR_W;
+    frame.fillStyle(0x1E1E26);
+    frame.fillRect(rpx, py - DH / 2 - 3, PILLAR_W + 3, DH + 3);
+    frame.fillStyle(0x3C3C4C);
+    frame.fillRect(rpx, py - DH / 2, PILLAR_W, DH);
+    frame.fillStyle(0x545468, 0.85);
+    frame.fillRect(rpx + 1, py - DH / 2, 3, DH);
+    frame.fillStyle(0x18181E, 0.7);
+    frame.fillRect(rpx + PILLAR_W - 3, py - DH / 2, 3, DH);
+    frame.lineStyle(1, 0x14141A, 0.55);
+    for (let sy = py - DH / 2; sy < py + DH / 2; sy += 10) {
+      frame.lineBetween(rpx, sy, rpx + PILLAR_W, sy);
+    }
+
+    frame.fillStyle(0x1E1E26);
+    frame.fillCircle(px, archCY, ARCH_R + 3);
+    frame.fillStyle(0x3C3C4C);
+    frame.fillCircle(px, archCY, ARCH_R);
+    frame.fillStyle(0x3C3C4C);
+    frame.fillRect(lpx - 1, archCY, DW + 2, ARCH_R + 4);
+
+    // Boss name label
+    this._bossLabel = this.add.text(
+      px, py + DH / 2 + 10, this.regionData.bossName,
+      { fontSize: '9px', color: '#CC88FF', fontFamily: 'Arial',
+        fontStyle: 'bold', align: 'center', stroke: '#000', strokeThickness: 2 },
+    ).setOrigin(0.5, 0).setDepth(10);
+
+    // Remaining-enemies counter (shown when locked)
+    this._enemyCountText = this.add.text(
+      px, py - DH / 2 - 14, '',
+      { fontSize: '9px', color: '#FF9999', fontFamily: 'Arial',
+        align: 'center', stroke: '#000', strokeThickness: 2 },
+    ).setOrigin(0.5, 1).setDepth(10);
+
+    // ── Dynamic layers (redrawn on state change) ──────────────────────────
+    this._doorFill = this.add.graphics().setDepth(5);
+    this._doorDeco = this.add.graphics().setDepth(6);
+
+    // ── Physics: ONE static body in its own group ─────────────────────────
+    // When LOCKED  : body is enabled  → blocks Mimi; collider callback fires dialog
+    // When OPEN    : body is disabled → Mimi can enter; update() checks distance
+    this._doorGroup = this.physics.add.staticGroup();
+    const blocker   = this.add.rectangle(px, py, OPEN_W, DH, 0, 0);
+    this.physics.add.existing(blocker, true);
+    this._doorGroup.add(blocker);
+    this._doorBodyRect = blocker;  // keep reference for enable/disable
+
+    // Collider fires the locked message (Mimi bumps door → dialog)
+    this._doorMsgCooldown = false;
+    this.physics.add.collider(
+      this.mimi.sprite, this._doorGroup,
+      () => {
+        if (!this._bossOpen && !this._doorMsgCooldown && !this.dialog.isOpen) {
+          this._doorMsgCooldown = true;
+          const n = this._remainingEnemyCount();
+          this.dialog.show(
+            `The boss seal is unbroken.\nDefeat the ${n} remaining enemi${n === 1 ? 'y' : 'es'} to enter.`,
+            () => { this.time.delayedCall(2500, () => { this._doorMsgCooldown = false; }); },
+            '\uD83D\uDD12 Sealed',
+          );
+        }
+      },
+    );
+
+    // Stash geometry for _checkBossDoor redraws
+    this._doorGeom = { px, py, openX, openTopY, OPEN_W, OPEN_H };
+
+    // Evaluate initial state
+    this._bossOpen = GameState.hasDefeatedBoss(this.regionId);
+    this._checkBossDoor();
+  }
+
+  /** How many region enemies are not yet defeated. */
+  _remainingEnemyCount() {
+    return this.regionData.enemySpawns.filter((spawn, i) =>
+      !GameState.isEnemyDefeated(this.regionId, spawn.id + i),
+    ).length;
+  }
+
+  /**
+   * Recompute open/locked state and redraw the door visuals.
+   * Safe to call at any point (including during create() before dialog exists).
+   */
+  _checkBossDoor() {
+    const n = this._remainingEnemyCount();
+    this._bossOpen = (n === 0) || GameState.hasDefeatedBoss(this.regionId);
+
+    const { px, py, openX, openTopY, OPEN_W, OPEN_H } = this._doorGeom;
+    this._doorFill.clear();
+    this._doorDeco.clear();
 
     if (this._bossOpen) {
-      this._bossLockText.setVisible(false);
-      this._bossLabel.setColor('#FFDD44');
+      // Disable the physics body so Mimi can walk through
+      if (this._doorBodyRect?.body) this._doorBodyRect.body.enable = false;
+
+      // Purple portal glow
+      this._doorFill.fillStyle(0x110022);
+      this._doorFill.fillRect(openX, openTopY, OPEN_W, OPEN_H);
+      this._doorFill.fillStyle(0x5500AA, 0.7);
+      this._doorFill.fillEllipse(px, py, OPEN_W * 0.82, OPEN_H * 0.76);
+      this._doorFill.fillStyle(0xAA44FF, 0.45);
+      this._doorFill.fillEllipse(px, py - 4, OPEN_W * 0.45, OPEN_H * 0.45);
+      this._doorDeco.lineStyle(2, 0xFFDD44, 1);
+      this._doorDeco.strokeRect(openX + 1, openTopY + 1, OPEN_W - 2, OPEN_H - 2);
+
+      // Pulsing tween (only add once)
+      if (!this._doorPulseTween) {
+        this._doorPulseTween = this.tweens.add({
+          targets: this._doorFill, alpha: 0.65, duration: 900, yoyo: true, repeat: -1,
+        });
+      }
+
+      this._bossLabel.setColor('#FFDD44').setFontStyle('bold');
+      this._enemyCountText.setVisible(false);
+
+    } else {
+      // Re-enable physics body if it was disabled (shouldn't happen, but safe)
+      if (this._doorBodyRect?.body) this._doorBodyRect.body.enable = true;
+
+      // Stone door fill
+      this._doorFill.fillStyle(0x2A2A36);
+      this._doorFill.fillRect(openX, openTopY, OPEN_W, OPEN_H);
+      this._doorFill.fillStyle(0x38384A);
+      this._doorFill.fillRect(openX + 2, openTopY + 2, OPEN_W - 4, OPEN_H / 3);
+      this._doorFill.lineStyle(1, 0x1A1A24, 0.6);
+      for (let sy = openTopY + 10; sy < openTopY + OPEN_H; sy += 11) {
+        this._doorFill.lineBetween(openX + 2, sy, openX + OPEN_W - 2, sy);
+      }
+      this._doorFill.lineStyle(1, 0x1A1A24, 0.5);
+      this._doorFill.lineBetween(px, openTopY + 2, px, openTopY + OPEN_H - 2);
+
+      // Padlock
+      const lx = px, ly = py - 2;
+      this._doorDeco.fillStyle(0x997700);
+      this._doorDeco.fillRoundedRect(lx - 9, ly - 2, 18, 14, 2);
+      this._doorDeco.fillStyle(0xFFCC22);
+      this._doorDeco.fillRoundedRect(lx - 7, ly, 14, 11, 2);
+      this._doorDeco.lineStyle(4, 0xAA8800, 1);
+      this._doorDeco.strokeCircle(lx, ly - 2, 6);
+      this._doorDeco.fillStyle(0x2A2A36);
+      this._doorDeco.fillRect(lx - 10, ly - 2, 20, 7);
+      this._doorDeco.fillStyle(0x6E5500);
+      this._doorDeco.fillCircle(lx, ly + 5, 2.5);
+      this._doorDeco.fillTriangle(lx - 2, ly + 7, lx + 2, ly + 7, lx, ly + 11);
+
+      this._enemyCountText
+        .setText(`${n} of ${this.regionData.enemySpawns.length} enemies remain`)
+        .setVisible(true);
+      this._bossLabel.setColor('#CC88FF');
     }
   }
 
   _startBossBattle() {
     if (this._bossBattleStarted) return;
     this._bossBattleStarted = true;
-
-    const bossKey  = this.regionData.boss;
-    const bossData = ENEMIES[bossKey];
+    const bossData = ENEMIES[this.regionData.boss];
     this.scene.start('BattleScene', {
-      enemy:       bossData,
+      enemy:         bossData,
       enemyInstance: 'boss',
-      regionId:    this.regionId,
-      isBoss:      true,
-      returnScene: 'ExploreScene',
-      returnData:  { regionId: this.regionId },
+      regionId:      this.regionId,
+      isBoss:        true,
+      returnScene:   'ExploreScene',
+      returnData:    {
+        regionId: this.regionId,
+        mimiX:    this.mimi.x,
+        mimiY:    this.mimi.y,
+      },
     });
   }
 
-  // ── NPC ───────────────────────────────────────────────────────────────────
+  //  NPC 
 
   _setupNPC() {
-    const px = tx(NPC_TILE.col);
-    const py = ty(NPC_TILE.row);
+    const px = tx(this.regionData.npcTile.col);
+    const py = ty(this.regionData.npcTile.row);
 
-    const npc = this.add.image(px, py, 'tile_npc').setDepth(8);
-    this.tweens.add({ targets: npc, y: py - 4, duration: 800, yoyo: true, repeat: -1 });
-
-    this.add.text(px, py + 20, 'NPC', {
-      fontSize: '10px', color: '#FFE8A0', fontFamily: 'Arial',
-      stroke: '#000', strokeThickness: 2,
-    }).setOrigin(0.5, 0).setDepth(9);
-
-    // Interaction zone
-    const zone = this.add.zone(px, py, 48, 48).setDepth(5);
-    this.physics.world.enable(zone);
-    zone.body.setAllowGravity(false);
-
-    let canInteract = true;
-    this.physics.add.overlap(this.mimi.sprite, zone, () => {
-      if (canInteract && !this.dialog.isOpen) {
-        canInteract = false;
-        this.dialog.show(this.regionData.npcHint, () => {
-          this.time.delayedCall(1000, () => { canInteract = true; });
-        }, '🐾 Hint');
-      }
-    });
+    this._npc = new NPC(
+      this,
+      px, py,
+      { spriteKey: 'npc_wizard', spriteKeyB: 'npc_wizard_b' },
+      (done) => {
+        if (!this.dialog.isOpen) {
+          this.dialog.show(this.regionData.npcHint, done, ' Hint');
+        }
+      },
+    );
+    this._npc.registerOverlap(this.mimi.sprite);
   }
 
-  // ── Treasure chest ────────────────────────────────────────────────────────
+  //  Treasure chest 
 
   _setupChest() {
     if (GameState.isEnemyDefeated(this.regionId, 'chest')) return;
 
-    const px = tx(CHEST_TILE.col);
-    const py = ty(CHEST_TILE.row);
+    const px = tx(this.regionData.chestTile.col);
+    const py = ty(this.regionData.chestTile.row);
     const chest = this.add.image(px, py, 'tile_chest').setDepth(8);
 
     const zone = this.add.zone(px, py, 40, 40).setDepth(5);
@@ -352,21 +597,21 @@ export default class ExploreScene extends Phaser.Scene {
       chest.setTint(0x666666);
 
       const ITEM_NAMES = {
-        sardine: 'Sardine 🐟 (+2 HP)',
-        yarn_ball: 'Yarn Ball 🧶 (+5s timer)',
-        catnip: 'Catnip 🌿 (double hit)',
-        lucky_collar: 'Lucky Collar 💎 (shield)',
-        fish_fossil: 'Fish Fossil 🦴 (hint)',
+        sardine:       'Sardine  (+2 HP)',
+        yarn_ball:     'Yarn Ball  (+5s timer)',
+        catnip:        'Catnip  (double hit)',
+        lucky_collar:  'Lucky Collar  (shield)',
+        fish_fossil:   'Fish Fossil  (hint)',
       };
       this.dialog.show(
         `You opened a chest!\nFound: ${ITEM_NAMES[item]}`,
-        null, '📦 Treasure!',
+        null, ' Treasure!',
       );
       this.hud.refresh();
     });
   }
 
-  // ── Scene lifecycle ───────────────────────────────────────────────────────
+  //  Scene lifecycle 
 
   update() {
     if (this.dialog.isOpen) {
@@ -378,7 +623,24 @@ export default class ExploreScene extends Phaser.Scene {
     this.mimi.update();
     this.hud.update();
 
-    // Pause → overworld
+    // Tick enemy wander AI
+    for (const enemy of this._enemies) {
+      if (enemy.alive) enemy.update();
+    }
+
+    // Tick NPC wander AI
+    if (this._npc) this._npc.update();
+
+    // Boss door — check proximity when open (collision handles the locked case)
+    if (this._bossOpen && !this._bossBattleStarted && this._doorGeom) {
+      const { px, py } = this._doorGeom;
+      const dx = this.mimi.x - px;
+      const dy = this.mimi.y - py;
+      if (dx * dx + dy * dy < 40 * 40) {
+        this._startBossBattle();
+      }
+    }
+
     if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
       this.scene.start('OverworldScene');
     }

@@ -3,9 +3,10 @@
  *
  * Wraps a Phaser physics image and handles:
  *   - WASD / arrow-key movement
- *   - 4-directional sprite tinting to hint direction
+ *   - 4-directional walking sprites
  *   - Idle bobbing animation
  */
+import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
 
 export default class Mimi {
@@ -17,13 +18,14 @@ export default class Mimi {
   constructor(scene, x, y) {
     this.scene = scene;
     this.speed = 160;
+    this._frozen = false;
 
     this.sprite = scene.physics.add.image(x, y, 'mimi');
     this.sprite.setDepth(10);
     this.sprite.setCollideWorldBounds(true);
 
-    // Bobbing tween
-    scene.tweens.add({
+    // Bobbing tween - will be paused when moving
+    this._bobbingTween = scene.tweens.add({
       targets:   this.sprite,
       y:         y - 4,
       duration:  600,
@@ -31,6 +33,11 @@ export default class Mimi {
       repeat:    -1,
       ease:      'Sine.easeInOut',
     });
+
+    // Leg animation state — alternates frame A / B every STEP_INTERVAL ticks
+    this._stepFrame   = 0;   // 0 = frame A, 1 = frame B
+    this._stepCounter = 0;
+    this._lastDir     = '';  // detect direction changes so steps reset cleanly
 
     this._setupKeys(scene);
   }
@@ -46,6 +53,8 @@ export default class Mimi {
   }
 
   update() {
+    if (this._frozen) return;
+
     const { cursors, wasd, sprite, speed } = this;
     let vx = 0;
     let vy = 0;
@@ -59,6 +68,65 @@ export default class Mimi {
     if (vx !== 0 && vy !== 0) {
       vx *= 0.707;
       vy *= 0.707;
+    }
+
+    // Update sprite based on movement direction
+    if (vx !== 0 || vy !== 0) {
+      // Determine dominant direction
+      let dir;
+      if (Math.abs(vx) > Math.abs(vy)) {
+        dir = vx > 0 ? 'right' : 'left';
+      } else {
+        dir = vy > 0 ? 'down' : 'up';
+      }
+
+      // Reset step frame on direction change to avoid visual glitch
+      if (dir !== this._lastDir) {
+        this._stepFrame   = 0;
+        this._stepCounter = 0;
+        this._lastDir     = dir;
+      }
+
+      // Advance step counter — swap leg frame every 9 ticks (~150 ms at 60 fps)
+      this._stepCounter++;
+      if (this._stepCounter >= 9) {
+        this._stepCounter = 0;
+        this._stepFrame   = 1 - this._stepFrame;
+      }
+
+      const suffix     = this._stepFrame === 1 ? '_b' : '';
+      const newTexture = `mimi_walk_${dir}${suffix}`;
+      if (this.scene.textures.exists(newTexture)) {
+        sprite.setTexture(newTexture);
+      }
+
+      // Pause bobbing when moving
+      if (this._bobbingTween && this._bobbingTween.isPlaying()) {
+        this._bobbingTween.pause();
+      }
+    } else {
+      // Reset walking state
+      this._stepFrame   = 0;
+      this._stepCounter = 0;
+      this._lastDir     = '';
+
+      // Idle - use default sprite
+      sprite.setTexture('mimi');
+      
+      // Resume bobbing when idle
+      if (this._bobbingTween && !this._bobbingTween.isPlaying()) {
+        // Restart bobbing from current position (don't snap back)
+        const currentY = sprite.y;
+        this._bobbingTween.stop();
+        this._bobbingTween = this.scene.tweens.add({
+          targets:   sprite,
+          y:         currentY - 4,
+          duration:  600,
+          yoyo:      true,
+          repeat:    -1,
+          ease:      'Sine.easeInOut',
+        });
+      }
     }
 
     sprite.setVelocity(vx, vy);

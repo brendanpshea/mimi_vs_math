@@ -2,6 +2,7 @@
  * BootScene — preloads all assets, generates procedural tile textures,
  * then hands off to TitleScene.
  */
+import * as Phaser from 'phaser';
 import { loadAllAssets } from '../config/AssetConfig.js';
 
 export default class BootScene extends Phaser.Scene {
@@ -22,6 +23,10 @@ export default class BootScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     this.load.on('progress', v => barFill.setDisplaySize(400 * v, 20));
+    
+    this.load.on('loaderror', (file) => {
+      console.error(`Failed to load: ${file.key} from ${file.src}`);
+    });
 
     // ── Load all character/UI sprites ──────────────────────────────────
     loadAllAssets(this);
@@ -30,6 +35,7 @@ export default class BootScene extends Phaser.Scene {
   create() {
     // Generate procedural tile textures used in ExploreScene
     this._generateTileTextures();
+    
     this.scene.start('TitleScene');
   }
 

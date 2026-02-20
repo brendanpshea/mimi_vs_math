@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 40">
+  <!-- shadow -->
+  <ellipse cx="12" cy="39" rx="9" ry="2" fill="#000" opacity="0.3"/>
+  <!-- base plinth  dark outline -->
+  <rect x="3"  y="33" width="18" height="6" fill="#2A2A34" rx="1"/>
+  <!-- base plinth  light top -->
+  <rect x="4"  y="33" width="16" height="2" fill="#545462"/>
+  <rect x="3"  y="35" width="18" height="4" fill="#3C3C48"/>
+  <!-- column shaft  dark bevel -->
+  <rect x="5"  y="9"  width="14" height="25" fill="#2E2E38"/>
+  <!-- column shaft  main face -->
+  <rect x="6"  y="9"  width="12" height="25" fill="#484858"/>
+  <!-- left highlight strip -->
+  <rect x="6.5" y="10" width="3.5" height="23" fill="#5C5C6E" opacity="0.8"/>
+  <!-- right shadow strip -->
+  <rect x="15"  y="9"  width="2"   height="25" fill="#222230" opacity="0.7"/>
+  <!-- fluting grooves -->
+  <line x1="10" y1="9"  x2="10" y2="34" stroke="#242434" stroke-width="0.8" opacity="0.6"/>
+  <line x1="14" y1="9"  x2="14" y2="34" stroke="#242434" stroke-width="0.8" opacity="0.6"/>
+  <!-- capital (top)  dark outline -->
+  <rect x="3"  y="6"  width="18" height="4" fill="#2A2A34" rx="1"/>
+  <rect x="4"  y="6"  width="16" height="2" fill="#545462"/>
+  <rect x="3"  y="8"  width="18" height="2" fill="#3C3C48"/>
+  <!-- broken top / jagged edge -->
+  <polygon points="5,6 9,1 12,4 16,0 20,6" fill="#2E2E38"/>
+  <polygon points="9,1 12,4 10,2" fill="#1A1A22" opacity="0.7"/>
+  <!-- moss patch -->
+  <rect x="5" y="24" width="5" height="4" fill="#1E3010" opacity="0.55" rx="1"/>
+  <!-- crack -->
+  <path d="M11,16 L12.5,22 L11.5,28" stroke="#1A1A22" stroke-width="1" fill="none" opacity="0.8"/>
+</svg>

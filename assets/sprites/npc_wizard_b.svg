@@ -1,0 +1,67 @@
+<svg width="48" height="56" viewBox="0 0 48 56" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    NPC Wizard — walk frame B.
+    Key differences from frame A:
+      • Staff tilted forward (toward viewer) by ~15 degrees.
+      • Left arm extended more forward.
+      • Robe hem shifted right to imply right-foot stride.
+      • Head/hat leaning 3 degrees right.
+    Cycles with npc_wizard.svg every ~450 ms for gentle walk animation.
+  -->
+
+  <!-- Shadow -->
+  <ellipse cx="25" cy="52" rx="12" ry="3" fill="#000000" opacity="0.2"/>
+
+  <!-- Robe base ellipse (slightly shifted right for stride) -->
+  <ellipse cx="25" cy="42" rx="14" ry="10" fill="#4A5FA8"/>
+
+  <!-- Body/robe — hem shifted right 2 px to imply stride -->
+  <path d="M14,30 Q9,38 13,43 L37,43 Q40,38 34,30 Z" fill="#5A70C8"/>
+
+  <!-- Belt -->
+  <ellipse cx="24" cy="30" rx="10" ry="2.5" fill="#8B7355"/>
+  <circle  cx="24" cy="30" r="1.5" fill="#FFD700"/>
+
+  <!-- Head + hat group — lean 3° right -->
+  <g transform="rotate(3, 24, 14)">
+    <!-- Head -->
+    <circle cx="24" cy="18" r="9" fill="#FFD4A3"/>
+
+    <!-- Wizard hat -->
+    <path d="M18,16 L24,4 L30,16 Q28,18 24,18 Q20,18 18,16 Z" fill="#4A5FA8"/>
+    <ellipse cx="24" cy="16" rx="8" ry="2" fill="#5A70C8"/>
+
+    <!-- Hat decorations -->
+    <circle cx="22" cy="10" r="1.2" fill="#FFD700" opacity="0.8"/>
+    <path d="M26,11 L26.8,11.5 L27,12.5 L26,12 L25,12.5 L25.2,11.5 Z" fill="#FFD700" opacity="0.8"/>
+
+    <!-- Eyes -->
+    <circle cx="21" cy="18" r="1.5" fill="#2C3E50"/>
+    <circle cx="27" cy="18" r="1.5" fill="#2C3E50"/>
+    <circle cx="21.5" cy="17.5" r="0.6" fill="#FFFFFF"/>
+    <circle cx="27.5" cy="17.5" r="0.6" fill="#FFFFFF"/>
+
+    <!-- Smile -->
+    <path d="M21,22 Q24,24 27,22" stroke="#8B6B4A" stroke-width="1" fill="none" stroke-linecap="round"/>
+
+    <!-- Beard -->
+    <path d="M18,22 Q20,26 24,27 Q28,26 30,22" fill="#D4D4D4"/>
+    <ellipse cx="24" cy="25" rx="4" ry="3" fill="#E8E8E8"/>
+  </g>
+
+  <!-- Left arm/sleeve — rotated more forward for stride -->
+  <ellipse cx="14" cy="34" rx="4" ry="6" fill="#5A70C8" transform="rotate(-38 14 34)"/>
+
+  <!-- Right arm/sleeve — back slightly -->
+  <ellipse cx="34" cy="34" rx="4" ry="6" fill="#5A70C8" transform="rotate(18 34 34)"/>
+
+  <!-- Hands -->
+  <circle cx="11" cy="37" r="2.5" fill="#FFD4A3"/>
+  <circle cx="36" cy="39" r="2.5" fill="#FFD4A3"/>
+
+  <!-- Staff (tilted forward ~15° from A frame — orb moves to right and up) -->
+  <line x1="11" y1="37" x2="13" y2="10"
+        stroke="#8B6B4A" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="13" cy="8" r="2.5" fill="#9966FF" opacity="0.7"/>
+  <circle cx="13" cy="8" r="1.5" fill="#CC99FF" opacity="0.9"/>
+</svg>

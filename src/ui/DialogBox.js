@@ -5,6 +5,8 @@
  *   const dlg = new DialogBox(scene);
  *   dlg.show('Hello, Mimi! Good luck!', () => console.log('closed'));
  */
+import * as Phaser from 'phaser';
+
 export default class DialogBox {
   /** @param {Phaser.Scene} scene */
   constructor(scene) {

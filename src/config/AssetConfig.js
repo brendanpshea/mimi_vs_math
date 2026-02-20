@@ -25,6 +25,15 @@ export const SPRITE_DEFS = [
   // Player
   { key: 'mimi',                  file: 'mimi',                  size: 64 },
   { key: 'mimi_battle',           file: 'mimi_battle',           size: 96 },
+  { key: 'mimi_walk_down',        file: 'mimi_walk_down',        size: 64 },
+  { key: 'mimi_walk_up',          file: 'mimi_walk_up',          size: 64 },
+  { key: 'mimi_walk_left',        file: 'mimi_walk_left',        size: 64 },
+  { key: 'mimi_walk_right',       file: 'mimi_walk_right',       size: 64 },
+  // Frame-B walk sprites (opposite leg phase — cycled by Mimi.js step timer)
+  { key: 'mimi_walk_down_b',      file: 'mimi_walk_down_b',      size: 64 },
+  { key: 'mimi_walk_up_b',        file: 'mimi_walk_up_b',        size: 64 },
+  { key: 'mimi_walk_left_b',      file: 'mimi_walk_left_b',      size: 64 },
+  { key: 'mimi_walk_right_b',     file: 'mimi_walk_right_b',     size: 64 },
 
   // Region 0 — Sunny Village
   { key: 'counting_caterpillar',  file: 'counting_caterpillar',  size: 64 },
@@ -66,23 +75,76 @@ export const UI_DEFS = [
 ];
 
 /**
+ * Terrain tile definitions (floors, walls, decorations)
+ */
+export const TERRAIN_DEFS = [
+  // Floor tiles (A = base, B/C = texture variants for random tiling)
+  { key: 'floor_grass',   file: 'floor_grass',   size: 32 },
+  { key: 'floor_grass_b', file: 'floor_grass_b', size: 32 },
+  { key: 'floor_grass_c', file: 'floor_grass_c', size: 32 },
+  { key: 'floor_sand',    file: 'floor_sand',    size: 32 },
+  { key: 'floor_sand_b',  file: 'floor_sand_b',  size: 32 },
+  { key: 'floor_sand_c',  file: 'floor_sand_c',  size: 32 },
+  { key: 'floor_snow',    file: 'floor_snow',    size: 32 },
+  { key: 'floor_snow_b',  file: 'floor_snow_b',  size: 32 },
+  { key: 'floor_snow_c',  file: 'floor_snow_c',  size: 32 },
+  { key: 'floor_stone',   file: 'floor_stone',   size: 32 },
+  { key: 'floor_stone_b', file: 'floor_stone_b', size: 32 },
+  { key: 'floor_stone_c', file: 'floor_stone_c', size: 32 },
+  
+  // Wall tiles
+  { key: 'wall_brick',  file: 'wall_brick',  size: 32 },
+  { key: 'wall_ice',    file: 'wall_ice',    size: 32 },
+  
+  // Decorations
+  { key: 'decoration_tree',        file: 'decoration_tree',        size: { width: 32, height: 48 } },
+  { key: 'decoration_rock',        file: 'decoration_rock',        size: 32 },
+  { key: 'decoration_cactus',      file: 'decoration_cactus',      size: { width: 32, height: 48 } },
+  { key: 'decoration_flower',      file: 'decoration_flower',      size: 32 },
+  { key: 'decoration_mushroom',    file: 'decoration_mushroom',    size: 32 },
+  { key: 'decoration_palmtree',    file: 'decoration_palmtree',    size: { width: 32, height: 48 } },
+  { key: 'decoration_icicle',      file: 'decoration_icicle',      size: { width: 32, height: 48 } },
+  { key: 'decoration_snowpile',    file: 'decoration_snowpile',    size: { width: 32, height: 16 } },
+  { key: 'decoration_pillar',      file: 'decoration_pillar',      size: { width: 24, height: 40 } },
+  { key: 'decoration_gravestone',  file: 'decoration_gravestone',  size: { width: 24, height: 32 } },
+  
+  // NPCs (A = idle/stand, B = walk frame — cycled by NPC.js step timer)
+  { key: 'npc_wizard',   file: 'npc_wizard',   size: { width: 48, height: 56 } },
+  { key: 'npc_wizard_b', file: 'npc_wizard_b', size: { width: 48, height: 56 } },
+];
+
+/**
+ * Battle backdrop definitions (Final Fantasy-style backgrounds)
+ */
+export const BACKDROP_DEFS = [
+  { key: 'backdrop_village', file: 'backdrop_village', size: { width: 800, height: 600 } },
+  { key: 'backdrop_meadow',  file: 'backdrop_meadow',  size: { width: 800, height: 600 } },
+  { key: 'backdrop_desert',  file: 'backdrop_desert',  size: { width: 800, height: 600 } },
+  { key: 'backdrop_ice',     file: 'backdrop_ice',     size: { width: 800, height: 600 } },
+  { key: 'backdrop_shadow',  file: 'backdrop_shadow',  size: { width: 800, height: 600 } },
+];
+
+/**
  * Load a character sprite into a Phaser scene's loader.
  * @param {Phaser.Scene} scene
  * @param {string} key    Phaser texture key
  * @param {string} file   Filename without extension (relative to assets/sprites/)
- * @param {number} size   Pixel size (used for SVG rendering)
+ * @param {number|object} size   Pixel size (used for SVG rendering) - can be number or {width, height}
  */
 export function loadSprite(scene, key, file, size = 64) {
   const base = `assets/sprites/${file}`;
   if (ASSET_TYPE === 'svg') {
-    scene.load.svg(key, `${base}.svg`, { width: size, height: size });
+    const sizeConfig = typeof size === 'number' 
+      ? { width: size, height: size }
+      : size;
+    scene.load.svg(key, `${base}.svg`, sizeConfig);
   } else {
     scene.load.image(key, `${base}.png`);
   }
 }
 
 /**
- * Load all sprites defined in SPRITE_DEFS and UI_DEFS.
+ * Load all sprites defined in SPRITE_DEFS, UI_DEFS, TERRAIN_DEFS, and BACKDROP_DEFS.
  * Call this from BootScene.preload().
  * @param {Phaser.Scene} scene
  */
@@ -91,6 +153,12 @@ export function loadAllAssets(scene) {
     loadSprite(scene, def.key, def.file, def.size);
   }
   for (const def of UI_DEFS) {
+    loadSprite(scene, def.key, def.file, def.size);
+  }
+  for (const def of TERRAIN_DEFS) {
+    loadSprite(scene, def.key, def.file, def.size);
+  }
+  for (const def of BACKDROP_DEFS) {
     loadSprite(scene, def.key, def.file, def.size);
   }
 }

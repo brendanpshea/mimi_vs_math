@@ -64,16 +64,36 @@ export default class BossIntroScene extends Phaser.Scene {
     const onLeft   = (p.side ?? 'left') === 'left';
     const avatarX  = onLeft ? W * 0.19 : W * 0.81;
     const avatarY  = H * 0.29;
-    const AVATAR_SIZE = 128;
+    const AVATAR_SIZE = 160;
 
     // Glow ring behind portrait
     const glowColor = p.nameColor
       ? parseInt(p.nameColor.replace('#', ''), 16)
       : 0x4466AA;
-    const ring = this.add.circle(avatarX, avatarY, AVATAR_SIZE / 2 + 6,
-      glowColor, 0.25);
+
+    // Dramatic radiating lines behind portrait
+    const rays = this.add.graphics();
+    const RAY_COUNT = 12;
+    for (let i = 0; i < RAY_COUNT; i++) {
+      const angle = (i / RAY_COUNT) * Math.PI * 2;
+      const innerR = AVATAR_SIZE / 2 + 10;
+      const outerR = AVATAR_SIZE / 2 + 60;
+      rays.lineStyle(2, glowColor, 0.15);
+      rays.lineBetween(
+        avatarX + Math.cos(angle) * innerR, avatarY + Math.sin(angle) * innerR,
+        avatarX + Math.cos(angle) * outerR, avatarY + Math.sin(angle) * outerR,
+      );
+    }
     this.tweens.add({
-      targets: ring, alpha: { from: 0.15, to: 0.45 },
+      targets: rays, angle: 360,
+      duration: 20000, repeat: -1,
+    });
+
+    // Outer glow ring
+    const ring2 = this.add.circle(avatarX, avatarY, AVATAR_SIZE / 2 + 12, glowColor, 0.1);
+    const ring = this.add.circle(avatarX, avatarY, AVATAR_SIZE / 2 + 6, glowColor, 0.25);
+    this.tweens.add({
+      targets: [ring, ring2], alpha: { from: 0.12, to: 0.45 },
       duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
     });
 
@@ -82,7 +102,7 @@ export default class BossIntroScene extends Phaser.Scene {
         .setDisplaySize(AVATAR_SIZE, AVATAR_SIZE);
       if (!onLeft) portrait.setFlipX(true);
       this.tweens.add({
-        targets: portrait, y: avatarY - 9,
+        targets: portrait, y: avatarY - 10,
         duration: 1700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
       });
     } else {
@@ -90,17 +110,20 @@ export default class BossIntroScene extends Phaser.Scene {
       this.add.rectangle(avatarX, avatarY, AVATAR_SIZE, AVATAR_SIZE,
         glowColor, 0.3).setStrokeStyle(2, glowColor, 0.8);
       this.add.text(avatarX, avatarY, p.speaker[0] ?? '?', {
-        fontSize: '48px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+        fontSize: '56px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
       }).setOrigin(0.5);
     }
 
-    // Speaker name badge
-    const badgeY = avatarY + AVATAR_SIZE / 2 + 18;
-    this.add.rectangle(avatarX, badgeY, 160, 28, 0x060618, 0.90)
-      .setStrokeStyle(1, glowColor, 0.7);
+    // Speaker name badge (larger, with Fredoka font)
+    const badgeY = avatarY + AVATAR_SIZE / 2 + 20;
+    const badgeGfx = this.add.graphics();
+    badgeGfx.fillStyle(0x060618, 0.92);
+    badgeGfx.fillRoundedRect(avatarX - 90, badgeY - 16, 180, 32, 8);
+    badgeGfx.lineStyle(1.5, glowColor, 0.7);
+    badgeGfx.strokeRoundedRect(avatarX - 90, badgeY - 16, 180, 32, 8);
     this.add.text(avatarX, badgeY, p.speaker, {
-      fontSize: '13px', color: p.nameColor ?? '#FFFFFF',
-      fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+      fontSize: '15px', color: p.nameColor ?? '#FFFFFF',
+      fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
     // ── Dialogue box ────────────────────────────────────────────────────
@@ -145,15 +168,33 @@ export default class BossIntroScene extends Phaser.Scene {
     const stCol  = isBoss ? 0xFF5544 : 0x4488FF;
     const txtCol = isBoss ? '#FF9988' : '#88AAFF';
 
+    // Button shadow
+    this.add.rectangle(W / 2 + 2, btnY + 3, 220, 48, 0x000000, 0.4);
+
     const btn = this.add.rectangle(W / 2, btnY, 220, 48, bgCol)
       .setStrokeStyle(2, stCol)
       .setInteractive({ useHandCursor: true });
-    this.add.text(W / 2, btnY, label, {
-      fontSize: '20px', color: txtCol, fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+    // Top bevel
+    this.add.rectangle(W / 2, btnY - 10, 214, 12, 0xFFFFFF, 0.06);
+
+    const btnText = this.add.text(W / 2, btnY, label, {
+      fontSize: '20px', color: txtCol, fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    btn.on('pointerover', () => btn.setAlpha(0.75));
-    btn.on('pointerout',  () => btn.setAlpha(1));
+    // Pulse the battle button on the last panel
+    if (isBoss) {
+      this.tweens.add({
+        targets: [btn, btnText], scaleX: 1.06, scaleY: 1.06,
+        duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      });
+    }
+
+    btn.on('pointerover', () => {
+      this.tweens.add({ targets: [btn, btnText], scaleX: 1.08, scaleY: 1.08, duration: 80 });
+    });
+    btn.on('pointerout', () => {
+      this.tweens.add({ targets: [btn, btnText], scaleX: 1, scaleY: 1, duration: 80 });
+    });
     btn.on('pointerdown', () => this._advance());
 
     this.input.keyboard.once('keydown-ENTER', () => this._advance());

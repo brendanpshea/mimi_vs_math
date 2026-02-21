@@ -18,6 +18,7 @@
  */
 import * as Phaser from 'phaser';
 import GameState   from '../config/GameState.js';
+import BGM         from '../audio/BGM.js';
 
 export default class BossIntroScene extends Phaser.Scene {
   constructor() { super({ key: 'BossIntroScene' }); }
@@ -32,6 +33,7 @@ export default class BossIntroScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.fadeIn(400, 0, 0, 0);
+    BGM.play('boss');
     this.time.delayedCall(200, () => this.sound.play('sfx_boss_intro', { volume: 0.80 }));
 
     this._draw();

@@ -8,6 +8,7 @@
 import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
 import REGIONS   from '../data/regions.js';
+import BGM       from '../audio/BGM.js';
 
 const TITLE_COLOR = '#FFD700';
 const BG_COLOR    = 0x0D0D2A;
@@ -18,6 +19,7 @@ export default class TitleScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.fadeIn(400, 0, 0, 0);
+    BGM.play('title');
 
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;

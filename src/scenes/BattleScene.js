@@ -13,6 +13,7 @@
  */
 import * as Phaser from 'phaser';
 import GameState             from '../config/GameState.js';
+import BGM                   from '../audio/BGM.js';
 import { generateQuestion }  from '../math/QuestionBank.js';
 import { getChoices }        from '../math/Distractors.js';
 import { getExplanation }    from '../math/Explanations.js';
@@ -69,6 +70,7 @@ export default class BattleScene extends Phaser.Scene {
     this._setupKeys();
 
     this.sound.play('sfx_battle_start', { volume: 0.75 });
+    BGM.play(this.isBoss ? 'boss' : 'battle');
     this.time.delayedCall(400, () => this._nextQuestion());
   }
 

@@ -9,6 +9,7 @@
  */
 import * as Phaser from 'phaser';
 import GameState   from '../config/GameState.js';
+import BGM         from '../audio/BGM.js';
 import REGIONS     from '../data/regions.js';
 import ENEMIES     from '../data/enemies.js';
 import MAPS, { LANDMARKS, POSITIONS } from '../data/maps.js';
@@ -54,6 +55,7 @@ export default class ExploreScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.fadeIn(400, 0, 0, 0);
+    BGM.play('explore');
 
     // World geometry
     this._drawRoom();

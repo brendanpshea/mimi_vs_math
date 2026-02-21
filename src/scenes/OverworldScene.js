@@ -7,6 +7,7 @@
 import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
 import REGIONS   from '../data/regions.js';
+import BGM       from '../audio/BGM.js';
 
 const NODE_RADIUS = 40;
 const PATH_COLOR  = 0x8B6A3A;
@@ -34,6 +35,7 @@ export default class OverworldScene extends Phaser.Scene {
 
   create(data) {
     this.cameras.main.fadeIn(400, 0, 0, 0);
+    BGM.play('overworld');
 
     if (data?.bossDefeated) GameState.defeatBoss(data.regionId);
 

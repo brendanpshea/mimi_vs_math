@@ -68,6 +68,7 @@ export default class BattleScene extends Phaser.Scene {
     this._buildLayout(W, H);
     this._setupKeys();
 
+    this.sound.play('sfx_battle_start', { volume: 0.75 });
     this.time.delayedCall(400, () => this._nextQuestion());
   }
 
@@ -435,6 +436,8 @@ export default class BattleScene extends Phaser.Scene {
 
   _onCorrect(isFast) {
     GameState.recordAnswer(true, this.time.now - this._qStartTime);
+    this.sound.play('sfx_hit_enemy', { volume: 0.70 });
+    this.sound.play('sfx_correct',   { volume: 0.55 });
 
     this.streak++;
     let dmg = isFast ? 3 : 2;
@@ -484,6 +487,7 @@ export default class BattleScene extends Phaser.Scene {
 
   _onWrong() {
     GameState.recordAnswer(false, this.time.now - this._qStartTime);
+    this.sound.play('sfx_wrong', { volume: 0.75 });
     this.battleWrongAnswers++;
 
     this.streak = 0;
@@ -502,6 +506,7 @@ export default class BattleScene extends Phaser.Scene {
       return;
     }
     const dmg = this.enemyData.damage ?? 1;
+    this.sound.play('sfx_hit_player', { volume: 0.80 });
     this.playerHP = Math.max(0, this.playerHP - dmg);
     GameState.hp  = this.playerHP;
     this._updateHPBar(this.playerHPBar, this.playerHP);
@@ -742,6 +747,7 @@ export default class BattleScene extends Phaser.Scene {
     const H = this.cameras.main.height;
 
     if (victory) {
+      this.sound.play('sfx_victory', { volume: 0.80 });
       // Victory effects
       this._spawnConfetti(W, H);
       this.cameras.main.flash(400, 255, 215, 0, false, null, null, 0.15);

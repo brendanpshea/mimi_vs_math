@@ -197,6 +197,25 @@ export function loadSprite(scene, key, file, size = 64) {
   }
 }
 
+/** Keys for every WAV file in assets/audio/. */
+export const AUDIO_KEYS = [
+  'sfx_correct', 'sfx_wrong', 'sfx_click',
+  'sfx_hit_enemy', 'sfx_hit_player', 'sfx_chest_open',
+  'sfx_battle_start', 'sfx_victory', 'sfx_boss_intro',
+  'sfx_page_turn', 'sfx_level_up', 'sfx_npc_talk',
+  'sfx_damage_critical',
+];
+
+/**
+ * Load all audio files.  Call from BootScene.preload().
+ * @param {Phaser.Scene} scene
+ */
+export function loadAllAudio(scene) {
+  for (const key of AUDIO_KEYS) {
+    scene.load.audio(key, `assets/audio/${key}.wav`);
+  }
+}
+
 /**
  * Load all sprites defined in SPRITE_DEFS, UI_DEFS, TERRAIN_DEFS, and BACKDROP_DEFS.
  * Call this from BootScene.preload().

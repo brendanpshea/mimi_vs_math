@@ -25,9 +25,9 @@
  *    → { decorations: Array, blocked: Set<"col,row"> }
  */
 
-const COLS        = 70;
-const ROWS        = 50;
-const BORDER      = 2;   // border wall thickness — tiles 0–1 / 68–69 / etc.
+const COLS        = 80;
+const ROWS        = 56;
+const BORDER      = 2;   // border wall thickness — tiles 0–1 / 78–79 / etc.
 const NODE_CLEAR  = 5;   // glade radius around every key position
 const CORRIDOR_HW = 2;   // corridor half-width: total width = 2*CORRIDOR_HW+1 = 5 tiles
 
@@ -142,26 +142,129 @@ const SET_PIECES = [
   },
 ];
 
+// ═══════════════════════════════════════════════════════════════════════════
+// Position randomization — NPC + enemies get fresh locations each run
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Placement zones (rectangles inside the 70×50 grid).
+ * Enemies are distributed across north / mid / south to maintain
+ * the original three-zone gameplay flow.
+ */
+const PLACE_ZONES = {
+  npc:   { c1: 4,  c2: 18, r1: 22, r2: 32 },  // near Mimi start (mid-left)
+  north: { c1: 10, c2: 68, r1: 4,  r2: 16 },
+  mid:   { c1: 14, c2: 68, r1: 20, r2: 32 },
+  south: { c1: 10, c2: 68, r1: 38, r2: 50 },
+};
+
+/**
+ * Zone assignment for each enemy slot index.
+ * All regions now have 10 enemies (indices 0-9).
+ * Pattern: 3 north, 3 mid, 4 south — spreads encounters evenly.
+ */
+const ZONE_SLOTS = ['north', 'north', 'south', 'mid', 'south', 'south', 'north', 'mid', 'south', 'mid'];
+
+/**
+ * Pick a random tile within `zone` that is ≥ `minDist` Manhattan distance
+ * from every position in `placed`.
+ *
+ * Tries up to 300 random samples, then falls back to a shuffled
+ * exhaustive scan with gradually relaxed distance.
+ */
+function pickRandomInZone(zone, placed, minDist) {
+  const ok = (c, r) => placed.every(
+    p => Math.abs(c - p.col) + Math.abs(r - p.row) >= minDist,
+  );
+
+  // Fast sampling
+  const cSpan = zone.c2 - zone.c1 + 1;
+  const rSpan = zone.r2 - zone.r1 + 1;
+  for (let i = 0; i < 300; i++) {
+    const c = zone.c1 + Math.floor(Math.random() * cSpan);
+    const r = zone.r1 + Math.floor(Math.random() * rSpan);
+    if (ok(c, r)) return { col: c, row: r };
+  }
+
+  // Fallback: exhaustive scan, shuffled, with distance relaxation
+  const candidates = [];
+  for (let c = zone.c1; c <= zone.c2; c++)
+    for (let r = zone.r1; r <= zone.r2; r++)
+      candidates.push({ col: c, row: r });
+  for (let i = candidates.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+  }
+  for (let dist = minDist; dist >= 4; dist -= 2) {
+    for (const pos of candidates) {
+      if (placed.every(p => Math.abs(pos.col - p.col) + Math.abs(pos.row - p.row) >= dist))
+        return pos;
+    }
+  }
+  return candidates[0];   // last resort
+}
+
+/**
+ * Generate randomized positions for NPC and every enemy.
+ * mimiStart and bossTile remain fixed (from regionData).
+ *
+ * @param  {object} regionData — one entry from regions.js
+ * @returns {{ npcTile: {col,row}, enemySpawns: Array<{col,row,id,difficultyOverride?}> }}
+ */
+function randomizePositions(regionData) {
+  const MIN_DIST = 10;
+  const placed = [
+    { col: regionData.mimiStart.col, row: regionData.mimiStart.row },
+    { col: regionData.bossTile.col,  row: regionData.bossTile.row },
+  ];
+
+  // NPC — always near Mimi (mid-left zone)
+  const npcTile = pickRandomInZone(PLACE_ZONES.npc, placed, MIN_DIST);
+  placed.push(npcTile);
+
+  // Enemies — distribute across north / mid / south zones
+  const enemySpawns = [];
+  for (let i = 0; i < regionData.enemySpawns.length; i++) {
+    const orig     = regionData.enemySpawns[i];
+    const zoneName = ZONE_SLOTS[i] || 'south';
+    const pos      = pickRandomInZone(PLACE_ZONES[zoneName], placed, MIN_DIST);
+    placed.push(pos);
+    enemySpawns.push({
+      col: pos.col,
+      row: pos.row,
+      id:  orig.id,
+      difficultyOverride: orig.difficultyOverride,
+    });
+  }
+
+  return { npcTile, enemySpawns };
+}
+
 // ── Public API ─────────────────────────────────────────────────────────────
 
 /**
  * Generate a complete map for one region.
  *
  * @param  {object} regionData  - One entry from regions.js
- * @returns {{ decorations: Array, blocked: Set<string> }}
+ * @returns {{ decorations: Array, blocked: Set<string>, landmarks: Array,
+ *             npcTile: {col,row}, enemySpawns: Array }}
  *   decorations — tile objects for ExploreScene._addDecorations()
  *   blocked     — exact blocked-tile Set (borders + remaining walls after carving),
  *                 suitable for BFS reachability tests
+ *   npcTile / enemySpawns — randomized positions for this run
  */
 export function generateRegionMap(regionData) {
   const tileFn = TILE_FN[regionData.id] ?? TILE_FN[0];
 
+  // Randomize NPC + enemy positions (Mimi start & boss stay fixed)
+  const { npcTile, enemySpawns } = randomizePositions(regionData);
+
   // Key positions — mimiStart must be index 0 (MST root).
   const nodes = [
     regionData.mimiStart,
-    regionData.npcTile,
+    npcTile,
     regionData.bossTile,
-    ...regionData.enemySpawns.map(s => ({ col: s.col, row: s.row })),
+    ...enemySpawns.map(s => ({ col: s.col, row: s.row })),
   ];
 
   // ── Step 1: Start with border walls + fully filled walkable area ──────
@@ -170,11 +273,11 @@ export function generateRegionMap(regionData) {
   // Border walls (rendered by ExploreScene as tileSprites, not decorations)
   for (let c = 0; c < COLS; c++) {
     blocked.add(`${c},0`);      blocked.add(`${c},1`);
-    blocked.add(`${c},48`);     blocked.add(`${c},49`);
+    blocked.add(`${c},54`);     blocked.add(`${c},55`);
   }
   for (let r = 0; r < ROWS; r++) {
     blocked.add(`0,${r}`);      blocked.add(`1,${r}`);
-    blocked.add(`68,${r}`);     blocked.add(`69,${r}`);
+    blocked.add(`78,${r}`);     blocked.add(`79,${r}`);
   }
 
   // Fill every tile in the walkable interior
@@ -258,7 +361,7 @@ export function generateRegionMap(regionData) {
     }
   }
 
-  return { decorations, blocked, landmarks };
+  return { decorations, blocked, landmarks, npcTile, enemySpawns };
 }
 
 // ── Internal helpers ───────────────────────────────────────────────────────
@@ -285,6 +388,13 @@ function buildMST(nodes) {
   const minKey = new Array(n).fill(Infinity);  // cheapest edge to reach node i
   const parent = new Array(n).fill(-1);        // which tree node reaches node i cheapest
   minKey[0] = 0;
+
+  // Initial relaxation from root (node 0 = mimiStart)
+  for (let v = 1; v < n; v++) {
+    const d = manhattan(nodes[0], nodes[v]);
+    minKey[v] = d;
+    parent[v] = 0;
+  }
 
   const edges = [];
 
@@ -358,9 +468,9 @@ function findSetPieceSlot(blocked, keyPositions, sp, regionId) {
   // Zones to scan — order is rotated by regionId so landmarks
   // don't all land in the same zone across regions.
   const allZones = [
-    { c1: 14, c2: 50, r1: 35, r2: 43 },   // south zone
-    { c1: 14, c2: 50, r1: 19, r2: 27 },   // mid zone
-    { c1: 14, c2: 50, r1:  5, r2: 12 },   // north zone
+    { c1: 14, c2: 60, r1: 38, r2: 48 },   // south zone
+    { c1: 14, c2: 60, r1: 21, r2: 31 },   // mid zone
+    { c1: 14, c2: 60, r1:  5, r2: 14 },   // north zone
   ];
   // Per-region column offset so each region scans from a different start
   const colOffsets = [0, 12, 6, 18, 3];
@@ -384,6 +494,16 @@ function findSetPieceSlot(blocked, keyPositions, sp, regionId) {
           p.row >= r - safeR && p.row < r + h + safeR,
         );
         if (tooClose) continue;
+
+        // Blocking landmarks must not overlap any carved corridor or glade
+        if (sp.blocking) {
+          let overlapsCorridor = false;
+          for (let dc = 0; dc < w && !overlapsCorridor; dc++)
+            for (let dr = 0; dr < h && !overlapsCorridor; dr++)
+              if (!blocked.has(`${c + dc},${r + dr}`))
+                overlapsCorridor = true;
+          if (overlapsCorridor) continue;
+        }
 
         // Valid! Carve the footprint + margin so it becomes open walkable space
         for (let dc = -m; dc < w + m; dc++)

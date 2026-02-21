@@ -11,7 +11,7 @@ import * as Phaser from 'phaser';
 import GameState   from '../config/GameState.js';
 import REGIONS     from '../data/regions.js';
 import ENEMIES     from '../data/enemies.js';
-import MAPS, { LANDMARKS } from '../data/maps.js';
+import MAPS, { LANDMARKS, POSITIONS } from '../data/maps.js';
 import Mimi        from '../entities/Mimi.js';
 import Enemy       from '../entities/Enemy.js';
 import NPC         from '../entities/NPC.js';
@@ -21,8 +21,8 @@ import NPC_JOKES   from '../data/npcJokes.json' with { type: 'json' };
 
 //  World constants 
 const T     = 32;    // tile size in pixels
-const MAP_W = 70;    // map width  in tiles  (~4 screens wide)
-const MAP_H = 50;    // map height in tiles  (~3 screens tall)
+const MAP_W = 80;    // map width  in tiles  (~5 screens wide)
+const MAP_H = 56;    // map height in tiles  (~3.5 screens tall)
 const WALL  = 2;     // border wall thickness in tiles
 
 // World-space pixel helpers (no HUD offset  camera handles that)
@@ -67,7 +67,8 @@ export default class ExploreScene extends Phaser.Scene {
     this._preBattleAllClear = false;
     if (this.battleResult?.victory && !this.battleResult?.isBoss) {
       const inst = this.battleResult.enemyInstance;
-      this._preBattleAllClear = this.regionData.enemySpawns.every((spawn, i) => {
+      const spawns = POSITIONS[this.regionId].enemySpawns;
+      this._preBattleAllClear = spawns.every((spawn, i) => {
         const key = spawn.id + i;
         return key === inst || GameState.isEnemyDefeated(this.regionId, key);
       });
@@ -190,20 +191,11 @@ export default class ExploreScene extends Phaser.Scene {
   _placeLandmarks() {
     this._landmarkObstacles = this.physics.add.staticGroup();
     const list = LANDMARKS[this.regionId];
-    console.log('[LANDMARK] regionId=', this.regionId,
-                'LANDMARKS array length=', LANDMARKS.length,
-                'list=', JSON.stringify(list));
-    if (!list || list.length === 0) {
-      console.warn('[LANDMARK] No landmarks for region', this.regionId);
-      return;
-    }
+    if (!list || list.length === 0) return;
 
     for (const lm of list) {
-      const texExists = this.textures.exists(lm.key);
-      console.log('[LANDMARK] placing', lm.key, 'at col=', lm.col, 'row=', lm.row,
-                  'texExists=', texExists);
-      if (!texExists) {
-        console.warn(`[LANDMARK] texture missing: ${lm.key}`);
+      if (!this.textures.exists(lm.key)) {
+        console.warn(`Landmark texture missing: ${lm.key}`);
         continue;
       }
       const lw = (lm.tilesW || 1) * T;
@@ -211,7 +203,6 @@ export default class ExploreScene extends Phaser.Scene {
       const lx = tx(lm.col) + lw / 2 - T / 2;
       const ly = ty(lm.row) + lh / 2 - T / 2;
       const depth = 3 + (lm.row / MAP_H) * 6;
-      console.log('[LANDMARK]', lm.key, 'pos=', lx, ly, 'size=', lw, lh, 'depth=', depth);
 
       this.add.image(lx, ly, lm.key)
         .setDepth(depth)
@@ -245,11 +236,12 @@ export default class ExploreScene extends Phaser.Scene {
 
     // --- Clearance guard ---------------------------------------------------
     const CLEAR_R = 3;  // tile radius to keep clear around key positions
+    const positions = POSITIONS[this.regionId];
     const keyPositions = [
       this.regionData.mimiStart,
-      this.regionData.npcTile,
+      positions.npcTile,
       this.regionData.bossTile,
-      ...this.regionData.enemySpawns.map(s => ({ col: s.col, row: s.row })),
+      ...positions.enemySpawns.map(s => ({ col: s.col, row: s.row })),
     ];
     const isClear = (col, row) => keyPositions.every(
       p => Math.abs(col - p.col) > CLEAR_R || Math.abs(row - p.row) > CLEAR_R,
@@ -314,7 +306,7 @@ export default class ExploreScene extends Phaser.Scene {
     this._enemies   = [];
     this._liveCount = 0;
 
-    this.regionData.enemySpawns.forEach((spawn, i) => {
+    POSITIONS[this.regionId].enemySpawns.forEach((spawn, i) => {
       const instanceKey = spawn.id + i;
       if (GameState.isEnemyDefeated(this.regionId, instanceKey)) return;
 
@@ -387,6 +379,7 @@ export default class ExploreScene extends Phaser.Scene {
     this._checkBossDoor();
 
     if (justUnlocked) {
+      this.sound.play('sfx_level_up', { volume: 0.80 });
       this.dialog.show(
         `All enemies defeated!\nThe boss seal is broken — enter when ready.`,
         null,
@@ -649,8 +642,9 @@ export default class ExploreScene extends Phaser.Scene {
   //  NPC 
 
   _setupNPC() {
-    const px = this._returnNpcX ?? tx(this.regionData.npcTile.col);
-    const py = this._returnNpcY ?? ty(this.regionData.npcTile.row);
+    const npc = POSITIONS[this.regionId].npcTile;
+    const px = this._returnNpcX ?? tx(npc.col);
+    const py = this._returnNpcY ?? ty(npc.row);
 
     this._npc = new NPC(
       this,

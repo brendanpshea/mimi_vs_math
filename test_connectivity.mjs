@@ -12,7 +12,7 @@
  * Run with:  node test_connectivity.mjs
  */
 
-import MAPS, { WALK_GRIDS } from './src/data/maps.js';
+import MAPS, { WALK_GRIDS, POSITIONS } from './src/data/maps.js';
 import REGIONS               from './src/data/regions.js';
 
 // ── BFS ──────────────────────────────────────────────────────────────────────
@@ -27,7 +27,7 @@ import REGIONS               from './src/data/regions.js';
  * @param {number}                   [rows=50]
  * @returns {Set<string>}
  */
-function bfsReachable(start, blocked, cols = 70, rows = 50) {
+function bfsReachable(start, blocked, cols = 80, rows = 56) {
   const visited = new Set();
   const queue   = [{ col: start.col, row: start.row }];
   const key     = (c, r) => `${c},${r}`;
@@ -91,16 +91,17 @@ for (const region of REGIONS) {
     return false;
   };
 
-  // Boss tile
+  // Boss tile (fixed position from regionData)
   assert(canReach(region.bossTile),
     `boss (col ${region.bossTile.col}, row ${region.bossTile.row}) reachable`);
 
-  // NPC tile
-  assert(canReach(region.npcTile),
-    `NPC (col ${region.npcTile.col}, row ${region.npcTile.row}) reachable`);
+  // NPC tile (randomized — read from POSITIONS)
+  const positions = POSITIONS[region.id];
+  assert(canReach(positions.npcTile),
+    `NPC (col ${positions.npcTile.col}, row ${positions.npcTile.row}) reachable`);
 
-  // Each enemy spawn
-  for (const [i, spawn] of region.enemySpawns.entries()) {
+  // Each enemy spawn (randomized — read from POSITIONS)
+  for (const [i, spawn] of positions.enemySpawns.entries()) {
     assert(canReach(spawn),
       `enemy[${i}] ${spawn.id} (col ${spawn.col}, row ${spawn.row}) reachable`);
   }

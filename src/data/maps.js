@@ -355,6 +355,9 @@ export default MAPS;
 /** Landmark arrays — one per region, placed as standalone objects */
 export const LANDMARKS = _gen.map(g => g.landmarks);
 
+/** Randomized NPC + enemy positions generated alongside the map */
+export const POSITIONS = _gen.map(g => ({ npcTile: g.npcTile, enemySpawns: g.enemySpawns }));
+
 /**
  * Pre-computed walkability grids — exact blocked-tile Sets for BFS.
  * Each Set<"col,row"> includes border walls + remaining terrain after carving.
@@ -373,8 +376,8 @@ export const WALK_GRIDS = _gen.map(g => g.blocked);
  * @returns {Set<string>}       - Set of "col,row" strings that are blocked
  */
 export function buildWalkGrid(decorations, keyPositions = []) {
-  const COLS   = 70;
-  const ROWS   = 50;
+  const COLS   = 80;
+  const ROWS   = 56;
   const CLEAR_R = 3;  // mirrors ExploreScene._addDecorations constant
 
   const blocked = new Set();
@@ -382,11 +385,11 @@ export function buildWalkGrid(decorations, keyPositions = []) {
   // Border walls — 2-tile frame on every side (same as _drawRoom tileSprite)
   for (let c = 0; c < COLS; c++) {
     blocked.add(`${c},0`);  blocked.add(`${c},1`);
-    blocked.add(`${c},48`); blocked.add(`${c},49`);
+    blocked.add(`${c},54`); blocked.add(`${c},55`);
   }
   for (let r = 0; r < ROWS; r++) {
     blocked.add(`0,${r}`);  blocked.add(`1,${r}`);
-    blocked.add(`68,${r}`); blocked.add(`69,${r}`);
+    blocked.add(`78,${r}`); blocked.add(`79,${r}`);
   }
 
   // Clearance guard — mirrors ExploreScene isClear()

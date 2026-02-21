@@ -50,11 +50,11 @@ const ALL_TOPICS = [
   // legacy compound topics
   'addSub', 'multiplication', 'division', 'fractions', 'mixed',
   // Region 0
-  'addition', 'subtraction', 'comparison',
+  'addition', 'subtraction', 'comparison', 'numberOrder',
   // Region 1
-  'multTables', 'skipCounting',
+  'multTables', 'skipCounting', 'doubling',
   // Region 2
-  'divisionWord',
+  'divisionWord', 'missingNumber',
   // Region 3
   'fractionCompare', 'fractionAdd', 'decimals',
   // Region 4
@@ -67,15 +67,18 @@ const TOPIC_BOUNDS = {
   addition:       [0,  99],
   subtraction:    [0,  99],
   comparison:     [0,  100],
+  numberOrder:    [0,  99],
   multiplication: [0,  300],
   multTables:     [0,  100],
   division:       [0,  144],
   divisionWord:   [0,  72],
+  missingNumber:  [0,  108],
   mixed:          [0,  500],
   orderOfOps:     [0,  500],
   percentages:    [0,  1000],
   ratiosProp:     [0,  200],
   skipCounting:   [0,  1000],
+  doubling:       [0,  100],
   fractions:      null,        // string
   fractionCompare:null,        // string
   fractionAdd:    null,        // string

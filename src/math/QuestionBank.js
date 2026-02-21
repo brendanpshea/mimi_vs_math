@@ -500,6 +500,107 @@ function percentagesD3() {
   return { text: `${part} out of ${whole}\nis what percent?`, answer: pct, answerDisplay: String(pct), topic: 'percentages' };
 }
 
+// ── Number ordering (Region 0 — additional type) ─────────────────────────────
+
+function numberOrderD1() {
+  const seen = new Set();
+  while (seen.size < 4) seen.add(rand(1, 20));
+  const nums = [...seen];
+  const biggest = Math.max(...nums);
+  return {
+    text: `Which is the BIGGEST?\n${nums.join(', ')}`,
+    answer: biggest,
+    answerDisplay: String(biggest),
+    choices: nums.map(n => ({ text: String(n), correct: n === biggest })),
+    topic: 'numberOrder',
+  };
+}
+function numberOrderD2() {
+  const seen = new Set();
+  while (seen.size < 4) seen.add(rand(5, 50));
+  const nums = [...seen];
+  const smallest = Math.min(...nums);
+  return {
+    text: `Which is the SMALLEST?\n${nums.join(', ')}`,
+    answer: smallest,
+    answerDisplay: String(smallest),
+    choices: nums.map(n => ({ text: String(n), correct: n === smallest })),
+    topic: 'numberOrder',
+  };
+}
+function numberOrderD3() {
+  const seen = new Set();
+  while (seen.size < 4) seen.add(rand(10, 99));
+  const nums = [...seen];
+  if (Math.random() < 0.5) {
+    const biggest = Math.max(...nums);
+    return {
+      text: `Which is the BIGGEST?\n${nums.join(', ')}`,
+      answer: biggest,
+      answerDisplay: String(biggest),
+      choices: nums.map(n => ({ text: String(n), correct: n === biggest })),
+      topic: 'numberOrder',
+    };
+  }
+  const smallest = Math.min(...nums);
+  return {
+    text: `Which is the SMALLEST?\n${nums.join(', ')}`,
+    answer: smallest,
+    answerDisplay: String(smallest),
+    choices: nums.map(n => ({ text: String(n), correct: n === smallest })),
+    topic: 'numberOrder',
+  };
+}
+
+// ── Doubling & halving (Region 1 — additional type) ──────────────────────────
+
+function doublingD1() {
+  const n = rand(1, 10);
+  return { text: `Double ${n} = ?`, answer: n * 2, answerDisplay: String(n * 2), topic: 'doubling' };
+}
+function doublingD2() {
+  if (Math.random() < 0.5) {
+    const n = rand(5, 20);
+    return { text: `Double ${n} = ?`, answer: n * 2, answerDisplay: String(n * 2), topic: 'doubling' };
+  }
+  const n = rand(1, 10) * 2;
+  return { text: `Half of ${n} = ?`, answer: n / 2, answerDisplay: String(n / 2), topic: 'doubling' };
+}
+function doublingD3() {
+  if (Math.random() < 0.5) {
+    const n = rand(12, 50);
+    return { text: `Double ${n} = ?`, answer: n * 2, answerDisplay: String(n * 2), topic: 'doubling' };
+  }
+  const n = rand(6, 25) * 2;
+  return { text: `Half of ${n} = ?`, answer: n / 2, answerDisplay: String(n / 2), topic: 'doubling' };
+}
+
+// ── Missing number (Region 2 — additional type) ──────────────────────────────
+
+function missingNumberD1() {
+  const a = rand(2, 8); const b = rand(2, 10 - a);
+  const sum = a + b;
+  if (Math.random() < 0.5) {
+    return { text: `? + ${b} = ${sum}`, answer: a, answerDisplay: String(a), topic: 'missingNumber' };
+  }
+  return { text: `${sum} − ? = ${a}`, answer: b, answerDisplay: String(b), topic: 'missingNumber' };
+}
+function missingNumberD2() {
+  const a = rand(2, 9); const b = rand(2, 9);
+  const prod = a * b;
+  return { text: `? × ${b} = ${prod}`, answer: a, answerDisplay: String(a), topic: 'missingNumber' };
+}
+function missingNumberD3() {
+  if (Math.random() < 0.5) {
+    const a = rand(3, 12); const b = rand(2, 9);
+    const prod = a * b;
+    return { text: `${prod} ÷ ? = ${a}`, answer: b, answerDisplay: String(b), topic: 'missingNumber' };
+  }
+  const a = rand(10, 40); const b = rand(5, 20);
+  const sum = a + b;
+  return { text: `? + ${b} = ${sum}`, answer: a, answerDisplay: String(a), topic: 'missingNumber' };
+}
+
 // ── Ratios & proportions (Region 4 — NEW additional type) ────────────────────
 
 function ratiosPropD1() {
@@ -528,11 +629,14 @@ const generators = {
   addition:       [additionD1,       additionD2,       additionD3],
   subtraction:    [subtractionD1,    subtractionD2,    subtractionD3],
   comparison:     [comparisonD1,     comparisonD2,     comparisonD3],
+  numberOrder:    [numberOrderD1,    numberOrderD2,    numberOrderD3],
   // Region 1 — Meadow Maze
   multTables:     [multTablesD1,     multTablesD2,     multTablesD3],
   skipCounting:   [skipCountingD1,   skipCountingD2,   skipCountingD3],
+  doubling:       [doublingD1,       doublingD2,       doublingD3],
   // Region 2 — Desert Dunes
   divisionWord:   [divisionWordD1,   divisionWordD2,   divisionWordD3],
+  missingNumber:  [missingNumberD1,  missingNumberD2,  missingNumberD3],
   // Region 3 — Frostbite Cavern
   fractionCompare:[fractionCompareD1,fractionCompareD2,fractionCompareD3],
   fractionAdd:    [fractionAddD1,    fractionAddD2,    fractionAddD3],

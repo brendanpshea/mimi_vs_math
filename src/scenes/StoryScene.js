@@ -15,14 +15,14 @@ import GameState   from '../config/GameState.js';
 // H = 600 reference:
 //   Title   centred at  42  (H * 0.07)
 //   Art     centred at 180  (H * 0.30)  — Mimi @ scale 3.0 = 192 px → bottom 276
-//   Pill    315 → 475        (H * 0.525, 160 px tall)  — 39 px gap below art
-//   Button  centred at 540   (H * 0.90)  — 65 px below pill bottom
-//   Dots    at 572           (H * 0.953)
+//   Pill    303 → 523        (H * 0.505, 220 px tall)  — 27 px gap below art
+//   Button  centred at 557   (H * 0.929) — 34 px below pill bottom
+//   Dots    at 587           (H * 0.978)
 const TITLE_Y    = 0.07;
 const ART_Y      = 0.30;
-const TEXT_TOP_Y = 0.525;   // art pages: pill top (fraction of H)
-const BTN_Y      = 0.90;
-const DOTS_Y     = 0.953;
+const TEXT_TOP_Y = 0.505;   // art pages: pill top (fraction of H)
+const BTN_Y      = 0.929;
+const DOTS_Y     = 0.978;
 
 const PAGES = [
   {
@@ -42,15 +42,15 @@ const PAGES = [
   {
     bg:         0x080808,
     title:      'Five Kingdoms.  Five Champions.',
-    body:       'Fenwick\'s shadow now stretched across five kingdoms, each sealed\nbehind a Math Ward — an enchantment only a correct answer\ncould break.\n\nWarriors had tried.  Adventurers had tried.\nOne very confused accountant had tried.\n(The accountant sent a very polite apology note.)',
-    art:        'none',
+    body:       'Fenwick\'s shadow stretched across five kingdoms,\neach sealed behind a Math Ward.\n\nWarriors tried.  Adventurers tried.\nOne confused accountant tried — and sent an apology note.',
+    art:        'kingdoms_cast',
     titleColor: '#CC88FF',
   },
   {
     bg:         0x08101A,
     title:      '✨  The Only Language Fenwick Fears',
-    body:       'Every seal, every barricade, every locked gate in the five kingdoms\nbends to the same ancient rule:\n\nAnswer correctly  →  the shield shatters!\nAnswer wrong  →  Mimi takes damage.\n\nFive lands.  Five seals.  All standing between one cat and her yarn ball.',
-    art:        'none',
+    body:       'Every seal, every locked gate bends to one rule:\n\nAnswer correctly → the shield SHATTERS!\nAnswer wrong → Mimi takes damage.\n\nFive lands.  Five seals.  One yarn ball.',
+    art:        'answer_shield',
     titleColor: '#88FFCC',
   },
   {
@@ -95,9 +95,10 @@ export default class StoryScene extends Phaser.Scene {
 
     // Zone A — title
     this.add.text(W / 2, H * TITLE_Y, p.title, {
-      fontSize: '24px', color: p.titleColor, fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+      fontSize: '28px', color: p.titleColor,
+      fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif",
       stroke: '#000000', strokeThickness: 4, align: 'center',
-      wordWrap: { width: W - 60 },
+      wordWrap: { width: W - 48 },
     }).setOrigin(0.5, 0.5);
 
     // Zone B — art
@@ -106,18 +107,19 @@ export default class StoryScene extends Phaser.Scene {
     // Zone C — body text on dark pill
     // Art pages:    fixed 160 px strip just below the art zone (H*0.525–H*0.792)
     // No-art pages: tall pill fills most of the screen (H*0.18 – H*0.79)
-    const hasArt   = p.art !== 'none';
-    const pillW    = W - 64;
-    const pillTopY = hasArt ? H * TEXT_TOP_Y : H * 0.18;
-    const pillH    = hasArt ? 175 : (H * BTN_Y - 25 - 44 - H * 0.18);  // 44 = gap above btn
-    const pillY    = pillTopY + pillH / 2;
+    const hasArt    = p.art !== 'none';
+    const pillW     = W - 56;
+    const pillTopY  = hasArt ? H * TEXT_TOP_Y : H * 0.18;
+    const pillH     = hasArt ? 220 : (H * BTN_Y - 25 - 44 - H * 0.18);
+    const pillY     = pillTopY + pillH / 2;
+    const pillBorder = parseInt((p.titleColor ?? '#334466').replace('#', ''), 16);
 
-    this.add.rectangle(W / 2, pillY, pillW, pillH, 0x000000, 0.62)
-      .setStrokeStyle(1, 0x334466, 0.7);
-    this.add.text(W / 2, pillTopY + 14, p.body, {
-      fontSize: hasArt ? '15px' : '16px', color: '#DDEEFF', fontFamily: "'Nunito', Arial, sans-serif",
+    this.add.rectangle(W / 2, pillY, pillW, pillH, 0x000000, 0.55)
+      .setStrokeStyle(1.5, pillBorder, 0.38);
+    this.add.text(W / 2, pillTopY + 18, p.body, {
+      fontSize: '18px', color: '#DDEEFF', fontFamily: "'Nunito', Arial, sans-serif",
       align: 'center', stroke: '#000000', strokeThickness: 2,
-      lineSpacing: 5, wordWrap: { width: pillW - 48 },
+      lineSpacing: 7, wordWrap: { width: pillW - 40 },
     }).setOrigin(0.5, 0);
 
     // Zone D — navigation button
@@ -126,15 +128,20 @@ export default class StoryScene extends Phaser.Scene {
     const bgColor = isLast ? 0x1A3A0A : 0x0A1A3A;
     const stroke  = isLast ? 0x66FF44  : 0x4488FF;
 
-    const btn = this.add.rectangle(W / 2, H * BTN_Y, 290, 50, bgColor)
+    // Button shadow
+    this.add.rectangle(W / 2 + 2, H * BTN_Y + 3, 302, 50, 0x000000, 0.35);
+    const btn = this.add.rectangle(W / 2, H * BTN_Y, 302, 50, bgColor)
       .setStrokeStyle(2, stroke)
       .setInteractive({ useHandCursor: true });
-    this.add.text(W / 2, H * BTN_Y, label, {
-      fontSize: '20px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+    // Top bevel
+    this.add.rectangle(W / 2, H * BTN_Y - 13, 294, 10, 0xFFFFFF, 0.07);
+    const btnTxt = this.add.text(W / 2, H * BTN_Y, label, {
+      fontSize: '21px', color: '#FFFFFF',
+      fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif",
     }).setOrigin(0.5);
 
-    btn.on('pointerover', () => btn.setFillStyle(isLast ? 0x2A5A10 : 0x162A5A));
-    btn.on('pointerout',  () => btn.setFillStyle(bgColor));
+    btn.on('pointerover', () => { btn.setFillStyle(isLast ? 0x2A5A10 : 0x162A5A); btnTxt.setScale(1.04); });
+    btn.on('pointerout',  () => { btn.setFillStyle(bgColor); btnTxt.setScale(1); });
     btn.on('pointerdown', () => this._advance());
 
     // Skip link
@@ -213,6 +220,75 @@ export default class StoryScene extends Phaser.Scene {
         targets: fenwick, alpha: { from: 0.3, to: 0.55 },
         duration: 2000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
       });
+
+    } else if (p.art === 'kingdoms_cast') {
+      // Five boss portraits spread across the art zone
+      const keys = ['subtraction_witch', 'count_multiplico', 'the_diviner', 'glacius', 'fenwick'];
+      const spacing = W / (keys.length + 1);
+      for (let i = 0; i < keys.length; i++) {
+        const spX = spacing * (i + 1);
+        const spY = artY + (i % 2 === 0 ? -10 : 10);
+        if (this.textures.exists(keys[i])) {
+          const sp = this.add.image(spX, spY, keys[i]).setDisplaySize(68, 68);
+          this.tweens.add({
+            targets: sp, y: spY - 10,
+            duration: 1300 + i * 180, yoyo: true, repeat: -1,
+            ease: 'Sine.easeInOut', delay: i * 130,
+          });
+        } else {
+          this.add.circle(spX, spY, 30, 0x334455, 0.8).setStrokeStyle(2, 0x88AACC);
+          this.add.text(spX, spY, String(i + 1), {
+            fontSize: '20px', color: '#AADDFF',
+            fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif",
+          }).setOrigin(0.5);
+        }
+      }
+
+    } else if (p.art === 'answer_shield') {
+      // Procedural animated shield + checkmark
+      const cx = W * 0.5;
+      const cy = artY;
+      const glow = this.add.circle(cx, cy, 62, 0x88FFCC, 0.08);
+      this.tweens.add({
+        targets: glow, scaleX: 1.3, scaleY: 1.3, alpha: 0.18,
+        duration: 1100, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      });
+      const g = this.add.graphics();
+      // Shield body
+      g.fillStyle(0x113355, 0.92);
+      g.fillRoundedRect(cx - 46, cy - 54, 92, 70, 20);
+      g.fillTriangle(cx - 46, cy + 12, cx + 46, cy + 12, cx, cy + 64);
+      // Inner panel
+      g.fillStyle(0x1A5533, 0.88);
+      g.fillRoundedRect(cx - 30, cy - 40, 60, 50, 10);
+      g.fillTriangle(cx - 30, cy + 8, cx + 30, cy + 8, cx, cy + 46);
+      // Shield outline
+      g.lineStyle(2.5, 0x44DDAA, 0.9);
+      g.strokeRoundedRect(cx - 46, cy - 54, 92, 70, 20);
+      g.lineStyle(2, 0x44DDAA, 0.8);
+      g.strokeTriangle(cx - 46, cy + 12, cx + 46, cy + 12, cx, cy + 64);
+      // Checkmark
+      g.lineStyle(5, 0xFFFFFF, 1);
+      g.beginPath();
+      g.moveTo(cx - 18, cy - 2);
+      g.lineTo(cx - 4, cy + 16);
+      g.lineTo(cx + 26, cy - 22);
+      g.strokePath();
+      // Sparkles
+      const sparkColors = [0xFFDD88, 0x88FFCC, 0xFFAAFF, 0xAADDFF, 0xFFCC44];
+      [[cx - 58, cy - 30], [cx + 60, cy - 24], [cx - 52, cy + 44],
+       [cx + 54, cy + 38], [cx,      cy - 70]].forEach(([sx, sy], i) => {
+        const spark = this.add.circle(sx, sy, 4 - (i % 2), sparkColors[i], 0.9);
+        this.tweens.add({
+          targets: spark, y: sy - 12, alpha: 0.25,
+          duration: 900 + i * 180, yoyo: true, repeat: -1,
+          delay: i * 150, ease: 'Sine.easeInOut',
+        });
+      });
+      this.tweens.add({
+        targets: g, y: g.y - 9,
+        duration: 2000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      });
     }
     // 'none' — no art rendered (stars + bg only)
   }
@@ -250,6 +326,7 @@ export default class StoryScene extends Phaser.Scene {
   }
 
   _advance() {
+    this.sound.play('sfx_page_turn', { volume: 0.6 });
     if (PAGES[this._idx].last) { this._finish(); }
     else { this._idx++; this._draw(); }
   }

@@ -3,7 +3,7 @@
  * then hands off to TitleScene.
  */
 import * as Phaser from 'phaser';
-import { loadAllAssets } from '../config/AssetConfig.js';
+import { loadAllAssets, loadAllAudio } from '../config/AssetConfig.js';
 
 export default class BootScene extends Phaser.Scene {
   constructor() { super({ key: 'BootScene' }); }
@@ -30,6 +30,9 @@ export default class BootScene extends Phaser.Scene {
 
     // ── Load all character/UI sprites ──────────────────────────────────
     loadAllAssets(this);
+
+    // ── Load all SFX ───────────────────────────────────────────────────
+    loadAllAudio(this);
   }
 
   create() {

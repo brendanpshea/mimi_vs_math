@@ -32,6 +32,7 @@ export default class BossIntroScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.fadeIn(400, 0, 0, 0);
+    this.time.delayedCall(200, () => this.sound.play('sfx_boss_intro', { volume: 0.80 }));
 
     this._draw();
   }
@@ -62,14 +63,19 @@ export default class BossIntroScene extends Phaser.Scene {
 
     // ── Portrait ────────────────────────────────────────────────────────
     const onLeft   = (p.side ?? 'left') === 'left';
-    const avatarX  = onLeft ? W * 0.19 : W * 0.81;
-    const avatarY  = H * 0.29;
-    const AVATAR_SIZE = 160;
+    const avatarX  = onLeft ? W * 0.185 : W * 0.815;
+    const avatarY  = H * 0.255;
+    const AVATAR_SIZE = 200;
 
     // Glow ring behind portrait
     const glowColor = p.nameColor
       ? parseInt(p.nameColor.replace('#', ''), 16)
       : 0x4466AA;
+
+    // Atmosphere wash — portrait half of screen tinted with speaker colour
+    const washX = onLeft ? W * 0.25 : W * 0.75;
+    this.add.rectangle(washX, H / 2, W * 0.5, H, glowColor, 0.06);
+    this.add.rectangle(washX, H / 2, W * 0.28, H, glowColor, 0.04);
 
     // Dramatic radiating lines behind portrait
     const rays = this.add.graphics();
@@ -114,51 +120,59 @@ export default class BossIntroScene extends Phaser.Scene {
       }).setOrigin(0.5);
     }
 
-    // Speaker name badge (larger, with Fredoka font)
-    const badgeY = avatarY + AVATAR_SIZE / 2 + 20;
+    // Speaker name badge below portrait
+    const badgeY = avatarY + AVATAR_SIZE / 2 + 18;
     const badgeGfx = this.add.graphics();
-    badgeGfx.fillStyle(0x060618, 0.92);
-    badgeGfx.fillRoundedRect(avatarX - 90, badgeY - 16, 180, 32, 8);
-    badgeGfx.lineStyle(1.5, glowColor, 0.7);
-    badgeGfx.strokeRoundedRect(avatarX - 90, badgeY - 16, 180, 32, 8);
+    badgeGfx.fillStyle(0x06061C, 0.96);
+    badgeGfx.fillRoundedRect(avatarX - 100, badgeY - 17, 200, 34, 10);
+    badgeGfx.lineStyle(2, glowColor, 0.9);
+    badgeGfx.strokeRoundedRect(avatarX - 100, badgeY - 17, 200, 34, 10);
     this.add.text(avatarX, badgeY, p.speaker, {
-      fontSize: '15px', color: p.nameColor ?? '#FFFFFF',
-      fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
+      fontSize: '17px', color: p.nameColor ?? '#FFFFFF',
+      fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif",
     }).setOrigin(0.5);
 
     // ── Dialogue box ────────────────────────────────────────────────────
-    const BOX_Y  = H * 0.685;
-    const BOX_H  = 196;
-    const BOX_W  = W * 0.88;
+    const BOX_Y  = H * 0.676;
+    const BOX_H  = 210;
+    const BOX_W  = W * 0.90;
+    const boxL   = W / 2 - BOX_W / 2;
+    const boxT   = BOX_Y - BOX_H / 2;
 
     // Drop shadow
     this.add.rectangle(W / 2 + 3, BOX_Y + 3, BOX_W, BOX_H, 0x000000, 0.55);
     // Main box
-    this.add.rectangle(W / 2, BOX_Y, BOX_W, BOX_H, 0x06061A, 0.94)
-      .setStrokeStyle(2, 0x4455AA);
-    // Top accent stripe
-    this.add.rectangle(W / 2, BOX_Y - BOX_H / 2 + 4, BOX_W - 4, 4,
-      glowColor, 0.55);
-    // Corner diamonds
-    for (const [cx, cy] of [
-      [W * 0.065, BOX_Y - BOX_H / 2],
-      [W * 0.935, BOX_Y - BOX_H / 2],
-      [W * 0.065, BOX_Y + BOX_H / 2],
-      [W * 0.935, BOX_Y + BOX_H / 2],
-    ]) {
-      this.add.rectangle(cx, cy, 8, 8, glowColor, 0.9)
-        .setAngle(45);
-    }
+    this.add.rectangle(W / 2, BOX_Y, BOX_W, BOX_H, 0x06061A, 0.95)
+      .setStrokeStyle(2, 0x3A4A88);
+    // Top accent stripe (speaker colour)
+    this.add.rectangle(W / 2, boxT + 3, BOX_W - 4, 4, glowColor, 0.75);
 
-    // Dialogue text — anchored to the top-inside of the box so long speeches
-    // always start at the top and never overflow downward into the button.
-    const textTopY = BOX_Y - BOX_H / 2 + 18;
-    this.add.text(W / 2, textTopY, p.text, {
-      fontSize: '14px', color: '#DDEEFF', fontFamily: "'Nunito', Arial, sans-serif",
-      align:  'center', lineSpacing: 5,
+    // Speaker name tab (inside box, portrait side)
+    const tabW   = Math.min(p.speaker.length * 11 + 28, 230);
+    const tabX   = onLeft ? boxL + 14 : W / 2 + BOX_W / 2 - 14 - tabW;
+    const tabGfx = this.add.graphics();
+    tabGfx.fillStyle(0x09091E, 0.98);
+    tabGfx.fillRoundedRect(tabX, boxT + 10, tabW, 26, 6);
+    tabGfx.lineStyle(1.5, glowColor, 0.85);
+    tabGfx.strokeRoundedRect(tabX, boxT + 10, tabW, 26, 6);
+    this.add.text(
+      onLeft ? tabX + 12 : tabX + tabW - 12,
+      boxT + 23,
+      p.speaker,
+      {
+        fontSize: '14px', color: p.nameColor ?? '#FFFFFF',
+        fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif",
+      },
+    ).setOrigin(onLeft ? 0 : 1, 0.5);
+
+    // Dialogue text — left-aligned, starts below speaker tab
+    const textTopY = boxT + 44;
+    this.add.text(boxL + 20, textTopY, p.text, {
+      fontSize: '15px', color: '#DDEEFF', fontFamily: "'Nunito', Arial, sans-serif",
+      align: 'left', lineSpacing: 7,
       stroke: '#000000', strokeThickness: 2,
-      wordWrap: { width: BOX_W * 0.86 },
-    }).setOrigin(0.5, 0);
+      wordWrap: { width: BOX_W - 48 },
+    }).setOrigin(0, 0);
 
     // ── Advance button ──────────────────────────────────────────────────
     const btnY   = H * 0.925;
@@ -202,6 +216,7 @@ export default class BossIntroScene extends Phaser.Scene {
   }
 
   _advance() {
+    this.sound.play('sfx_page_turn', { volume: 0.55 });
     if (this._idx < this._panels.length - 1) {
       this._idx++;
       this._draw();

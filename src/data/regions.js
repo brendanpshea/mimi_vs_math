@@ -30,6 +30,7 @@
  *
  * ── enemySpawns ──────────────────────────────────────────────────────────
  *   { col, row, id, difficultyOverride? }
+ *   Positions are fully randomized by ProceduralMap.randomizePositions().
  *   difficultyOverride replaces data.difficulty — changes tint + question difficulty
  *   for "hard review" versions of enemies from earlier regions.
  */
@@ -47,19 +48,23 @@ const REGIONS = [
     floorTile: 'floor_grass',
     wallTile: 'wall_brick',
     // ── Map key positions ──────────────────────────────────────────────────
-    mimiStart: { col: 4, row: 23 },
-    npcTile:   { col: 6, row: 26 },
-    chestTile: { col: 65, row: 44 },
-    bossTile:  { col: 66, row: 5 },
+    mimiStart: { col: 4, row: 26 },
+    npcTile:   { col: 6, row: 29 },
+    chestTile: { col: 75, row: 50 },
+    bossTile:  { col: 76, row: 5 },
 
-    // ── Enemies: 6 (intro region — native types only, one harder review) ──
+    // ── Enemies: 10 (intro region — native types at rising difficulties) ──
     enemySpawns: [
       { col: 20, row: 10, id: 'counting_caterpillar' },                       // D1 addition
-      { col: 52, row:  9, id: 'number_gnome' },                               // D2 subtraction
-      { col: 30, row: 37, id: 'minus_mole' },                                 // D2 comparison
-      { col: 44, row: 23, id: 'counting_caterpillar', difficultyOverride: 2 },// D2 review (mid)
-      { col: 14, row: 37, id: 'number_gnome',          difficultyOverride: 1 },// D1 south guard
-      { col: 57, row: 36, id: 'minus_mole',            difficultyOverride: 1 },// D1 SE patrol
+      { col: 52, row:  9, id: 'number_gnome' },                               // D1 subtraction
+      { col: 30, row: 40, id: 'minus_mole' },                                 // D1 comparison
+      { col: 40, row:  7, id: 'number_bee' },                                 // D1 numberOrder (NEW)
+      { col: 44, row: 26, id: 'counting_caterpillar', difficultyOverride: 2 },// D2 addition
+      { col: 14, row: 40, id: 'number_gnome',         difficultyOverride: 2 },// D2 subtraction
+      { col: 57, row: 40, id: 'minus_mole',           difficultyOverride: 2 },// D2 comparison
+      { col: 35, row: 26, id: 'number_bee',           difficultyOverride: 2 },// D2 numberOrder
+      { col: 60, row: 12, id: 'counting_caterpillar', difficultyOverride: 3 },// D3 addition
+      { col: 50, row: 42, id: 'minus_mole',           difficultyOverride: 3 },// D3 comparison
     ],
 
     boss: 'subtraction_witch',
@@ -97,20 +102,23 @@ const REGIONS = [
     bgColor: 0x5FA827,
     floorTile: 'floor_grass',
     wallTile: 'wall_brick',
-    mimiStart: { col: 4, row: 23 },
-    npcTile:   { col: 6, row: 26 },
-    chestTile: { col: 65, row: 44 },
-    bossTile:  { col: 66, row: 5 },
+    mimiStart: { col: 4, row: 26 },
+    npcTile:   { col: 6, row: 29 },
+    chestTile: { col: 75, row: 50 },
+    bossTile:  { col: 76, row: 5 },
 
-    // ── Enemies: 7 — 3 native + 3 hard reviews from R0 + 1 north patrol ──
+    // ── Enemies: 10 — 4 native + 4 hard reviews from R0 + 2 native D2 ──
     enemySpawns: [
       { col: 20, row: 10, id: 'slime_pup' },                                  // D1 multTables
       { col: 52, row:  9, id: 'cactus_sprite' },                              // D2 multiplication
-      { col: 30, row: 37, id: 'cloud_bully' },                                // D2 skipCounting
-      { col: 44, row: 23, id: 'counting_caterpillar', difficultyOverride: 3 },// D3 addition review
-      { col: 14, row: 37, id: 'number_gnome',          difficultyOverride: 3 },// D3 subtraction review
-      { col: 57, row: 36, id: 'minus_mole',            difficultyOverride: 3 },// D3 comparison review
-      { col: 35, row:  7, id: 'slime_pup',             difficultyOverride: 1 },// D1 north patrol
+      { col: 30, row: 40, id: 'cloud_bully' },                                // D2 skipCounting
+      { col: 40, row:  7, id: 'double_bunny' },                               // D1 doubling (NEW)
+      { col: 44, row: 26, id: 'counting_caterpillar', difficultyOverride: 3 },// D3 addition review
+      { col: 14, row: 40, id: 'number_gnome',         difficultyOverride: 3 },// D3 subtraction review
+      { col: 57, row: 40, id: 'minus_mole',           difficultyOverride: 3 },// D3 comparison review
+      { col: 35, row: 26, id: 'number_bee',           difficultyOverride: 3 },// D3 numberOrder review
+      { col: 60, row: 12, id: 'slime_pup',            difficultyOverride: 2 },// D2 multTables
+      { col: 50, row: 42, id: 'double_bunny',         difficultyOverride: 2 },// D2 doubling
     ],
 
     boss: 'count_multiplico',
@@ -148,20 +156,23 @@ const REGIONS = [
     bgColor: 0xC8943C,
     floorTile: 'floor_sand',
     wallTile: 'wall_brick',
-    mimiStart: { col: 4, row: 23 },
-    npcTile:   { col: 6, row: 26 },
-    chestTile: { col: 65, row: 44 },
-    bossTile:  { col: 66, row: 5 },
+    mimiStart: { col: 4, row: 26 },
+    npcTile:   { col: 6, row: 29 },
+    chestTile: { col: 75, row: 50 },
+    bossTile:  { col: 76, row: 5 },
 
-    // ── Enemies: 7 — 3 native + 3 hard reviews from R1 + 1 north patrol ──
+    // ── Enemies: 10 — 4 native + 4 hard reviews from R1 + 2 native D2 ──
     enemySpawns: [
       { col: 20, row: 10, id: 'sand_scarab' },                                // D1 division
       { col: 52, row:  9, id: 'mummy_cat' },                                  // D2 mult review
-      { col: 30, row: 37, id: 'mirage_fox' },                                 // D2 divisionWord
-      { col: 44, row: 23, id: 'slime_pup',     difficultyOverride: 3 },       // D3 multTables review
-      { col: 14, row: 37, id: 'cactus_sprite', difficultyOverride: 3 },       // D3 multiplication review
-      { col: 57, row: 36, id: 'cloud_bully',   difficultyOverride: 3 },       // D3 skipCounting review
-      { col: 35, row:  7, id: 'sand_scarab',   difficultyOverride: 1 },       // D1 north patrol
+      { col: 30, row: 40, id: 'mirage_fox' },                                 // D2 divisionWord
+      { col: 40, row:  7, id: 'riddle_scarab' },                              // D1 missingNumber (NEW)
+      { col: 44, row: 26, id: 'slime_pup',     difficultyOverride: 3 },       // D3 multTables review
+      { col: 14, row: 40, id: 'cactus_sprite', difficultyOverride: 3 },       // D3 multiplication review
+      { col: 57, row: 40, id: 'cloud_bully',   difficultyOverride: 3 },       // D3 skipCounting review
+      { col: 35, row: 26, id: 'double_bunny',  difficultyOverride: 3 },       // D3 doubling review
+      { col: 60, row: 12, id: 'sand_scarab',   difficultyOverride: 2 },       // D2 division
+      { col: 50, row: 42, id: 'riddle_scarab', difficultyOverride: 2 },       // D2 missingNumber
     ],
 
     boss: 'the_diviner',
@@ -199,20 +210,23 @@ const REGIONS = [
     bgColor: 0x7AB4CC,
     floorTile: 'floor_snow',
     wallTile: 'wall_ice',
-    mimiStart: { col: 4, row: 23 },
-    npcTile:   { col: 6, row: 26 },
-    chestTile: { col: 65, row: 44 },
-    bossTile:  { col: 66, row: 5 },
+    mimiStart: { col: 4, row: 26 },
+    npcTile:   { col: 6, row: 29 },
+    chestTile: { col: 75, row: 50 },
+    bossTile:  { col: 76, row: 5 },
 
-    // ── Enemies: 7 — 3 native + 3 hard reviews from R2 + 1 north patrol ──
+    // ── Enemies: 10 — 4 native + 4 hard reviews from R2 + 2 native D3 ──
     enemySpawns: [
       { col: 20, row: 10, id: 'ice_frog' },                                   // D1 fractionCompare
       { col: 52, row:  9, id: 'snow_golem' },                                 // D2 fractionAdd
-      { col: 30, row: 37, id: 'crystal_bat' },                                // D2 decimals
-      { col: 44, row: 23, id: 'sand_scarab',  difficultyOverride: 3 },        // D3 division review
-      { col: 14, row: 37, id: 'mummy_cat',    difficultyOverride: 3 },        // D3 mult review
-      { col: 57, row: 36, id: 'mirage_fox',   difficultyOverride: 3 },        // D3 word-problem review
-      { col: 35, row:  7, id: 'ice_frog',     difficultyOverride: 1 },        // D1 north patrol
+      { col: 30, row: 40, id: 'crystal_bat' },                                // D2 decimals
+      { col: 40, row:  7, id: 'ice_frog',      difficultyOverride: 2 },       // D2 fractionCompare
+      { col: 44, row: 26, id: 'sand_scarab',   difficultyOverride: 3 },       // D3 division review
+      { col: 14, row: 40, id: 'mummy_cat',     difficultyOverride: 3 },       // D3 mult review
+      { col: 57, row: 40, id: 'mirage_fox',    difficultyOverride: 3 },       // D3 word-problem review
+      { col: 35, row: 26, id: 'riddle_scarab', difficultyOverride: 3 },       // D3 missingNumber review
+      { col: 60, row: 12, id: 'snow_golem',    difficultyOverride: 3 },       // D3 fractionAdd
+      { col: 50, row: 42, id: 'crystal_bat',   difficultyOverride: 3 },       // D3 decimals
     ],
 
     boss: 'glacius',
@@ -250,20 +264,23 @@ const REGIONS = [
     bgColor: 0x2D1B4E,
     floorTile: 'floor_stone',
     wallTile: 'wall_brick',
-    mimiStart: { col: 4, row: 23 },
-    npcTile:   { col: 6, row: 26 },
-    chestTile: { col: 65, row: 44 },
-    bossTile:  { col: 66, row: 5 },
+    mimiStart: { col: 4, row: 26 },
+    npcTile:   { col: 6, row: 29 },
+    chestTile: { col: 75, row: 50 },
+    bossTile:  { col: 76, row: 5 },
 
-    // ── Enemies: 7 — 3 native + 3 hard reviews from R3 + 1 north patrol ──
+    // ── Enemies: 10 — 4 native + 4 hard reviews from R3 + 2 native D3 ──
     enemySpawns: [
       { col: 20, row: 10, id: 'shadow_knight' },                              // D1 orderOfOps
       { col: 52, row:  9, id: 'ratio_raven' },                                // D2 percentages
-      { col: 30, row: 37, id: 'percent_wraith' },                             // D2 ratiosProp
-      { col: 44, row: 23, id: 'ice_frog',      difficultyOverride: 3 },       // D3 fractionCompare review
-      { col: 14, row: 37, id: 'snow_golem',    difficultyOverride: 3 },       // D3 fractionAdd review
-      { col: 57, row: 36, id: 'crystal_bat',   difficultyOverride: 3 },       // D3 decimals review
-      { col: 35, row:  7, id: 'shadow_knight', difficultyOverride: 1 },       // D1 north patrol
+      { col: 30, row: 40, id: 'percent_wraith' },                             // D2 ratiosProp
+      { col: 40, row:  7, id: 'shadow_knight', difficultyOverride: 2 },       // D2 orderOfOps
+      { col: 44, row: 26, id: 'ice_frog',      difficultyOverride: 3 },       // D3 fractionCompare review
+      { col: 14, row: 40, id: 'snow_golem',    difficultyOverride: 3 },       // D3 fractionAdd review
+      { col: 57, row: 40, id: 'crystal_bat',   difficultyOverride: 3 },       // D3 decimals review
+      { col: 35, row: 26, id: 'ratio_raven',   difficultyOverride: 3 },       // D3 percentages
+      { col: 60, row: 12, id: 'percent_wraith', difficultyOverride: 3 },      // D3 ratiosProp
+      { col: 50, row: 42, id: 'shadow_knight', difficultyOverride: 3 },       // D3 orderOfOps
     ],
 
     boss: 'fenwick',

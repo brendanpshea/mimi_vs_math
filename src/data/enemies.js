@@ -70,6 +70,20 @@ const ENEMIES = {
     special: 'Number comparison problems',
     color: 0x886644,
   },
+  number_bee: {
+    id: 'number_bee',
+    name: 'Number Bee',
+    spriteKey: 'counting_caterpillar',     // reuses caterpillar sprite
+    region: 0,
+    hp: 5,
+    damage: 1,
+    xp: 10,
+    mathTopic: 'numberOrder',              // number ordering (new type)
+    difficulty: 1,
+    timerSeconds: 22,                      // Gr 1: pick biggest/smallest from a set
+    special: 'Number ordering problems',
+    color: 0xFFAA22,
+  },
   subtraction_witch: {
     id: 'subtraction_witch',
     name: 'The Subtraction Witch',
@@ -79,7 +93,7 @@ const ENEMIES = {
     damage: 2,
     xp: 40,
     mathTopic: 'addSub',
-    mathTopics: ['addition', 'subtraction', 'comparison'],  // all Region 0 types
+    mathTopics: ['addition', 'subtraction', 'comparison', 'numberOrder'],  // all Region 0 types
     difficulty: 3,
     timerSeconds: 22,              // Boss: matches heaviest R0 type (comparison)
     special: 'Boss: Addition, subtraction & comparisons',
@@ -130,6 +144,20 @@ const ENEMIES = {
     special: 'Skip counting sequences',
     color: 0x8899AA,
   },
+  double_bunny: {
+    id: 'double_bunny',
+    name: 'Double Bunny',
+    spriteKey: 'slime_pup',               // reuses slime pup sprite
+    region: 1,
+    hp: 5,
+    damage: 1,
+    xp: 12,
+    mathTopic: 'doubling',                // doubling & halving (new type)
+    difficulty: 1,
+    timerSeconds: 20,                     // Gr 2: simple double/half
+    special: 'Doubling & halving problems',
+    color: 0x88DD44,
+  },
   count_multiplico: {
     id: 'count_multiplico',
     name: 'Count Multiplico',
@@ -139,7 +167,7 @@ const ENEMIES = {
     damage: 2,
     xp: 60,
     mathTopic: 'multiplication',
-    mathTopics: ['multTables', 'multiplication', 'skipCounting'],  // all Region 1 types
+    mathTopics: ['multTables', 'multiplication', 'skipCounting', 'doubling'],  // all Region 1 types
     difficulty: 3,
     timerSeconds: 25,              // Boss: D3 can draw 2-digit×1-digit mult; Grade 2 audience
     special: 'Boss: Tables, multiplication & sequences',
@@ -190,6 +218,20 @@ const ENEMIES = {
     special: 'Division word problems; answers shuffle at 5 s',
     color: 0xFF8844,
   },
+  riddle_scarab: {
+    id: 'riddle_scarab',
+    name: 'Riddle Scarab',
+    spriteKey: 'sand_scarab',              // reuses sand scarab sprite
+    region: 2,
+    hp: 6,
+    damage: 2,
+    xp: 14,
+    mathTopic: 'missingNumber',            // missing number problems (new type)
+    difficulty: 1,
+    timerSeconds: 22,                      // Gr 3: solve for unknown
+    special: 'Missing number problems',
+    color: 0xDD8833,
+  },
   the_diviner: {
     id: 'the_diviner',
     name: 'The Diviner',
@@ -199,7 +241,7 @@ const ENEMIES = {
     damage: 2,
     xp: 65,
     mathTopic: 'division',
-    mathTopics: ['division', 'multiplication', 'divisionWord'],  // all Region 2 types
+    mathTopics: ['division', 'multiplication', 'divisionWord', 'missingNumber'],  // all Region 2 types
     difficulty: 3,
     timerSeconds: 22,              // Boss: elevated for word problem rounds
     special: 'Boss: Division, multiplication & word problems',

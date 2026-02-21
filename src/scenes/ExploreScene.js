@@ -227,6 +227,11 @@ export default class ExploreScene extends Phaser.Scene {
       decoration_icicle_b:      1.25,
       decoration_pillar:        1.15,
       decoration_pillar_b:      1.15,
+      decoration_vine:          1.25,
+      decoration_well:          1.10,
+      decoration_ice_crystal:   1.20,
+      decoration_chains:        1.15,
+      decoration_bookshelf:     1.15,
     };
 
     for (const item of deduped) {

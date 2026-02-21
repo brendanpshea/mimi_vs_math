@@ -137,6 +137,23 @@ export const TERRAIN_DEFS = [
   { key: 'decoration_pillar_b',    file: 'decoration_pillar_b',    size: { width: 24, height: 40 } },
   { key: 'decoration_gravestone',  file: 'decoration_gravestone',  size: { width: 24, height: 32 } },
   { key: 'decoration_torch',        file: 'decoration_torch',        size: { width: 24, height: 40 } },
+
+  // New decorations — Region 0 (Village)
+  { key: 'decoration_hay_bale',    file: 'decoration_hay_bale',    size: { width: 32, height: 24 } },
+  { key: 'decoration_well',        file: 'decoration_well',        size: { width: 32, height: 40 } },
+  // New decorations — Region 1 (Meadow)
+  { key: 'decoration_vine',        file: 'decoration_vine',        size: { width: 32, height: 48 } },
+  { key: 'decoration_lily',        file: 'decoration_lily',        size: 32 },
+  // New decorations — Region 2 (Desert)
+  { key: 'decoration_bones',       file: 'decoration_bones',       size: 32 },
+  { key: 'decoration_tumbleweed',  file: 'decoration_tumbleweed',  size: 32 },
+  // New decorations — Region 3 (Ice)
+  { key: 'decoration_ice_crystal', file: 'decoration_ice_crystal', size: { width: 32, height: 48 } },
+  { key: 'decoration_frost_flower',file: 'decoration_frost_flower',size: 32 },
+  // New decorations — Region 4 (Shadow)
+  { key: 'decoration_skull',       file: 'decoration_skull',       size: 32 },
+  { key: 'decoration_chains',      file: 'decoration_chains',      size: { width: 32, height: 48 } },
+  { key: 'decoration_bookshelf',   file: 'decoration_bookshelf',   size: { width: 32, height: 48 } },
   
   // NPCs (A = idle/stand, B = walk frame — cycled by NPC.js step timer)
   { key: 'npc_wizard',   file: 'npc_wizard',   size: { width: 48, height: 56 } },

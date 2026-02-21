@@ -49,13 +49,29 @@ const TILE_FN = [
 
 // ── Non-blocking accent tile for open floor areas (null = no accents) ──────
 const ACCENT_FN = [
-  (c, r) => ({ col: c, row: r, key: 'decoration_flower',   blocking: false }), // R0
-  (c, r) => ({ col: c, row: r, key: 'decoration_mushroom', blocking: false }), // R1
-  null,   // R2 — barren desert
-  (c, r) => ({ col: c, row: r, key: 'decoration_snowpile', blocking: false }), // R3
-  (c, r) => {                        // R4 — castle accents: gravestones + torches
+  (c, r) => {                        // R0 — village: flowers + hay bales
+    const pick = ((Math.imul(c, 2654435761) ^ Math.imul(r, 2246822519)) >>> 0) % 3;
+    const keys = ['decoration_flower', 'decoration_flower', 'decoration_hay_bale'];
+    return { col: c, row: r, key: keys[pick], blocking: false };
+  },
+  (c, r) => {                        // R1 — meadow: mushrooms + lilies
+    const pick = ((Math.imul(c, 2654435761) ^ Math.imul(r, 2246822519)) >>> 0) % 3;
+    const keys = ['decoration_mushroom', 'decoration_mushroom', 'decoration_lily'];
+    return { col: c, row: r, key: keys[pick], blocking: false };
+  },
+  (c, r) => {                        // R2 — desert: bones + tumbleweeds (no longer barren!)
     const pick = ((Math.imul(c, 2654435761) ^ Math.imul(r, 2246822519)) >>> 0) % 2;
-    return { col: c, row: r, key: pick === 0 ? 'decoration_gravestone' : 'decoration_torch', blocking: false };
+    return { col: c, row: r, key: pick === 0 ? 'decoration_bones' : 'decoration_tumbleweed', blocking: false };
+  },
+  (c, r) => {                        // R3 — ice: snowpiles + frost flowers
+    const pick = ((Math.imul(c, 2654435761) ^ Math.imul(r, 2246822519)) >>> 0) % 3;
+    const keys = ['decoration_snowpile', 'decoration_snowpile', 'decoration_frost_flower'];
+    return { col: c, row: r, key: keys[pick], blocking: false };
+  },
+  (c, r) => {                        // R4 — castle: gravestones, torches, skulls
+    const pick = ((Math.imul(c, 2654435761) ^ Math.imul(r, 2246822519)) >>> 0) % 3;
+    const keys = ['decoration_gravestone', 'decoration_torch', 'decoration_skull'];
+    return { col: c, row: r, key: keys[pick], blocking: false };
   },
 ];
 

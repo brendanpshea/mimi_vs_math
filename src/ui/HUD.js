@@ -1,16 +1,15 @@
 /**
  * HUD — exploration scene heads-up display.
  *
- * Shows:  ♥ hearts  |  Region name  |  Level / XP bar  |  Inventory pills
+ * Shows:  ♥ hearts  |  Region name  |  Accuracy stat  |  Inventory pills
  *
- * Call update() each frame so the XP bar stays current.
+ * Call update() each frame so the accuracy stays current.
  */
 import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
 
 const HEART_COLOR   = 0xFF4466;
 const EMPTY_COLOR   = 0x444444;
-const XP_COLOR      = 0x44DDFF;
 const PANEL_COLOR   = 0x000000;
 const PANEL_ALPHA   = 0.55;
 
@@ -43,18 +42,10 @@ export default class HUD {
       fontSize: '14px', color: '#FFEEAA', fontFamily: 'Arial', fontStyle: 'bold',
     }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(51);
 
-    // Level text
-    this._levelText = scene.add.text(W / 2, 30, '', {
+    // Stats line: accuracy + total correct
+    this._statsText = scene.add.text(W / 2, 30, '', {
       fontSize: '11px', color: '#AADDFF', fontFamily: 'Arial',
     }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(51);
-
-    // XP bar background
-    scene.add.rectangle(W / 2, 50, 200, 8, 0x222222)
-      .setScrollFactor(0).setDepth(51);
-
-    // XP bar fill
-    this._xpBar = scene.add.rectangle(W / 2 - 100, 50, 0, 8, XP_COLOR)
-      .setOrigin(0, 0.5).setScrollFactor(0).setDepth(52);
 
     // Inventory label (top-right)
     this._invLabel = scene.add.text(W - 10, 10, '', {
@@ -66,7 +57,7 @@ export default class HUD {
   }
 
   refresh() {
-    const { hp, maxHP, xp, level, inventory } = GameState;
+    const { hp, maxHP, stats, inventory } = GameState;
 
     // Hearts
     const fullHearts  = Math.floor(hp / 2);
@@ -77,13 +68,13 @@ export default class HUD {
       else                                         this._hearts[i].setColor('#333344');
     }
 
-    // XP bar
-    const needed = level * 50;
-    const ratio  = Math.min(xp / needed, 1);
-    this._xpBar.setDisplaySize(200 * ratio, 8);
-
-    // Level text
-    this._levelText.setText(`Lv ${level}  •  ${xp}/${needed} XP`);
+    // Accuracy stat
+    const pct = stats.answered > 0
+      ? Math.round(stats.correct / stats.answered * 100)
+      : 100;
+    this._statsText.setText(
+      `✓ ${stats.correct}/${stats.answered}  ·  ${pct}% accuracy  ·  streak best: ${stats.bestStreak}`,
+    );
 
     // Inventory
     const parts = [];
@@ -99,3 +90,4 @@ export default class HUD {
     this.refresh();
   }
 }
+

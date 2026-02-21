@@ -4,8 +4,9 @@
 
 Mimi vs. Math is a browser-based, Zelda-style top-down adventure game built with
 **JavaScript + Phaser.js**. Mimi the cat explores a whimsical world, encounters enemies,
-and defeats them by answering math questions. The game targets **middle-grade players
-(ages 9–12)** and focuses on multiplication, division, and fractions.
+and defeats them by answering math questions. The game targets **elementary and middle-grade
+players (ages 6–13)** and covers addition, subtraction, multiplication, division, fractions,
+decimals, and mixed challenge content across five regions.
 
 ---
 
@@ -16,8 +17,8 @@ and defeats them by answering math questions. The game targets **middle-grade pl
 | Engine | Phaser 3 (JavaScript) |
 | Platform | Browser (no install required) |
 | Entry point | `index.html` |
-| Asset format | PNG sprites, JSON tilemaps (Tiled) |
-| Audio | OGG/MP3 via Phaser's audio manager |
+| Asset format | SVG sprites |
+| Audio | Not yet implemented |
 
 ---
 
@@ -27,6 +28,7 @@ and defeats them by answering math questions. The game targets **middle-grade pl
 
 ```
 Overworld Map
+├── Region 0: Sunny Village        (Addition & Subtraction)
 ├── Region 1: Meadow Maze          (Multiplication)
 ├── Region 2: Desert Dunes         (Division)
 ├── Region 3: Frostbite Cavern     (Fractions & Decimals)
@@ -34,11 +36,12 @@ Overworld Map
 ```
 
 Each region contains:
-- A **tile-map exploration area** (8–10 screens wide)
-- **3–5 enemy types** scaled to that region's math theme
+- A **procedurally-decorated exploration area**
+- **3–5 enemy types** scaled to that region’s math theme
 - **1 boss encounter** to unlock the next region
-- **2–3 NPCs** who give hints, lore, or optional side challenges
-- **Treasure chests** containing power-ups
+- **2–3 NPCs** who give hints or lore
+
+There are no treasure chests; items are dropped by enemies after battle.
 
 ### Overworld
 
@@ -56,41 +59,52 @@ Each region contains:
 
 | Stat | Description |
 |---|---|
-| HP | 6 hearts (12 HP); displayed as cat-paw icons |
-| Speed | Movement speed across the tile map |
-| Math Power | Multiplier applied to bonus damage for fast correct answers |
+| HP | 6 hearts (12 HP); displayed as heart icons |
+| Speed | Movement speed across the exploration area |
 
-### Power-ups (collectible from chests or NPCs)
+### Items (Enemy Drops)
+
+Items drop at the end of battle (30% chance from regular enemies; 100% from bosses).
+The item name and description are shown in the victory overlay.
 
 | Item | Effect |
 |---|---|
 | Sardine | Restore 2 HP |
 | Yarn Ball | +5 seconds added to battle timer (one battle) |
 | Catnip | Double damage on next correct answer |
-| Lucky Collar | Wrong answer does not cost HP (one battle) |
-| Fish Fossil | Reveal one incorrect choice per battle (3 uses) |
+| Lucky Collar | Shield — blocks one hit from an enemy |
+| Fish Fossil | Reveal one incorrect choice per question (3 uses) |
 
 ### Persistence
 
-- Progress saved to `localStorage` (current region, HP, collected items)
-- Mimi respawns at the start of the current region's entrance if HP reaches 0
-  (no permanent game-over)
+- Progress saved to `localStorage` (current region, HP, inventory, defeated bosses, math stats)
+- Mimi respawns at the start of the current region's entrance if HP reaches 0 (no permanent game-over)
+- **New Game** opens a world-select overlay; choosing a world auto-unlocks all prior bosses
+- **Continue** loads the existing save and returns directly to the world map
+
+### Stats Tracking
+
+All math performance data accumulates across the entire save:
+
+| Stat | Description |
+|---|---|
+| Questions Answered | Total seen across all battles |
+| Correct / Incorrect | Raw counts; timeouts count as incorrect |
+| Accuracy % | `correct / answered × 100` |
+| Avg. Answer Time | Mean ms per answer, converted to seconds for display |
+| Best Streak | Longest consecutive correct-answer run |
+| Battles Won / Lost | Battle outcomes |
+| Perfect Battles | Battles won with zero wrong answers or timeouts |
+
+Stats are viewable from the title screen, the world-select overlay, and the world map.
 
 ---
 
 ## Exploration (Zelda-style)
 
 - **Movement:** WASD or arrow keys; 4-directional
-- **Interaction:** Spacebar or Enter to talk to NPCs / open chests / read signs
-- **Minimap:** Small map in top-right corner showing current room
-- **Pause menu:** Esc key; shows HP, inventory, current region, controls
-
-### Rooms & Layout
-
-- Each region is divided into rooms connected by doorways
-- Some doors are **locked** (require a key item found in a chest)
-- **Puzzle rooms** exist where Mimi must answer a math question to open a door
-  (no combat; just a single question with typed or multiple-choice input)
+- **Interaction:** Spacebar or Enter to talk to NPCs / interact with the boss door
+- **Pause / back:** Esc returns to overworld or closes the current overlay
 
 ---
 
@@ -138,8 +152,9 @@ Each "turn" presents one math problem:
 
 ### Post-battle
 
-- Defeated enemy drops XP (shown as stars) and occasionally an item
-- XP fills a level bar; leveling up increases Mimi's Math Power by 0.1×
+- **Victory overlay** shows: accuracy for the battle (`N/N correct, XX%`), streak badge (if ≥3), perfect-battle badge (zero wrong answers), boss-unlock message, and any item dropped.
+- **Defeat:** Mimi’s HP is restored to 50% of max; she returns to the region entrance.
+- Math stats (`GameState.stats`) are updated on every answer and at battle end.
 
 ---
 
@@ -234,7 +249,8 @@ displayed (hidden countdown).
 
 ```
 ┌─────────────────────────────────────────────┐
-│ [♥♥♥♥♥♥]  Region: Meadow Maze   [minimap]  │
+│ [♥♥♥♥♥♥]  Region: Meadow Maze                   │
+│      ✓ 18/22  ·  82% accuracy  ·  streak best: 5    │
 │                                             │
 │              (game world)                   │
 │                                             │
@@ -263,54 +279,56 @@ displayed (hidden countdown).
 ```
 mimi_vs_math/
 ├── index.html
-├── package.json
 ├── src/
-│   ├── main.js              # Phaser game config, scene registration
+│   ├── main.js                # Phaser game config, scene registration
+│   ├── config/
+│   │   ├── AssetConfig.js     # SVG/PNG switch + texture key list
+│   │   └── GameState.js       # Save/load, stats tracking, inventory helpers
 │   ├── scenes/
-│   │   ├── BootScene.js     # Preload assets
-│   │   ├── TitleScene.js    # Title screen, difficulty select
-│   │   ├── OverworldScene.js# Region select map
-│   │   ├── ExploreScene.js  # Tile-map exploration (reused per region)
-│   │   └── BattleScene.js   # Math battle UI
+│   │   ├── BootScene.js       # Preload assets
+│   │   ├── TitleScene.js      # Title screen; New Game → world-select overlay
+│   │   ├── StoryScene.js      # Intro cutscene for Region 0
+│   │   ├── OverworldScene.js  # Region-select world map + stats overlay
+│   │   ├── ExploreScene.js    # Top-down exploration (reused per region)
+│   │   ├── BattleScene.js     # Math battle UI + stats recording
+│   │   └── BossIntroScene.js  # Animated boss-introduction cutscene
 │   ├── entities/
-│   │   ├── Mimi.js          # Player sprite, movement, stats
-│   │   └── Enemy.js         # Enemy base class + subclasses
+│   │   ├── Mimi.js            # Player sprite and movement
+│   │   ├── Enemy.js           # Enemy base class
+│   │   └── NPC.js             # NPC interaction
 │   ├── math/
-│   │   ├── QuestionBank.js  # Question generation per topic
-│   │   └── Distractors.js   # Procedural wrong-answer generation
+│   │   ├── QuestionBank.js    # Question generation per topic
+│   │   ├── Distractors.js     # Procedural wrong-answer generation
+│   │   └── Explanations.js    # Post-answer explanation text
 │   ├── data/
-│   │   ├── enemies.json     # Enemy definitions (HP, damage, math topic)
-│   │   ├── items.json       # Item definitions and effects
-│   │   └── regions.json     # Region metadata, unlock order
+│   │   ├── enemies.js         # Enemy definitions (HP, damage, math topic)
+│   │   ├── items.js           # Item definitions and effects
+│   │   ├── regions.js         # Region metadata, unlock order
+│   │   ├── maps.js            # Procedural decoration data per region
+│   │   └── npcJokes.json      # NPC dialogue lines
 │   └── ui/
-│       ├── HUD.js           # HP bars, timer, inventory display
-│       └── DialogBox.js     # NPC dialogue and sign text
-├── assets/
-│   ├── sprites/             # Mimi, enemies, tiles, items
-│   ├── maps/                # Tiled JSON map files
-│   ├── audio/               # BGM and SFX
-│   └── fonts/               # Bitmap or web fonts
-└── GAME_SPEC.md
+│       ├── HUD.js             # Hearts, accuracy stats, inventory pills
+│       └── DialogBox.js       # NPC dialogue display
+└── assets/sprites/            # SVG files (walk cycles, battle pose, bosses, UI)
 ```
 
 ---
 
 ## Milestones
 
-| Milestone | Deliverable |
-|---|---|
-| M1 | Phaser project scaffolded; Mimi moves on a placeholder tile map |
-| M2 | Battle scene works end-to-end with Region 1 math questions |
-| M3 | Full Region 1 complete (map, enemies, boss, items) |
-| M4 | Regions 2 & 3 complete |
-| M5 | Region 4 + full progression, save/load, polish |
+| Milestone | Status | Deliverable |
+|---|---|---|
+| M1 | ✅ Done | Phaser project scaffolded; Mimi moves in procedurally-decorated regions |
+| M2 | ✅ Done | Battle scene works end-to-end with Region 0 math questions |
+| M3 | ✅ Done | All 5 regions with enemies, bosses, boss-intro cutscenes, item drops |
+| M4 | ✅ Done | Full progression, save/load, world-select, stats tracking |
+| M5 | 🔄 In progress | Audio, mobile touch controls, polish |
 
 ---
 
 ## Out of Scope (v1)
 
 - Multiplayer or leaderboards
-- Sound-design beyond basic SFX placeholders
+- Audio beyond basic SFX placeholders
 - Mobile touch controls (desktop-first)
 - User accounts or server-side save data
-- Procedurally generated maps

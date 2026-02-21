@@ -11,9 +11,18 @@ const GameState = {
   // ── Player stats ──────────────────────────────────────────────────────
   hp: 12,
   maxHP: 12,
-  xp: 0,
-  level: 1,
-  mathPower: 1.0,      // damage multiplier; increases with level
+
+  // ── Lifetime stats ────────────────────────────────────────────────────
+  stats: {
+    answered:       0,   // total questions seen
+    correct:        0,
+    incorrect:      0,
+    totalTimeMs:    0,   // sum of answer times (ms) for avg calculation
+    bestStreak:     0,   // all-time best answer streak
+    battlesWon:     0,
+    battlesLost:    0,
+    perfectBattles: 0,   // won with zero wrong answers
+  },
 
   // ── World progress ────────────────────────────────────────────────────
   currentRegion: 0,
@@ -47,9 +56,7 @@ const GameState = {
     const data = {
       hp:              this.hp,
       maxHP:           this.maxHP,
-      xp:              this.xp,
-      level:           this.level,
-      mathPower:       this.mathPower,
+      stats:           this.stats,
       currentRegion:   this.currentRegion,
       defeatedBosses:  this.defeatedBosses,
       defeatedEnemies: this.defeatedEnemies,
@@ -67,6 +74,14 @@ const GameState = {
       Object.assign(this, data);
       // Ensure fields added after old saves exist
       if (!this.bossIntroSeen) this.bossIntroSeen = [];
+      if (!this.stats) this.stats = {
+        answered: 0, correct: 0, incorrect: 0, totalTimeMs: 0,
+        bestStreak: 0, battlesWon: 0, battlesLost: 0, perfectBattles: 0,
+      };
+      // Strip legacy level/xp/mathPower fields from old saves
+      delete this.xp;
+      delete this.level;
+      delete this.mathPower;
       return true;
     } catch {
       return false;
@@ -76,9 +91,10 @@ const GameState = {
   reset() {
     this.hp              = 12;
     this.maxHP           = 12;
-    this.xp              = 0;
-    this.level           = 1;
-    this.mathPower       = 1.0;
+    this.stats           = {
+      answered: 0, correct: 0, incorrect: 0, totalTimeMs: 0,
+      bestStreak: 0, battlesWon: 0, battlesLost: 0, perfectBattles: 0,
+    };
     this.currentRegion   = 0;
     this.defeatedBosses  = [];
     this.defeatedEnemies = {};
@@ -124,19 +140,28 @@ const GameState = {
     this.save();
   },
 
-  /** Add XP and handle level-up. Returns true if levelled up. */
-  addXP(amount) {
-    this.xp += amount;
-    const xpNeeded = this.level * 50;
-    if (this.xp >= xpNeeded) {
-      this.level      += 1;
-      this.mathPower  = Math.round((this.mathPower + 0.1) * 10) / 10;
-      this.xp         -= xpNeeded;
-      this.save();
-      return true;
+  /** Record a single question result. timeMs is the time taken to answer. */
+  recordAnswer(correct, timeMs) {
+    this.stats.answered++;
+    if (correct) this.stats.correct++;
+    else         this.stats.incorrect++;
+    this.stats.totalTimeMs += (timeMs || 0);
+    // save() is intentionally skipped per-answer for performance;
+    // _endBattle calls save() once at the end of each battle.
+  },
+
+  /** Record end-of-battle outcome and update best streak. */
+  recordBattle(won, perfect, streak) {
+    if (won) {
+      this.stats.battlesWon++;
+      if (perfect) this.stats.perfectBattles++;
+    } else {
+      this.stats.battlesLost++;
+    }
+    if ((streak ?? 0) > this.stats.bestStreak) {
+      this.stats.bestStreak = streak;
     }
     this.save();
-    return false;
   },
 
   /** Add an item to inventory. */

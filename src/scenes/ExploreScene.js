@@ -321,23 +321,9 @@ export default class ExploreScene extends Phaser.Scene {
     if (justUnlocked) {
       this.dialog.show(
         `All enemies defeated!\nThe boss seal is broken — enter when ready.`,
-        battleResult.leveledUp
-          ? () => this.time.delayedCall(400, () => {
-              this.dialog.show(
-                `Level Up! Mimi is now Level ${GameState.level}.\nMath Power increased!`,
-                null, '\u2B50 Level Up!',
-              );
-            })
-          : null,
+        null,
         '\u2728 Seal Broken!',
       );
-    } else if (battleResult.leveledUp) {
-      this.time.delayedCall(400, () => {
-        this.dialog.show(
-          `Level Up! Mimi is now Level ${GameState.level}.\nMath Power increased!`,
-          null, '\u2B50 Level Up!',
-        );
-      });
     }
   }
 

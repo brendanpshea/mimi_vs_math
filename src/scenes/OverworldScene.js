@@ -49,15 +49,21 @@ export default class OverworldScene extends Phaser.Scene {
 
     this._drawPlayerInfo(W, H);
 
-    // ESC: close popup first, then return to title
+    // ESC: close overlay first, then popup, then return to title
     this.input.keyboard.on('keydown-ESC', () => {
-      if (this._popup) { this._closePopup(); }
-      else             { this.scene.start('TitleScene'); }
+      if (this._statsItems)  { this._closeStatsOverlay(); }
+      else if (this._popup)  { this._closePopup(); }
+      else                   { this.scene.start('TitleScene'); }
     });
 
     this.add.text(W / 2, H - 8, 'Click a region to enter  ·  Esc → Title', {
       fontSize: '11px', color: '#8A7050', fontFamily: 'Arial',
     }).setOrigin(0.5, 1);
+
+    // Auto-show stats after boss defeat
+    if (data?.bossDefeated) {
+      this.time.delayedCall(600, () => this._showStatsOverlay());
+    }
   }
 
   // ── Background: sky gradient + parchment land + water + terrain patches ──
@@ -270,13 +276,107 @@ export default class OverworldScene extends Phaser.Scene {
   }
 
   _drawPlayerInfo(W, H) {
-    const { hp, maxHP, level, xp } = GameState;
+    const { hp, maxHP, stats } = GameState;
+    const pct = stats.answered > 0
+      ? Math.round(stats.correct / stats.answered * 100) : 100;
     const px = W - 98;
-    this.add.rectangle(px, 78, 165, 90, 0x000000, 0.62).setStrokeStyle(1.5, 0x886644);
-    this.add.text(px, 44,  '🐱  Mimi',          { fontSize: '15px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold' }).setOrigin(0.5);
-    this.add.text(px, 63,  `HP: ${hp}/${maxHP}`,   { fontSize: '13px', color: '#FF8899', fontFamily: 'Arial' }).setOrigin(0.5);
-    this.add.text(px, 81,  `Level: ${level}`,       { fontSize: '13px', color: '#AADDFF', fontFamily: 'Arial' }).setOrigin(0.5);
-    this.add.text(px, 99,  `XP: ${xp}/${level*50}`, { fontSize: '13px', color: '#AADDFF', fontFamily: 'Arial' }).setOrigin(0.5);
+
+    this.add.rectangle(px, 78, 165, 105, 0x000000, 0.62)
+      .setStrokeStyle(1.5, 0x886644);
+    this.add.text(px, 40,  '🐱  Mimi',
+      { fontSize: '15px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold' }).setOrigin(0.5);
+    this.add.text(px, 59,  `HP: ${hp}/${maxHP}`,
+      { fontSize: '13px', color: '#FF8899', fontFamily: 'Arial' }).setOrigin(0.5);
+    this.add.text(px, 75,  `✓ ${stats.correct}/${stats.answered}`,
+      { fontSize: '11px', color: '#AADDFF', fontFamily: 'Arial' }).setOrigin(0.5);
+    this.add.text(px, 89,  `${pct}% accuracy`,
+      { fontSize: '11px', color: '#AADDFF', fontFamily: 'Arial' }).setOrigin(0.5);
+    this.add.text(px, 103, `Best streak: ${stats.bestStreak}`,
+      { fontSize: '10px', color: '#AADDFF', fontFamily: 'Arial' }).setOrigin(0.5);
+
+    // Stats button
+    const sb = this.add.rectangle(px, 124, 130, 24, 0x0C1A0C)
+      .setStrokeStyle(1.5, 0x44AA44).setInteractive({ useHandCursor: true });
+    const st = this.add.text(px, 124, '📊 Full Stats',
+      { fontSize: '12px', color: '#88FF88', fontFamily: 'Arial' }).setOrigin(0.5);
+    sb.on('pointerover', () => { sb.setFillStyle(0x153015); st.setColor('#AAFFAA'); });
+    sb.on('pointerout',  () => { sb.setFillStyle(0x0C1A0C); st.setColor('#88FF88'); });
+    sb.on('pointerdown', () => this._showStatsOverlay());
+  }
+
+  // ── Stats overlay ────────────────────────────────────────────────────────
+
+  _showStatsOverlay() {
+    if (this._statsItems) return;
+    const W = 800, H = 600, D = 150;
+    const s  = GameState.stats;
+    const items = this._statsItems = [];
+    const add = o => { items.push(o); return o; };
+
+    // Dim + close on bg click
+    const dim = add(this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.72)
+      .setDepth(D).setInteractive());
+    dim.on('pointerdown', () => this._closeStatsOverlay());
+
+    // Panel
+    add(this.add.rectangle(W / 2, H / 2, 420, 370, 0x08082A)
+      .setDepth(D + 1).setStrokeStyle(2, 0x4488FF));
+
+    add(this.add.text(W / 2, H / 2 - 162, '📊  Mimi’s Stats', {
+      fontSize: '24px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(D + 2));
+
+    // Divider
+    const dg = add(this.add.graphics().setDepth(D + 2));
+    dg.lineStyle(1, 0x445588, 0.8);
+    dg.lineBetween(W / 2 - 190, H / 2 - 140, W / 2 + 190, H / 2 - 140);
+
+    const pct = s.answered > 0
+      ? Math.round(s.correct / s.answered * 100) : 100;
+    const avgSec = s.answered > 0
+      ? (s.totalTimeMs / s.answered / 1000).toFixed(1) : '—';
+
+    const rows = [
+      ['❓ Questions Answered',    String(s.answered)],
+      ['✅ Correct',               `${s.correct}  (${pct}%)`],
+      ['❌ Incorrect / Timeouts',  String(s.incorrect)],
+      ['⏱ Avg. Answer Time',       `${avgSec}s`],
+      ['', ''],   // spacer
+      ['🔥 Best Streak',             String(s.bestStreak)],
+      ['⚔️ Battles Won',             String(s.battlesWon)],
+      ['💤 Battles Lost',            String(s.battlesLost)],
+      ['✨ Perfect Battles',          String(s.perfectBattles)],
+    ];
+
+    let ry = H / 2 - 132;
+    const labelX  = W / 2 - 168;
+    const valueX  = W / 2 + 168;
+    rows.forEach(([label, value]) => {
+      if (!label) { ry += 10; return; }
+      add(this.add.text(labelX, ry, label,
+        { fontSize: '14px', color: '#CCDDFF', fontFamily: 'Arial' },
+      ).setOrigin(0, 0).setDepth(D + 2));
+      add(this.add.text(valueX, ry, value,
+        { fontSize: '14px', color: '#FFFFFF', fontFamily: 'Arial', fontStyle: 'bold' },
+      ).setOrigin(1, 0).setDepth(D + 2));
+      ry += 26;
+    });
+
+    // Close button
+    const cb = add(this.add.rectangle(W / 2, H / 2 + 155, 160, 34, 0x2A0A0A)
+      .setDepth(D + 2).setStrokeStyle(1.5, 0xCC4444).setInteractive({ useHandCursor: true }));
+    const ct = add(this.add.text(W / 2, H / 2 + 155, '✕  Close',
+      { fontSize: '14px', color: '#FF8888', fontFamily: 'Arial', fontStyle: 'bold' },
+    ).setOrigin(0.5).setDepth(D + 3));
+    cb.on('pointerover', () => { cb.setFillStyle(0x401515); ct.setColor('#FFAAAA'); });
+    cb.on('pointerout',  () => { cb.setFillStyle(0x2A0A0A); ct.setColor('#FF8888'); });
+    cb.on('pointerdown', () => this._closeStatsOverlay());
+  }
+
+  _closeStatsOverlay() {
+    if (!this._statsItems) return;
+    this._statsItems.forEach(o => o.destroy());
+    this._statsItems = null;
   }
 
   // ── Node info popup ────────────────────────────────────────────────────────

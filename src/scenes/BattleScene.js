@@ -42,11 +42,13 @@ export default class BattleScene extends Phaser.Scene {
     this.returnData    = data.returnData  ?? {};
 
     // Battle state
-    this.enemyHP     = this.enemyData.hp;
-    this.streak      = 0;
-    this.questionIdx = 0;
-    this.battleOver  = false;
-    this.answering   = false;
+    this.enemyHP           = this.enemyData.hp;
+    this.streak            = 0;
+    this.questionIdx       = 0;
+    this.battleOver        = false;
+    this.answering         = false;
+    this.battleWrongAnswers = 0;   // for perfect-battle detection
+    this._qStartTime        = 0;   // Phaser timestamp when current question appeared
 
     // Consume inventory items → may raise GameState.hp before snapshotting
     GameState.resetEffects();
@@ -275,6 +277,7 @@ export default class BattleScene extends Phaser.Scene {
     // Timer
     const duration = (this.enemyData.timerSeconds + (GameState.activeEffects.timerBonus ?? 0)) * 1000;
     this._startTimer(duration);
+    this._qStartTime = this.time.now;
   }
 
   _startTimer(totalMs) {
@@ -316,6 +319,9 @@ export default class BattleScene extends Phaser.Scene {
     if (this.answering || this.battleOver) return;
     this.answering = true;
 
+    GameState.recordAnswer(false, this.time.now - this._qStartTime);
+    this.battleWrongAnswers++;
+
     this.answerButtons.forEach((btn, i) => {
       btn.bg.removeInteractive();
       if (this.currentChoices[i].correct) btn.bg.setFillStyle(BTN_COLORS.reveal);
@@ -352,15 +358,16 @@ export default class BattleScene extends Phaser.Scene {
   }
 
   _onCorrect(isFast) {
+    GameState.recordAnswer(true, this.time.now - this._qStartTime);
+
     this.streak++;
     let dmg = isFast ? 3 : 2;
-    if (this.streak >= 3)             dmg += 1;           // streak bonus
+    if (this.streak >= 3) dmg += 1;   // streak bonus
     if (GameState.activeEffects.doubleHit) {
       dmg *= 2;
       GameState.activeEffects.doubleHit = false;
       this._refreshEffectsDisplay();
     }
-    dmg = Math.round(dmg * GameState.mathPower);
 
     this.enemyHP = Math.max(0, this.enemyHP - dmg);
     this._updateHPBar(this.enemyHPBar, this.enemyHP);
@@ -394,6 +401,9 @@ export default class BattleScene extends Phaser.Scene {
   }
 
   _onWrong() {
+    GameState.recordAnswer(false, this.time.now - this._qStartTime);
+    this.battleWrongAnswers++;
+
     this.streak = 0;
     this._updateStreakDisplay();
     this._damagePlayer();
@@ -618,8 +628,7 @@ export default class BattleScene extends Phaser.Scene {
     const H = this.cameras.main.height;
 
     if (victory) {
-      const xpGain  = this.enemyData.xp ?? 10;
-      const levelUp = GameState.addXP(xpGain);
+      GameState.recordBattle(true, this.battleWrongAnswers === 0, this.streak);
 
       // ── Item drop: 100% for bosses, 30% for regular enemies ──
       const ITEM_IDS    = Object.keys(ITEMS);
@@ -630,33 +639,30 @@ export default class BattleScene extends Phaser.Scene {
       if (droppedItem) GameState.addItem(droppedItem);
 
       // ── Build victory overlay with a flowing y cursor ──────────────────
-      // First pass: measure how many optional lines appear so we can size
-      // the overlay and centre everything before drawing.
-      let nextY = H / 2 - 80; // top of content
+      let nextY = H / 2 - 80;
 
-      // Reserve space for fixed lines
-      const yVictory = nextY;       nextY += 52;  // "Victory!"
-      const yXP      = nextY;       nextY += 34;  // "+XP"
-
-      let yLevelUp = null;
-      if (levelUp)          { yLevelUp = nextY; nextY += 28; }
+      const yVictory  = nextY;  nextY += 52;
+      const yAccuracy = nextY;  nextY += 34;
 
       let yStreak = null;
-      if (this.streak >= 5) { yStreak  = nextY; nextY += 26; }
+      if (this.streak >= 3) { yStreak = nextY; nextY += 26; }
+
+      let yPerfect = null;
+      if (this.battleWrongAnswers === 0) { yPerfect = nextY; nextY += 24; }
 
       let yBoss = null;
-      if (this.isBoss)      { yBoss    = nextY; nextY += 24; }
+      if (this.isBoss) { yBoss = nextY; nextY += 24; }
 
       let yItemTitle = null, yItemDesc = null;
       if (droppedItem) {
-        nextY += 8;             // visual gap before item section
+        nextY += 8;
         yItemTitle = nextY; nextY += 22;
         yItemDesc  = nextY; nextY += 20;
       }
 
-      const btnY     = nextY + 18;   // centre of Continue button
-      const overlayH = (btnY + 30) - (H / 2 - 80 - 14) + 14; // top-pad + content + bottom-pad
-      const overlayY = (H / 2 - 80 - 14) + overlayH / 2;     // re-centre rectangle
+      const btnY     = nextY + 18;
+      const overlayH = (btnY + 30) - (H / 2 - 80 - 14) + 14;
+      const overlayY = (H / 2 - 80 - 14) + overlayH / 2;
 
       this.add.rectangle(W / 2, overlayY, W * 0.78, overlayH, 0x000033, 0.93)
         .setStrokeStyle(2, 0x4488FF);
@@ -665,14 +671,21 @@ export default class BattleScene extends Phaser.Scene {
         ...TEXT_STYLE(38, '#FFD700', true), stroke: '#000', strokeThickness: 3,
       }).setOrigin(0.5);
 
-      this.add.text(W / 2, yXP, `+${xpGain} XP`, TEXT_STYLE(22, '#AAFFCC')).setOrigin(0.5);
-
-      if (yLevelUp !== null) {
-        this.add.text(W / 2, yLevelUp, `Level Up! Now Level ${GameState.level} 🎉`, TEXT_STYLE(18, '#FFDD44')).setOrigin(0.5);
-      }
+      // Battle accuracy
+      const battleAnswered = this.questionIdx;
+      const battleCorrect  = battleAnswered - this.battleWrongAnswers;
+      const pct = battleAnswered > 0 ? Math.round(battleCorrect / battleAnswered * 100) : 100;
+      this.add.text(W / 2, yAccuracy,
+        `${battleCorrect}/${battleAnswered} correct  (${pct}%)`,
+        TEXT_STYLE(18, '#AAFFCC'),
+      ).setOrigin(0.5);
 
       if (yStreak !== null) {
-        this.add.text(W / 2, yStreak, `🔥 Incredible ${this.streak}-streak!`, TEXT_STYLE(16, '#FF9900')).setOrigin(0.5);
+        this.add.text(W / 2, yStreak, `🔥 ${this.streak}-answer streak!`, TEXT_STYLE(16, '#FF9900')).setOrigin(0.5);
+      }
+
+      if (yPerfect !== null) {
+        this.add.text(W / 2, yPerfect, '✨ Perfect battle!', TEXT_STYLE(15, '#FFEEAA')).setOrigin(0.5);
       }
 
       if (yBoss !== null) {
@@ -709,7 +722,6 @@ export default class BattleScene extends Phaser.Scene {
               victory:       true,
               enemyInstance: this.enemyInstance,
               isBoss:        this.isBoss,
-              leveledUp:     levelUp,
             },
           });
         }
@@ -717,6 +729,7 @@ export default class BattleScene extends Phaser.Scene {
 
     } else {
       // Defeat — respawn with half HP
+      GameState.recordBattle(false, false, this.streak);
       GameState.hp = Math.max(1, Math.ceil(GameState.maxHP / 2));
       GameState.save();
 

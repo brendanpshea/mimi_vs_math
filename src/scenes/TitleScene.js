@@ -20,6 +20,10 @@ export default class TitleScene extends Phaser.Scene {
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
 
+    // Load existing save early so we can show stats on the title screen.
+    const hasSave = !!localStorage.getItem('mimi_vs_math_save');
+    if (hasSave) GameState.load();
+
     // Background gradient
     this.add.rectangle(W / 2, H / 2, W, H, BG_COLOR);
     this._addStars(W, H);
@@ -45,10 +49,22 @@ export default class TitleScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     // Main buttons
-    const hasSave = !!localStorage.getItem('mimi_vs_math_save');
     this._makeButton(W / 2, H * 0.72, '⭐  New Game', () => this._showWorldSelect());
     if (hasSave) {
       this._makeButton(W / 2, H * 0.81, '▶  Continue', () => this._continue());
+    }
+
+    // Stats button — only shown if the player has answered at least one question
+    if (GameState.stats.answered > 0) {
+      const sb = this.add.rectangle(W / 2, H * (hasSave ? 0.9 : 0.81), 180, 36, 0x0C1A0C)
+        .setInteractive({ useHandCursor: true })
+        .setStrokeStyle(1.5, 0x44AA44);
+      const st = this.add.text(W / 2, H * (hasSave ? 0.9 : 0.81), '📊  View Stats', {
+        fontSize: '16px', color: '#88FF88', fontFamily: 'Arial', fontStyle: 'bold',
+      }).setOrigin(0.5);
+      sb.on('pointerover', () => { sb.setFillStyle(0x153015); st.setColor('#AAFFAA'); });
+      sb.on('pointerout',  () => { sb.setFillStyle(0x0C1A0C); st.setColor('#88FF88'); });
+      sb.on('pointerdown', () => this._showStatsOverlay());
     }
 
     // Footer
@@ -171,10 +187,12 @@ export default class TitleScene extends Phaser.Scene {
       card.on('pointerdown', () => this._startAtWorld(i));
     });
 
-    // Cancel button
-    const cb = add(this.add.rectangle(W / 2, H / 2 + 175, 150, 36, 0x2A0A0A)
+    // Cancel button — shifts left if Stats button also appears
+    const hasStats = GameState.stats.answered > 0;
+    const cancelX  = hasStats ? W / 2 - 95 : W / 2;
+    const cb = add(this.add.rectangle(cancelX, H / 2 + 175, 150, 36, 0x2A0A0A)
       .setDepth(D + 2).setStrokeStyle(1.5, 0xCC4444).setInteractive({ useHandCursor: true }));
-    const ct = add(this.add.text(W / 2, H / 2 + 175, '✕  Cancel', {
+    const ct = add(this.add.text(cancelX, H / 2 + 175, '✕  Cancel', {
       fontSize: '14px', color: '#FF8888', fontFamily: 'Arial', fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(D + 3));
     cb.on('pointerover', () => { cb.setFillStyle(0x401515); ct.setColor('#FFAAAA'); });
@@ -183,12 +201,95 @@ export default class TitleScene extends Phaser.Scene {
 
     // ESC closes
     this._escKey = this.input.keyboard.once('keydown-ESC', () => this._closeWorldSelect());
+
+    // Stats button inside world-select
+    if (hasStats) {
+      const wsb = add(this.add.rectangle(W / 2 + 95, H / 2 + 175, 150, 36, 0x0C1A0C)
+        .setDepth(D + 2).setStrokeStyle(1.5, 0x44AA44).setInteractive({ useHandCursor: true }));
+      const wst = add(this.add.text(W / 2 + 95, H / 2 + 175, '📊 Stats',
+        { fontSize: '14px', color: '#88FF88', fontFamily: 'Arial', fontStyle: 'bold' },
+      ).setOrigin(0.5).setDepth(D + 3));
+      wsb.on('pointerover', () => { wsb.setFillStyle(0x153015); wst.setColor('#AAFFAA'); });
+      wsb.on('pointerout',  () => { wsb.setFillStyle(0x0C1A0C); wst.setColor('#88FF88'); });
+      wsb.on('pointerdown', () => this._showStatsOverlay());
+    }
   }
 
   _closeWorldSelect() {
     if (!this._worldSelectItems) return;
     this._worldSelectItems.forEach(o => o.destroy());
     this._worldSelectItems = null;
+  }
+
+  // ── Stats overlay ──────────────────────────────────────────────────────
+
+  _showStatsOverlay() {
+    if (this._statsItems) return;
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+    const D = 300;
+    const s = GameState.stats;
+    const items = this._statsItems = [];
+    const add = o => { items.push(o); return o; };
+
+    const dim = add(this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.80)
+      .setDepth(D).setInteractive());
+    dim.on('pointerdown', () => this._closeStatsOverlay());
+
+    add(this.add.rectangle(W / 2, H / 2, 420, 370, 0x08082A)
+      .setDepth(D + 1).setStrokeStyle(2, 0x4488FF));
+
+    add(this.add.text(W / 2, H / 2 - 162, '📊  Mimi’s Stats', {
+      fontSize: '24px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(D + 2));
+
+    const dg = add(this.add.graphics().setDepth(D + 2));
+    dg.lineStyle(1, 0x445588, 0.8);
+    dg.lineBetween(W / 2 - 190, H / 2 - 140, W / 2 + 190, H / 2 - 140);
+
+    const pct = s.answered > 0
+      ? Math.round(s.correct / s.answered * 100) : 100;
+    const avgSec = s.answered > 0
+      ? (s.totalTimeMs / s.answered / 1000).toFixed(1) : '—';
+
+    const rows = [
+      ['❓ Questions Answered',   String(s.answered)],
+      ['✅ Correct',              `${s.correct}  (${pct}%)`],
+      ['❌ Incorrect / Timeouts', String(s.incorrect)],
+      ['⏱ Avg. Answer Time',      `${avgSec}s`],
+      ['', ''],
+      ['🔥 Best Streak',            String(s.bestStreak)],
+      ['⚔️ Battles Won',            String(s.battlesWon)],
+      ['💤 Battles Lost',           String(s.battlesLost)],
+      ['✨ Perfect Battles',         String(s.perfectBattles)],
+    ];
+
+    let ry = H / 2 - 132;
+    rows.forEach(([label, value]) => {
+      if (!label) { ry += 10; return; }
+      add(this.add.text(W / 2 - 168, ry, label,
+        { fontSize: '14px', color: '#CCDDFF', fontFamily: 'Arial' },
+      ).setOrigin(0, 0).setDepth(D + 2));
+      add(this.add.text(W / 2 + 168, ry, value,
+        { fontSize: '14px', color: '#FFFFFF', fontFamily: 'Arial', fontStyle: 'bold' },
+      ).setOrigin(1, 0).setDepth(D + 2));
+      ry += 26;
+    });
+
+    const cb = add(this.add.rectangle(W / 2, H / 2 + 155, 160, 34, 0x2A0A0A)
+      .setDepth(D + 2).setStrokeStyle(1.5, 0xCC4444).setInteractive({ useHandCursor: true }));
+    const ct = add(this.add.text(W / 2, H / 2 + 155, '✕  Close',
+      { fontSize: '14px', color: '#FF8888', fontFamily: 'Arial', fontStyle: 'bold' },
+    ).setOrigin(0.5).setDepth(D + 3));
+    cb.on('pointerover', () => { cb.setFillStyle(0x401515); ct.setColor('#FFAAAA'); });
+    cb.on('pointerout',  () => { cb.setFillStyle(0x2A0A0A); ct.setColor('#FF8888'); });
+    cb.on('pointerdown', () => this._closeStatsOverlay());
+  }
+
+  _closeStatsOverlay() {
+    if (!this._statsItems) return;
+    this._statsItems.forEach(o => o.destroy());
+    this._statsItems = null;
   }
 
   _startAtWorld(regionId) {

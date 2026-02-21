@@ -4,6 +4,7 @@
  */
 import * as Phaser from 'phaser';
 import { loadAllAssets, loadAllAudio } from '../config/AssetConfig.js';
+import BGM from '../audio/BGM.js';
 
 export default class BootScene extends Phaser.Scene {
   constructor() { super({ key: 'BootScene' }); }
@@ -37,6 +38,10 @@ export default class BootScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.fadeIn(600, 0, 0, 0);
+
+    // Kick off BGM sample decoding in parallel — by the time TitleScene
+    // appears all 46 MP3s should already be decoded and ready to play.
+    BGM.preload();
 
     // Generate procedural tile textures used in ExploreScene
     this._generateTileTextures();

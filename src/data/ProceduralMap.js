@@ -29,7 +29,7 @@ const COLS        = 80;
 const ROWS        = 56;
 const BORDER      = 2;   // border wall thickness — tiles 0–1 / 78–79 / etc.
 const NODE_CLEAR  = 5;   // glade radius around every key position
-const CORRIDOR_HW = 2;   // corridor half-width: total width = 2*CORRIDOR_HW+1 = 5 tiles
+const CORRIDOR_HW = 3;   // corridor half-width: total width = 2*CORRIDOR_HW+1 = 7 tiles
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 2D seeded value-noise (no dependencies)

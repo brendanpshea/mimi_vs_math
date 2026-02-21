@@ -23,6 +23,10 @@ export default class Mimi {
     this.sprite = scene.physics.add.image(x, y, 'mimi');
     this.sprite.setDepth(10);
     this.sprite.setCollideWorldBounds(true);
+    // Shrink physics body to roughly Mimi's torso — the 64px sprite has a lot
+    // of transparent padding around the character, so the default full-image
+    // body makes corridors feel impossibly narrow.
+    this.sprite.setSize(28, 28);
 
     // Bobbing tween - will be paused when moving
     this._bobbingTween = scene.tweens.add({

@@ -1,36 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Heat shimmer / mirage effect (base glow) -->
-  <ellipse cx="32" cy="56" rx="24" ry="6" fill="#FFAA44" opacity="0.3"/>
-  <!-- Tail (big fluffy) -->
-  <path d="M44,48 C56,40 64,50 58,60 C52,66 42,60 44,52" fill="#FFAA33"/>
-  <path d="M46,49 C56,43 62,52 57,59 C52,64 44,58 46,52" fill="#FFEE88"/>
-  <!-- Body -->
-  <ellipse cx="30" cy="44" rx="16" ry="14" fill="#FF8833"/>
-  <!-- Body sheen (mirage) -->
-  <ellipse cx="26" cy="40" rx="8" ry="5" fill="#FFCC66" opacity="0.5"/>
-  <!-- Head -->
-  <ellipse cx="28" cy="26" rx="15" ry="14" fill="#FF8833"/>
-  <!-- Pointed ears -->
-  <polygon points="18,18 14,4 26,16" fill="#FF8833"/>
-  <polygon points="38,18 42,4 30,16" fill="#FF8833"/>
-  <polygon points="19,17 16,7 25,16" fill="#FFCCAA"/>
-  <polygon points="37,17 40,7 31,16" fill="#FFCCAA"/>
-  <!-- Eyes (sly) -->
-  <ellipse cx="23" cy="24" rx="5" ry="4" fill="#FFEE44"/>
-  <ellipse cx="33" cy="24" rx="5" ry="4" fill="#FFEE44"/>
+  <!-- Mirage Fox — frame A: bold shimmery desert fox with sly eyes -->
+
+  <!-- Heat shimmer glow base -->
+  <ellipse cx="32" cy="58" rx="26" ry="6" fill="#FFAA44" opacity="0.25"/>
+
+  <!-- Fluffy tail — bold shape -->
+  <path d="M44,46 C58,38 64,50 56,60 C50,66 40,58 44,50" fill="#FFAA33" stroke="#AA5500" stroke-width="3"/>
+  <path d="M47,48 C56,42 60,52 55,58" fill="#FFE888" opacity="0.7"/>
+
+  <!-- Body — bold outline -->
+  <ellipse cx="30" cy="44" rx="17" ry="14" fill="#FF8833" stroke="#AA4400" stroke-width="3.5"/>
+  <!-- Body highlight -->
+  <ellipse cx="26" cy="40" rx="9" ry="6" fill="#FFCC66" opacity="0.45"/>
+
+  <!-- Head — bold outline -->
+  <ellipse cx="28" cy="26" rx="16" ry="15" fill="#FF8833" stroke="#AA4400" stroke-width="3.5"/>
+
+  <!-- Pointed ears — bold with inner color -->
+  <polygon points="16,18 12,2 27,15" fill="#FF8833" stroke="#AA4400" stroke-width="3"/>
+  <polygon points="40,18 44,2 31,15" fill="#FF8833" stroke="#AA4400" stroke-width="3"/>
+  <polygon points="18,16 15,6 25,15" fill="#FFCCAA"/>
+  <polygon points="38,16 41,6 33,15" fill="#FFCCAA"/>
+
+  <!-- Eyes — big bold sly eyes -->
+  <ellipse cx="22" cy="24" rx="6" ry="5" fill="#FFEE44" stroke="#AA6600" stroke-width="2"/>
+  <ellipse cx="34" cy="24" rx="6" ry="5" fill="#FFEE44" stroke="#AA6600" stroke-width="2"/>
   <!-- Slit pupils -->
-  <ellipse cx="23" cy="24" rx="1.5" ry="3.5" fill="#111"/>
-  <ellipse cx="33" cy="24" rx="1.5" ry="3.5" fill="#111"/>
-  <circle cx="24" cy="22.5" r="1" fill="white"/>
-  <circle cx="34" cy="22.5" r="1" fill="white"/>
-  <!-- Nose -->
-  <ellipse cx="28" cy="31" rx="3" ry="2" fill="#CC4422"/>
+  <ellipse cx="22" cy="24" rx="2" ry="4" fill="#111"/>
+  <ellipse cx="34" cy="24" rx="2" ry="4" fill="#111"/>
+  <circle cx="23.5" cy="22.5" r="1.5" fill="white"/>
+  <circle cx="35.5" cy="22.5" r="1.5" fill="white"/>
+
+  <!-- Nose — bold -->
+  <ellipse cx="28" cy="31" rx="3.5" ry="2.5" fill="#CC3322" stroke="#882211" stroke-width="1.5"/>
   <!-- Sly grin -->
-  <path d="M24,33 Q28,37 32,33" fill="none" stroke="#884422" stroke-width="1.5"/>
-  <!-- Mirage ripples -->
-  <path d="M6,54 Q16,50 26,54" fill="none" stroke="#FFAA44" stroke-width="1.5" opacity="0.6"/>
-  <path d="M4,58 Q16,54 30,58" fill="none" stroke="#FFAA44" stroke-width="1" opacity="0.4"/>
-  <!-- Legs -->
-  <rect x="20" y="54" width="7" height="10" fill="#FF8833" rx="3"/>
-  <rect x="30" y="55" width="7" height="9"  fill="#FF8833" rx="3"/>
+  <path d="M23,34 Q28,38 33,34" fill="none" stroke="#773311" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Mirage shimmer lines -->
+  <path d="M6,54 Q16,50 26,54" fill="none" stroke="#FFAA44" stroke-width="2.5" opacity="0.5"/>
+  <path d="M4,58 Q16,54 30,58" fill="none" stroke="#FFAA44" stroke-width="2" opacity="0.35"/>
+
+  <!-- Front legs — bold blocks -->
+  <rect x="19" y="54" width="8" height="10" fill="#FF8833" stroke="#AA4400" stroke-width="2.5" rx="3"/>
+  <rect x="30" y="55" width="8" height="9"  fill="#FF8833" stroke="#AA4400" stroke-width="2.5" rx="3"/>
 </svg>

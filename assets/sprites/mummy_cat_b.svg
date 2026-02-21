@@ -1,36 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!--
-    Mummy Cat — frame B (trailing bandage swings opposite side, body shifts slightly).
-    Eyes and most wrappings are identical.
-  -->
-  <!-- Body wrapped in bandages (shifted 1px right) -->
-  <ellipse cx="33" cy="46" rx="18" ry="16" fill="#DDDCAA"/>
-  <path d="M15,38 Q33,34 51,38" fill="none" stroke="#CCCC88" stroke-width="4" stroke-linecap="round"/>
-  <path d="M15,44 Q33,40 51,44" fill="none" stroke="#CCCC88" stroke-width="4" stroke-linecap="round"/>
-  <path d="M15,50 Q33,46 51,50" fill="none" stroke="#CCCC88" stroke-width="4" stroke-linecap="round"/>
+  <!-- Mummy Cat — frame B: body shifted slightly, trailing bandage swings opposite -->
+
+  <!-- Body — shifted 1px right for walk sway -->
+  <ellipse cx="33" cy="46" rx="19" ry="16" fill="#E8E0B8" stroke="#8A7D52" stroke-width="3.5"/>
+  <path d="M15,39 Q33,34 51,39" fill="none" stroke="#C8C088" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M15,47 Q33,42 51,47" fill="none" stroke="#C8C088" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M17,55 Q33,50 49,55" fill="none" stroke="#C8C088" stroke-width="4.5" stroke-linecap="round"/>
 
   <!-- Head (identical) -->
-  <circle cx="32" cy="24" r="16" fill="#DDDCAA"/>
-  <rect x="16" y="12" width="32" height="8" fill="#CCCC88" rx="2"/>
-  <rect x="16" y="20" width="32" height="6" fill="#DDDDAA" rx="1"/>
-  <!-- Ears still visible -->
-  <polygon points="18,16 14,6 24,14" fill="#DDDCAA"/>
-  <polygon points="46,16 50,6 40,14" fill="#DDDCAA"/>
-  <!-- Eyes -->
-  <ellipse cx="26" cy="26" rx="5" ry="5.5" fill="#00CCAA"/>
-  <ellipse cx="38" cy="26" rx="5" ry="5.5" fill="#00CCAA"/>
-  <ellipse cx="26" cy="26" rx="2.5" ry="3" fill="#111"/>
-  <ellipse cx="38" cy="26" rx="2.5" ry="3" fill="#111"/>
-  <circle cx="27.5" cy="24.5" r="1.2" fill="white"/>
-  <circle cx="39.5" cy="24.5" r="1.2" fill="white"/>
-  <!-- Bandage across face -->
-  <rect x="16" y="28" width="32" height="5" fill="#CCCC88" rx="2"/>
+  <circle cx="32" cy="22" r="17" fill="#E8E0B8" stroke="#8A7D52" stroke-width="3.5"/>
+  <rect x="15" y="11" width="34" height="8" fill="#C8C088" rx="3"/>
 
-  <!-- Tail (wrapped) — identical position -->
-  <path d="M48,54 C58,48 64,56 60,62" fill="none" stroke="#DDDCAA" stroke-width="5" stroke-linecap="round"/>
-  <path d="M50,54 C60,48 64,56 62,62" fill="none" stroke="#CCCC88" stroke-width="2" stroke-linecap="round"/>
+  <!-- Cat ears -->
+  <polygon points="17,14 12,2 25,12" fill="#E8E0B8" stroke="#8A7D52" stroke-width="2.5"/>
+  <polygon points="47,14 52,2 39,12" fill="#E8E0B8" stroke="#8A7D52" stroke-width="2.5"/>
 
-  <!-- Trailing bandage — now going LEFT (frame B is opposite swing from A) -->
-  <path d="M58,42 Q62,38 60,34" fill="none" stroke="#DDDDAA" stroke-width="3" stroke-linecap="round"/>
-  <path d="M56,46 Q62,44 62,40" fill="none" stroke="#CCCC88" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <!-- Eyes (identical) -->
+  <ellipse cx="25" cy="24" rx="6" ry="6.5" fill="#00DDBB" stroke="#008877" stroke-width="2"/>
+  <ellipse cx="39" cy="24" rx="6" ry="6.5" fill="#00DDBB" stroke="#008877" stroke-width="2"/>
+  <ellipse cx="25" cy="24" rx="3" ry="3.5" fill="#111"/>
+  <ellipse cx="39" cy="24" rx="3" ry="3.5" fill="#111"/>
+  <circle cx="27" cy="22.5" r="1.8" fill="white"/>
+  <circle cx="41" cy="22.5" r="1.8" fill="white"/>
+
+  <!-- Face bandage strip -->
+  <rect x="15" y="29" width="34" height="5" fill="#C8C088" rx="2"/>
+
+  <!-- Tail (identical) -->
+  <path d="M48,54 C58,48 62,56 58,62" fill="none" stroke="#E8E0B8" stroke-width="6" stroke-linecap="round"/>
+  <path d="M48,54 C58,48 62,56 58,62" fill="none" stroke="#C8C088" stroke-width="3" stroke-linecap="round" stroke-dasharray="4,3"/>
+
+  <!-- Trailing bandage — swings RIGHT in frame B -->
+  <path d="M56,40 Q60,36 58,30" fill="none" stroke="#E8E0B8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M54,44 Q60,42 60,38" fill="none" stroke="#C8C088" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
 </svg>

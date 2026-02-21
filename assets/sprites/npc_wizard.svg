@@ -1,69 +1,86 @@
-﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56">
-<!-- Wizard NPC: elderly cat wizard. Cream fur, blue robes, pointed hat, staff.
-     Fur #E8E8F0  Stripe #707080  Robe #4A5FA8  Robe-hi #5A70C8  Beard #F0F0F8
-     Hat #2832A0  Orb #CC88FF  Eye-gold #DDAA44  Outline #1E1E2C -->
-<!-- Staff (behind body) -->
-<line x1="36" y1="6" x2="33" y2="52" stroke="#5A4020" stroke-width="3.5" stroke-linecap="round"/>
-<circle cx="37" cy="8" r="5.5" fill="#CC88FF" stroke="#8840AA" stroke-width="1.5"/>
-<circle cx="37" cy="8" r="3" fill="#EEB8FF" opacity="0.6"/>
-<circle cx="38.5" cy="6.5" r="1.2" fill="white" opacity="0.8"/>
-<!-- Robe body -->
-<path d="M10,28 Q8,42 11,56 L37,56 Q40,42 38,28 Z" fill="#4A5FA8" stroke="#1E1E2C" stroke-width="1.5"/>
-<!-- Robe highlights -->
-<path d="M18,28 Q16,42 17,56" fill="none" stroke="#5A70C8" stroke-width="2" opacity="0.6"/>
-<!-- Robe hem runic pattern -->
-<path d="M11,50 Q24,47 37,50" fill="none" stroke="#8890D0" stroke-width="1" stroke-dasharray="3,2"/>
-<!-- Sleeves -->
-<ellipse cx="10" cy="36" rx="5" ry="9" fill="#4A5FA8" stroke="#1E1E2C" stroke-width="1.2" transform="rotate(10,10,30)"/>
-<ellipse cx="38" cy="36" rx="5" ry="9" fill="#4A5FA8" stroke="#1E1E2C" stroke-width="1.2" transform="rotate(-10,38,30)"/>
-<!-- Paw left -->
-<ellipse cx="8" cy="44" rx="5" ry="3" fill="#E8E8F0" stroke="#1E1E2C" stroke-width="1"/>
-<line x1="5"  y1="46" x2="5"  y2="48" stroke="#707080" stroke-width="1"/>
-<line x1="8"  y1="47" x2="8"  y2="49" stroke="#707080" stroke-width="1"/>
-<line x1="11" y1="46" x2="11" y2="48" stroke="#707080" stroke-width="1"/>
-<!-- Paw right (holding staff) -->
-<ellipse cx="35" cy="43" rx="4.5" ry="3" fill="#E8E8F0" stroke="#1E1E2C" stroke-width="1"/>
-<!-- Feet -->
-<ellipse cx="16" cy="54" rx="6" ry="3" fill="#3A4F98" stroke="#1E1E2C" stroke-width="1"/>
-<ellipse cx="30" cy="54" rx="6" ry="3" fill="#3A4F98" stroke="#1E1E2C" stroke-width="1"/>
-<!-- Collar / beard base -->
-<path d="M13,29 Q24,25 35,29" fill="none" stroke="#8890D0" stroke-width="2"/>
-<!-- Head -->
-<circle cx="24" cy="19" r="12" fill="#E8E8F0" stroke="#1E1E2C" stroke-width="1.5"/>
-<!-- Ear left under hat brim -->
-<polygon points="14,12 10,5 18,9" fill="#E8E8F0" stroke="#1E1E2C" stroke-width="1.5" stroke-linejoin="round"/>
-<polygon points="14.5,12 11,6 18,9.5" fill="#FFAACC"/>
-<!-- Ear right under hat brim -->
-<polygon points="34,12 38,5 30,9" fill="#E8E8F0" stroke="#1E1E2C" stroke-width="1.5" stroke-linejoin="round"/>
-<polygon points="33.5,12 37,6 30,9.5" fill="#FFAACC"/>
-<!-- Hat base band -->
-<rect x="11" y="12" width="26" height="4" rx="2" fill="#3848B8" stroke="#1E1E2C" stroke-width="1"/>
-<path d="M11,14 Q24,11 37,14" fill="none" stroke="#6070D0" stroke-width="1" opacity="0.5"/>
-<!-- Hat tower -->
-<polygon points="12,13 24,0 36,13" fill="#2832A0" stroke="#1E1E2C" stroke-width="1.5"/>
-<!-- Hat star detail -->
-<polygon points="24,3 25.2,6 28,6 26,8 26.8,11 24,9 21.2,11 22,8 20,6 22.8,6" fill="#8890D0" opacity="0.8"/>
-<!-- White Beard -->
-<path d="M14,26 Q10,32 12,40 Q18,44 24,45 Q30,44 36,40 Q38,32 34,26 Q29,23 24,24 Q19,23 14,26 Z" fill="#F0F0F8" stroke="#B0B0C8" stroke-width="0.8"/>
-<!-- Beard texture lines -->
-<path d="M18,28 Q17,35 18,42" fill="none" stroke="#C8C8DC" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
-<path d="M24,27 Q23,35 24,44" fill="none" stroke="#C8C8DC" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
-<path d="M30,28 Q31,35 30,42" fill="none" stroke="#C8C8DC" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
-<!-- Eyes above beard (elderly cat amber) -->
-<ellipse cx="19" cy="21" rx="4" ry="3.5" fill="#DDAA44" stroke="#886622" stroke-width="1.2"/>
-<ellipse cx="29" cy="21" rx="4" ry="3.5" fill="#DDAA44" stroke="#886622" stroke-width="1.2"/>
-<ellipse cx="19" cy="21" rx="1.2" ry="2.8" fill="#1E1E2C"/>
-<ellipse cx="29" cy="21" rx="1.2" ry="2.8" fill="#1E1E2C"/>
-<circle cx="20" cy="20" r="1" fill="white"/>
-<circle cx="30" cy="20" r="1" fill="white"/>
-<!-- Bushy elderly eyebrows -->
-<path d="M14,17 Q19,15 22,18" fill="none" stroke="#B0B0C8" stroke-width="2.5" stroke-linecap="round"/>
-<path d="M26,18 Q29,15 34,17" fill="none" stroke="#B0B0C8" stroke-width="2.5" stroke-linecap="round"/>
-<!-- Nose (barely visible above beard) -->
-<polygon points="24,25 22.5,27 25.5,27" fill="#D088AA"/>
-<!-- Whiskers subtle, over beard -->
-<line x1="21" y1="26" x2="4"  y2="24" stroke="#C0C0D0" stroke-width="0.7" opacity="0.6"/>
-<line x1="21" y1="28" x2="4"  y2="30" stroke="#C0C0D0" stroke-width="0.7" opacity="0.6"/>
-<line x1="27" y1="26" x2="44" y2="24" stroke="#C0C0D0" stroke-width="0.7" opacity="0.6"/>
-<line x1="27" y1="28" x2="44" y2="30" stroke="#C0C0D0" stroke-width="0.7" opacity="0.6"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56">
+  <!-- Wizard NPC — frame A. Elderly cat wizard. 48x56. Bold, readable at small size.
+       Cream fur, blue robes, pointed hat with star, magic staff.
+       Fur #E8E8F0  Robe #4A5FA8  Hat #2832A0  Orb #CC88FF  Outline #1E1E2C -->
+
+  <!-- Staff (behind body) -->
+  <line x1="37" y1="8" x2="34" y2="52" stroke="#5A4020" stroke-width="4" stroke-linecap="round"/>
+  <!-- Staff orb -->
+  <circle cx="38" cy="8" r="6" fill="#CC88FF" stroke="#7730AA" stroke-width="2.5"/>
+  <circle cx="39.5" cy="6.5" r="2" fill="white" opacity="0.7"/>
+
+  <!-- Robe body (bold) -->
+  <path d="M10,30 Q7,42 10,56 L38,56 Q41,42 39,30 Z"
+        fill="#4A5FA8" stroke="#1E1E2C" stroke-width="3"/>
+  <!-- Robe highlight -->
+  <path d="M18,30 Q16,44 17,56" fill="none" stroke="#5A70C8" stroke-width="2.5" opacity="0.6"/>
+
+  <!-- Sleeves (bold) -->
+  <ellipse cx="9" cy="37" rx="6" ry="9"
+           fill="#4A5FA8" stroke="#1E1E2C" stroke-width="2.5" transform="rotate(8,9,37)"/>
+  <ellipse cx="39" cy="37" rx="6" ry="9"
+           fill="#4A5FA8" stroke="#1E1E2C" stroke-width="2.5" transform="rotate(-8,39,37)"/>
+
+  <!-- Paw left -->
+  <ellipse cx="7" cy="44" rx="5" ry="3.5"
+           fill="#E8E8F0" stroke="#1E1E2C" stroke-width="2"/>
+  <!-- Paw right (holding staff) -->
+  <ellipse cx="36" cy="44" rx="5" ry="3.5"
+           fill="#E8E8F0" stroke="#1E1E2C" stroke-width="2"/>
+
+  <!-- Feet (bold) -->
+  <ellipse cx="16" cy="54" rx="7" ry="3.5"
+           fill="#3A4F98" stroke="#1E1E2C" stroke-width="2"/>
+  <ellipse cx="31" cy="54" rx="7" ry="3.5"
+           fill="#3A4F98" stroke="#1E1E2C" stroke-width="2"/>
+
+  <!-- Collar -->
+  <path d="M12,30 Q24,26 36,30" fill="none" stroke="#8890D0" stroke-width="2.5"/>
+
+  <!-- Head -->
+  <circle cx="24" cy="19" r="12"
+          fill="#E8E8F0" stroke="#1E1E2C" stroke-width="3"/>
+
+  <!-- Ears (bold, under hat brim) -->
+  <polygon points="14,12 9,4 19,10"
+           fill="#E8E8F0" stroke="#1E1E2C" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="15,12 11,6 18,10" fill="#FFAACC"/>
+  <polygon points="34,12 39,4 29,10"
+           fill="#E8E8F0" stroke="#1E1E2C" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="33,12 37,6 30,10" fill="#FFAACC"/>
+
+  <!-- Hat band -->
+  <rect x="10" y="12" width="28" height="5" rx="2"
+        fill="#3848B8" stroke="#1E1E2C" stroke-width="2"/>
+  <!-- Hat tower (bold) -->
+  <polygon points="11,13 24,-1 37,13"
+           fill="#2832A0" stroke="#1E1E2C" stroke-width="2.5"/>
+  <!-- Hat star (simplified, bold) -->
+  <polygon points="24,2 25.5,5 29,5 26.5,7.5 27.5,11 24,9 20.5,11 21.5,7.5 19,5 22.5,5"
+           fill="#AABBEE" stroke="#8890D0" stroke-width="1"/>
+
+  <!-- Beard (bold, simplified) -->
+  <path d="M14,26 Q9,34 12,42 Q18,46 24,47 Q30,46 36,42 Q39,34 34,26 Q30,24 24,24 Q18,24 14,26 Z"
+        fill="#F0F0F8" stroke="#B0B0C8" stroke-width="1.5"/>
+  <!-- Beard texture (fewer, bolder) -->
+  <path d="M19,28 Q18,36 19,44" fill="none" stroke="#C8C8DC" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <path d="M24,27 Q23,36 24,46" fill="none" stroke="#C8C8DC" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <path d="M29,28 Q30,36 29,44" fill="none" stroke="#C8C8DC" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Eyes (bold, amber cat eyes) -->
+  <ellipse cx="19" cy="21" rx="4" ry="3.5"
+           fill="#DDAA44" stroke="#886622" stroke-width="2"/>
+  <ellipse cx="29" cy="21" rx="4" ry="3.5"
+           fill="#DDAA44" stroke="#886622" stroke-width="2"/>
+  <ellipse cx="19" cy="21" rx="1.5" ry="3" fill="#1E1E2C"/>
+  <ellipse cx="29" cy="21" rx="1.5" ry="3" fill="#1E1E2C"/>
+  <circle cx="20" cy="20" r="1.2" fill="white"/>
+  <circle cx="30" cy="20" r="1.2" fill="white"/>
+
+  <!-- Bushy eyebrows (bold) -->
+  <path d="M14,17 Q19,14.5 23,18" fill="none" stroke="#B0B0C8" stroke-width="3" stroke-linecap="round"/>
+  <path d="M25,18 Q29,14.5 34,17" fill="none" stroke="#B0B0C8" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Nose -->
+  <polygon points="24,25 22,27 26,27" fill="#D088AA" stroke="#1E1E2C" stroke-width="1"/>
 </svg>

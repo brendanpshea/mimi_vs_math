@@ -1,46 +1,50 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Bottom snow ball -->
-  <circle cx="32" cy="52" r="20" fill="#EEEEFF"/>
-  <circle cx="32" cy="52" r="20" fill="none" stroke="#AABBDD" stroke-width="1.5"/>
+  <!-- Snow Golem — frame A: bold snowman with twig arms and ice crown -->
+
+  <!-- Bottom snow ball — large with bold outline -->
+  <circle cx="32" cy="50" r="20" fill="#EAEAFF" stroke="#8899BB" stroke-width="3.5"/>
+
   <!-- Middle snow ball -->
-  <circle cx="32" cy="32" r="15" fill="#F0F0FF"/>
-  <circle cx="32" cy="32" r="15" fill="none" stroke="#AABBDD" stroke-width="1.5"/>
+  <circle cx="32" cy="30" r="15" fill="#F0F0FF" stroke="#8899BB" stroke-width="3.5"/>
+
   <!-- Head snow ball -->
-  <circle cx="32" cy="16" r="12" fill="#F5F5FF"/>
-  <circle cx="32" cy="16" r="12" fill="none" stroke="#AABBDD" stroke-width="1.5"/>
-  <!-- Eyes (coal) -->
-  <circle cx="27" cy="13" r="2.5" fill="#221122"/>
-  <circle cx="37" cy="13" r="2.5" fill="#221122"/>
-  <!-- Carrot nose -->
-  <polygon points="32,16 40,18 32,20" fill="#FF6622"/>
-  <!-- Smile (twigs) -->
-  <circle cx="26" cy="20" r="1.5" fill="#443322"/>
-  <circle cx="29" cy="22" r="1.5" fill="#443322"/>
-  <circle cx="32" cy="23" r="1.5" fill="#443322"/>
-  <circle cx="35" cy="22" r="1.5" fill="#443322"/>
-  <circle cx="38" cy="20" r="1.5" fill="#443322"/>
-  <!-- Twig arms with claw tips -->
-  <line x1="18" y1="28" x2="6"  y2="20" stroke="#664422" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="46" y1="28" x2="58" y2="20" stroke="#664422" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Claw tips left -->
-  <line x1="6"  y1="20" x2="2"  y2="16" stroke="#664422" stroke-width="2" stroke-linecap="round"/>
-  <line x1="6"  y1="20" x2="2"  y2="24" stroke="#664422" stroke-width="2" stroke-linecap="round"/>
-  <line x1="6"  y1="20" x2="8"  y2="14" stroke="#664422" stroke-width="2" stroke-linecap="round"/>
-  <!-- Claw tips right -->
-  <line x1="58" y1="20" x2="62" y2="16" stroke="#664422" stroke-width="2" stroke-linecap="round"/>
-  <line x1="58" y1="20" x2="62" y2="24" stroke="#664422" stroke-width="2" stroke-linecap="round"/>
-  <line x1="58" y1="20" x2="56" y2="14" stroke="#664422" stroke-width="2" stroke-linecap="round"/>
-  <!-- Buttons on middle -->
-  <circle cx="32" cy="26" r="2.5" fill="#3355AA"/>
-  <circle cx="32" cy="32" r="2.5" fill="#3355AA"/>
-  <circle cx="32" cy="38" r="2.5" fill="#3355AA"/>
-  <!-- Ice shards on head -->
-  <polygon points="26,4  24,0  28,6"  fill="#AAEEFF"/>
-  <polygon points="38,4  40,0  36,6"  fill="#AAEEFF"/>
-  <polygon points="32,4  30,0  34,4"  fill="#CCFAFF"/>
-  <!-- Snow fall -->
-  <circle cx="10" cy="10" r="1.5" fill="white" opacity="0.8"/>
-  <circle cx="54" cy="8"  r="1.5" fill="white" opacity="0.8"/>
-  <circle cx="4"  cy="30" r="1"   fill="white" opacity="0.6"/>
-  <circle cx="60" cy="36" r="1"   fill="white" opacity="0.6"/>
+  <circle cx="32" cy="14" r="12" fill="#F5F5FF" stroke="#8899BB" stroke-width="3.5"/>
+
+  <!-- Coal eyes — big bold -->
+  <circle cx="26" cy="11" r="3.5" fill="#111122" stroke="#8899BB" stroke-width="1"/>
+  <circle cx="38" cy="11" r="3.5" fill="#111122" stroke="#8899BB" stroke-width="1"/>
+  <circle cx="27.5" cy="9.5" r="1.2" fill="white"/>
+  <circle cx="39.5" cy="9.5" r="1.2" fill="white"/>
+
+  <!-- Carrot nose — bold triangle -->
+  <polygon points="32,14 42,17 32,19" fill="#FF6622" stroke="#CC4400" stroke-width="2"/>
+
+  <!-- Smile — bold dots -->
+  <circle cx="25" cy="19" r="2" fill="#332211"/>
+  <circle cx="29" cy="21" r="2" fill="#332211"/>
+  <circle cx="33" cy="22" r="2" fill="#332211"/>
+  <circle cx="37" cy="21" r="2" fill="#332211"/>
+  <circle cx="41" cy="19" r="2" fill="#332211"/>
+
+  <!-- Twig arms — bold with claw tips -->
+  <line x1="18" y1="26" x2="4" y2="18" stroke="#664422" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="46" y1="26" x2="60" y2="18" stroke="#664422" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- Left claw -->
+  <line x1="4" y1="18" x2="0"  y2="13" stroke="#664422" stroke-width="3" stroke-linecap="round"/>
+  <line x1="4" y1="18" x2="0"  y2="22" stroke="#664422" stroke-width="3" stroke-linecap="round"/>
+  <line x1="4" y1="18" x2="7"  y2="12" stroke="#664422" stroke-width="3" stroke-linecap="round"/>
+  <!-- Right claw -->
+  <line x1="60" y1="18" x2="64" y2="13" stroke="#664422" stroke-width="3" stroke-linecap="round"/>
+  <line x1="60" y1="18" x2="64" y2="22" stroke="#664422" stroke-width="3" stroke-linecap="round"/>
+  <line x1="60" y1="18" x2="57" y2="12" stroke="#664422" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Blue buttons — bold -->
+  <circle cx="32" cy="24" r="3" fill="#3355CC" stroke="#2244AA" stroke-width="1.5"/>
+  <circle cx="32" cy="31" r="3" fill="#3355CC" stroke="#2244AA" stroke-width="1.5"/>
+  <circle cx="32" cy="38" r="3" fill="#3355CC" stroke="#2244AA" stroke-width="1.5"/>
+
+  <!-- Ice shards on head — bold crystal crown -->
+  <polygon points="25,3 23,-2 28,5" fill="#AAEEFF" stroke="#55BBEE" stroke-width="1.5"/>
+  <polygon points="39,3 41,-2 36,5" fill="#AAEEFF" stroke="#55BBEE" stroke-width="1.5"/>
+  <polygon points="32,1 30,-3 34,1" fill="#CCFAFF" stroke="#77CCEE" stroke-width="1.5"/>
 </svg>

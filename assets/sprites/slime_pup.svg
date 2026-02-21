@@ -1,63 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!--
-    Slime Pup — redesigned as a dangerous acidic ooze creature (Zelda/FF style).
-    TINT ZONE: slime fill (#338A1A) responds to setTint().
-    Dark outlines (#0A1A00), eyes, and teeth are tint-immune.
+    Slime Pup — bold redesign for 64x64 readability.
+    An acidic slime creature. Simple blob shape, bold eyes, dripping.
+    TINT ZONE: slime fill (#44BB22) responds to setTint().
   -->
+  <!-- Acid pool shadow -->
+  <ellipse cx="32" cy="59" rx="24" ry="5" fill="#2A7000" opacity="0.35"/>
 
-  <!-- Acid pool shadow/puddle -->
-  <ellipse cx="32" cy="60" rx="22" ry="5" fill="#2A7000" opacity="0.35"/>
+  <!-- === DRIP TENDRILS (simple, bold) === -->
+  <ellipse cx="16" cy="56" rx="5" ry="7" fill="#44BB22" stroke="#0A2200" stroke-width="2.5"/>
+  <ellipse cx="32" cy="58" rx="4" ry="6" fill="#44BB22" stroke="#0A2200" stroke-width="2.5"/>
+  <ellipse cx="48" cy="56" rx="5" ry="7" fill="#44BB22" stroke="#0A2200" stroke-width="2.5"/>
 
-  <!-- Drip tendrils at base -->
-  <ellipse cx="18" cy="57" rx="4.5" ry="7" fill="#338A1A" stroke="#0A1A00" stroke-width="1.2"/>
-  <ellipse cx="30" cy="60" rx="3.5" ry="6" fill="#338A1A" stroke="#0A1A00" stroke-width="1.2"/>
-  <ellipse cx="44" cy="58" rx="4"   ry="7" fill="#338A1A" stroke="#0A1A00" stroke-width="1.2"/>
+  <!-- === MAIN BODY (bold blob) === -->
+  <path d="M8,42 Q4,26 12,16 Q20,6 32,5 Q44,6 52,16 Q60,26 56,42 Q54,56 32,58 Q10,56 8,42 Z"
+        fill="#44BB22" stroke="#0A2200" stroke-width="3.5"/>
+  <!-- Glossy highlight -->
+  <ellipse cx="24" cy="16" rx="10" ry="6" fill="#88EE44" opacity="0.45"/>
 
-  <!-- ── MAIN BODY (irregular, menacing blob) ── -->
-  <path d="M8,44 Q4,28 10,18 Q16,8 28,6 Q38,4 46,10 Q56,16 58,28 Q62,42 56,50 Q50,58 32,60 Q14,58 8,44 Z"
-        fill="#338A1A" stroke="#0A1A00" stroke-width="2.2"/>
-  <!-- Body texture — darker mottled patches -->
-  <ellipse cx="20" cy="32" rx="7" ry="10" fill="#2A7010" opacity="0.45"/>
-  <ellipse cx="44" cy="26" rx="6" ry="8"  fill="#2A7010" opacity="0.35"/>
-  <ellipse cx="36" cy="44" rx="5" ry="6"  fill="#2A7010" opacity="0.30"/>
-  <!-- Glossy highlight (top) -->
-  <ellipse cx="24" cy="16" rx="10" ry="6" fill="#66DD33" opacity="0.40"/>
+  <!-- === ANTENNAE (pup nubs) === -->
+  <line x1="22" y1="8" x2="16" y2="2" stroke="#0A2200" stroke-width="3" stroke-linecap="round"/>
+  <line x1="42" y1="8" x2="48" y2="2" stroke="#0A2200" stroke-width="3" stroke-linecap="round"/>
+  <!-- Antenna tips -->
+  <circle cx="16" cy="2" r="3.5" fill="#AAFF44" stroke="#0A2200" stroke-width="2"/>
+  <circle cx="48" cy="2" r="3.5" fill="#AAFF44" stroke="#0A2200" stroke-width="2"/>
 
-  <!-- ── ANTENNAE (pup nubs — now spiky) ── -->
-  <path d="M24,8 C20,2 16,0 14,2" fill="none" stroke="#0A1A00" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M38,7 C42,1 46,0 48,2" fill="none" stroke="#0A1A00" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Venom-drip nub tips -->
-  <ellipse cx="14" cy="3"  rx="3.5" ry="3"   fill="#AAFF44" stroke="#0A1A00" stroke-width="1.2"/>
-  <ellipse cx="48" cy="3"  rx="3.5" ry="3"   fill="#AAFF44" stroke="#0A1A00" stroke-width="1.2"/>
-  <circle  cx="14" cy="3"  r="1.5"            fill="#DDFF88"/>
-  <circle  cx="48" cy="3"  r="1.5"            fill="#DDFF88"/>
-
-  <!-- ── EYES (menacing, glowing) ── -->
-  <ellipse cx="22" cy="28" rx="9" ry="8" fill="#0A1A00" stroke="#0A1A00" stroke-width="1"/>
-  <ellipse cx="42" cy="28" rx="9" ry="8" fill="#0A1A00" stroke="#0A1A00" stroke-width="1"/>
-  <!-- Iris (toxic orange glow) -->
-  <ellipse cx="22" cy="28" rx="6"   ry="5.5" fill="#FF7700"/>
-  <ellipse cx="42" cy="28" rx="6"   ry="5.5" fill="#FF7700"/>
+  <!-- === EYES (big, menacing) === -->
+  <ellipse cx="22" cy="26" rx="8" ry="7" fill="#0A2200"/>
+  <ellipse cx="42" cy="26" rx="8" ry="7" fill="#0A2200"/>
+  <!-- Iris (toxic orange) -->
+  <ellipse cx="22" cy="26" rx="5.5" ry="5" fill="#FF7700"/>
+  <ellipse cx="42" cy="26" rx="5.5" ry="5" fill="#FF7700"/>
   <!-- Slit pupils -->
-  <ellipse cx="22" cy="28" rx="1.5" ry="4"   fill="#0A1A00"/>
-  <ellipse cx="42" cy="28" rx="1.5" ry="4"   fill="#0A1A00"/>
-  <!-- Eye-shine -->
-  <circle cx="24" cy="25.5" r="2" fill="#FFEE44" opacity="0.7"/>
-  <circle cx="44" cy="25.5" r="2" fill="#FFEE44" opacity="0.7"/>
-  <!-- Angry brow (slants inward) -->
-  <path d="M14,22 L22,25" stroke="#0A1A00" stroke-width="2.8" stroke-linecap="round"/>
-  <path d="M50,22 L42,25" stroke="#0A1A00" stroke-width="2.8" stroke-linecap="round"/>
+  <ellipse cx="22" cy="26" rx="1.5" ry="4" fill="#0A2200"/>
+  <ellipse cx="42" cy="26" rx="1.5" ry="4" fill="#0A2200"/>
+  <!-- Eye shine -->
+  <circle cx="24" cy="23" r="2" fill="#FFEE44" opacity="0.7"/>
+  <circle cx="44" cy="23" r="2" fill="#FFEE44" opacity="0.7"/>
+  <!-- Angry brows -->
+  <line x1="14" y1="19" x2="22" y2="22" stroke="#0A2200" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="50" y1="19" x2="42" y2="22" stroke="#0A2200" stroke-width="3.5" stroke-linecap="round"/>
 
-  <!-- ── MOUTH (snarling, with drip-fangs) ── -->
-  <!-- Gum/jaw area -->
-  <path d="M18,42 Q32,50 46,42" fill="#1A5A08" stroke="#0A1A00" stroke-width="1.5"/>
-  <!-- Row of uneven triangular teeth -->
-  <polygon points="20,42 22,38 24,42" fill="white" stroke="#0A1A00" stroke-width="0.8"/>
-  <polygon points="25,42 27,36 29,42" fill="white" stroke="#0A1A00" stroke-width="0.8"/>
-  <polygon points="30,43 32,37 34,43" fill="white" stroke="#0A1A00" stroke-width="0.8"/>
-  <polygon points="35,42 37,36 39,42" fill="white" stroke="#0A1A00" stroke-width="0.8"/>
-  <polygon points="40,42 42,38 44,42" fill="white" stroke="#0A1A00" stroke-width="0.8"/>
-  <!-- Drool drips from chin -->
-  <path d="M26,50 Q25,56 24,58" fill="none" stroke="#66DD33" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
-  <path d="M36,52 Q36,58 35,62" fill="none" stroke="#66DD33" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <!-- === MOUTH (big toothy grin) === -->
+  <path d="M16,42 Q32,52 48,42" fill="#1A5A08" stroke="#0A2200" stroke-width="2.5"/>
+  <!-- Bold triangular teeth -->
+  <polygon points="19,42 22,36 25,42" fill="white" stroke="#0A2200" stroke-width="1.5"/>
+  <polygon points="27,43 30,36 33,43" fill="white" stroke="#0A2200" stroke-width="1.5"/>
+  <polygon points="35,43 38,36 41,43" fill="white" stroke="#0A2200" stroke-width="1.5"/>
+  <polygon points="43,42 46,37 48,42" fill="white" stroke="#0A2200" stroke-width="1.5"/>
+
+  <!-- Drool drips -->
+  <line x1="26" y1="48" x2="24" y2="56" stroke="#88EE44" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+  <line x1="38" y1="50" x2="37" y2="58" stroke="#88EE44" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
 </svg>

@@ -1,43 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
   <!--
-    Subtraction Witch — frame B (hover cycle phase 2).
-    Cloak billows right, body shifted slightly down (1–2 px),
-    wand arm at slightly different angle. Hat remains identical.
+    Subtraction Witch — frame B (hover cycle: body shifts down 2px, cape billows right, wand angle shifts).
+    Hat and face identical.
   -->
-  <!-- Hat brim -->
-  <ellipse cx="48" cy="20" rx="26" ry="6" fill="#1A0033"/>
-  <!-- Hat cone -->
-  <polygon points="48,2 30,20 66,20" fill="#220044"/>
-  <!-- Hat band -->
-  <rect x="30" y="17" width="36" height="5" fill="#440066" rx="1"/>
-  <text x="38" y="14" font-size="8" fill="#FFDD44" font-family="Arial">★</text>
-  <text x="50" y="12" font-size="6" fill="#FFDD44" font-family="Arial">★</text>
+  <!-- Ground shadow -->
+  <ellipse cx="48" cy="92" rx="28" ry="4" fill="#00000030"/>
 
-  <!-- Face (identical) -->
-  <ellipse cx="48" cy="35" rx="16" ry="18" fill="#CCEEAA"/>
-  <circle cx="41" cy="31" r="4.5" fill="#220033"/>
-  <circle cx="55" cy="31" r="4.5" fill="#220033"/>
-  <circle cx="42" cy="30" r="1.5" fill="#AA44FF"/>
-  <circle cx="56" cy="30" r="1.5" fill="#AA44FF"/>
-  <path d="M48,39 Q52,45 46,45" fill="#AABB88" stroke="#88AA66" stroke-width="1"/>
-  <path d="M38,45 Q44,51 52,45 Q56,49 60,45" fill="none" stroke="#334422" stroke-width="2"/>
-  <circle cx="55" cy="42" r="2" fill="#99BB77"/>
+  <!-- === CAPE (billowed to the right in frame B) === -->
+  <path d="M24,52 Q36,76 24,92 L48,82 L80,94 Q90,74 76,52 Z" fill="#2A0044" stroke="#110022" stroke-width="3.5"/>
+  <path d="M26,56 Q38,74 26,88" fill="none" stroke="#440066" stroke-width="2"/>
+  <path d="M74,56 Q86,74 78,90" fill="none" stroke="#440066" stroke-width="2"/>
 
-  <!-- Cape — billowed to RIGHT in frame B (mirrored from A) -->
-  <path d="M26,54 Q38,80 28,92 L48,80 L78,94 Q88,78 74,54 Z" fill="#220044"/>
+  <!-- === BODY (shifted down 2px) === -->
+  <ellipse cx="48" cy="60" rx="18" ry="14" fill="#330055" stroke="#110022" stroke-width="3"/>
   <!-- Collar -->
-  <path d="M30,54 Q48,60 68,54" fill="none" stroke="#440066" stroke-width="3"/>
-  <!-- Body -->
-  <ellipse cx="48" cy="62" rx="18" ry="12" fill="#330055"/>
+  <path d="M30,50 L48,58 L66,50" fill="#440066" stroke="#110022" stroke-width="3"/>
 
-  <!-- Wand (slightly different angle in frame B) -->
-  <line x1="76" y1="90" x2="80" y2="34" stroke="#662288" stroke-width="4" stroke-linecap="round"/>
-  <circle cx="80" cy="30" r="10" fill="#8844AA" stroke="#FFDD44" stroke-width="2"/>
-  <rect x="73" y="27" width="14" height="4" fill="#FF4444" rx="2"/>
-  <text x="80" y="31" font-size="9" fill="white" text-anchor="middle" font-family="Arial" font-weight="bold">−</text>
+  <!-- === WAND (slightly different angle) === -->
+  <line x1="74" y1="86" x2="78" y2="36" stroke="#662288" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="78" cy="32" r="11" fill="#9955CC" stroke="#FFDD44" stroke-width="3"/>
+  <rect x="70" y="29.5" width="16" height="5" rx="2.5" fill="#FF4444" stroke="#CC0000" stroke-width="1.5"/>
 
-  <!-- Minus symbols floating (shifted position in B) -->
-  <text x="10" y="48" font-size="14" fill="#FF4444" opacity="0.7" font-family="Arial">−</text>
-  <text x="16" y="36" font-size="10" fill="#FF6666" opacity="0.5" font-family="Arial">−</text>
-  <text x="4"  y="66" font-size="8"  fill="#FF4444" opacity="0.35" font-family="Arial">−</text>
+  <!-- === FACE (identical, shifted down 1px for hover bob) === -->
+  <ellipse cx="48" cy="35" rx="17" ry="18" fill="#BBDD88" stroke="#334422" stroke-width="3.5"/>
+
+  <!-- Eyes -->
+  <ellipse cx="40" cy="31" rx="6" ry="6.5" fill="white" stroke="#334422" stroke-width="2.5"/>
+  <ellipse cx="56" cy="31" rx="6" ry="6.5" fill="white" stroke="#334422" stroke-width="2.5"/>
+  <circle cx="41" cy="32" r="3.5" fill="#6622AA"/>
+  <circle cx="57" cy="32" r="3.5" fill="#6622AA"/>
+  <circle cx="42" cy="30" r="1.5" fill="white"/>
+  <circle cx="58" cy="30" r="1.5" fill="white"/>
+
+  <!-- Witchy nose -->
+  <path d="M48,39 Q53,45 47,47" fill="#99BB66" stroke="#334422" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Wicked grin -->
+  <path d="M37,49 Q44,55 53,49 Q57,53 61,49" fill="none" stroke="#334422" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Wart -->
+  <circle cx="56" cy="43" r="2.5" fill="#88AA55" stroke="#334422" stroke-width="1.5"/>
+
+  <!-- === WITCH HAT (identical) === -->
+  <ellipse cx="48" cy="18" rx="26" ry="7" fill="#1A0033" stroke="#110022" stroke-width="3"/>
+  <polygon points="48,0 28,18 68,18" fill="#220044" stroke="#110022" stroke-width="3"/>
+  <rect x="28" y="14" width="40" height="6" rx="3" fill="#440066" stroke="#110022" stroke-width="2"/>
+  <circle cx="48" cy="8" r="3.5" fill="#FFDD44"/>
+
+  <!-- === FLOATING MINUS SYMBOLS (shifted positions) === -->
+  <rect x="6" y="40" width="12" height="4" rx="2" fill="#FF4444" opacity="0.6"/>
+  <rect x="12" y="28" width="9" height="3" rx="1.5" fill="#FF6666" opacity="0.4"/>
+  <rect x="2" y="56" width="8" height="3" rx="1.5" fill="#FF4444" opacity="0.3"/>
+  <rect x="8" y="68" width="7" height="3" rx="1.5" fill="#FF4444" opacity="0.25"/>
 </svg>

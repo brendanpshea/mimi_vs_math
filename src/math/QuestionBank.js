@@ -85,9 +85,9 @@ function multD2() {
 
 function multD3() {
   if (Math.random() < 0.4) {
-    // Multi-digit × single-digit
-    const a = rand(11, 25);
-    const b = rand(2, 9);
+    // Multi-digit × single-digit — capped so mental maths stays Grade-3-feasible
+    const a = rand(11, 19);
+    const b = rand(2, 5);
     return { text: `${a} × ${b} = ?`, answer: a * b, answerDisplay: String(a * b), topic: 'multiplication' };
   }
   const a = rand(3, 12);
@@ -325,7 +325,7 @@ function skipCountingD1() {
   return { text: `Fill the blank:\n${disp}`, answer: ans, answerDisplay: String(ans), topic: 'skipCounting' };
 }
 function skipCountingD2() {
-  const step = rand(6, 15); const start = rand(1, 4) * step;
+  const step = rand(5, 10); const start = rand(1, 4) * step;
   const pos   = rand(1, 3);
   const seq   = Array.from({ length: 5 }, (_, i) => start + i * step);
   const ans   = seq[pos];

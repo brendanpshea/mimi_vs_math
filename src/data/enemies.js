@@ -18,11 +18,12 @@
  *
  * Rough baselines used:
  *   Region 0 (Gr 1):  25 s simple calc, 22 s reading-heavy comparison
- *   Region 1 (Gr 2):  18–20 s tables/mult, 25 s sequence read+solve
- *   Region 2 (Gr 3):  20 s clean division, 16 s mult review, 30 s word
+ *   Region 1 (Gr 2):  22 s tables/mult, 28 s sequence read+solve
+ *   Region 2 (Gr 3):  20 s clean division, 20 s mult review, 30 s word
  *   Region 3 (Gr 4):  25 s fraction compare, 28 s fraction add, 20 s decimal
  *   Region 4 (Gr 5):  22 s order-of-ops, 20 s percentages, 22 s ratios
- *   Bosses: match the heaviest topic in their pool
+ *   Bosses: match the heaviest topic in their pool; extra time when
+ *           D3 can produce multi-digit multiplication or reverse-percentage
  * ─────────────────────────────────────────────────────────────────────────
  */
 const ENEMIES = {
@@ -97,7 +98,7 @@ const ENEMIES = {
     xp: 10,
     mathTopic: 'multTables',        // 2×, 5×, 10× tables
     difficulty: 1,
-    timerSeconds: 18,              // Gr 2: easy tables but brand-new concept
+    timerSeconds: 22,              // Gr 2: brand-new concept — fingers-on-the-table moment
     special: 'Times-table problems (2s, 5s, 10s)',
     color: 0x44BB44,
   },
@@ -111,7 +112,7 @@ const ENEMIES = {
     xp: 12,
     mathTopic: 'multiplication',    // full multiplication
     difficulty: 2,
-    timerSeconds: 20,              // Gr 2: harder recall (6×7, 8×9 etc.)
+    timerSeconds: 22,              // Gr 2: 8×9, 7×6 type combos need real recall time
     special: 'Harder multiplication problems',
     color: 0x228B22,
   },
@@ -125,7 +126,7 @@ const ENEMIES = {
     xp: 14,
     mathTopic: 'skipCounting',      // fill-in-the-sequence (new type)
     difficulty: 2,
-    timerSeconds: 25,              // Gr 2: read 5-item sequence + find pattern
+    timerSeconds: 28,              // Gr 2: read all 5 items, find step, compute blank — 3 steps
     special: 'Skip counting sequences',
     color: 0x8899AA,
   },
@@ -140,7 +141,7 @@ const ENEMIES = {
     mathTopic: 'multiplication',
     mathTopics: ['multTables', 'multiplication', 'skipCounting'],  // all Region 1 types
     difficulty: 3,
-    timerSeconds: 20,              // Boss: matches heaviest R1 type (multiplication)
+    timerSeconds: 25,              // Boss: D3 can draw 2-digit×1-digit mult; Grade 2 audience
     special: 'Boss: Tables, multiplication & sequences',
     isBoss: true,
     color: 0xCC6600,
@@ -171,7 +172,7 @@ const ENEMIES = {
     xp: 15,
     mathTopic: 'multiplication',    // ×  underpins ÷; wrong answer heals enemy
     difficulty: 2,
-    timerSeconds: 16,              // Gr 3: review topic — full region of practice behind them
+    timerSeconds: 20,              // Gr 3: review, but 7×8 isn't instant — don't punish recall
     special: 'Multiplication review; wrong answer heals enemy by 1',
     color: 0xDDCCAA,
   },
@@ -320,7 +321,7 @@ const ENEMIES = {
     mathTopic: 'mixed',
     mathTopics: ['orderOfOps', 'percentages', 'ratiosProp'],  // all Region 4 types
     difficulty: 3,
-    timerSeconds: 22,              // Final boss: tense but fair — matches heaviest R4 type
+    timerSeconds: 25,              // Final boss: D3 includes reverse-percentage format; needs extra read time
     special: 'Boss: Order of ops, percentages & ratios',
     isBoss: true,
     color: 0x220044,

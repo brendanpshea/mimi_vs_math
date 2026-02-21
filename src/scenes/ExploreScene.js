@@ -40,8 +40,11 @@ export default class ExploreScene extends Phaser.Scene {
     this.battleResult = data?.battleResult ?? null;
     // On defeat, always restart from the region spawn — never restore battle position
     const isDefeat = data?.battleResult?.victory === false;
-    this._returnX = isDefeat ? null : (data?.mimiX ?? null);
-    this._returnY = isDefeat ? null : (data?.mimiY ?? null);
+    this._returnX   = isDefeat ? null : (data?.mimiX ?? null);
+    this._returnY   = isDefeat ? null : (data?.mimiY ?? null);
+    // Restore NPC position from before the battle (so the wizard doesn’t reset)
+    this._returnNpcX = isDefeat ? null : (data?.npcX ?? null);
+    this._returnNpcY = isDefeat ? null : (data?.npcY ?? null);
   }
 
   create() {
@@ -95,7 +98,7 @@ export default class ExploreScene extends Phaser.Scene {
     this._createAmbientParticles();
 
     // UI (scrollFactor(0) set inside these classes)
-    this.hud    = new HUD(this, this.regionData.name);
+    this.hud    = new HUD(this, this.regionData);
     this.dialog = new DialogBox(this);
 
     this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
@@ -294,6 +297,8 @@ export default class ExploreScene extends Phaser.Scene {
           regionId: this.regionId,
           mimiX:    this.mimi.x,
           mimiY:    this.mimi.y,
+          npcX:     this._npc?.sprite.x ?? null,
+          npcY:     this._npc?.sprite.y ?? null,
         },
       });
     });
@@ -560,6 +565,8 @@ export default class ExploreScene extends Phaser.Scene {
         regionId: this.regionId,
         mimiX:    this.mimi.x,
         mimiY:    this.mimi.y,
+        npcX:     this._npc?.sprite.x ?? null,
+        npcY:     this._npc?.sprite.y ?? null,
       },
     };
 
@@ -583,8 +590,8 @@ export default class ExploreScene extends Phaser.Scene {
   //  NPC 
 
   _setupNPC() {
-    const px = tx(this.regionData.npcTile.col);
-    const py = ty(this.regionData.npcTile.row);
+    const px = this._returnNpcX ?? tx(this.regionData.npcTile.col);
+    const py = this._returnNpcY ?? ty(this.regionData.npcTile.row);
 
     this._npc = new NPC(
       this,
@@ -603,6 +610,10 @@ export default class ExploreScene extends Phaser.Scene {
       },
     );
     this._npc.registerOverlap(this.mimi.sprite);
+
+    // Prevent the wizard from wandering through walls and decoration obstacles
+    this.physics.add.collider(this._npc.sprite, this._walls);
+    this.physics.add.collider(this._npc.sprite, this._decorObstacles);
   }
 
   // ── Ambient particles ──────────────────────────────────────────────────

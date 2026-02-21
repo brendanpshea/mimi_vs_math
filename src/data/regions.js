@@ -9,6 +9,7 @@
  *  NORTH ZONE (rows 3-14)
  *    E1 (col 20, row 10)  ← north-left
  *    E2 (col 52, row  9)  ← north-right
+ *    E7 (col 35, row  7)  ← north-mid patrol (regions 1-4 only)
  *    BOSS (col 66, row 5) ← far NE corner
  *
  *  ═══ Wall A: rows 15-16 ═══ gap @ cols 9-12 (NW) ═══ gap @ cols 41-44 (NE) ═══
@@ -24,8 +25,8 @@
  *  SOUTH ZONE (rows 33-46)
  *    E5    (col 14, row 37)  ← far-left
  *    E3    (col 30, row 37)  ← center-left
- *    E6    (col 57, row 36)  ← right (regions 1-4 only)
- *    CHEST (col 65, row 44)  ← SE corner
+ *    E6    (col 57, row 36)  ← right (all regions)
+ *    CHEST (col 65, row 44)  ← SE corner (unused — kept as landmark)
  *
  * ── enemySpawns ──────────────────────────────────────────────────────────
  *   { col, row, id, difficultyOverride? }
@@ -51,13 +52,14 @@ const REGIONS = [
     chestTile: { col: 65, row: 44 },
     bossTile:  { col: 66, row: 5 },
 
-    // ── Enemies: 5 (intro region — native types only, one harder review) ──
+    // ── Enemies: 6 (intro region — native types only, one harder review) ──
     enemySpawns: [
       { col: 20, row: 10, id: 'counting_caterpillar' },                       // D1 addition
       { col: 52, row:  9, id: 'number_gnome' },                               // D2 subtraction
       { col: 30, row: 37, id: 'minus_mole' },                                 // D2 comparison
       { col: 44, row: 23, id: 'counting_caterpillar', difficultyOverride: 2 },// D2 review (mid)
       { col: 14, row: 37, id: 'number_gnome',          difficultyOverride: 1 },// D1 south guard
+      { col: 57, row: 36, id: 'minus_mole',            difficultyOverride: 1 },// D1 SE patrol
     ],
 
     boss: 'subtraction_witch',
@@ -100,7 +102,7 @@ const REGIONS = [
     chestTile: { col: 65, row: 44 },
     bossTile:  { col: 66, row: 5 },
 
-    // ── Enemies: 6 — 3 native + 3 hard reviews from R0 ──────────────────
+    // ── Enemies: 7 — 3 native + 3 hard reviews from R0 + 1 north patrol ──
     enemySpawns: [
       { col: 20, row: 10, id: 'slime_pup' },                                  // D1 multTables
       { col: 52, row:  9, id: 'cactus_sprite' },                              // D2 multiplication
@@ -108,6 +110,7 @@ const REGIONS = [
       { col: 44, row: 23, id: 'counting_caterpillar', difficultyOverride: 3 },// D3 addition review
       { col: 14, row: 37, id: 'number_gnome',          difficultyOverride: 3 },// D3 subtraction review
       { col: 57, row: 36, id: 'minus_mole',            difficultyOverride: 3 },// D3 comparison review
+      { col: 35, row:  7, id: 'slime_pup',             difficultyOverride: 1 },// D1 north patrol
     ],
 
     boss: 'count_multiplico',
@@ -150,7 +153,7 @@ const REGIONS = [
     chestTile: { col: 65, row: 44 },
     bossTile:  { col: 66, row: 5 },
 
-    // ── Enemies: 6 — 3 native + 3 hard reviews from R1 ──────────────────
+    // ── Enemies: 7 — 3 native + 3 hard reviews from R1 + 1 north patrol ──
     enemySpawns: [
       { col: 20, row: 10, id: 'sand_scarab' },                                // D1 division
       { col: 52, row:  9, id: 'mummy_cat' },                                  // D2 mult review
@@ -158,6 +161,7 @@ const REGIONS = [
       { col: 44, row: 23, id: 'slime_pup',     difficultyOverride: 3 },       // D3 multTables review
       { col: 14, row: 37, id: 'cactus_sprite', difficultyOverride: 3 },       // D3 multiplication review
       { col: 57, row: 36, id: 'cloud_bully',   difficultyOverride: 3 },       // D3 skipCounting review
+      { col: 35, row:  7, id: 'sand_scarab',   difficultyOverride: 1 },       // D1 north patrol
     ],
 
     boss: 'the_diviner',
@@ -200,7 +204,7 @@ const REGIONS = [
     chestTile: { col: 65, row: 44 },
     bossTile:  { col: 66, row: 5 },
 
-    // ── Enemies: 6 — 3 native + 3 hard reviews from R2 ──────────────────
+    // ── Enemies: 7 — 3 native + 3 hard reviews from R2 + 1 north patrol ──
     enemySpawns: [
       { col: 20, row: 10, id: 'ice_frog' },                                   // D1 fractionCompare
       { col: 52, row:  9, id: 'snow_golem' },                                 // D2 fractionAdd
@@ -208,6 +212,7 @@ const REGIONS = [
       { col: 44, row: 23, id: 'sand_scarab',  difficultyOverride: 3 },        // D3 division review
       { col: 14, row: 37, id: 'mummy_cat',    difficultyOverride: 3 },        // D3 mult review
       { col: 57, row: 36, id: 'mirage_fox',   difficultyOverride: 3 },        // D3 word-problem review
+      { col: 35, row:  7, id: 'ice_frog',     difficultyOverride: 1 },        // D1 north patrol
     ],
 
     boss: 'glacius',
@@ -250,7 +255,7 @@ const REGIONS = [
     chestTile: { col: 65, row: 44 },
     bossTile:  { col: 66, row: 5 },
 
-    // ── Enemies: 6 — 3 native + 3 hard reviews from R3 ──────────────────
+    // ── Enemies: 7 — 3 native + 3 hard reviews from R3 + 1 north patrol ──
     enemySpawns: [
       { col: 20, row: 10, id: 'shadow_knight' },                              // D1 orderOfOps
       { col: 52, row:  9, id: 'ratio_raven' },                                // D2 percentages
@@ -258,6 +263,7 @@ const REGIONS = [
       { col: 44, row: 23, id: 'ice_frog',      difficultyOverride: 3 },       // D3 fractionCompare review
       { col: 14, row: 37, id: 'snow_golem',    difficultyOverride: 3 },       // D3 fractionAdd review
       { col: 57, row: 36, id: 'crystal_bat',   difficultyOverride: 3 },       // D3 decimals review
+      { col: 35, row:  7, id: 'shadow_knight', difficultyOverride: 1 },       // D1 north patrol
     ],
 
     boss: 'fenwick',

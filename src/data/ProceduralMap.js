@@ -5,7 +5,7 @@
  * ─────────
  *  1. Fill the entire walkable area with blocking terrain (dense walls).
  *  2. Clear a square glade (NODE_CLEAR tile radius) around every key
- *     position: Mimi's start, each enemy, the NPC, the chest, and the boss.
+ *     position: Mimi's start, each enemy, the NPC, and the boss.
  *  3. Build a minimum spanning tree (Prim's) rooted at Mimi's start,
  *     connecting ALL key positions by shortest Manhattan distance.
  *  4. Carve a 3-tile-wide L-shaped corridor along every MST edge:
@@ -93,7 +93,6 @@ export function generateRegionMap(regionData) {
   const nodes = [
     regionData.mimiStart,
     regionData.npcTile,
-    regionData.chestTile,
     regionData.bossTile,
     ...regionData.enemySpawns.map(s => ({ col: s.col, row: s.row })),
   ];

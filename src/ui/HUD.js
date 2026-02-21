@@ -16,11 +16,12 @@ const PANEL_ALPHA   = 0.55;
 export default class HUD {
   /**
    * @param {Phaser.Scene} scene
-   * @param {string} regionName
+   * @param {object} regionData  - full region object from regions.js
    */
-  constructor(scene, regionName) {
+  constructor(scene, regionData) {
     this.scene      = scene;
-    this.regionName = regionName;
+    this.regionData = regionData;
+    this.regionName = regionData.name;
 
     const W = scene.cameras.main.width;
 
@@ -38,11 +39,11 @@ export default class HUD {
     }
 
     // Region label
-    this._regionLabel = scene.add.text(W / 2, 10, regionName, {
+    this._regionLabel = scene.add.text(W / 2, 10, this.regionName, {
       fontSize: '14px', color: '#FFEEAA', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(51);
 
-    // Stats line: accuracy + total correct
+    // Accuracy stat + enemies remaining
     this._statsText = scene.add.text(W / 2, 30, '', {
       fontSize: '11px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(51);
@@ -72,8 +73,15 @@ export default class HUD {
     const pct = stats.answered > 0
       ? Math.round(stats.correct / stats.answered * 100)
       : 100;
+
+    // Enemies remaining in the current region
+    const remaining = this.regionData.enemySpawns.filter(
+      (spawn, i) => !GameState.isEnemyDefeated(this.regionData.id, spawn.id + i),
+    ).length;
+    const enemyStr = remaining > 0 ? `⚔ ${remaining} left` : '⚔ all clear';
+
     this._statsText.setText(
-      `✓ ${stats.correct}/${stats.answered}  ·  ${pct}% accuracy  ·  streak best: ${stats.bestStreak}`,
+      `✓ ${stats.correct}/${stats.answered}  ·  ${pct}% accuracy  ·  streak best: ${stats.bestStreak}  ·  ${enemyStr}`,
     );
 
     // Inventory

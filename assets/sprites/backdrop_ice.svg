@@ -1,45 +1,162 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
-  <!-- Frostbite Cavern Backdrop - Icy cave interior -->
-  
+  <!-- Frostbite Cavern Backdrop — crystalline ice cave interior -->
   <defs>
-    <linearGradient id="iceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#4A6B88;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#2A3B48;stop-opacity:1" />
+    <linearGradient id="caveBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1A2A3A"/>
+      <stop offset="40%" stop-color="#2A4A60"/>
+      <stop offset="100%" stop-color="#1A3040"/>
     </linearGradient>
-    <radialGradient id="iceGlow">
-      <stop offset="0%" style="stop-color:#B8E8FF;stop-opacity:0.4" />
-      <stop offset="100%" style="stop-color:#4A6B88;stop-opacity:0" />
+    <radialGradient id="glow1" cx="20%" cy="35%" r="25%">
+      <stop offset="0%" stop-color="#88DDFF" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#88DDFF" stop-opacity="0"/>
     </radialGradient>
+    <radialGradient id="glow2" cx="75%" cy="30%" r="22%">
+      <stop offset="0%" stop-color="#AAEEFF" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#AAEEFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow3" cx="50%" cy="20%" r="18%">
+      <stop offset="0%" stop-color="#CCFFFF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#CCFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="iceFloor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4A7A90"/>
+      <stop offset="100%" stop-color="#2A4A58"/>
+    </linearGradient>
+    <linearGradient id="crystalBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#AAEEFF"/>
+      <stop offset="50%" stop-color="#66CCEE"/>
+      <stop offset="100%" stop-color="#44AACC"/>
+    </linearGradient>
+    <linearGradient id="crystalCyan" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#CCFFFF"/>
+      <stop offset="50%" stop-color="#88EEFF"/>
+      <stop offset="100%" stop-color="#55CCDD"/>
+    </linearGradient>
   </defs>
-  
-  <!-- Dark cave background -->
-  <rect width="800" height="600" fill="url(#iceGradient)"/>
-  
-  <!-- Glowing ice crystals in background -->
-  <circle cx="150" cy="150" r="80" fill="url(#iceGlow)"/>
-  <circle cx="650" cy="200" r="100" fill="url(#iceGlow)"/>
-  <circle cx="400" cy="100" r="60" fill="url(#iceGlow)"/>
-  
-  <!-- Icicles from ceiling -->
-  <polygon points="100,0 110,80 90,80" fill="#A8D8EA" opacity="0.7"/>
-  <polygon points="250,0 262,120 238,120" fill="#C8E8FA" opacity="0.6"/>
-  <polygon points="420,0 435,100 405,100" fill="#A8D8EA" opacity="0.7"/>
-  <polygon points="580,0 590,90 570,90" fill="#B8E8FA" opacity="0.65"/>
-  <polygon points="720,0 732,110 708,110" fill="#A8D8EA" opacity="0.6"/>
-  
-  <!-- Ice formations (stalagmites) on ground -->
-  <polygon points="180,600 200,520 220,600" fill="#88C8DD" opacity="0.6"/>
-  <polygon points="350,600 375,490 400,600" fill="#99D8EE" opacity="0.7"/>
-  <polygon points="550,600 570,530 590,600" fill="#88C8DD" opacity="0.65"/>
-  <polygon points="700,600 715,510 730,600" fill="#78B8CD" opacity="0.6"/>
-  
-  <!-- Snow/ice covered floor -->
-  <ellipse cx="400" cy="550" rx="400" ry="50" fill="#B8D8EA" opacity="0.3"/>
-  
-  <!-- Sparkles (ice crystals in air) -->
-  <circle cx="200" cy="250" r="2" fill="#FFFFFF" opacity="0.8"/>
-  <circle cx="450" cy="300" r="2.5" fill="#FFFFFF" opacity="0.9"/>
-  <circle cx="600" cy="220" r="2" fill="#FFFFFF" opacity="0.7"/>
-  <circle cx="320" cy="380" r="2" fill="#FFFFFF" opacity="0.8"/>
-  <circle cx="680" cy="340" r="2.5" fill="#FFFFFF" opacity="0.9"/>
+
+  <!-- Cave background -->
+  <rect width="800" height="600" fill="url(#caveBg)"/>
+  <rect width="800" height="600" fill="url(#glow1)"/>
+  <rect width="800" height="600" fill="url(#glow2)"/>
+  <rect width="800" height="600" fill="url(#glow3)"/>
+
+  <!-- Cave ceiling (rough rock) -->
+  <path d="M0,0 L0,80 Q50,95 100,75 Q180,100 250,70 Q310,90 380,65 Q440,85 520,60 Q590,80 660,55 Q720,75 780,50 L800,45 L800,0 Z" fill="#0E1A24"/>
+  <path d="M0,0 L0,60 Q60,78 120,58 Q200,82 280,55 Q340,75 420,50 Q490,70 570,42 Q640,60 710,38 L800,30 L800,0 Z" fill="#0A1218"/>
+
+  <!-- Stalactites (icicles from ceiling) -->
+  <g>
+    <polygon points="80,75 92,170 68,170" fill="url(#crystalBlue)" opacity="0.75"/>
+    <polygon points="80,75 88,170 80,120" fill="#CCFFFF" opacity="0.3"/>
+
+    <polygon points="190,68 206,195 174,195" fill="url(#crystalCyan)" opacity="0.7"/>
+    <polygon points="190,68 200,195 190,130" fill="#DFFFFF" opacity="0.25"/>
+
+    <polygon points="320,62 334,160 306,160" fill="url(#crystalBlue)" opacity="0.8"/>
+    <polygon points="320,62 330,160 320,110" fill="#CCFFFF" opacity="0.3"/>
+
+    <polygon points="460,58 476,185 444,185" fill="url(#crystalCyan)" opacity="0.72"/>
+    <polygon points="460,58 472,185 460,120" fill="#DFFFFF" opacity="0.25"/>
+
+    <polygon points="580,52 594,155 566,155" fill="url(#crystalBlue)" opacity="0.68"/>
+    <polygon points="580,52 590,155 580,100" fill="#CCFFFF" opacity="0.28"/>
+
+    <polygon points="700,48 712,140 688,140" fill="url(#crystalCyan)" opacity="0.75"/>
+    <polygon points="700,48 708,140 700,90" fill="#DFFFFF" opacity="0.3"/>
+  </g>
+  <!-- Smaller stalactites -->
+  <g opacity="0.5">
+    <polygon points="140,85 148,135 132,135" fill="#88C8DD"/>
+    <polygon points="250,72 256,115 244,115" fill="#99D8EE"/>
+    <polygon points="400,66 407,118 393,118" fill="#88C8DD"/>
+    <polygon points="530,56 536,100 524,100" fill="#99D8EE"/>
+    <polygon points="650,52 656,95 644,95" fill="#88C8DD"/>
+  </g>
+
+  <!-- Cave walls (side pillars) -->
+  <g>
+    <!-- Left wall -->
+    <path d="M0,70 L0,600 L50,600 L45,400 Q55,350 40,280 Q52,220 38,150 L35,70 Z" fill="#1A2830" opacity="0.8"/>
+    <path d="M0,70 L0,600 L30,600 L28,380 Q35,320 25,240 Q32,180 22,120 L20,70 Z" fill="#14222A"/>
+    <!-- Ice patches on wall -->
+    <ellipse cx="25" cy="250" rx="12" ry="30" fill="#4A8A9A" opacity="0.4"/>
+    <ellipse cx="20" cy="400" rx="10" ry="25" fill="#4A8A9A" opacity="0.35"/>
+  </g>
+  <g>
+    <!-- Right wall -->
+    <path d="M800,50 L800,600 L750,600 L755,380 Q742,320 758,250 Q745,190 760,130 L762,50 Z" fill="#1A2830" opacity="0.8"/>
+    <path d="M800,50 L800,600 L770,600 L772,360 Q764,300 775,230 Q767,170 778,110 L780,50 Z" fill="#14222A"/>
+    <ellipse cx="775" cy="280" rx="12" ry="28" fill="#4A8A9A" opacity="0.4"/>
+    <ellipse cx="780" cy="420" rx="10" ry="22" fill="#4A8A9A" opacity="0.35"/>
+  </g>
+
+  <!-- Ice floor -->
+  <rect y="470" width="800" height="130" fill="url(#iceFloor)"/>
+  <!-- Floor ice cracks -->
+  <g stroke="#3A6A78" stroke-width="1" fill="none" opacity="0.5">
+    <path d="M100,490 L180,500 L220,495 L280,505"/>
+    <path d="M350,485 L420,498 L480,492 L540,502"/>
+    <path d="M600,488 L660,496 L720,490"/>
+    <path d="M150,520 L200,528 L260,522"/>
+    <path d="M400,530 L460,525 L520,535"/>
+  </g>
+  <!-- Floor reflections -->
+  <g opacity="0.12">
+    <ellipse cx="200" cy="510" rx="60" ry="15" fill="#88DDFF"/>
+    <ellipse cx="450" cy="520" rx="70" ry="12" fill="#88DDFF"/>
+    <ellipse cx="650" cy="505" rx="55" ry="14" fill="#88DDFF"/>
+  </g>
+
+  <!-- Stalagmites (ice formations from floor) -->
+  <polygon points="130,600 150,490 170,600" fill="#6AAABB" opacity="0.65"/>
+  <polygon points="130,600 148,490 150,540" fill="#AAEEFF" opacity="0.2"/>
+
+  <polygon points="310,600 338,470 366,600" fill="#78C0D0" opacity="0.7"/>
+  <polygon points="310,600 334,470 338,520" fill="#BBFFFF" opacity="0.2"/>
+
+  <polygon points="520,600 542,500 564,600" fill="#6AAABB" opacity="0.65"/>
+  <polygon points="520,600 540,500 542,540" fill="#AAEEFF" opacity="0.2"/>
+
+  <polygon points="680,600 698,480 716,600" fill="#78C0D0" opacity="0.68"/>
+  <polygon points="680,600 696,480 698,530" fill="#BBFFFF" opacity="0.2"/>
+
+  <!-- Large crystal formation (left) -->
+  <g transform="translate(100,380)">
+    <polygon points="0,60 15,-30 30,60" fill="#66CCEE" opacity="0.6"/>
+    <polygon points="0,60 13,-30 15,10" fill="#CCFFFF" opacity="0.35"/>
+    <polygon points="10,60 30,-50 50,60" fill="#55BBDD" opacity="0.55"/>
+    <polygon points="10,60 28,-50 30,-10" fill="#BBFFFF" opacity="0.3"/>
+    <polygon points="-8,60 5,-15 18,60" fill="#77DDEE" opacity="0.5"/>
+  </g>
+
+  <!-- Large crystal formation (right) -->
+  <g transform="translate(640,370)">
+    <polygon points="0,70 18,-35 36,70" fill="#55BBDD" opacity="0.6"/>
+    <polygon points="0,70 16,-35 18,15" fill="#CCFFFF" opacity="0.3"/>
+    <polygon points="15,70 35,-55 55,70" fill="#66CCEE" opacity="0.55"/>
+    <polygon points="15,70 33,-55 35,-15" fill="#BBFFFF" opacity="0.28"/>
+  </g>
+
+  <!-- Floating ice sparkles -->
+  <g>
+    <circle cx="150" cy="250" r="2.5" fill="#FFFFFF" opacity="0.9"/>
+    <circle cx="148" cy="248" r="1" fill="#FFFFFF" opacity="0.5"/>
+    <circle cx="350" cy="300" r="2" fill="#EEFFFF" opacity="0.8"/>
+    <circle cx="500" cy="220" r="2.5" fill="#FFFFFF" opacity="0.85"/>
+    <circle cx="498" cy="218" r="1" fill="#FFFFFF" opacity="0.5"/>
+    <circle cx="620" cy="280" r="2" fill="#EEFFFF" opacity="0.75"/>
+    <circle cx="280" cy="350" r="2" fill="#FFFFFF" opacity="0.7"/>
+    <circle cx="450" cy="180" r="1.5" fill="#EEFFFF" opacity="0.65"/>
+    <circle cx="700" cy="320" r="2" fill="#FFFFFF" opacity="0.8"/>
+    <circle cx="200" cy="160" r="1.5" fill="#EEFFFF" opacity="0.6"/>
+    <circle cx="550" cy="350" r="2" fill="#FFFFFF" opacity="0.7"/>
+    <circle cx="380" cy="240" r="1.5" fill="#EEFFFF" opacity="0.65"/>
+  </g>
+
+  <!-- Frozen waterfall (center-left background) -->
+  <g opacity="0.3">
+    <rect x="230" y="100" width="25" height="180" rx="8" fill="#88CCDD"/>
+    <rect x="238" y="100" width="10" height="180" rx="4" fill="#AAEEFF"/>
+    <ellipse cx="242" cy="285" rx="20" ry="8" fill="#88CCDD"/>
+  </g>
 </svg>

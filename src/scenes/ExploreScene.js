@@ -403,14 +403,14 @@ export default class ExploreScene extends Phaser.Scene {
     // Boss name label
     this._bossLabel = this.add.text(
       px, py + DH / 2 + 10, this.regionData.bossName,
-      { fontSize: '9px', color: '#CC88FF', fontFamily: 'Arial',
+      { fontSize: '9px', color: '#CC88FF', fontFamily: "'Nunito', Arial, sans-serif",
         fontStyle: 'bold', align: 'center', stroke: '#000', strokeThickness: 2 },
     ).setOrigin(0.5, 0).setDepth(10);
 
     // Remaining-enemies counter (shown when locked)
     this._enemyCountText = this.add.text(
       px, py - DH / 2 - 14, '',
-      { fontSize: '9px', color: '#FF9999', fontFamily: 'Arial',
+      { fontSize: '9px', color: '#FF9999', fontFamily: "'Nunito', Arial, sans-serif",
         align: 'center', stroke: '#000', strokeThickness: 2 },
     ).setOrigin(0.5, 1).setDepth(10);
 

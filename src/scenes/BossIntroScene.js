@@ -88,7 +88,7 @@ export default class BossIntroScene extends Phaser.Scene {
       this.add.rectangle(avatarX, avatarY, AVATAR_SIZE, AVATAR_SIZE,
         glowColor, 0.3).setStrokeStyle(2, glowColor, 0.8);
       this.add.text(avatarX, avatarY, p.speaker[0] ?? '?', {
-        fontSize: '48px', color: '#FFFFFF', fontFamily: 'Arial', fontStyle: 'bold',
+        fontSize: '48px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
       }).setOrigin(0.5);
     }
 
@@ -98,7 +98,7 @@ export default class BossIntroScene extends Phaser.Scene {
       .setStrokeStyle(1, glowColor, 0.7);
     this.add.text(avatarX, badgeY, p.speaker, {
       fontSize: '13px', color: p.nameColor ?? '#FFFFFF',
-      fontFamily: 'Arial', fontStyle: 'bold',
+      fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
     // ── Dialogue box ────────────────────────────────────────────────────
@@ -129,7 +129,7 @@ export default class BossIntroScene extends Phaser.Scene {
     // always start at the top and never overflow downward into the button.
     const textTopY = BOX_Y - BOX_H / 2 + 18;
     this.add.text(W / 2, textTopY, p.text, {
-      fontSize: '14px', color: '#DDEEFF', fontFamily: 'Arial',
+      fontSize: '14px', color: '#DDEEFF', fontFamily: "'Nunito', Arial, sans-serif",
       align:  'center', lineSpacing: 5,
       stroke: '#000000', strokeThickness: 2,
       wordWrap: { width: BOX_W * 0.86 },
@@ -147,7 +147,7 @@ export default class BossIntroScene extends Phaser.Scene {
       .setStrokeStyle(2, stCol)
       .setInteractive({ useHandCursor: true });
     this.add.text(W / 2, btnY, label, {
-      fontSize: '20px', color: txtCol, fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '20px', color: txtCol, fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
     btn.on('pointerover', () => btn.setAlpha(0.75));

@@ -1,52 +1,209 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
-  <!-- Shadow Castle Backdrop - Dark fortress interior -->
-  
+  <!-- Shadow Castle Backdrop — dark gothic fortress interior -->
   <defs>
-    <linearGradient id="shadowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#1A0A2E;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#0A0A20;stop-opacity:1" />
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0A0414"/>
+      <stop offset="50%" stop-color="#140A28"/>
+      <stop offset="100%" stop-color="#0A0818"/>
     </linearGradient>
-    <radialGradient id="purpleGlow">
-      <stop offset="0%" style="stop-color:#6A0DAD;stop-opacity:0.5" />
-      <stop offset="100%" style="stop-color:#1A0A2E;stop-opacity:0" />
+    <radialGradient id="glow1" cx="15%" cy="45%" r="22%">
+      <stop offset="0%" stop-color="#8833CC" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#8833CC" stop-opacity="0"/>
     </radialGradient>
+    <radialGradient id="glow2" cx="82%" cy="40%" r="20%">
+      <stop offset="0%" stop-color="#6622AA" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#6622AA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow3" cx="50%" cy="25%" r="20%">
+      <stop offset="0%" stop-color="#AA44FF" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#AA44FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="candleGlow">
+      <stop offset="0%" stop-color="#FFAA44" stop-opacity="0.6"/>
+      <stop offset="60%" stop-color="#FF6600" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#FF6600" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="stoneFloor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E1830"/>
+      <stop offset="100%" stop-color="#14101E"/>
+    </linearGradient>
   </defs>
-  
-  <!-- Dark background -->
-  <rect width="800" height="600" fill="url(#shadowGradient)"/>
-  
-  <!-- Purple mystical glows -->
-  <circle cx="150" cy="200" r="120" fill="url(#purpleGlow)"/>
-  <circle cx="650" cy="250" r="140" fill="url(#purpleGlow)"/>
-  <circle cx="400" cy="150" r="100" fill="url(#purpleGlow)"/>
-  
-  <!-- Castle architecture silhouettes -->
-  <!-- Arched windows/doorways in background -->
-  <path d="M 100 250 Q 100 150 150 150 Q 200 150 200 250 L 100 250" fill="#2A1A4E" opacity="0.4"/>
-  <path d="M 600 280 Q 600 160 670 160 Q 740 160 740 280 L 600 280" fill="#2A1A4E" opacity="0.3"/>
-  
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bgGrad)"/>
+  <rect width="800" height="600" fill="url(#glow1)"/>
+  <rect width="800" height="600" fill="url(#glow2)"/>
+  <rect width="800" height="600" fill="url(#glow3)"/>
+
+  <!-- Vaulted ceiling arch -->
+  <path d="M0,0 L0,120 Q400,-30 800,120 L800,0 Z" fill="#08040E"/>
+  <!-- Ceiling ribs -->
+  <g stroke="#1E1434" stroke-width="4" fill="none" opacity="0.7">
+    <path d="M0,110 Q200,20 400,5 Q600,20 800,110"/>
+    <path d="M200,0 Q200,50 400,5 Q600,50 600,0" opacity="0.4"/>
+  </g>
+  <!-- Keystone -->
+  <polygon points="390,0 400,-5 410,0 408,18 392,18" fill="#2A1E3E" opacity="0.7"/>
+
+  <!-- Gothic arched windows (background) -->
+  <!-- Window left -->
+  <g opacity="0.6">
+    <path d="M90,140 Q90,80 145,80 Q200,80 200,140 L200,320 L90,320 Z" fill="#1E1238"/>
+    <path d="M100,150 Q100,95 145,95 Q190,95 190,150 L190,310 L100,310 Z" fill="#14082A"/>
+    <!-- Window glow (moonlight) -->
+    <path d="M105,155 Q105,100 145,100 Q185,100 185,155 L185,305 L105,305 Z" fill="#2A1850" opacity="0.6"/>
+    <!-- Window frame divisions -->
+    <line x1="145" y1="95" x2="145" y2="310" stroke="#2A1E3E" stroke-width="3"/>
+    <line x1="100" y1="200" x2="190" y2="200" stroke="#2A1E3E" stroke-width="3"/>
+    <!-- Faint moonlight through window -->
+    <path d="M108,158 L145,200 L108,200 Z" fill="#3322AA" opacity="0.15"/>
+    <path d="M145,100 L185,155 L145,155 Z" fill="#4433BB" opacity="0.1"/>
+  </g>
+
+  <!-- Window right -->
+  <g opacity="0.55">
+    <path d="M600,150 Q600,85 660,85 Q720,85 720,150 L720,330 L600,330 Z" fill="#1E1238"/>
+    <path d="M610,160 Q610,100 660,100 Q710,100 710,160 L710,320 L610,320 Z" fill="#14082A"/>
+    <path d="M615,165 Q615,105 660,105 Q705,105 705,165 L705,315 L615,315 Z" fill="#2A1850" opacity="0.5"/>
+    <line x1="660" y1="100" x2="660" y2="320" stroke="#2A1E3E" stroke-width="3"/>
+    <line x1="610" y1="210" x2="710" y2="210" stroke="#2A1E3E" stroke-width="3"/>
+    <path d="M618,168 L660,210 L618,210 Z" fill="#3322AA" opacity="0.12"/>
+  </g>
+
   <!-- Stone pillars -->
-  <rect x="80" y="350" width="40" height="250" fill="#3A2A5E" opacity="0.5"/>
-  <rect x="680" y="320" width="40" height="280" fill="#3A2A5E" opacity="0.5"/>
-  
+  <!-- Left pillar -->
+  <g>
+    <rect x="50" y="110" width="48" height="490" fill="#1E1832"/>
+    <rect x="52" y="110" width="8" height="490" fill="#2A2040" opacity="0.7"/>
+    <rect x="88" y="110" width="8" height="490" fill="#120E1E" opacity="0.6"/>
+    <!-- Pillar cap -->
+    <rect x="44" y="105" width="60" height="12" rx="2" fill="#2A2040"/>
+    <rect x="44" y="590" width="60" height="10" fill="#2A2040"/>
+    <!-- Pillar grooves -->
+    <g stroke="#120E1E" stroke-width="0.8" opacity="0.5">
+      <line x1="60" y1="120" x2="60" y2="600"/>
+      <line x1="70" y1="120" x2="70" y2="600"/>
+      <line x1="80" y1="120" x2="80" y2="600"/>
+    </g>
+  </g>
+  <!-- Right pillar -->
+  <g>
+    <rect x="702" y="110" width="48" height="490" fill="#1E1832"/>
+    <rect x="704" y="110" width="8" height="490" fill="#2A2040" opacity="0.7"/>
+    <rect x="740" y="110" width="8" height="490" fill="#120E1E" opacity="0.6"/>
+    <rect x="696" y="105" width="60" height="12" rx="2" fill="#2A2040"/>
+    <rect x="696" y="590" width="60" height="10" fill="#2A2040"/>
+    <g stroke="#120E1E" stroke-width="0.8" opacity="0.5">
+      <line x1="712" y1="120" x2="712" y2="600"/>
+      <line x1="722" y1="120" x2="722" y2="600"/>
+      <line x1="732" y1="120" x2="732" y2="600"/>
+    </g>
+  </g>
+
+  <!-- Wall torches with candle glow -->
+  <!-- Torch left -->
+  <g>
+    <circle cx="108" cy="260" r="40" fill="url(#candleGlow)"/>
+    <rect x="102" y="260" width="10" height="22" fill="#4A3A2A"/>
+    <rect x="100" y="258" width="14" height="4" rx="1" fill="#5A4A3A"/>
+    <!-- Flame -->
+    <ellipse cx="107" cy="254" rx="5" ry="8" fill="#FF8800" opacity="0.9"/>
+    <ellipse cx="107" cy="252" rx="3" ry="5" fill="#FFCC44" opacity="0.85"/>
+    <ellipse cx="107" cy="250" rx="1.5" ry="3" fill="#FFFFAA" opacity="0.9"/>
+  </g>
+  <!-- Torch right -->
+  <g>
+    <circle cx="692" cy="270" r="40" fill="url(#candleGlow)"/>
+    <rect x="688" y="270" width="10" height="22" fill="#4A3A2A"/>
+    <rect x="686" y="268" width="14" height="4" rx="1" fill="#5A4A3A"/>
+    <ellipse cx="693" cy="264" rx="5" ry="8" fill="#FF8800" opacity="0.9"/>
+    <ellipse cx="693" cy="262" rx="3" ry="5" fill="#FFCC44" opacity="0.85"/>
+    <ellipse cx="693" cy="260" rx="1.5" ry="3" fill="#FFFFAA" opacity="0.9"/>
+  </g>
+
+  <!-- Hanging chains -->
+  <g stroke="#3A3048" stroke-width="2" fill="none" opacity="0.5">
+    <path d="M300,0 L300,80 Q298,85 300,90 Q302,95 300,100 Q298,105 300,110"/>
+    <path d="M500,0 L500,60 Q498,65 500,70 Q502,75 500,80 Q498,85 500,90"/>
+  </g>
+  <!-- Chain ends (broken) -->
+  <circle cx="300" cy="112" r="3" fill="#3A3048" opacity="0.5"/>
+  <circle cx="500" cy="92" r="3" fill="#3A3048" opacity="0.5"/>
+
   <!-- Stone floor -->
-  <rect y="500" width="800" height="100" fill="#1A1A30"/>
-  
-  <!-- Floor tiles perspective -->
-  <line x1="0" y1="520" x2="800" y2="520" stroke="#2A2A40" stroke-width="1" opacity="0.6"/>
-  <line x1="0" y1="545" x2="800" y2="545" stroke="#2A2A40" stroke-width="1" opacity="0.5"/>
-  <line x1="0" y1="575" x2="800" y2="575" stroke="#2A2A40" stroke-width="1" opacity="0.4"/>
-  
-  <!-- Vertical tile lines -->
-  <line x1="200" y1="500" x2="200" y2="600" stroke="#2A2A40" stroke-width="1" opacity="0.4"/>
-  <line x1="400" y1="500" x2="400" y2="600" stroke="#2A2A40" stroke-width="1" opacity="0.5"/>
-  <line x1="600" y1="500" x2="600" y2="600" stroke="#2A2A40" stroke-width="1" opacity="0.4"/>
-  
-  <!-- Mystical floating particles -->
-  <circle cx="250" cy="280" r="2.5" fill="#9A4DFF" opacity="0.8"/>
-  <circle cx="420" cy="320" r="2" fill="#8A3DFF" opacity="0.7"/>
-  <circle cx="580" cy="240" r="2.5" fill="#9A4DFF" opacity="0.9"/>
-  <circle cx="320" cy="400" r="2" fill="#7A2DFF" opacity="0.6"/>
-  <circle cx="650" cy="360" r="2.5" fill="#8A3DFF" opacity="0.8"/>
-  <circle cx="180" cy="340" r="2" fill="#9A4DFF" opacity="0.7"/>
+  <rect y="480" width="800" height="120" fill="url(#stoneFloor)"/>
+  <!-- Floor tile grid -->
+  <g stroke="#2A2240" stroke-width="1" opacity="0.5">
+    <line x1="0" y1="500" x2="800" y2="500"/>
+    <line x1="0" y1="530" x2="800" y2="530"/>
+    <line x1="0" y1="565" x2="800" y2="565"/>
+    <line x1="100" y1="480" x2="100" y2="600"/>
+    <line x1="200" y1="480" x2="200" y2="600"/>
+    <line x1="300" y1="480" x2="300" y2="600"/>
+    <line x1="400" y1="480" x2="400" y2="600"/>
+    <line x1="500" y1="480" x2="500" y2="600"/>
+    <line x1="600" y1="480" x2="600" y2="600"/>
+    <line x1="700" y1="480" x2="700" y2="600"/>
+  </g>
+  <!-- Floor cracks -->
+  <g stroke="#0A0612" stroke-width="0.8" fill="none" opacity="0.4">
+    <path d="M250,495 L280,510 L260,530"/>
+    <path d="M520,505 L550,520 L540,540"/>
+    <path d="M150,540 L180,555 L170,570"/>
+    <path d="M450,550 L475,560"/>
+  </g>
+
+  <!-- Floating magic particles -->
+  <g>
+    <circle cx="200" cy="300" r="2.5" fill="#BB66FF" opacity="0.85"/>
+    <circle cx="198" cy="298" r="1" fill="#DDAAFF" opacity="0.5"/>
+    <circle cx="420" cy="350" r="2" fill="#9944FF" opacity="0.75"/>
+    <circle cx="580" cy="280" r="2.5" fill="#BB66FF" opacity="0.9"/>
+    <circle cx="578" cy="278" r="1" fill="#DDAAFF" opacity="0.5"/>
+    <circle cx="320" cy="420" r="2" fill="#8833EE" opacity="0.65"/>
+    <circle cx="650" cy="380" r="2.5" fill="#9944FF" opacity="0.8"/>
+    <circle cx="250" cy="200" r="2" fill="#BB66FF" opacity="0.7"/>
+    <circle cx="500" cy="180" r="1.8" fill="#AA55FF" opacity="0.6"/>
+    <circle cx="380" cy="250" r="2" fill="#9944FF" opacity="0.65"/>
+    <circle cx="550" cy="400" r="1.5" fill="#BB66FF" opacity="0.55"/>
+    <circle cx="170" cy="380" r="2" fill="#8833EE" opacity="0.6"/>
+  </g>
+
+  <!-- Cobwebs -->
+  <g stroke="#554466" stroke-width="0.5" fill="none" opacity="0.3">
+    <!-- Top-left cobweb -->
+    <path d="M0,0 Q30,30 60,20"/>
+    <path d="M0,0 Q20,35 20,60"/>
+    <path d="M0,0 Q40,40 50,50"/>
+    <path d="M20,10 Q30,20 50,25" stroke-dasharray="2,3"/>
+    <path d="M10,20 Q20,30 25,50" stroke-dasharray="2,3"/>
+    <!-- Top-right cobweb -->
+    <path d="M800,0 Q770,30 740,20"/>
+    <path d="M800,0 Q780,35 780,60"/>
+    <path d="M800,0 Q760,40 750,50"/>
+    <path d="M780,10 Q770,20 750,25" stroke-dasharray="2,3"/>
+  </g>
+
+  <!-- Floating books (magical) -->
+  <g opacity="0.35" transform="translate(350, 150) rotate(-15)">
+    <rect x="0" y="0" width="20" height="26" rx="1" fill="#5A2A1A"/>
+    <rect x="2" y="2" width="16" height="22" fill="#8A4A2A"/>
+    <line x1="10" y1="2" x2="10" y2="24" stroke="#5A2A1A" stroke-width="0.8"/>
+    <!-- Pages -->
+    <rect x="4" y="4" width="12" height="18" fill="#E8D8C8" opacity="0.5"/>
+  </g>
+  <g opacity="0.25" transform="translate(480, 130) rotate(10)">
+    <rect x="0" y="0" width="18" height="24" rx="1" fill="#1A2A5A"/>
+    <rect x="2" y="2" width="14" height="20" fill="#2A3A7A"/>
+    <rect x="4" y="4" width="10" height="16" fill="#E8D8C8" opacity="0.4"/>
+  </g>
+
+  <!-- Purple mist along floor -->
+  <g opacity="0.2">
+    <ellipse cx="150" cy="500" rx="120" ry="25" fill="#6622AA"/>
+    <ellipse cx="400" cy="510" rx="150" ry="30" fill="#5522AA"/>
+    <ellipse cx="650" cy="505" rx="130" ry="25" fill="#6622AA"/>
+    <ellipse cx="300" cy="520" rx="100" ry="20" fill="#7733BB"/>
+    <ellipse cx="550" cy="515" rx="110" ry="22" fill="#7733BB"/>
+  </g>
 </svg>

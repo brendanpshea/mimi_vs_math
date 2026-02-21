@@ -37,15 +37,15 @@ export default class TitleScene extends Phaser.Scene {
 
     // Title text with shadow
     this.add.text(W / 2 + 3, H * 0.52 + 3, 'Mimi vs. Math', {
-      fontSize: '52px', color: '#442200', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '52px', color: '#442200', fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
     this.add.text(W / 2, H * 0.52, 'Mimi vs. Math', {
-      fontSize: '52px', color: TITLE_COLOR, fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '52px', color: TITLE_COLOR, fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
     // Tagline
     this.add.text(W / 2, H * 0.61, 'A Math Adventure for Grades 1–5', {
-      fontSize: '18px', color: '#AACCFF', fontFamily: 'Arial',
+      fontSize: '18px', color: '#AACCFF', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5);
 
     // Main buttons
@@ -60,7 +60,7 @@ export default class TitleScene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true })
         .setStrokeStyle(1.5, 0x44AA44);
       const st = this.add.text(W / 2, H * (hasSave ? 0.9 : 0.81), '📊  View Stats', {
-        fontSize: '16px', color: '#88FF88', fontFamily: 'Arial', fontStyle: 'bold',
+        fontSize: '16px', color: '#88FF88', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
       }).setOrigin(0.5);
       sb.on('pointerover', () => { sb.setFillStyle(0x153015); st.setColor('#AAFFAA'); });
       sb.on('pointerout',  () => { sb.setFillStyle(0x0C1A0C); st.setColor('#88FF88'); });
@@ -69,7 +69,7 @@ export default class TitleScene extends Phaser.Scene {
 
     // Footer
     this.add.text(W / 2, H - 4, 'WASD / Arrow keys to move  ·  Space to interact  ·  Esc to pause', {
-      fontSize: '11px', color: '#556688', fontFamily: 'Arial',
+      fontSize: '11px', color: '#556688', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5, 1);
 
     // Press Enter to start
@@ -97,7 +97,7 @@ export default class TitleScene extends Phaser.Scene {
       .setStrokeStyle(2, 0x4488FF);
 
     const txt = this.add.text(x, y, label, {
-      fontSize: '22px', color: '#FFFFFF', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '22px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
     bg.on('pointerover', () => { bg.setFillStyle(0x3355AA); txt.setColor('#FFEE88'); });
@@ -125,11 +125,11 @@ export default class TitleScene extends Phaser.Scene {
       .setDepth(D + 1).setStrokeStyle(2, 0x4488FF));
 
     add(this.add.text(W / 2, H / 2 - 178, 'Choose a Starting World', {
-      fontSize: '22px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '22px', color: '#FFD700', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(D + 2));
 
     add(this.add.text(W / 2, H / 2 - 155, 'Earlier worlds will be unlocked automatically', {
-      fontSize: '12px', color: '#8899BB', fontFamily: 'Arial',
+      fontSize: '12px', color: '#8899BB', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5).setDepth(D + 2));
 
     // Cards — two rows: 3 top, 2 bottom
@@ -157,29 +157,29 @@ export default class TitleScene extends Phaser.Scene {
       add(this.add.circle(cx - cardW / 2 + 14, cy - cardH / 2 + 14, 12, 0x1A3A6E)
         .setDepth(D + 3).setStrokeStyle(1.5, 0x4488FF));
       add(this.add.text(cx - cardW / 2 + 14, cy - cardH / 2 + 14, String(i + 1), {
-        fontSize: '13px', color: '#AADDFF', fontFamily: 'Arial', fontStyle: 'bold',
+        fontSize: '13px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
       }).setOrigin(0.5).setDepth(D + 4));
 
       // Region name
       add(this.add.text(cx, cy - 26, region.name, {
-        fontSize: '11px', color: '#FFE8A0', fontFamily: 'Arial', fontStyle: 'bold',
+        fontSize: '11px', color: '#FFE8A0', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
         wordWrap: { width: cardW - 12 }, align: 'center',
       }).setOrigin(0.5).setDepth(D + 3));
 
       // Subtitle (trim after ·)
       add(this.add.text(cx, cy - 6, region.subtitle.split('·')[0].trim(), {
-        fontSize: '9px', color: '#7799BB', fontFamily: 'Arial',
+        fontSize: '9px', color: '#7799BB', fontFamily: "'Nunito', Arial, sans-serif",
         wordWrap: { width: cardW - 12 }, align: 'center',
       }).setOrigin(0.5).setDepth(D + 3));
 
       // Grade label
       add(this.add.text(cx, cy + 14, region.subtitle.split('·')[1]?.trim() ?? '', {
-        fontSize: '9px', color: '#55AA88', fontFamily: 'Arial',
+        fontSize: '9px', color: '#55AA88', fontFamily: "'Nunito', Arial, sans-serif",
       }).setOrigin(0.5).setDepth(D + 3));
 
       // "Start here" label
       add(this.add.text(cx, cy + 36, '▶ Start here', {
-        fontSize: '10px', color: '#88DDFF', fontFamily: 'Arial', fontStyle: 'bold',
+        fontSize: '10px', color: '#88DDFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
       }).setOrigin(0.5).setDepth(D + 3));
 
       card.on('pointerover', () => { card.setFillStyle(0x1A2E5A); card.setStrokeStyle(2, 0x88CCFF); });
@@ -193,7 +193,7 @@ export default class TitleScene extends Phaser.Scene {
     const cb = add(this.add.rectangle(cancelX, H / 2 + 175, 150, 36, 0x2A0A0A)
       .setDepth(D + 2).setStrokeStyle(1.5, 0xCC4444).setInteractive({ useHandCursor: true }));
     const ct = add(this.add.text(cancelX, H / 2 + 175, '✕  Cancel', {
-      fontSize: '14px', color: '#FF8888', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '14px', color: '#FF8888', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(D + 3));
     cb.on('pointerover', () => { cb.setFillStyle(0x401515); ct.setColor('#FFAAAA'); });
     cb.on('pointerout',  () => { cb.setFillStyle(0x2A0A0A); ct.setColor('#FF8888'); });
@@ -207,7 +207,7 @@ export default class TitleScene extends Phaser.Scene {
       const wsb = add(this.add.rectangle(W / 2 + 95, H / 2 + 175, 150, 36, 0x0C1A0C)
         .setDepth(D + 2).setStrokeStyle(1.5, 0x44AA44).setInteractive({ useHandCursor: true }));
       const wst = add(this.add.text(W / 2 + 95, H / 2 + 175, '📊 Stats',
-        { fontSize: '14px', color: '#88FF88', fontFamily: 'Arial', fontStyle: 'bold' },
+        { fontSize: '14px', color: '#88FF88', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' },
       ).setOrigin(0.5).setDepth(D + 3));
       wsb.on('pointerover', () => { wsb.setFillStyle(0x153015); wst.setColor('#AAFFAA'); });
       wsb.on('pointerout',  () => { wsb.setFillStyle(0x0C1A0C); wst.setColor('#88FF88'); });
@@ -240,7 +240,7 @@ export default class TitleScene extends Phaser.Scene {
       .setDepth(D + 1).setStrokeStyle(2, 0x4488FF));
 
     add(this.add.text(W / 2, H / 2 - 162, '📊  Mimi’s Stats', {
-      fontSize: '24px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '24px', color: '#FFD700', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(D + 2));
 
     const dg = add(this.add.graphics().setDepth(D + 2));
@@ -268,10 +268,10 @@ export default class TitleScene extends Phaser.Scene {
     rows.forEach(([label, value]) => {
       if (!label) { ry += 10; return; }
       add(this.add.text(W / 2 - 168, ry, label,
-        { fontSize: '14px', color: '#CCDDFF', fontFamily: 'Arial' },
+        { fontSize: '14px', color: '#CCDDFF', fontFamily: "'Nunito', Arial, sans-serif" },
       ).setOrigin(0, 0).setDepth(D + 2));
       add(this.add.text(W / 2 + 168, ry, value,
-        { fontSize: '14px', color: '#FFFFFF', fontFamily: 'Arial', fontStyle: 'bold' },
+        { fontSize: '14px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' },
       ).setOrigin(1, 0).setDepth(D + 2));
       ry += 26;
     });
@@ -279,7 +279,7 @@ export default class TitleScene extends Phaser.Scene {
     const cb = add(this.add.rectangle(W / 2, H / 2 + 155, 160, 34, 0x2A0A0A)
       .setDepth(D + 2).setStrokeStyle(1.5, 0xCC4444).setInteractive({ useHandCursor: true }));
     const ct = add(this.add.text(W / 2, H / 2 + 155, '✕  Close',
-      { fontSize: '14px', color: '#FF8888', fontFamily: 'Arial', fontStyle: 'bold' },
+      { fontSize: '14px', color: '#FF8888', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' },
     ).setOrigin(0.5).setDepth(D + 3));
     cb.on('pointerover', () => { cb.setFillStyle(0x401515); ct.setColor('#FFAAAA'); });
     cb.on('pointerout',  () => { cb.setFillStyle(0x2A0A0A); ct.setColor('#FF8888'); });

@@ -26,18 +26,18 @@ export default class DialogBox {
 
     // Speaker name
     this._speaker = scene.add.text(30, H - 148, '', {
-      fontSize: '13px', color: '#FFDD88', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '13px', color: '#FFDD88', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setScrollFactor(0).setDepth(81).setVisible(false);
 
     // Body text
     this._body = scene.add.text(30, H - 130, '', {
-      fontSize: '15px', color: '#FFFFFF', fontFamily: 'Arial',
+      fontSize: '15px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif",
       wordWrap: { width: W - 80 },
     }).setScrollFactor(0).setDepth(81).setVisible(false);
 
     // Continue prompt
     this._prompt = scene.add.text(W - 30, H - 42, '▶ Press SPACE', {
-      fontSize: '11px', color: '#88AAFF', fontFamily: 'Arial',
+      fontSize: '11px', color: '#88AAFF', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(1, 1).setScrollFactor(0).setDepth(81).setVisible(false);
 
     // Blink the prompt

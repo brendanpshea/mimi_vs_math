@@ -32,24 +32,24 @@ export default class HUD {
     this._hearts = [];
     for (let i = 0; i < 6; i++) {
       const h = scene.add.text(16 + i * 26, 14, '♥', {
-        fontSize: '22px', color: '#FF4466', fontFamily: 'Arial',
+        fontSize: '22px', color: '#FF4466', fontFamily: "'Nunito', Arial, sans-serif",
       }).setScrollFactor(0).setDepth(51);
       this._hearts.push(h);
     }
 
     // Region label
     this._regionLabel = scene.add.text(W / 2, 10, regionName, {
-      fontSize: '14px', color: '#FFEEAA', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '14px', color: '#FFEEAA', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(51);
 
     // Stats line: accuracy + total correct
     this._statsText = scene.add.text(W / 2, 30, '', {
-      fontSize: '11px', color: '#AADDFF', fontFamily: 'Arial',
+      fontSize: '11px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(51);
 
     // Inventory label (top-right)
     this._invLabel = scene.add.text(W - 10, 10, '', {
-      fontSize: '16px', color: '#FFFFFF', fontFamily: 'Arial',
+      fontSize: '16px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif",
       align: 'right',
     }).setOrigin(1, 0).setScrollFactor(0).setDepth(51);
 

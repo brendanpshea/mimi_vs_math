@@ -25,8 +25,10 @@ const BTN_COLORS = {
   wrong:   0x7A1A1A,
   reveal:  0x1A2E7A,
 };
+const FONT_UI    = "'Nunito', Arial, sans-serif";
+const FONT_TITLE = "'Fredoka', 'Nunito', Arial, sans-serif";
 const TEXT_STYLE = (size, color = '#FFFFFF', bold = false) => ({
-  fontSize: `${size}px`, color, fontFamily: 'Arial',
+  fontSize: `${size}px`, color, fontFamily: FONT_UI,
   fontStyle: bold ? 'bold' : 'normal',
 });
 
@@ -140,6 +142,7 @@ export default class BattleScene extends Phaser.Scene {
 
     this.questionText = this.add.text(W / 2, H * 0.43, '', {
       ...TEXT_STYLE(34, '#FFE44D', true),
+      fontFamily: FONT_TITLE,
       stroke: '#000000', strokeThickness: 4,
       align: 'center',
       wordWrap: { width: W - 80 },
@@ -154,6 +157,7 @@ export default class BattleScene extends Phaser.Scene {
     // ── Feedback / streak ───────────────────────────────────────────────
     this.feedbackText = this.add.text(W / 2, H * 0.27, '', {
       ...TEXT_STYLE(26, '#FFD700', true),
+      fontFamily: FONT_TITLE,
       stroke: '#000000', strokeThickness: 4,
     }).setOrigin(0.5).setAlpha(0);
 
@@ -500,7 +504,7 @@ export default class BattleScene extends Phaser.Scene {
       );
       this.effectsRow.add(
         this.add.text(x + 34, y, `${tag.icon} ${tag.label}`, {
-          fontSize: '10px', color: tag.color, fontFamily: 'Arial', fontStyle: 'bold',
+          fontSize: '10px', color: tag.color, fontFamily: FONT_UI, fontStyle: 'bold',
         }).setOrigin(0.5),
       );
     });
@@ -530,7 +534,7 @@ export default class BattleScene extends Phaser.Scene {
 
     // Header: correct answer
     add(this.add.text(W / 2, H * 0.20, `✓  Correct answer: ${ans}`, {
-      fontSize: '22px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '22px', color: '#FFD700', fontFamily: FONT_TITLE, fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 4,
     }).setOrigin(0.5).setDepth(D + 1));
 
@@ -541,7 +545,7 @@ export default class BattleScene extends Phaser.Scene {
 
     // Explanation text
     add(this.add.text(W / 2, H * 0.31, explanation, {
-      fontSize: '16px', color: '#DDEEFF', fontFamily: 'Arial',
+      fontSize: '16px', color: '#DDEEFF', fontFamily: FONT_UI,
       align: 'center', lineSpacing: 5,
       stroke: '#000000', strokeThickness: 2,
       wordWrap: { width: W * 0.74 },
@@ -553,7 +557,7 @@ export default class BattleScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setDepth(D + 1));
     const btnTxt = add(this.add.text(W / 2, H * 0.79, 'Got it!  →', {
-      fontSize: '19px', color: '#88CCFF', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '19px', color: '#88CCFF', fontFamily: FONT_UI, fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(D + 2));
 
     const dismiss = () => {
@@ -668,7 +672,7 @@ export default class BattleScene extends Phaser.Scene {
         .setStrokeStyle(2, 0x4488FF);
 
       this.add.text(W / 2, yVictory, '⭐  Victory!  ⭐', {
-        ...TEXT_STYLE(38, '#FFD700', true), stroke: '#000', strokeThickness: 3,
+        ...TEXT_STYLE(38, '#FFD700', true), fontFamily: FONT_TITLE, stroke: '#000', strokeThickness: 3,
       }).setOrigin(0.5);
 
       // Battle accuracy
@@ -737,7 +741,7 @@ export default class BattleScene extends Phaser.Scene {
         .setStrokeStyle(2, 0x882222);
 
       this.add.text(W / 2, H / 2 - 60, '💫  Defeated…', {
-        ...TEXT_STYLE(38, '#FF6666', true), stroke: '#000', strokeThickness: 3,
+        ...TEXT_STYLE(38, '#FF6666', true), fontFamily: FONT_TITLE, stroke: '#000', strokeThickness: 3,
       }).setOrigin(0.5);
 
       this.add.text(W / 2, H / 2 - 14, 'Mimi returns to the region entrance.', TEXT_STYLE(16, '#FFAAAA')).setOrigin(0.5);

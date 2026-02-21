@@ -1,37 +1,169 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
-  <!-- Meadow Maze Backdrop - Lush green meadow -->
-  
+  <!-- Meadow Maze Backdrop — lush enchanted meadow with dense foliage -->
   <defs>
-    <linearGradient id="skyMeadow" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#7CB9E8;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#B8E8FF;stop-opacity:1" />
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5AA0D8"/>
+      <stop offset="70%" stop-color="#8CCAE8"/>
+      <stop offset="100%" stop-color="#D0EEFF"/>
     </linearGradient>
-    <linearGradient id="grassMeadow" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#5FA827;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#4A8A1E;stop-opacity:1" />
+    <linearGradient id="ground" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4CAA28"/>
+      <stop offset="100%" stop-color="#367A18"/>
     </linearGradient>
+    <radialGradient id="dapple1" cx="30%" cy="40%" r="25%">
+      <stop offset="0%" stop-color="#FFFF88" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FFFF88" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="dapple2" cx="65%" cy="35%" r="20%">
+      <stop offset="0%" stop-color="#FFFF88" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#FFFF88" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  
-  <!-- Sky with clouds -->
-  <rect width="800" height="380" fill="url(#skyMeadow)"/>
-  
+
+  <!-- Sky -->
+  <rect width="800" height="600" fill="url(#sky)"/>
+
   <!-- Clouds -->
-  <ellipse cx="150" cy="100" rx="60" ry="30" fill="#FFFFFF" opacity="0.7"/>
-  <ellipse cx="180" cy="110" rx="50" ry="25" fill="#FFFFFF" opacity="0.7"/>
-  <ellipse cx="550" cy="80" rx="70" ry="35" fill="#FFFFFF" opacity="0.6"/>
-  <ellipse cx="600" cy="90" rx="55" ry="28" fill="#FFFFFF" opacity="0.6"/>
-  
-  <!-- Distant tree line -->
-  <ellipse cx="150" cy="370" rx="100" ry="60" fill="#4A7A1E" opacity="0.5"/>
-  <ellipse cx="350" cy="360" rx="120" ry="70" fill="#4A7A1E" opacity="0.5"/>
-  <ellipse cx="550" cy="365" rx="110" ry="65" fill="#4A7A1E" opacity="0.5"/>
-  <ellipse cx="700" cy="370" rx="100" ry="60" fill="#4A7A1E" opacity="0.5"/>
-  
+  <g opacity="0.75">
+    <ellipse cx="160" cy="70" rx="70" ry="24" fill="#FFF"/>
+    <ellipse cx="200" cy="62" rx="52" ry="20" fill="#FFF"/>
+    <ellipse cx="130" cy="66" rx="44" ry="18" fill="#F8FAFF"/>
+  </g>
+  <g opacity="0.55">
+    <ellipse cx="580" cy="55" rx="62" ry="20" fill="#FFF"/>
+    <ellipse cx="620" cy="50" rx="46" ry="17" fill="#FFF"/>
+  </g>
+  <g opacity="0.4">
+    <ellipse cx="380" cy="95" rx="44" ry="14" fill="#FFF"/>
+  </g>
+
+  <!-- Dense tree canopy (background) — creates the "maze" feel -->
+  <!-- Left tree cluster -->
+  <rect x="18" y="180" width="18" height="140" fill="#5A3A1A" opacity="0.7"/>
+  <ellipse cx="27" cy="170" rx="50" ry="55" fill="#2A7A18"/>
+  <ellipse cx="15" cy="160" rx="38" ry="45" fill="#35901E"/>
+  <ellipse cx="42" cy="155" rx="35" ry="40" fill="#308A1A"/>
+
+  <!-- Left-center tree -->
+  <rect x="148" y="200" width="14" height="120" fill="#5A3A1A" opacity="0.6"/>
+  <ellipse cx="155" cy="190" rx="45" ry="50" fill="#2C7C1A"/>
+  <ellipse cx="142" cy="182" rx="34" ry="38" fill="#38921E"/>
+  <ellipse cx="168" cy="185" rx="32" ry="36" fill="#329018"/>
+
+  <!-- Right-center tree -->
+  <rect x="618" y="190" width="16" height="130" fill="#5A3A1A" opacity="0.65"/>
+  <ellipse cx="626" cy="180" rx="48" ry="52" fill="#287618"/>
+  <ellipse cx="614" cy="172" rx="36" ry="40" fill="#34901C"/>
+  <ellipse cx="640" cy="175" rx="34" ry="38" fill="#30881A"/>
+
+  <!-- Right tree cluster -->
+  <rect x="748" y="185" width="16" height="135" fill="#5A3A1A" opacity="0.7"/>
+  <ellipse cx="756" cy="175" rx="52" ry="56" fill="#2A7818"/>
+  <ellipse cx="770" cy="165" rx="40" ry="44" fill="#368E1E"/>
+  <ellipse cx="744" cy="168" rx="36" ry="40" fill="#32881A"/>
+
+  <!-- Mid-ground foliage layer -->
+  <ellipse cx="80" cy="360" rx="90" ry="40" fill="#3A9020" opacity="0.6"/>
+  <ellipse cx="250" cy="355" rx="85" ry="35" fill="#358A1C" opacity="0.55"/>
+  <ellipse cx="500" cy="360" rx="95" ry="38" fill="#3A9020" opacity="0.55"/>
+  <ellipse cx="720" cy="358" rx="80" ry="36" fill="#358A1C" opacity="0.6"/>
+
   <!-- Ground -->
-  <rect y="380" width="800" height="220" fill="url(#grassMeadow)"/>
-  
+  <rect y="370" width="800" height="230" fill="url(#ground)"/>
+
+  <!-- Dappled sunlight effect -->
+  <rect width="800" height="600" fill="url(#dapple1)"/>
+  <rect width="800" height="600" fill="url(#dapple2)"/>
+
+  <!-- Vines hanging from canopy -->
+  <g stroke="#2A7A14" stroke-width="2" fill="none" opacity="0.6">
+    <path d="M70,220 Q65,260 72,300 Q68,330 74,360"/>
+    <path d="M90,235 Q86,270 92,310"/>
+    <path d="M680,215 Q676,255 682,295 Q678,325 684,355"/>
+    <path d="M760,225 Q756,260 762,300"/>
+  </g>
+  <!-- Vine leaves -->
+  <g fill="#3A9A20" opacity="0.55">
+    <ellipse cx="72" cy="280" rx="5" ry="3" transform="rotate(-20 72 280)"/>
+    <ellipse cx="68" cy="320" rx="4" ry="2.5" transform="rotate(15 68 320)"/>
+    <ellipse cx="682" cy="275" rx="5" ry="3" transform="rotate(20 682 275)"/>
+    <ellipse cx="678" cy="315" rx="4" ry="2.5" transform="rotate(-15 678 315)"/>
+  </g>
+
   <!-- Grass depth lines -->
-  <path d="M 0 400 Q 200 395 400 400 T 800 400" stroke="#4A8A1E" stroke-width="2" fill="none" opacity="0.4"/>
-  <path d="M 0 440 Q 250 435 500 440 T 800 440" stroke="#3A7A0E" stroke-width="2" fill="none" opacity="0.3"/>
-  <path d="M 0 490 Q 200 485 600 490 T 800 490" stroke="#2A6A0E" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M0,390 Q150,384 300,390 T600,387 T800,391" stroke="#367A18" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M0,420 Q200,415 400,420 T800,418" stroke="#2C6A12" stroke-width="2" fill="none" opacity="0.4"/>
+  <path d="M0,460 Q250,455 500,460 T800,458" stroke="#2C6A12" stroke-width="1.5" fill="none" opacity="0.35"/>
+  <path d="M0,500 Q300,496 600,500 T800,498" stroke="#226010" stroke-width="1.5" fill="none" opacity="0.3"/>
+  <path d="M0,545 Q200,541 400,545 T800,543" stroke="#226010" stroke-width="1" fill="none" opacity="0.25"/>
+
+  <!-- Toadstools -->
+  <g>
+    <!-- Toadstool 1 -->
+    <rect x="185" y="440" width="5" height="12" fill="#E8D8B8"/>
+    <ellipse cx="187" cy="438" rx="12" ry="8" fill="#CC3333"/>
+    <circle cx="183" cy="435" r="2" fill="#FFFFFF" opacity="0.8"/>
+    <circle cx="190" cy="433" r="1.5" fill="#FFFFFF" opacity="0.7"/>
+    <circle cx="187" cy="437" r="1.2" fill="#FFFFFF" opacity="0.6"/>
+  </g>
+  <g>
+    <!-- Toadstool 2 -->
+    <rect x="540" y="465" width="4" height="10" fill="#E8D8B8"/>
+    <ellipse cx="542" cy="463" rx="10" ry="7" fill="#CC3333"/>
+    <circle cx="538" cy="460" r="1.8" fill="#FFFFFF" opacity="0.8"/>
+    <circle cx="545" cy="459" r="1.3" fill="#FFFFFF" opacity="0.7"/>
+  </g>
+
+  <!-- Wildflowers scattered -->
+  <g>
+    <circle cx="140" cy="425" r="3.5" fill="#FF88DD"/>
+    <circle cx="140" cy="425" r="1.5" fill="#FFD0F0"/>
+    <circle cx="330" cy="450" r="3" fill="#FFAA44"/>
+    <circle cx="330" cy="450" r="1.3" fill="#FFE0AA"/>
+    <circle cx="460" cy="430" r="3.5" fill="#AA88FF"/>
+    <circle cx="460" cy="430" r="1.5" fill="#D0C0FF"/>
+    <circle cx="620" cy="448" r="3" fill="#FF88DD"/>
+    <circle cx="620" cy="448" r="1.3" fill="#FFD0F0"/>
+    <circle cx="720" cy="435" r="3.5" fill="#FFAA44"/>
+    <circle cx="720" cy="435" r="1.5" fill="#FFE0AA"/>
+  </g>
+
+  <!-- Tall grass tufts -->
+  <g fill="#4AAA28" opacity="0.5">
+    <path d="M100,415 Q104,398 108,415"/>
+    <path d="M103,415 Q110,395 113,415"/>
+    <path d="M280,440 Q284,424 288,440"/>
+    <path d="M283,440 Q290,422 293,440"/>
+    <path d="M420,420 Q424,404 428,420"/>
+    <path d="M560,445 Q564,428 568,445"/>
+    <path d="M563,445 Q570,426 573,445"/>
+    <path d="M690,425 Q694,408 698,425"/>
+  </g>
+
+  <!-- Butterflies -->
+  <g opacity="0.7">
+    <path d="M310,310 Q305,302 310,298 Q315,302 310,310" fill="#FFD700"/>
+    <path d="M310,310 Q315,302 320,298 Q315,302 310,310" fill="#FFAA00"/>
+    <circle cx="310" cy="306" r="1" fill="#333"/>
+  </g>
+  <g opacity="0.55">
+    <path d="M480,290 Q475,282 480,278 Q485,282 480,290" fill="#88DDFF"/>
+    <path d="M480,290 Q485,282 490,278 Q485,282 480,290" fill="#66BBDD"/>
+    <circle cx="480" cy="286" r="1" fill="#333"/>
+  </g>
+
+  <!-- Moss-covered stones -->
+  <g opacity="0.45">
+    <ellipse cx="360" cy="500" rx="22" ry="10" fill="#8A8A78"/>
+    <ellipse cx="358" cy="497" rx="12" ry="5" fill="#5A9A30"/>
+    <ellipse cx="680" cy="520" rx="18" ry="8" fill="#8A8A78"/>
+    <ellipse cx="678" cy="518" rx="9" ry="4" fill="#5A9A30"/>
+  </g>
+
+  <!-- Fireflies/pollen particles -->
+  <circle cx="220" cy="340" r="2" fill="#FFFFAA" opacity="0.7"/>
+  <circle cx="400" cy="310" r="1.5" fill="#FFFFAA" opacity="0.6"/>
+  <circle cx="560" cy="350" r="2" fill="#FFFFAA" opacity="0.7"/>
+  <circle cx="350" cy="280" r="1.5" fill="#FFFFAA" opacity="0.5"/>
+  <circle cx="650" cy="300" r="1.8" fill="#FFFFAA" opacity="0.6"/>
 </svg>

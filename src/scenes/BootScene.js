@@ -16,10 +16,10 @@ export default class BootScene extends Phaser.Scene {
     const barBg   = this.add.rectangle(W / 2, H / 2 + 20, 400, 20, 0x333355);
     const barFill = this.add.rectangle(W / 2 - 200, H / 2 + 20, 0, 20, 0x6688FF).setOrigin(0, 0.5);
     this.add.text(W / 2, H / 2 - 20, 'Loading…', {
-      fontSize: '20px', color: '#FFFFFF', fontFamily: 'Arial',
+      fontSize: '20px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5);
     this.add.text(W / 2, H / 2 - 60, '🐱 Mimi vs. Math', {
-      fontSize: '32px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '32px', color: '#FFD700', fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
     this.load.on('progress', v => barFill.setDisplaySize(400 * v, 20));

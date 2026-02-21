@@ -154,6 +154,13 @@ export const TERRAIN_DEFS = [
   { key: 'decoration_skull',       file: 'decoration_skull',       size: 32 },
   { key: 'decoration_chains',      file: 'decoration_chains',      size: { width: 32, height: 48 } },
   { key: 'decoration_bookshelf',   file: 'decoration_bookshelf',   size: { width: 32, height: 48 } },
+
+  // Landmark set-pieces (multi-tile, one per region)
+  { key: 'landmark_pond',         file: 'landmark_pond',         size: { width: 160, height: 128 } },
+  { key: 'landmark_flower_ring',  file: 'landmark_flower_ring',  size: { width: 160, height: 128 } },
+  { key: 'landmark_lava_pool',    file: 'landmark_lava_pool',    size: { width: 160, height: 128 } },
+  { key: 'landmark_frozen_lake',  file: 'landmark_frozen_lake',  size: { width: 192, height: 160 } },
+  { key: 'landmark_dark_altar',   file: 'landmark_dark_altar',   size: { width: 128, height: 128 } },
   
   // NPCs (A = idle/stand, B = walk frame — cycled by NPC.js step timer)
   { key: 'npc_wizard',   file: 'npc_wizard',   size: { width: 48, height: 56 } },

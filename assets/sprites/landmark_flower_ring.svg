@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 128">
+  <!--
+    R1 Meadow Flower Ring — 5×4 tile landmark (160×128 px)
+    A fairy-ring of wildflowers around a mossy central stone, non-blocking.
+  -->
+  <!-- Soft grass mound base -->
+  <ellipse cx="80" cy="68" rx="72" ry="50" fill="#4A8A22"/>
+  <ellipse cx="80" cy="66" rx="68" ry="46" fill="#5AA82A"/>
+  <!-- Inner lighter grass -->
+  <ellipse cx="80" cy="64" rx="50" ry="34" fill="#68B838"/>
+  <!-- Mossy central stone -->
+  <ellipse cx="80" cy="64" rx="14" ry="10" fill="#707860"/>
+  <ellipse cx="80" cy="62" rx="12" ry="8" fill="#808A6A"/>
+  <ellipse cx="76" cy="60" rx="6" ry="4" fill="#90986A" opacity="0.6"/>
+  <!-- Moss patches on stone -->
+  <ellipse cx="84" cy="66" rx="4" ry="3" fill="#5A7830" opacity="0.5"/>
+  <!-- Flower ring — outer circle of colourful flowers -->
+  <!-- Reds -->
+  <circle cx="80" cy="28" r="5" fill="#DD3030"/><circle cx="80" cy="28" r="2" fill="#FFEE66"/>
+  <circle cx="38" cy="52" r="5" fill="#DD3030"/><circle cx="38" cy="52" r="2" fill="#FFEE66"/>
+  <circle cx="122" cy="52" r="5" fill="#DD3030"/><circle cx="122" cy="52" r="2" fill="#FFEE66"/>
+  <circle cx="80" cy="100" r="5" fill="#DD3030"/><circle cx="80" cy="100" r="2" fill="#FFEE66"/>
+  <!-- Yellows -->
+  <circle cx="56" cy="34" r="4.5" fill="#EECC20"/><circle cx="56" cy="34" r="1.8" fill="#AA7710"/>
+  <circle cx="104" cy="34" r="4.5" fill="#EECC20"/><circle cx="104" cy="34" r="1.8" fill="#AA7710"/>
+  <circle cx="56" cy="92" r="4.5" fill="#EECC20"/><circle cx="56" cy="92" r="1.8" fill="#AA7710"/>
+  <circle cx="104" cy="92" r="4.5" fill="#EECC20"/><circle cx="104" cy="92" r="1.8" fill="#AA7710"/>
+  <!-- Purples -->
+  <circle cx="36" cy="72" r="4" fill="#9944CC"/><circle cx="36" cy="72" r="1.5" fill="#FFEE88"/>
+  <circle cx="124" cy="72" r="4" fill="#9944CC"/><circle cx="124" cy="72" r="1.5" fill="#FFEE88"/>
+  <!-- Whites -->
+  <circle cx="48" cy="42" r="3.5" fill="#F0EEE8"/><circle cx="48" cy="42" r="1.2" fill="#DDCC40"/>
+  <circle cx="112" cy="42" r="3.5" fill="#F0EEE8"/><circle cx="112" cy="42" r="1.2" fill="#DDCC40"/>
+  <circle cx="48" cy="86" r="3.5" fill="#F0EEE8"/><circle cx="48" cy="86" r="1.2" fill="#DDCC40"/>
+  <circle cx="112" cy="86" r="3.5" fill="#F0EEE8"/><circle cx="112" cy="86" r="1.2" fill="#DDCC40"/>
+  <!-- Small leaf accents -->
+  <ellipse cx="66" cy="30" rx="5" ry="2" fill="#4A8828" transform="rotate(-20 66 30)"/>
+  <ellipse cx="96" cy="96" rx="5" ry="2" fill="#4A8828" transform="rotate(15 96 96)"/>
+  <ellipse cx="32" cy="62" rx="4" ry="2" fill="#4A8828" transform="rotate(-40 32 62)"/>
+  <ellipse cx="128" cy="62" rx="4" ry="2" fill="#4A8828" transform="rotate(40 128 62)"/>
+</svg>

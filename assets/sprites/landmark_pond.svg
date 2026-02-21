@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 128">
+  <!--
+    R0 Village Pond — 5×4 tile landmark (160×128 px)
+    A calm oval pond with a stone rim and cattails.
+  -->
+  <!-- Ground border — light dirt ring -->
+  <ellipse cx="80" cy="64" rx="78" ry="60" fill="#8B7340"/>
+  <!-- Stone rim -->
+  <ellipse cx="80" cy="64" rx="74" ry="56" fill="#9A9080"/>
+  <ellipse cx="80" cy="64" rx="70" ry="52" fill="#A8A090"/>
+  <!-- Water body -->
+  <ellipse cx="80" cy="64" rx="64" ry="46" fill="#2A6088"/>
+  <ellipse cx="80" cy="62" rx="60" ry="42" fill="#3478A0"/>
+  <!-- Water highlight -->
+  <ellipse cx="68" cy="52" rx="30" ry="16" fill="#4090B8" opacity="0.6"/>
+  <ellipse cx="58" cy="48" rx="14" ry="8" fill="#58A8D0" opacity="0.4"/>
+  <!-- Ripples -->
+  <ellipse cx="80" cy="68" rx="28" ry="10" fill="none" stroke="#58A8D0" stroke-width="0.8" opacity="0.35"/>
+  <ellipse cx="80" cy="68" rx="18" ry="6" fill="none" stroke="#58A8D0" stroke-width="0.6" opacity="0.25"/>
+  <!-- Lily pads on the water -->
+  <ellipse cx="96" cy="72" rx="8" ry="5" fill="#2A7A30"/>
+  <ellipse cx="96" cy="71" rx="7" ry="4.5" fill="#3A8A3A"/>
+  <ellipse cx="64" cy="78" rx="6" ry="4" fill="#2A7A30"/>
+  <ellipse cx="64" cy="77" rx="5.5" ry="3.5" fill="#3A8A3A"/>
+  <!-- Small lily flower -->
+  <circle cx="97" cy="70" r="2.5" fill="#F0DDE0"/>
+  <circle cx="97" cy="70" r="1" fill="#E8C040"/>
+  <!-- Cattail left -->
+  <line x1="28" y1="30" x2="28" y2="58" stroke="#3A5A20" stroke-width="2"/>
+  <ellipse cx="28" cy="28" rx="2.5" ry="6" fill="#5A3018"/>
+  <!-- Cattail right -->
+  <line x1="130" y1="34" x2="130" y2="60" stroke="#3A5A20" stroke-width="2"/>
+  <ellipse cx="130" cy="32" rx="2.5" ry="6" fill="#5A3018"/>
+  <!-- Small stones on rim -->
+  <circle cx="30" cy="80" r="4" fill="#888070"/>
+  <circle cx="36" cy="84" r="3" fill="#7A7268"/>
+  <circle cx="120" cy="86" r="3.5" fill="#888070"/>
+  <circle cx="128" cy="82" r="2.5" fill="#7A7268"/>
+</svg>

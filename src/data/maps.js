@@ -352,6 +352,9 @@ const _gen = REGIONS.map(r => generateRegionMap(r));
 const MAPS = _gen.map(g => g.decorations);
 export default MAPS;
 
+/** Landmark arrays — one per region, placed as standalone objects */
+export const LANDMARKS = _gen.map(g => g.landmarks);
+
 /**
  * Pre-computed walkability grids — exact blocked-tile Sets for BFS.
  * Each Set<"col,row"> includes border walls + remaining terrain after carving.

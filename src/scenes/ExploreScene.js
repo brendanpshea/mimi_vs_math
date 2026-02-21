@@ -11,7 +11,7 @@ import * as Phaser from 'phaser';
 import GameState   from '../config/GameState.js';
 import REGIONS     from '../data/regions.js';
 import ENEMIES     from '../data/enemies.js';
-import MAPS        from '../data/maps.js';
+import MAPS, { LANDMARKS } from '../data/maps.js';
 import Mimi        from '../entities/Mimi.js';
 import Enemy       from '../entities/Enemy.js';
 import NPC         from '../entities/NPC.js';
@@ -57,6 +57,7 @@ export default class ExploreScene extends Phaser.Scene {
 
     // World geometry
     this._drawRoom();
+    this._placeLandmarks();
     this._addDecorations();
 
     // Compute whether THIS battle just cleared the last enemy, BEFORE recording
@@ -89,6 +90,7 @@ export default class ExploreScene extends Phaser.Scene {
     this.mimi.sprite.setCollideWorldBounds(true);
     this.physics.add.collider(this.mimi.sprite, this._walls);
     this.physics.add.collider(this.mimi.sprite, this._decorObstacles);
+    this.physics.add.collider(this.mimi.sprite, this._landmarkObstacles);
 
     // Camera follows Mimi with slight lerp (Zelda feel)
     this.cameras.main.setBounds(0, 0, MAP_W * T, MAP_H * T);
@@ -178,7 +180,50 @@ export default class ExploreScene extends Phaser.Scene {
       this._walls.add(rect);
     }
   }
+  // ── Landmarks (standalone multi-tile obstacles) ────────────────────────────────
 
+  /**
+   * Place large multi-tile landmark set-pieces BEFORE decorations.
+   * These bypass the decoration pipeline (clearance guard / dedup) entirely
+   * because ProceduralMap already guarantees safe placement with margin.
+   */
+  _placeLandmarks() {
+    this._landmarkObstacles = this.physics.add.staticGroup();
+    const list = LANDMARKS[this.regionId];
+    console.log('[LANDMARK] regionId=', this.regionId,
+                'LANDMARKS array length=', LANDMARKS.length,
+                'list=', JSON.stringify(list));
+    if (!list || list.length === 0) {
+      console.warn('[LANDMARK] No landmarks for region', this.regionId);
+      return;
+    }
+
+    for (const lm of list) {
+      const texExists = this.textures.exists(lm.key);
+      console.log('[LANDMARK] placing', lm.key, 'at col=', lm.col, 'row=', lm.row,
+                  'texExists=', texExists);
+      if (!texExists) {
+        console.warn(`[LANDMARK] texture missing: ${lm.key}`);
+        continue;
+      }
+      const lw = (lm.tilesW || 1) * T;
+      const lh = (lm.tilesH || 1) * T;
+      const lx = tx(lm.col) + lw / 2 - T / 2;
+      const ly = ty(lm.row) + lh / 2 - T / 2;
+      const depth = 3 + (lm.row / MAP_H) * 6;
+      console.log('[LANDMARK]', lm.key, 'pos=', lx, ly, 'size=', lw, lh, 'depth=', depth);
+
+      this.add.image(lx, ly, lm.key)
+        .setDepth(depth)
+        .setDisplaySize(lw, lh);
+
+      if (lm.blocking) {
+        const body = this.add.rectangle(lx, ly, lw * 0.9, lh * 0.7, 0, 0);
+        this.physics.add.existing(body, true);
+        this._landmarkObstacles.add(body);
+      }
+    }
+  }
   // ── Decorations ───────────────────────────────────────────────────────────
 
   /**

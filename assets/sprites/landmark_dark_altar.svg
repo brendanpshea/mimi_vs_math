@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!--
+    R4 Dark Altar — 4×4 tile landmark (128×128 px)
+    A crumbled stone sacrificial altar with eerie purple glow.
+  -->
+  <!-- Shadow pool -->
+  <ellipse cx="64" cy="100" rx="58" ry="22" fill="#0A0812" opacity="0.6"/>
+  <!-- Stone platform base -->
+  <rect x="10" y="72" width="108" height="40" rx="6" fill="#28242A"/>
+  <rect x="14" y="74" width="100" height="36" rx="4" fill="#38343A"/>
+  <!-- Platform top surface -->
+  <rect x="18" y="70" width="92" height="8" rx="3" fill="#484248"/>
+  <!-- Crumbled corner — left -->
+  <polygon points="10,110 10,88 22,88 18,100 14,110" fill="#28242A"/>
+  <rect x="6" y="100" width="10" height="12" rx="2" fill="#222" opacity="0.7"/>
+  <!-- Crumbled corner — right -->
+  <polygon points="118,110 118,90 108,88 112,100" fill="#28242A"/>
+  <rect x="112" y="102" width="8" height="10" rx="2" fill="#222" opacity="0.6"/>
+  <!-- Central altar slab -->
+  <rect x="36" y="48" width="56" height="26" rx="4" fill="#3A3440"/>
+  <rect x="38" y="50" width="52" height="22" rx="3" fill="#484050"/>
+  <!-- Top surface highlight -->
+  <rect x="40" y="48" width="48" height="6" rx="2" fill="#585060"/>
+  <!-- Rune circle on altar top -->
+  <circle cx="64" cy="58" r="14" fill="none" stroke="#8844CC" stroke-width="1.2" opacity="0.7"/>
+  <circle cx="64" cy="58" r="10" fill="none" stroke="#9955DD" stroke-width="0.8" opacity="0.5"/>
+  <!-- Rune symbols -->
+  <text x="56" y="62" font-size="8" fill="#AA66EE" opacity="0.6" font-family="serif">⚝</text>
+  <!-- Purple glow emanating from altar -->
+  <ellipse cx="64" cy="58" rx="30" ry="20" fill="#7730AA" opacity="0.10"/>
+  <ellipse cx="64" cy="56" rx="18" ry="12" fill="#9944DD" opacity="0.12"/>
+  <ellipse cx="64" cy="54" rx="8" ry="6" fill="#BB66FF" opacity="0.15"/>
+  <!-- Candles on altar -->
+  <!-- Left candle -->
+  <rect x="40" y="40" width="4" height="10" rx="1" fill="#D8D0B0"/>
+  <ellipse cx="42" cy="38" rx="2.5" ry="4" fill="#FFAA20" opacity="0.8"/>
+  <ellipse cx="42" cy="36" rx="1.5" ry="2.5" fill="#FFDD40" opacity="0.7"/>
+  <!-- Right candle -->
+  <rect x="84" y="42" width="4" height="8" rx="1" fill="#D8D0B0"/>
+  <ellipse cx="86" cy="40" rx="2.5" ry="4" fill="#FFAA20" opacity="0.8"/>
+  <ellipse cx="86" cy="38" rx="1.5" ry="2.5" fill="#FFDD40" opacity="0.7"/>
+  <!-- Scattered debris around base -->
+  <rect x="8" y="112" width="6" height="4" rx="1" fill="#38343A" transform="rotate(15 11 114)"/>
+  <rect x="110" y="114" width="5" height="3" rx="1" fill="#38343A" transform="rotate(-10 112 115)"/>
+  <circle cx="24" cy="116" r="2" fill="#2A262C"/>
+  <circle cx="100" cy="118" r="1.5" fill="#2A262C"/>
+</svg>

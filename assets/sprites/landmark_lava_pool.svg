@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 128">
+  <!--
+    R2 Lava Pool — 5×4 tile landmark (160×128 px)
+    A bubbling lava fissure with charred stone rim.
+  -->
+  <!-- Charred earth ring -->
+  <ellipse cx="80" cy="64" rx="76" ry="58" fill="#2A1A08"/>
+  <!-- Scorched stone rim -->
+  <ellipse cx="80" cy="64" rx="72" ry="54" fill="#3A2A14"/>
+  <ellipse cx="80" cy="64" rx="68" ry="50" fill="#4A3820"/>
+  <!-- Cracked rim detail -->
+  <line x1="20" y1="50" x2="30" y2="40" stroke="#2A1A08" stroke-width="1.5" opacity="0.6"/>
+  <line x1="130" y1="44" x2="140" y2="54" stroke="#2A1A08" stroke-width="1.5" opacity="0.6"/>
+  <line x1="60" y1="108" x2="50" y2="100" stroke="#2A1A08" stroke-width="1" opacity="0.5"/>
+  <!-- Lava body — deep red glow -->
+  <ellipse cx="80" cy="64" rx="58" ry="40" fill="#880808"/>
+  <ellipse cx="80" cy="62" rx="54" ry="36" fill="#AA2010"/>
+  <!-- Lava surface — hot orange -->
+  <ellipse cx="80" cy="60" rx="46" ry="30" fill="#CC4010"/>
+  <!-- Bright hotspots -->
+  <ellipse cx="68" cy="54" rx="20" ry="12" fill="#DD6020" opacity="0.8"/>
+  <ellipse cx="94" cy="66" rx="16" ry="10" fill="#DD6020" opacity="0.7"/>
+  <!-- Yellow molten veins -->
+  <ellipse cx="60" cy="50" rx="10" ry="6" fill="#EE8820" opacity="0.6"/>
+  <ellipse cx="100" cy="58" rx="8" ry="5" fill="#EE8820" opacity="0.5"/>
+  <ellipse cx="78" cy="68" rx="12" ry="4" fill="#EE8820" opacity="0.5"/>
+  <!-- White-hot centre -->
+  <ellipse cx="72" cy="56" rx="6" ry="4" fill="#FFAA30" opacity="0.7"/>
+  <ellipse cx="88" cy="62" rx="4" ry="3" fill="#FFAA30" opacity="0.5"/>
+  <!-- Bubbles -->
+  <circle cx="56" cy="58" r="3.5" fill="#EE6818" opacity="0.6"/>
+  <circle cx="56" cy="58" r="1.5" fill="#FFCC40" opacity="0.4"/>
+  <circle cx="96" cy="52" r="2.5" fill="#EE6818" opacity="0.5"/>
+  <circle cx="96" cy="52" r="1" fill="#FFCC40" opacity="0.3"/>
+  <circle cx="74" cy="72" r="2" fill="#EE6818" opacity="0.4"/>
+  <!-- Glow halo (soft, behind everything) -->
+  <ellipse cx="80" cy="64" rx="78" ry="60" fill="#FF4400" opacity="0.06"/>
+  <!-- Smoke wisps -->
+  <ellipse cx="50" cy="36" rx="8" ry="4" fill="#444" opacity="0.12"/>
+  <ellipse cx="110" cy="32" rx="6" ry="3" fill="#444" opacity="0.10"/>
+</svg>

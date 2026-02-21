@@ -134,7 +134,7 @@ export default class BattleScene extends Phaser.Scene {
     // ── Question display ────────────────────────────────────────────────
     // Dark pill behind the question text only — guarantees contrast without
     // darkening the rest of the battle scene.
-    this.add.rectangle(W / 2, H * 0.43, W - 40, 88, 0x000000, 0.68).setDepth(2);
+    this.questionBg = this.add.rectangle(W / 2, H * 0.43, W - 40, 88, 0x000000, 0.68).setDepth(2);
 
     this.questionText = this.add.text(W / 2, H * 0.43, '', {
       ...TEXT_STYLE(34, '#FFE44D', true),
@@ -594,6 +594,7 @@ export default class BattleScene extends Phaser.Scene {
 
   /** Hide all mid-battle question UI so the victory/defeat overlay is clean. */
   _hideQuestionUI() {
+    if (this.questionBg) this.questionBg.setVisible(false);
     this.questionText.setVisible(false);
     this.answerButtons.forEach(btn => {
       btn.bg.removeInteractive().setVisible(false);

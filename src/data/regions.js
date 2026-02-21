@@ -36,7 +36,7 @@ const REGIONS = [
   {
     id: 0,
     name: 'Sunny Village',
-    subtitle: 'Grades 1–2 · Addition & Subtraction',
+    subtitle: 'Grade 1 · Addition & Subtraction',
     mathTopic: 'addSub',
     unlocked: true,
     floorColor: 0x88CC55,
@@ -62,8 +62,8 @@ const REGIONS = [
 
     boss: 'subtraction_witch',
     bossName: 'The Subtraction Witch',
-    description: 'A cheerful starting village! Solve addition and subtraction problems (up to 20) to help Mimi begin her quest.',
-    npcHint: 'Add the numbers together to find the total!',
+    description: 'A cheerful starting village! Practice Grade 1 skills — adding and subtracting numbers up to 20 and comparing values to help Mimi begin her quest.',
+    npcHint: 'Count on from the bigger number to add faster!',
     bossIntro: [
       {
         speaker:   'The Subtraction Witch',
@@ -86,7 +86,7 @@ const REGIONS = [
   {
     id: 1,
     name: 'Meadow Maze',
-    subtitle: 'Grades 3–4 · Multiplication',
+    subtitle: 'Grade 2 · Skip Counting & Times Tables',
     mathTopic: 'multiplication',
     unlocked: false,
     floorColor: 0x5FA827,
@@ -112,8 +112,8 @@ const REGIONS = [
 
     boss: 'count_multiplico',
     bossName: 'Count Multiplico',
-    description: 'Navigate the winding meadow paths and master multiplication tables and skip counting to defeat the Count!',
-    npcHint: 'Remember: multiplication is repeated addition!',
+    description: 'Navigate the winding meadow paths and build Grade 2 skills — skip counting by 2s, 5s, and 10s, and tackle the first multiplication tables to defeat the Count!',
+    npcHint: 'Skip counting by 2s, 5s, and 10s is the secret to fast multiplication!',
     bossIntro: [
       {
         speaker:   'Count Multiplico',
@@ -136,7 +136,7 @@ const REGIONS = [
   {
     id: 2,
     name: 'Desert Dunes',
-    subtitle: 'Grade 4 · Division',
+    subtitle: 'Grade 3 · Multiplication & Division',
     mathTopic: 'division',
     unlocked: false,
     floorColor: 0xD4A044,
@@ -162,8 +162,8 @@ const REGIONS = [
 
     boss: 'the_diviner',
     bossName: 'The Diviner',
-    description: 'Trek through scorching sands and solve division and word problems to reveal the ancient Diviner!',
-    npcHint: 'Division is the opposite of multiplication — think backwards!',
+    description: 'Trek through scorching sands and master Grade 3 skills — complete multiplication tables, learn division as the inverse of multiplication, and solve division word problems to reveal the ancient Diviner!',
+    npcHint: 'Division is just multiplication in reverse — if 4 × 3 = 12, then 12 ÷ 4 = 3!',
     bossIntro: [
       {
         speaker:   'The Diviner',
@@ -186,7 +186,7 @@ const REGIONS = [
   {
     id: 3,
     name: 'Frostbite Cavern',
-    subtitle: 'Grade 5 · Fractions & Decimals',
+    subtitle: 'Grade 4 · Fractions & Decimals',
     mathTopic: 'fractions',
     unlocked: false,
     floorColor: 0x99C8DD,
@@ -212,8 +212,8 @@ const REGIONS = [
 
     boss: 'glacius',
     bossName: 'Glacius the Fraction Dragon',
-    description: 'Brave the icy depths and master fractions, fraction addition, and decimals — all Grade 5 essentials!',
-    npcHint: 'To compare fractions, find a common denominator!',
+    description: 'Brave the icy depths and conquer Grade 4 skills — compare and add fractions, and work with decimal tenths to prove to Glacius that fractions hold no fear!',
+    npcHint: 'To compare fractions, find a common denominator first!',
     bossIntro: [
       {
         speaker:   'Glacius the Fraction Dragon',
@@ -236,7 +236,7 @@ const REGIONS = [
   {
     id: 4,
     name: 'Shadow Castle',
-    subtitle: 'Grade 5 · Mixed Challenge',
+    subtitle: 'Grade 5 · Percentages, Ratios & Operations',
     mathTopic: 'mixed',
     unlocked: false,
     floorColor: 0x3D2B5E,
@@ -262,8 +262,8 @@ const REGIONS = [
 
     boss: 'fenwick',
     bossName: 'Fenwick, the Sly Fox',
-    description: 'Fenwick the Sly Fox lurks at the top of his Shadow Castle. Defeat his elite guards using order of operations, percentages, and ratios — then face him in the ultimate Grade 5 showdown to reclaim Mimi\'s yarn ball!',
-    npcHint: 'Remember order of operations: multiplication before addition!',
+    description: 'Fenwick the Sly Fox lurks at the top of his Shadow Castle. Prove your Grade 5 mastery — order of operations, percentages, and ratios — then topple the Sly Fox himself to reclaim Mimi\'s yarn ball!',
+    npcHint: 'Order of operations: multiply and divide before you add or subtract!',
     bossIntro: [
       {
         speaker:   'Fenwick the Sly Fox',

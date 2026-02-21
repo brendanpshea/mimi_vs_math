@@ -1,13 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56">
-<!-- Mimi walk up frame A: back view, tail swings left, right leg forward -->
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56">
+<!-- Mimi walk up frame A: back view, tail swings left, right leg forward â€” fierce Link/Puss aesthetic -->
 <!-- Tail curves left -->
 <path d="M22,35 C12,28 6,36 10,45" fill="none" stroke="#505058" stroke-width="4" stroke-linecap="round"/>
 <path d="M22,35 C12,28 6,36 10,45" fill="none" stroke="#A8A8B4" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4,3"/>
+<!-- Cape (very prominent from back view) -->
+<path d="M14,30 Q5,43 9,56 Q24,50 39,56 Q43,43 34,30" fill="#2A1A55" stroke="#1A1035" stroke-width="1.2"/>
+<path d="M14,30 Q24,34 34,30" fill="none" stroke="#5533AA" stroke-width="1.2"/>
 <!-- Body back view -->
 <ellipse cx="24" cy="34" rx="10" ry="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5"/>
 <path d="M15,28 Q17,34 15,40" fill="none" stroke="#505058" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
 <path d="M33,28 Q31,34 33,40" fill="none" stroke="#505058" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
-<!-- Bandana knot visible at back-right of neck -->
+<!-- Belt (back view) -->
+<rect x="16" y="42" width="16" height="2.5" rx="1.2" fill="#7A5A12" stroke="#4A3608" stroke-width="0.8"/>
+<!-- Neckerchief knot at back of neck -->
 <path d="M16,25 Q24,28 32,25 Q31,30 24,31 Q17,30 16,25 Z" fill="#DD2222" stroke="#991111" stroke-width="0.8"/>
 <path d="M16,25 L12,30 L18,29 Z" fill="#BB1111"/>
 <!-- Arms back view: left arm forward -->
@@ -24,7 +29,11 @@
 <circle cx="24" cy="13" r="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5"/>
 <polygon points="13,8 8,0 18,5" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" stroke-linejoin="round"/>
 <polygon points="35,8 40,0 30,5" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" stroke-linejoin="round"/>
-<!-- Back-of-head fur / stripe detail -->
-<path d="M18,5 Q24,22 30,5" fill="none" stroke="#505058" stroke-width="2" opacity="0.45"/>
-<line x1="18" y1="12" x2="30" y2="12" stroke="#505058" stroke-width="1.5" opacity="0.3"/>
+<!-- Green Link cap (seen from back) -->
+<ellipse cx="24" cy="8" rx="10" ry="2.8" fill="#3A7034" stroke="#254E23" stroke-width="1"/>
+<path d="M14,8 Q24,4 34,8 Q32,2 28,0 Q25,-2 24,1 Q23,-2 20,0 Q16,2 14,8 Z" fill="#3A6030" stroke="#254E23" stroke-width="1"/>
+<!-- Cap tip drooping right (visible from back at angle) -->
+<path d="M28,0 Q36,-2 38,4 L34,3 Q33,1 28,0 Z" fill="#3A6030" stroke="#254E23" stroke-width="0.8"/>
+<!-- Back-of-head fur detail -->
+<path d="M18,5 Q24,18 30,5" fill="none" stroke="#505058" stroke-width="1.8" opacity="0.4"/>
 </svg>

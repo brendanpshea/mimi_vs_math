@@ -17,11 +17,11 @@
  *      gets extra time regardless of grade.
  *
  * Rough baselines used:
- *   Region 0 (Gr 1–3):  25 s simple calc, 22 s reading-heavy comparison
- *   Region 1 (Gr 3–5):  18–20 s tables/mult, 25 s sequence read+solve
- *   Region 2 (Gr 4–5):  20 s clean division, 16 s mult review, 30 s word
- *   Region 3 (Gr 5–6):  25 s fraction compare, 28 s fraction add, 20 s decimal
- *   Region 4 (Gr 6–7):  22 s order-of-ops, 20 s percentages, 22 s ratios
+ *   Region 0 (Gr 1):  25 s simple calc, 22 s reading-heavy comparison
+ *   Region 1 (Gr 2):  18–20 s tables/mult, 25 s sequence read+solve
+ *   Region 2 (Gr 3):  20 s clean division, 16 s mult review, 30 s word
+ *   Region 3 (Gr 4):  25 s fraction compare, 28 s fraction add, 20 s decimal
+ *   Region 4 (Gr 5):  22 s order-of-ops, 20 s percentages, 22 s ratios
  *   Bosses: match the heaviest topic in their pool
  * ─────────────────────────────────────────────────────────────────────────
  */
@@ -37,7 +37,7 @@ const ENEMIES = {
     xp: 8,
     mathTopic: 'addition',         // pure addition
     difficulty: 1,
-    timerSeconds: 25,              // Gr 1–2: youngest students, counting on fingers
+    timerSeconds: 25,              // Gr 1: youngest students, counting on fingers
     special: 'Addition problems only',
     color: 0x44CC66,
   },
@@ -51,7 +51,7 @@ const ENEMIES = {
     xp: 10,
     mathTopic: 'subtraction',       // pure subtraction
     difficulty: 2,
-    timerSeconds: 22,              // Gr 2–3: subtraction harder than addition
+    timerSeconds: 22,              // Gr 1: subtraction harder than addition
     special: 'Subtraction problems only',
     color: 0xFF6633,
   },
@@ -65,7 +65,7 @@ const ENEMIES = {
     xp: 12,
     mathTopic: 'comparison',        // number comparison (new type)
     difficulty: 2,
-    timerSeconds: 22,              // Gr 2–3: reading-heavy question format
+    timerSeconds: 22,              // Gr 1: reading-heavy question format
     special: 'Number comparison problems',
     color: 0x886644,
   },
@@ -97,7 +97,7 @@ const ENEMIES = {
     xp: 10,
     mathTopic: 'multTables',        // 2×, 5×, 10× tables
     difficulty: 1,
-    timerSeconds: 18,              // Gr 3–4: easy tables but brand-new concept
+    timerSeconds: 18,              // Gr 2: easy tables but brand-new concept
     special: 'Times-table problems (2s, 5s, 10s)',
     color: 0x44BB44,
   },
@@ -111,7 +111,7 @@ const ENEMIES = {
     xp: 12,
     mathTopic: 'multiplication',    // full multiplication
     difficulty: 2,
-    timerSeconds: 20,              // Gr 4–5: harder recall (6×7, 8×9 etc.)
+    timerSeconds: 20,              // Gr 2: harder recall (6×7, 8×9 etc.)
     special: 'Harder multiplication problems',
     color: 0x228B22,
   },
@@ -125,7 +125,7 @@ const ENEMIES = {
     xp: 14,
     mathTopic: 'skipCounting',      // fill-in-the-sequence (new type)
     difficulty: 2,
-    timerSeconds: 25,              // Gr 4–5: read 5-item sequence + find pattern
+    timerSeconds: 25,              // Gr 2: read 5-item sequence + find pattern
     special: 'Skip counting sequences',
     color: 0x8899AA,
   },
@@ -157,7 +157,7 @@ const ENEMIES = {
     xp: 12,
     mathTopic: 'division',          // clean division, no remainders
     difficulty: 1,
-    timerSeconds: 20,              // Gr 4–5: division harder than multiplication
+    timerSeconds: 20,              // Gr 3: division harder than multiplication
     special: 'Basic division problems',
     color: 0xAA8833,
   },
@@ -171,7 +171,7 @@ const ENEMIES = {
     xp: 15,
     mathTopic: 'multiplication',    // ×  underpins ÷; wrong answer heals enemy
     difficulty: 2,
-    timerSeconds: 16,              // Gr 4–5: review topic — full region of practice behind them
+    timerSeconds: 16,              // Gr 3: review topic — full region of practice behind them
     special: 'Multiplication review; wrong answer heals enemy by 1',
     color: 0xDDCCAA,
   },
@@ -185,7 +185,7 @@ const ENEMIES = {
     xp: 14,
     mathTopic: 'divisionWord',      // division word problems (new type)
     difficulty: 2,
-    timerSeconds: 30,              // Gr 4–5: 3-line word problem — reading + solving
+    timerSeconds: 30,              // Gr 3: 3-line word problem — reading + solving
     special: 'Division word problems; answers shuffle at 5 s',
     color: 0xFF8844,
   },
@@ -217,7 +217,7 @@ const ENEMIES = {
     xp: 14,
     mathTopic: 'fractionCompare',   // fraction comparison only
     difficulty: 1,
-    timerSeconds: 25,              // Gr 5: brand-new concept, high cognitive load
+    timerSeconds: 25,              // Gr 4: brand-new concept, high cognitive load
     special: 'Fraction comparison problems',
     color: 0x66AACC,
   },
@@ -231,7 +231,7 @@ const ENEMIES = {
     xp: 16,
     mathTopic: 'fractionAdd',       // fraction addition & subtraction
     difficulty: 2,
-    timerSeconds: 28,              // Gr 5–6: find LCD → convert → add → simplify
+    timerSeconds: 28,              // Gr 4: find LCD → convert → add → simplify
     special: 'Fraction addition & subtraction',
     color: 0xCCEEFF,
   },
@@ -245,7 +245,7 @@ const ENEMIES = {
     xp: 15,
     mathTopic: 'decimals',          // decimal operations (new type)
     difficulty: 2,
-    timerSeconds: 20,              // Gr 5–6: easier than fractions, but still grade 5
+    timerSeconds: 20,              // Gr 4: easier than fractions, decimal tenths intro
     special: 'Decimal problems',
     color: 0xAA88FF,
   },
@@ -277,7 +277,7 @@ const ENEMIES = {
     xp: 18,
     mathTopic: 'orderOfOps',        // order of operations
     difficulty: 1,
-    timerSeconds: 22,              // Gr 6–7: PEMDAS still new; must parse carefully
+    timerSeconds: 22,              // Gr 5: PEMDAS still new; must parse carefully
     special: 'Order of operations problems',
     color: 0x334455,
   },
@@ -291,7 +291,7 @@ const ENEMIES = {
     xp: 20,
     mathTopic: 'percentages',       // percentage calculations
     difficulty: 2,
-    timerSeconds: 20,              // Gr 6–7: older faster students; practiced calculation
+    timerSeconds: 20,              // Gr 5: practiced calculation, moderate time needed
     special: 'Percentage problems',
     color: 0x221133,
   },
@@ -305,7 +305,7 @@ const ENEMIES = {
     xp: 22,
     mathTopic: 'ratiosProp',        // ratios & proportions (new type)
     difficulty: 2,
-    timerSeconds: 22,              // Gr 6–7: setting up a proportion takes deliberate thought
+    timerSeconds: 22,              // Gr 5: setting up a proportion takes deliberate thought
     special: 'Ratio & proportion problems',
     color: 0x6644AA,
   },

@@ -17,6 +17,8 @@ export default class TitleScene extends Phaser.Scene {
   constructor() { super({ key: 'TitleScene' }); }
 
   create() {
+    this.cameras.main.fadeIn(400, 0, 0, 0);
+
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
 
@@ -300,7 +302,10 @@ export default class TitleScene extends Phaser.Scene {
 
     if (regionId === 0) {
       // World 1 plays the story intro normally
-      this.scene.start('StoryScene');
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.scene.start('StoryScene');
+      });
       return;
     }
 
@@ -313,11 +318,17 @@ export default class TitleScene extends Phaser.Scene {
     GameState.currentRegion = regionId;
     GameState.save();
 
-    this.scene.start('ExploreScene', { regionId });
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.start('ExploreScene', { regionId });
+    });
   }
 
   _continue() {
     GameState.load();
-    this.scene.start('OverworldScene');
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.start('OverworldScene');
+    });
   }
 }

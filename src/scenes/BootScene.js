@@ -33,10 +33,15 @@ export default class BootScene extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(600, 0, 0, 0);
+
     // Generate procedural tile textures used in ExploreScene
     this._generateTileTextures();
-    
-    this.scene.start('TitleScene');
+
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.start('TitleScene');
+    });
   }
 
   // ── Tile texture generation ─────────────────────────────────────────────

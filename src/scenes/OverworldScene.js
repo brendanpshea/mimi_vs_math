@@ -33,6 +33,8 @@ export default class OverworldScene extends Phaser.Scene {
   constructor() { super({ key: 'OverworldScene' }); }
 
   create(data) {
+    this.cameras.main.fadeIn(400, 0, 0, 0);
+
     if (data?.bossDefeated) GameState.defeatBoss(data.regionId);
 
     const W = this.cameras.main.width;
@@ -53,7 +55,12 @@ export default class OverworldScene extends Phaser.Scene {
     this.input.keyboard.on('keydown-ESC', () => {
       if (this._statsItems)  { this._closeStatsOverlay(); }
       else if (this._popup)  { this._closePopup(); }
-      else                   { this.scene.start('TitleScene'); }
+      else {
+        this.cameras.main.fadeOut(300, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          this.scene.start('TitleScene');
+        });
+      }
     });
 
     this.add.text(W / 2, H - 8, 'Click a region to enter  ·  Esc → Title', {
@@ -434,7 +441,10 @@ export default class OverworldScene extends Phaser.Scene {
     eb.on('pointerdown',  () => {
       GameState.currentRegion = region.id;
       GameState.save();
-      this.scene.start('ExploreScene', { regionId: region.id });
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.scene.start('ExploreScene', { regionId: region.id });
+      });
     });
 
     // Not Yet button

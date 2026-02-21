@@ -45,6 +45,8 @@ export default class ExploreScene extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(400, 0, 0, 0);
+
     // World geometry
     this._drawRoom();
     this._addDecorations();
@@ -272,17 +274,20 @@ export default class ExploreScene extends Phaser.Scene {
   }
 
   _startBattle(enemyData, instanceKey) {
-    this.scene.start('BattleScene', {
-      enemy:         enemyData,
-      enemyInstance: instanceKey,
-      regionId:      this.regionId,
-      isBoss:        false,
-      returnScene:   'ExploreScene',
-      returnData:    {
-        regionId: this.regionId,
-        mimiX:    this.mimi.x,
-        mimiY:    this.mimi.y,
-      },
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.start('BattleScene', {
+        enemy:         enemyData,
+        enemyInstance: instanceKey,
+        regionId:      this.regionId,
+        isBoss:        false,
+        returnScene:   'ExploreScene',
+        returnData:    {
+          regionId: this.regionId,
+          mimiX:    this.mimi.x,
+          mimiY:    this.mimi.y,
+        },
+      });
     });
   }
 
@@ -552,16 +557,19 @@ export default class ExploreScene extends Phaser.Scene {
 
     // Show boss intro cutscene the first time only
     const introSeen = GameState.bossIntroSeen.includes(this.regionId);
-    if (!introSeen && this.regionData.bossIntro?.length) {
-      this.scene.start('BossIntroScene', {
-        panels:    this.regionData.bossIntro,
-        regionId:  this.regionId,
-        nextScene: 'BattleScene',
-        nextData:  battleData,
-      });
-    } else {
-      this.scene.start('BattleScene', battleData);
-    }
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      if (!introSeen && this.regionData.bossIntro?.length) {
+        this.scene.start('BossIntroScene', {
+          panels:    this.regionData.bossIntro,
+          regionId:  this.regionId,
+          nextScene: 'BattleScene',
+          nextData:  battleData,
+        });
+      } else {
+        this.scene.start('BattleScene', battleData);
+      }
+    });
   }
 
   //  NPC 
@@ -620,7 +628,10 @@ export default class ExploreScene extends Phaser.Scene {
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
-      this.scene.start('OverworldScene');
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.scene.start('OverworldScene');
+      });
     }
   }
 }

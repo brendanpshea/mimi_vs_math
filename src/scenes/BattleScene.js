@@ -59,6 +59,8 @@ export default class BattleScene extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(400, 0, 0, 0);
+
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
 
@@ -713,22 +715,25 @@ export default class BattleScene extends Phaser.Scene {
       this._makeContinueButton(W, H, 'Continue →', () => {
         GameState.save();
 
-        // Boss victory → go directly to overworld
-        if (this.isBoss) {
-          GameState.defeatBoss(this.regionId);
-          GameState.save();
-          this.scene.start('OverworldScene', { bossDefeated: true, regionId: this.regionId });
-        } else {
-          // Regular enemy → return to exploration
-          this.scene.start(this.returnScene, {
-            ...this.returnData,
-            battleResult: {
-              victory:       true,
-              enemyInstance: this.enemyInstance,
-              isBoss:        this.isBoss,
-            },
-          });
-        }
+        this.cameras.main.fadeOut(300, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          // Boss victory → go directly to overworld
+          if (this.isBoss) {
+            GameState.defeatBoss(this.regionId);
+            GameState.save();
+            this.scene.start('OverworldScene', { bossDefeated: true, regionId: this.regionId });
+          } else {
+            // Regular enemy → return to exploration
+            this.scene.start(this.returnScene, {
+              ...this.returnData,
+              battleResult: {
+                victory:       true,
+                enemyInstance: this.enemyInstance,
+                isBoss:        this.isBoss,
+              },
+            });
+          }
+        });
       }, undefined, undefined, btnYOffset);
 
     } else {
@@ -748,9 +753,12 @@ export default class BattleScene extends Phaser.Scene {
       this.add.text(W / 2, H / 2 + 14, `HP restored to ${GameState.hp}/${GameState.maxHP}`, TEXT_STYLE(14, '#FFAAAA')).setOrigin(0.5);
 
       this._makeContinueButton(W, H, 'Try Again →', () => {
-        this.scene.start(this.returnScene, {
-          ...this.returnData,
-          battleResult: { victory: false },
+        this.cameras.main.fadeOut(300, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          this.scene.start(this.returnScene, {
+            ...this.returnData,
+            battleResult: { victory: false },
+          });
         });
       }, 0x660000, 0xAA4444);
     }

@@ -31,6 +31,8 @@ export default class BossIntroScene extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(400, 0, 0, 0);
+
     this._draw();
   }
 
@@ -168,7 +170,10 @@ export default class BossIntroScene extends Phaser.Scene {
         GameState.bossIntroSeen.push(this._regionId);
         GameState.save();
       }
-      this.scene.start(this._nextScene, this._nextData);
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.scene.start(this._nextScene, this._nextData);
+      });
     }
   }
 

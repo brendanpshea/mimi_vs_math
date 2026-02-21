@@ -67,6 +67,8 @@ export default class StoryScene extends Phaser.Scene {
   constructor() { super({ key: 'StoryScene' }); }
 
   create() {
+    this.cameras.main.fadeIn(400, 0, 0, 0);
+
     this._idx = 0;
     this._draw();
   }
@@ -254,7 +256,10 @@ export default class StoryScene extends Phaser.Scene {
 
   _finish() {
     GameState.reset();
-    this.scene.start('OverworldScene');
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.start('OverworldScene');
+    });
   }
 
   _stars(W, H) {

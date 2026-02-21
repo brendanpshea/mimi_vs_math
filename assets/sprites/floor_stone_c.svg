@@ -1,19 +1,37 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Stone C  staggered brick rows: 3 rows with offset joints -->
-  <!-- Mortar base -->
-  <rect width="32" height="32" fill="#28232E"/>
-  <!-- Row 1: left 2/3 brick + right 1/3 brick (offset joint) -->
-  <rect x="1"  y="1"  width="18" height="9"  fill="#5A5268" rx="0.5"/>
-  <rect x="21" y="1"  width="10" height="9"  fill="#524C60" rx="0.5"/>
-  <!-- Row 2: right-shifted  short left stub + full right brick -->
-  <rect x="1"  y="12" width="8"  height="9"  fill="#564E66" rx="0.5"/>
-  <rect x="11" y="12" width="20" height="9"  fill="#5A5268" rx="0.5"/>
-  <!-- Row 3: offset back like row 1 (but different proportions) -->
-  <rect x="1"  y="23" width="13" height="8"  fill="#504A5E" rx="0.5"/>
-  <rect x="16" y="23" width="15" height="8"  fill="#5E5870" rx="0.5"/>
-  <!-- Worn chip on row 2 right brick -->
-  <ellipse cx="22" cy="17" rx="2.5" ry="1.5" fill="#322C3C" opacity="0.65"/>
-  <!-- Row highlights -->
-  <line x1="1"  y1="1"  x2="18" y2="1"  stroke="#6A6478" stroke-width="1" opacity="0.4"/>
-  <line x1="21" y1="1"  x2="30" y2="1"  stroke="#706A80" stroke-width="1" opacity="0.4"/>
+  <!-- Stone C — Stone with a faint magic rune/circle -->
+  <!-- Dark mortar/grout base -->
+  <rect width="32" height="32" fill="#2A1E40"/>
+  <!-- Brick layout: staggered rows -->
+  <rect x="1" y="1" width="14" height="9" fill="#3D2B5E" rx="0.5"/>
+  <rect x="17" y="1" width="14" height="9" fill="#3D2B5E" rx="0.5"/>
+  <rect x="-6" y="12" width="14" height="9" fill="#3D2B5E" rx="0.5"/>
+  <rect x="10" y="12" width="14" height="9" fill="#3D2B5E" rx="0.5"/>
+  <rect x="26" y="12" width="14" height="9" fill="#3D2B5E" rx="0.5"/>
+  <rect x="1" y="23" width="14" height="9" fill="#3D2B5E" rx="0.5"/>
+  <rect x="17" y="23" width="14" height="9" fill="#3D2B5E" rx="0.5"/>
+  <!-- Bevel highlights -->
+  <line x1="1" y1="1.5" x2="14" y2="1.5" stroke="#504078" stroke-width="0.8" opacity="0.4"/>
+  <line x1="17" y1="1.5" x2="30" y2="1.5" stroke="#504078" stroke-width="0.8" opacity="0.35"/>
+  <line x1="10" y1="12.5" x2="23" y2="12.5" stroke="#504078" stroke-width="0.8" opacity="0.35"/>
+  <line x1="1" y1="23.5" x2="14" y2="23.5" stroke="#504078" stroke-width="0.8" opacity="0.35"/>
+  <line x1="17" y1="23.5" x2="30" y2="23.5" stroke="#504078" stroke-width="0.8" opacity="0.3"/>
+  <!-- Magic rune circle: faint glowing arcane symbol -->
+  <!-- Outer circle -->
+  <circle cx="16" cy="16" r="8" fill="none" stroke="#7858C0" stroke-width="0.8" opacity="0.3"/>
+  <!-- Inner circle -->
+  <circle cx="16" cy="16" r="5" fill="none" stroke="#7858C0" stroke-width="0.6" opacity="0.25"/>
+  <!-- Rune lines inside: simple geometric pattern -->
+  <line x1="16" y1="11" x2="16" y2="21" stroke="#8868D0" stroke-width="0.6" opacity="0.22"/>
+  <line x1="11" y1="16" x2="21" y2="16" stroke="#8868D0" stroke-width="0.6" opacity="0.22"/>
+  <!-- Diagonal rune marks -->
+  <line x1="12.5" y1="12.5" x2="19.5" y2="19.5" stroke="#8868D0" stroke-width="0.5" opacity="0.18"/>
+  <line x1="19.5" y1="12.5" x2="12.5" y2="19.5" stroke="#8868D0" stroke-width="0.5" opacity="0.18"/>
+  <!-- Small arcane dots at cardinal points -->
+  <circle cx="16" cy="8" r="0.8" fill="#9070E0" opacity="0.35"/>
+  <circle cx="16" cy="24" r="0.8" fill="#9070E0" opacity="0.3"/>
+  <circle cx="8" cy="16" r="0.8" fill="#9070E0" opacity="0.3"/>
+  <circle cx="24" cy="16" r="0.8" fill="#9070E0" opacity="0.3"/>
+  <!-- Subtle glow under the rune -->
+  <circle cx="16" cy="16" r="9" fill="#7050B0" opacity="0.08"/>
 </svg>

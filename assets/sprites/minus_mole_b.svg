@@ -1,61 +1,45 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!--
-    Minus Mole — frame B (right claw raised/striking, left claw down — alternate dig phase).
-    Feet also swap forward/back for waddle cycle.
+    Minus Mole — frame B (claws alternate position, waddle cycle).
+    Left claw raised, right claw lowered. Feet swap positions.
   -->
-  <!-- Ground shadow + dirt -->
-  <ellipse cx="32" cy="61" rx="22" ry="4" fill="#00000028"/>
-  <circle cx="10" cy="58" r="4" fill="#5A3A18" opacity="0.35"/>
-  <circle cx="54" cy="57" r="3.5" fill="#5A3A18" opacity="0.30"/>
+  <!-- Ground shadow + dirt mounds -->
+  <ellipse cx="32" cy="61" rx="24" ry="3.5" fill="#00000030"/>
+  <ellipse cx="14" cy="59" r="5" fill="#8A6633" opacity="0.3"/>
+  <ellipse cx="52" cy="59" r="4" fill="#8A6633" opacity="0.3"/>
 
-  <!-- Feet (right forward this time) -->
-  <ellipse cx="20" cy="58" rx="8"  ry="5" fill="#664422" stroke="#1A0A00" stroke-width="1.5"/>
-  <ellipse cx="44" cy="56" rx="8"  ry="5" fill="#664422" stroke="#1A0A00" stroke-width="1.5"/>
+  <!-- === FEET (swapped: right forward, left back) === -->
+  <ellipse cx="20" cy="58" rx="8" ry="4.5" fill="#775533" stroke="#1A0A00" stroke-width="3"/>
+  <ellipse cx="44" cy="56" rx="8" ry="4.5" fill="#775533" stroke="#1A0A00" stroke-width="3"/>
 
-  <!-- Legs -->
-  <rect x="15" y="50" width="12" height="11" rx="4" fill="#886644" stroke="#1A0A00" stroke-width="1.5"/>
-  <rect x="37" y="47" width="12" height="11" rx="4" fill="#886644" stroke="#1A0A00" stroke-width="1.5"/>
+  <!-- === BODY (identical) === -->
+  <ellipse cx="32" cy="44" rx="20" ry="14" fill="#996644" stroke="#1A0A00" stroke-width="3"/>
+  <ellipse cx="32" cy="46" rx="12" ry="8" fill="#553322" stroke="#1A0A00" stroke-width="2.5"/>
+  <rect x="23" y="44" width="18" height="5" rx="2.5" fill="#EE3333" stroke="#1A0A00" stroke-width="2"/>
 
-  <!-- Body -->
-  <ellipse cx="32" cy="42" rx="20" ry="14" fill="#886644" stroke="#1A0A00" stroke-width="2"/>
-  <ellipse cx="32" cy="44" rx="13" ry="10" fill="#442211" stroke="#1A0A00" stroke-width="1.5"/>
-  <path d="M22,42 Q32,39 42,42" fill="none" stroke="#664433" stroke-width="1.3"/>
-  <path d="M22,46 Q32,43 42,46" fill="none" stroke="#664433" stroke-width="1.3"/>
-  <rect x="24" y="43" width="16" height="4" rx="2" fill="#CC2222" stroke="#1A0A00" stroke-width="1"/>
-  <circle cx="16" cy="40" r="2.5" fill="#553322" stroke="#1A0A00" stroke-width="1"/>
-  <circle cx="48" cy="40" r="2.5" fill="#553322" stroke="#1A0A00" stroke-width="1"/>
+  <!-- === LEFT CLAW (raised higher in frame B) === -->
+  <ellipse cx="8" cy="40" rx="8" ry="6" fill="#996644" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="2,46 0,55 6,46" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="7,47 6,57 12,47" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="12,46 12,55 17,46" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
 
-  <!-- LEFT CLAW-GAUNTLET (raised/striking in frame B) -->
-  <rect x="2" y="32" width="14" height="12" rx="3" fill="#553322" stroke="#1A0A00" stroke-width="1.5"/>
-  <!-- Claws angled upward (striking pose) -->
-  <path d="M4,44 L0,52" stroke="#442211" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M8,44 L5,53" stroke="#442211" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M12,44 L11,53" stroke="#442211" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M4,44 L0,52 L2,53 L4,44" fill="#886644" stroke="#1A0A00" stroke-width="1"/>
-  <path d="M8,44 L5,53 L7,54 L8,44" fill="#886644" stroke="#1A0A00" stroke-width="1"/>
-  <path d="M12,44 L11,53 L13,53 L12,44" fill="#886644" stroke="#1A0A00" stroke-width="1"/>
+  <!-- === RIGHT CLAW (lowered in frame B) === -->
+  <ellipse cx="56" cy="48" rx="8" ry="6" fill="#996644" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="50,54 48,63 54,54" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="55,55 54,64 60,55" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="60,54 60,63 64,54" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
 
-  <!-- RIGHT CLAW-GAUNTLET (lowered/planted in frame B) -->
-  <rect x="48" y="42" width="14" height="12" rx="3" fill="#553322" stroke="#1A0A00" stroke-width="1.5"/>
-  <path d="M60,54 L63,62" stroke="#442211" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M56,55 L58,64" stroke="#442211" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M52,54 L52,63" stroke="#442211" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M60,54 L63,62 L61,63 L60,54" fill="#886644" stroke="#1A0A00" stroke-width="1"/>
-  <path d="M56,55 L58,64 L56,65 L56,55" fill="#886644" stroke="#1A0A00" stroke-width="1"/>
-  <path d="M52,54 L52,63 L50,63 L52,54" fill="#886644" stroke="#1A0A00" stroke-width="1"/>
-
-  <!-- Mining Helmet (identical to frame A) -->
-  <ellipse cx="32" cy="22" rx="18" ry="16" fill="#553322" stroke="#1A0A00" stroke-width="2"/>
-  <rect x="14" y="28" width="36" height="5" rx="2" fill="#442211" stroke="#1A0A00" stroke-width="1.5"/>
-  <rect x="20" y="24" width="24" height="7" rx="3" fill="#1A0A00" stroke="#1A0A00" stroke-width="1"/>
-  <ellipse cx="27" cy="27.5" rx="4" ry="3" fill="#FF4400" opacity="0.9"/>
-  <ellipse cx="37" cy="27.5" rx="4" ry="3" fill="#FF4400" opacity="0.9"/>
-  <ellipse cx="27" cy="27.5" rx="2" ry="1.5" fill="#FFAA44"/>
-  <ellipse cx="37" cy="27.5" rx="2" ry="1.5" fill="#FFAA44"/>
-  <ellipse cx="32" cy="12" rx="5.5" ry="5" fill="#FFCC44" stroke="#1A0A00" stroke-width="1.2"/>
-  <ellipse cx="32" cy="12" rx="3.5" ry="3" fill="#FFEE88"/>
-  <path d="M28,8 Q32,4 36,8" fill="none" stroke="#FFCC44" stroke-width="1" opacity="0.5"/>
-  <ellipse cx="32" cy="34" rx="9" ry="6" fill="#AA8866" stroke="#1A0A00" stroke-width="1.5"/>
-  <circle cx="29.5" cy="33" r="2" fill="#442222" stroke="#1A0A00" stroke-width="0.8"/>
-  <circle cx="34.5" cy="33" r="2" fill="#442222" stroke="#1A0A00" stroke-width="0.8"/>
+  <!-- === MINING HELMET (identical) === -->
+  <ellipse cx="32" cy="22" rx="17" ry="14" fill="#664422" stroke="#1A0A00" stroke-width="3"/>
+  <rect x="15" y="28" width="34" height="5" rx="2.5" fill="#553311" stroke="#1A0A00" stroke-width="2.5"/>
+  <rect x="20" y="24" width="24" height="7" rx="3" fill="#1A0A00"/>
+  <ellipse cx="27" cy="27.5" rx="4.5" ry="3" fill="#FF4400"/>
+  <ellipse cx="37" cy="27.5" rx="4.5" ry="3" fill="#FF4400"/>
+  <ellipse cx="27" cy="27.5" rx="2" ry="1.5" fill="#FFCC44"/>
+  <ellipse cx="37" cy="27.5" rx="2" ry="1.5" fill="#FFCC44"/>
+  <circle cx="32" cy="12" r="5.5" fill="#FFCC44" stroke="#1A0A00" stroke-width="2.5"/>
+  <circle cx="32" cy="12" r="3" fill="#FFEE88"/>
+  <ellipse cx="32" cy="35" rx="8" ry="5" fill="#BB9977" stroke="#1A0A00" stroke-width="2.5"/>
+  <circle cx="29" cy="34" r="2" fill="#553322"/>
+  <circle cx="35" cy="34" r="2" fill="#553322"/>
 </svg>

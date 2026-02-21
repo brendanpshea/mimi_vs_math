@@ -45,6 +45,8 @@ export default class ExploreScene extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(400, 0, 0, 0);
+
     // World geometry
     this._drawRoom();
     this._addDecorations();
@@ -88,6 +90,9 @@ export default class ExploreScene extends Phaser.Scene {
     this._setupEnemies();
     this._setupNPC();
     this._setupBossDoor();
+
+    // Ambient particles
+    this._createAmbientParticles();
 
     // UI (scrollFactor(0) set inside these classes)
     this.hud    = new HUD(this, this.regionData.name);
@@ -222,6 +227,11 @@ export default class ExploreScene extends Phaser.Scene {
       decoration_icicle_b:      1.25,
       decoration_pillar:        1.15,
       decoration_pillar_b:      1.15,
+      decoration_vine:          1.25,
+      decoration_well:          1.10,
+      decoration_ice_crystal:   1.20,
+      decoration_chains:        1.15,
+      decoration_bookshelf:     1.15,
     };
 
     for (const item of deduped) {
@@ -272,17 +282,20 @@ export default class ExploreScene extends Phaser.Scene {
   }
 
   _startBattle(enemyData, instanceKey) {
-    this.scene.start('BattleScene', {
-      enemy:         enemyData,
-      enemyInstance: instanceKey,
-      regionId:      this.regionId,
-      isBoss:        false,
-      returnScene:   'ExploreScene',
-      returnData:    {
-        regionId: this.regionId,
-        mimiX:    this.mimi.x,
-        mimiY:    this.mimi.y,
-      },
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.start('BattleScene', {
+        enemy:         enemyData,
+        enemyInstance: instanceKey,
+        regionId:      this.regionId,
+        isBoss:        false,
+        returnScene:   'ExploreScene',
+        returnData:    {
+          regionId: this.regionId,
+          mimiX:    this.mimi.x,
+          mimiY:    this.mimi.y,
+        },
+      });
     });
   }
 
@@ -403,14 +416,14 @@ export default class ExploreScene extends Phaser.Scene {
     // Boss name label
     this._bossLabel = this.add.text(
       px, py + DH / 2 + 10, this.regionData.bossName,
-      { fontSize: '9px', color: '#CC88FF', fontFamily: 'Arial',
+      { fontSize: '9px', color: '#CC88FF', fontFamily: "'Nunito', Arial, sans-serif",
         fontStyle: 'bold', align: 'center', stroke: '#000', strokeThickness: 2 },
     ).setOrigin(0.5, 0).setDepth(10);
 
     // Remaining-enemies counter (shown when locked)
     this._enemyCountText = this.add.text(
       px, py - DH / 2 - 14, '',
-      { fontSize: '9px', color: '#FF9999', fontFamily: 'Arial',
+      { fontSize: '9px', color: '#FF9999', fontFamily: "'Nunito', Arial, sans-serif",
         align: 'center', stroke: '#000', strokeThickness: 2 },
     ).setOrigin(0.5, 1).setDepth(10);
 
@@ -552,16 +565,19 @@ export default class ExploreScene extends Phaser.Scene {
 
     // Show boss intro cutscene the first time only
     const introSeen = GameState.bossIntroSeen.includes(this.regionId);
-    if (!introSeen && this.regionData.bossIntro?.length) {
-      this.scene.start('BossIntroScene', {
-        panels:    this.regionData.bossIntro,
-        regionId:  this.regionId,
-        nextScene: 'BattleScene',
-        nextData:  battleData,
-      });
-    } else {
-      this.scene.start('BattleScene', battleData);
-    }
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      if (!introSeen && this.regionData.bossIntro?.length) {
+        this.scene.start('BossIntroScene', {
+          panels:    this.regionData.bossIntro,
+          regionId:  this.regionId,
+          nextScene: 'BattleScene',
+          nextData:  battleData,
+        });
+      } else {
+        this.scene.start('BattleScene', battleData);
+      }
+    });
   }
 
   //  NPC 
@@ -589,7 +605,55 @@ export default class ExploreScene extends Phaser.Scene {
     this._npc.registerOverlap(this.mimi.sprite);
   }
 
-  //  Scene lifecycle 
+  // ── Ambient particles ──────────────────────────────────────────────────
+
+  _createAmbientParticles() {
+    const worldW = MAP_W * T;
+    const worldH = MAP_H * T;
+    const PARTICLE_COUNT = 40;
+
+    // Region-themed particle configs
+    const configs = [
+      // R0 Sunny Village — floating leaves and pollen
+      { colors: [0x88CC44, 0xAADD66, 0xFFDD44], sizeMin: 2, sizeMax: 4, speedY: [8, 25], speedX: [-12, 12], alpha: [0.3, 0.7] },
+      // R1 Meadow Maze — fireflies and pollen
+      { colors: [0xFFFFAA, 0xAAFF88, 0xFFEE66], sizeMin: 1.5, sizeMax: 3.5, speedY: [-8, 8], speedX: [-6, 6], alpha: [0.2, 0.8] },
+      // R2 Desert Dunes — sand particles
+      { colors: [0xD4A044, 0xE8C868, 0xC89838], sizeMin: 1, sizeMax: 3, speedY: [5, 15], speedX: [10, 30], alpha: [0.2, 0.5] },
+      // R3 Frostbite Cavern — snowflakes
+      { colors: [0xFFFFFF, 0xCCEEFF, 0xAADDFF], sizeMin: 2, sizeMax: 5, speedY: [10, 30], speedX: [-8, 8], alpha: [0.3, 0.8] },
+      // R4 Shadow Castle — purple magic motes
+      { colors: [0x9944FF, 0xBB66FF, 0x6622CC], sizeMin: 1.5, sizeMax: 4, speedY: [-15, 15], speedX: [-10, 10], alpha: [0.2, 0.7] },
+    ];
+    const cfg = configs[this.regionId] ?? configs[0];
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const color = cfg.colors[Math.floor(Math.random() * cfg.colors.length)];
+      const size = Phaser.Math.FloatBetween(cfg.sizeMin, cfg.sizeMax);
+      const alpha = Phaser.Math.FloatBetween(cfg.alpha[0], cfg.alpha[1]);
+
+      const px = Phaser.Math.Between(0, worldW);
+      const py = Phaser.Math.Between(0, worldH);
+      const particle = this.add.circle(px, py, size, color, alpha).setDepth(20);
+
+      const vx = Phaser.Math.FloatBetween(cfg.speedX[0], cfg.speedX[1]);
+      const vy = Phaser.Math.FloatBetween(cfg.speedY[0], cfg.speedY[1]);
+
+      // Drift + fade cycle
+      this.tweens.add({
+        targets: particle,
+        x: particle.x + vx * 20,
+        y: particle.y + vy * 20,
+        alpha: { from: alpha, to: alpha * 0.2 },
+        duration: Phaser.Math.Between(4000, 9000),
+        yoyo: true,
+        repeat: -1,
+        delay: Phaser.Math.Between(0, 3000),
+      });
+    }
+  }
+
+  //  Scene lifecycle
 
   update() {
     if (this.dialog.isOpen) {
@@ -620,7 +684,10 @@ export default class ExploreScene extends Phaser.Scene {
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
-      this.scene.start('OverworldScene');
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.scene.start('OverworldScene');
+      });
     }
   }
 }

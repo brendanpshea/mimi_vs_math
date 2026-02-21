@@ -1,34 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Ghostly glow -->
-  <ellipse cx="32" cy="40" rx="26" ry="28" fill="#6633AA" opacity="0.25"/>
-  <!-- Wispy lower body (ghost tails) -->
-  <path d="M12,52 Q16,62 20,54 Q24,64 28,54 Q32,62 36,54 Q40,64 44,54 Q48,62 52,54 L52,40 L12,40 Z" fill="#8844CC" opacity="0.7"/>
-  <!-- Main body -->
-  <ellipse cx="32" cy="34" rx="22" ry="26" fill="#9955DD" opacity="0.9"/>
-  <!-- Body highlights -->
-  <ellipse cx="26" cy="26" rx="8" ry="5" fill="#BB77EE" opacity="0.5"/>
-  <!-- Head -->
-  <ellipse cx="32" cy="18" rx="18" ry="16" fill="#AA66EE"/>
-  <!-- Hollow eyes -->
-  <ellipse cx="24" cy="16" rx="6" ry="7" fill="#220033"/>
-  <ellipse cx="40" cy="16" rx="6" ry="7" fill="#220033"/>
-  <ellipse cx="24" cy="17" rx="3" ry="4" fill="#6600AA" opacity="0.6"/>
-  <ellipse cx="40" cy="17" rx="3" ry="4" fill="#6600AA" opacity="0.6"/>
-  <!-- Wailing mouth -->
-  <ellipse cx="32" cy="26" rx="7" ry="4" fill="#220033"/>
-  <!-- % symbol (large, prominent) -->
-  <circle cx="26" cy="38" r="4.5" fill="none" stroke="#FFDD44" stroke-width="2.5"/>
-  <circle cx="38" cy="46" r="4.5" fill="none" stroke="#FFDD44" stroke-width="2.5"/>
-  <line x1="22" y1="48" x2="42" y2="36" stroke="#FFDD44" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Floating wisps around body -->
-  <circle cx="8"  cy="28" r="3.5" fill="#9955DD" opacity="0.5"/>
-  <circle cx="4"  cy="38" r="2.5" fill="#9955DD" opacity="0.4"/>
-  <circle cx="56" cy="28" r="3.5" fill="#9955DD" opacity="0.5"/>
-  <circle cx="60" cy="38" r="2.5" fill="#9955DD" opacity="0.4"/>
-  <circle cx="10" cy="48" r="2"   fill="#9955DD" opacity="0.35"/>
-  <circle cx="54" cy="50" r="2"   fill="#9955DD" opacity="0.35"/>
-  <!-- Particle sparkles -->
-  <circle cx="14" cy="18" r="1.5" fill="#FFAAFF" opacity="0.7"/>
-  <circle cx="50" cy="22" r="1.5" fill="#FFAAFF" opacity="0.7"/>
-  <circle cx="20" cy="8"  r="1"   fill="#FFAAFF" opacity="0.5"/>
+  <!-- Percent Wraith — frame A. Bold ghostly shape, readable at 64x64.
+       Ghostly purple wraith with prominent % symbol. -->
+
+  <!-- Ghostly glow aura -->
+  <ellipse cx="32" cy="36" rx="28" ry="28" fill="#6633AA" opacity="0.2"/>
+
+  <!-- Wispy lower body (ghost tails, simplified) -->
+  <path d="M12,48 Q18,60 24,50 Q30,62 36,50 Q42,60 52,48 L52,38 L12,38 Z"
+        fill="#8844CC" stroke="#5522AA" stroke-width="2.5" opacity="0.8" stroke-linejoin="round"/>
+
+  <!-- Main body (bold shape) -->
+  <ellipse cx="32" cy="32" rx="22" ry="24"
+           fill="#9955DD" stroke="#5522AA" stroke-width="3.5"/>
+
+  <!-- Head (merged with body, large) -->
+  <ellipse cx="32" cy="18" rx="18" ry="16"
+           fill="#AA66EE" stroke="#5522AA" stroke-width="3"/>
+
+  <!-- Hollow eyes (bold, dramatic) -->
+  <ellipse cx="23" cy="16" rx="7" ry="7" fill="#220044"/>
+  <ellipse cx="41" cy="16" rx="7" ry="7" fill="#220044"/>
+  <!-- Inner eye glow -->
+  <ellipse cx="23" cy="17" rx="3.5" ry="3.5" fill="#7700BB" opacity="0.7"/>
+  <ellipse cx="41" cy="17" rx="3.5" ry="3.5" fill="#7700BB" opacity="0.7"/>
+
+  <!-- Wailing mouth (bold) -->
+  <ellipse cx="32" cy="26" rx="7" ry="5" fill="#220044" stroke="#330055" stroke-width="2"/>
+
+  <!-- % symbol (large, prominent, gold) -->
+  <circle cx="24" cy="38" r="5" fill="none" stroke="#FFDD44" stroke-width="3"/>
+  <circle cx="40" cy="48" r="5" fill="none" stroke="#FFDD44" stroke-width="3"/>
+  <line x1="20" y1="50" x2="44" y2="36" stroke="#FFDD44" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Floating wisps (fewer, bolder) -->
+  <circle cx="6" cy="28" r="4" fill="#9955DD" opacity="0.5"/>
+  <circle cx="58" cy="28" r="4" fill="#9955DD" opacity="0.5"/>
+  <circle cx="8" cy="46" r="3" fill="#9955DD" opacity="0.4"/>
+  <circle cx="56" cy="46" r="3" fill="#9955DD" opacity="0.4"/>
 </svg>

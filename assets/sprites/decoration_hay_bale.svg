@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 24">
+  <!-- Ground shadow -->
+  <ellipse cx="16" cy="22" rx="13" ry="3" fill="#3a2e1a" opacity="0.3"/>
+  <!-- Hay bale body (back/dark) -->
+  <ellipse cx="16" cy="14" rx="12" ry="9" fill="#b8911e"/>
+  <!-- Hay bale body (base) -->
+  <ellipse cx="16" cy="13" rx="11" ry="8" fill="#d4a926"/>
+  <!-- Straw texture bands (dark) -->
+  <ellipse cx="16" cy="10" rx="10" ry="1.2" fill="#9a7814" opacity="0.5"/>
+  <ellipse cx="16" cy="14" rx="11" ry="1.2" fill="#9a7814" opacity="0.45"/>
+  <ellipse cx="16" cy="18" rx="9" ry="1.1" fill="#9a7814" opacity="0.4"/>
+  <!-- Circular end face -->
+  <ellipse cx="16" cy="13" rx="7" ry="7.5" fill="#c49e20"/>
+  <!-- Spiral straw pattern on face -->
+  <circle cx="16" cy="13" r="5" fill="none" stroke="#a8850f" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="16" cy="13" r="2.5" fill="none" stroke="#a8850f" stroke-width="0.7" opacity="0.45"/>
+  <circle cx="16" cy="13" r="0.8" fill="#a8850f" opacity="0.5"/>
+  <!-- Highlight (top) -->
+  <ellipse cx="14" cy="8" rx="5" ry="2.5" fill="#e8c94a" opacity="0.45"/>
+  <!-- Specular glint -->
+  <ellipse cx="13" cy="9" rx="2" ry="1" fill="#f5e07a" opacity="0.35"/>
+  <!-- Stray straw wisps -->
+  <line x1="4" y1="12" x2="2" y2="10" stroke="#d4a926" stroke-width="0.6" stroke-linecap="round"/>
+  <line x1="28" y1="11" x2="30" y2="9" stroke="#d4a926" stroke-width="0.6" stroke-linecap="round"/>
+  <line x1="26" y1="14" x2="29" y2="13" stroke="#c49e20" stroke-width="0.5" stroke-linecap="round"/>
+</svg>

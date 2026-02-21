@@ -1,33 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!--
-    Cloud Bully — frame B (cloud drifts/reshapes slightly, lightning shifts).
-    Facial expression is identical; cloud bumps slightly different shape.
+    Cloud Bully — frame B (cloud puffs shift slightly, lightning repositioned).
+    Face identical. Cloud shape subtly different.
   -->
-  <!-- Cloud body (bumpy outline — right side slightly fuller in B) -->
-  <circle cx="16" cy="36" r="14" fill="#CCCCDD"/>
-  <circle cx="32" cy="27" r="19" fill="#CCCCDD"/>
-  <circle cx="48" cy="34" r="15" fill="#CCCCDD"/>
-  <rect x="8" y="34" width="48" height="18" fill="#CCCCDD"/>
+  <!-- === CLOUD BODY (puffs shifted for drift animation) === -->
+  <circle cx="16" cy="33" r="14" fill="#BBBBDD" stroke="#334466" stroke-width="3"/>
+  <circle cx="32" cy="23" r="19" fill="#BBBBDD" stroke="#334466" stroke-width="3"/>
+  <circle cx="48" cy="31" r="15" fill="#BBBBDD" stroke="#334466" stroke-width="3"/>
+  <!-- Cloud base -->
+  <rect x="8" y="33" width="48" height="15" fill="#BBBBDD"/>
+  <line x1="8" y1="48" x2="56" y2="48" stroke="#334466" stroke-width="3"/>
 
-  <!-- Angry eyebrows (identical) -->
-  <line x1="22" y1="26" x2="32" y2="30" stroke="#334455" stroke-width="3.5" stroke-linecap="round"/>
-  <line x1="42" y1="26" x2="32" y2="30" stroke="#334455" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- Storm tinge -->
+  <circle cx="16" cy="35" r="12" fill="#7788BB" opacity="0.25"/>
+  <circle cx="48" cy="33" r="13" fill="#7788BB" opacity="0.25"/>
 
-  <!-- Eyes (identical) -->
-  <circle cx="25" cy="34" r="5" fill="#EEEEFF"/>
-  <circle cx="39" cy="34" r="5" fill="#EEEEFF"/>
-  <circle cx="25.5" cy="34.5" r="3" fill="#222233"/>
-  <circle cx="39.5" cy="34.5" r="3" fill="#222233"/>
-  <circle cx="26.5" cy="33.5" r="1" fill="white"/>
-  <circle cx="40.5" cy="33.5" r="1" fill="white"/>
+  <!-- === FACE (identical) === -->
+  <line x1="18" y1="26" x2="28" y2="30" stroke="#223344" stroke-width="4" stroke-linecap="round"/>
+  <line x1="46" y1="26" x2="36" y2="30" stroke="#223344" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="24" cy="34" r="5.5" fill="white" stroke="#223344" stroke-width="2.5"/>
+  <circle cx="40" cy="34" r="5.5" fill="white" stroke="#223344" stroke-width="2.5"/>
+  <circle cx="25" cy="35" r="3" fill="#222244"/>
+  <circle cx="41" cy="35" r="3" fill="#222244"/>
+  <circle cx="26" cy="33" r="1.2" fill="white"/>
+  <circle cx="42" cy="33" r="1.2" fill="white"/>
+  <path d="M22,43 Q32,38 42,43" fill="none" stroke="#223344" stroke-width="3" stroke-linecap="round"/>
 
-  <!-- Frowning mouth (identical) -->
-  <path d="M24,44 Q32,40 40,44" fill="none" stroke="#334455" stroke-width="2.5" stroke-linecap="round"/>
-
-  <!-- Lightning bolt (slightly angled in frame B) -->
-  <polygon points="38,52 32,60 36,60 30,68 42,58 37,58 43,50" fill="#FFDD00" stroke="#CC9900" stroke-width="1"/>
-
-  <!-- Storm tinge (matches new shape) -->
-  <circle cx="16" cy="36" r="14" fill="#4455AA" opacity="0.18"/>
-  <circle cx="48" cy="34" r="15" fill="#4455AA" opacity="0.18"/>
+  <!-- === LIGHTNING BOLT (shifted angle for animation) === -->
+  <polygon points="38,48 32,56 36,56 30,64 44,54 39,54 44,48" fill="#FFDD00" stroke="#CC9900" stroke-width="2"/>
 </svg>

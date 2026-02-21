@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- decoration_skull  dark stone skull on pedestal, eerie glow, non-blocking -->
+  <!-- Ground shadow -->
+  <ellipse cx="16" cy="31" rx="10" ry="2" fill="#000000" opacity="0.25"/>
+  <!-- Eerie glow aura behind skull -->
+  <ellipse cx="16" cy="16" rx="12" ry="10" fill="#7744AA" opacity="0.12"/>
+  <!-- Stone pedestal dark base -->
+  <rect x="8" y="26" width="16" height="5" fill="#1A1524" rx="1"/>
+  <!-- Pedestal top bevel -->
+  <rect x="9" y="26" width="14" height="1.5" fill="#2E2840" opacity="0.8"/>
+  <!-- Pedestal right shadow -->
+  <rect x="21" y="26" width="2" height="5" fill="#0A0810" opacity="0.6"/>
+  <!-- Skull back shadow -->
+  <ellipse cx="16" cy="18" rx="8" ry="9" fill="#1A1525"/>
+  <!-- Skull main cranium -->
+  <ellipse cx="16" cy="17" rx="7" ry="8" fill="#3A3448"/>
+  <!-- Skull left highlight -->
+  <ellipse cx="13" cy="15" rx="4" ry="6" fill="#4E4860" opacity="0.6"/>
+  <!-- Brow ridge -->
+  <path d="M9.5,16 Q12,13 16,14 Q20,13 22.5,16" fill="#2E2840" stroke="none"/>
+  <!-- Left eye socket -->
+  <ellipse cx="13" cy="17.5" rx="2.5" ry="2.8" fill="#0A0810"/>
+  <!-- Right eye socket -->
+  <ellipse cx="19" cy="17.5" rx="2.5" ry="2.8" fill="#0A0810"/>
+  <!-- Left eye glow -->
+  <ellipse cx="13" cy="17.5" rx="1.2" ry="1.4" fill="#8855CC" opacity="0.4"/>
+  <!-- Right eye glow -->
+  <ellipse cx="19" cy="17.5" rx="1.2" ry="1.4" fill="#8855CC" opacity="0.4"/>
+  <!-- Nose cavity -->
+  <polygon points="15,20 17,20 16,22" fill="#1A1525"/>
+  <!-- Jaw line -->
+  <path d="M10,22 Q13,25 16,25.5 Q19,25 22,22" fill="#3A3448" stroke="#2E2840" stroke-width="0.5"/>
+  <!-- Teeth row -->
+  <rect x="11.5" y="22.5" width="1.5" height="2" fill="#4E4860" rx="0.3"/>
+  <rect x="13.5" y="22.5" width="1.5" height="2.2" fill="#4E4860" rx="0.3"/>
+  <rect x="15.5" y="22.5" width="1.5" height="2.2" fill="#4E4860" rx="0.3"/>
+  <rect x="17.5" y="22.5" width="1.5" height="2" fill="#4E4860" rx="0.3"/>
+  <rect x="19.5" y="22.5" width="1.5" height="1.8" fill="#4E4860" rx="0.3"/>
+  <!-- Specular highlight on forehead -->
+  <ellipse cx="14.5" cy="12" rx="3" ry="1.5" fill="#6E6880" opacity="0.4"/>
+</svg>

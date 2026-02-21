@@ -1,46 +1,61 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
   <!--
-    Count Multiplico — frame B (wings raised in flap cycle, feet shift).
-    Head, face, cap, body are identical.
+    Count Multiplico — frame B (wings raised in flap, feet shift).
+    Head, face, cap, body identical. Wings and feet differ.
   -->
-  <!-- Graduation cap (identical) -->
-  <rect x="24" y="8" width="48" height="8" fill="#1A1A1A" rx="2"/>
-  <polygon points="48,2 24,12 72,12" fill="#111111"/>
-  <line x1="72" y1="10" x2="84" y2="22" stroke="#FFDD44" stroke-width="2.5" stroke-linecap="round"/>
-  <circle cx="86" cy="24" r="4" fill="#FFDD44"/>
+  <!-- Ground shadow -->
+  <ellipse cx="48" cy="92" rx="24" ry="4" fill="#00000030"/>
 
-  <!-- Body (identical) -->
-  <ellipse cx="48" cy="58" rx="28" ry="30" fill="#CC7722"/>
-  <ellipse cx="48" cy="64" rx="16" ry="18" fill="#FFCC88"/>
+  <!-- === BODY (identical) === -->
+  <ellipse cx="48" cy="60" rx="26" ry="28" fill="#CC7722" stroke="#552200" stroke-width="3.5"/>
+  <ellipse cx="48" cy="66" rx="16" ry="18" fill="#FFCC88" stroke="#AA6622" stroke-width="2"/>
 
-  <!-- Wings — RAISED in frame B (flapping up position) -->
-  <path d="M20,40 Q4,22 10,6 Q16,16 26,34 Z" fill="#AA5511"/>
-  <path d="M76,40 Q92,22 84,6 Q76,16 70,34 Z" fill="#AA5511"/>
-  <!-- × symbols on wings (repositioned up with wings) -->
-  <text x="10" y="22" font-size="14" fill="#FFDD44" text-anchor="middle" font-family="Arial" font-weight="bold">×</text>
-  <text x="86" y="22" font-size="14" fill="#FFDD44" text-anchor="middle" font-family="Arial" font-weight="bold">×</text>
+  <!-- === WINGS (raised in flap position) === -->
+  <path d="M22,40 Q4,22 10,6 Q18,18 28,36 Z" fill="#AA5511" stroke="#552200" stroke-width="3"/>
+  <path d="M74,40 Q92,22 86,6 Q78,18 68,36 Z" fill="#AA5511" stroke="#552200" stroke-width="3"/>
+  <!-- Bold X on wings (repositioned with wings up) -->
+  <line x1="8" y1="14" x2="16" y2="24" stroke="#FFDD44" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="16" y1="14" x2="8" y2="24" stroke="#FFDD44" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="80" y1="14" x2="88" y2="24" stroke="#FFDD44" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="88" y1="14" x2="80" y2="24" stroke="#FFDD44" stroke-width="3.5" stroke-linecap="round"/>
 
-  <!-- Head (identical) -->
-  <circle cx="48" cy="32" r="22" fill="#CC7722"/>
-  <polygon points="38,12 34,4 42,10" fill="#AA5511"/>
-  <polygon points="58,12 62,4 54,10" fill="#AA5511"/>
+  <!-- === HEAD (identical) === -->
+  <circle cx="48" cy="32" r="22" fill="#CC7722" stroke="#552200" stroke-width="3.5"/>
+  <polygon points="36,12 32,2 42,10" fill="#AA5511" stroke="#552200" stroke-width="2.5"/>
+  <polygon points="60,12 64,2 54,10" fill="#AA5511" stroke="#552200" stroke-width="2.5"/>
+
   <!-- Eyes -->
-  <circle cx="38" cy="30" r="10" fill="#FFFAAA"/>
-  <circle cx="58" cy="30" r="10" fill="#FFFAAA"/>
-  <circle cx="58" cy="30" r="12" fill="none" stroke="#FFDD44" stroke-width="2.5"/>
-  <line x1="69" y1="38" x2="74" y2="44" stroke="#FFDD44" stroke-width="2" stroke-linecap="round"/>
-  <circle cx="38" cy="30" r="6" fill="#442200"/>
-  <circle cx="58" cy="30" r="6" fill="#442200"/>
-  <circle cx="40" cy="28" r="2" fill="white"/>
-  <circle cx="60" cy="28" r="2" fill="white"/>
-  <!-- Beak -->
-  <polygon points="48,40 44,46 52,46" fill="#FFAA33"/>
-  <!-- × on chest -->
-  <text x="48" y="70" font-size="18" fill="#CC4400" text-anchor="middle" font-family="Arial" font-weight="bold">×</text>
+  <circle cx="38" cy="30" r="10" fill="#FFFACC" stroke="#552200" stroke-width="2.5"/>
+  <circle cx="58" cy="30" r="10" fill="#FFFACC" stroke="#552200" stroke-width="2.5"/>
+  <circle cx="39" cy="31" r="5.5" fill="#442200"/>
+  <circle cx="59" cy="31" r="5.5" fill="#442200"/>
+  <circle cx="41" cy="28" r="2.5" fill="white"/>
+  <circle cx="61" cy="28" r="2.5" fill="white"/>
 
-  <!-- Feet (swapped forward/back in frame B) -->
-  <line x1="38" y1="86" x2="34" y2="94" stroke="#CC7722" stroke-width="4" stroke-linecap="round"/>
-  <line x1="58" y1="86" x2="62" y2="94" stroke="#CC7722" stroke-width="4" stroke-linecap="round"/>
-  <line x1="32" y1="94" x2="40" y2="94" stroke="#CC7722" stroke-width="3" stroke-linecap="round"/>
-  <line x1="60" y1="94" x2="68" y2="94" stroke="#CC7722" stroke-width="3" stroke-linecap="round"/>
+  <!-- Monocle -->
+  <circle cx="58" cy="30" r="12.5" fill="none" stroke="#FFDD44" stroke-width="3"/>
+  <line x1="69" y1="38" x2="74" y2="46" stroke="#FFDD44" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Angry brows -->
+  <line x1="28" y1="20" x2="38" y2="24" stroke="#552200" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="68" y1="20" x2="58" y2="24" stroke="#552200" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Beak -->
+  <polygon points="48,40 43,48 53,48" fill="#FFAA33" stroke="#CC7700" stroke-width="2.5"/>
+
+  <!-- Bold X on chest -->
+  <line x1="42" y1="60" x2="54" y2="74" stroke="#CC4400" stroke-width="4" stroke-linecap="round"/>
+  <line x1="54" y1="60" x2="42" y2="74" stroke="#CC4400" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- === GRADUATION CAP (identical) === -->
+  <rect x="24" y="8" width="48" height="6" rx="2" fill="#1A1A1A" stroke="#000000" stroke-width="2.5"/>
+  <polygon points="48,2 24,10 72,10" fill="#111111" stroke="#000000" stroke-width="2.5"/>
+  <line x1="72" y1="10" x2="82" y2="22" stroke="#FFDD44" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="84" cy="24" r="4" fill="#FFDD44" stroke="#CC9900" stroke-width="1.5"/>
+
+  <!-- === FEET (swapped forward/back) === -->
+  <line x1="38" y1="86" x2="34" y2="92" stroke="#CC7722" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="32" y1="92" x2="42" y2="92" stroke="#CC7722" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="58" y1="86" x2="62" y2="92" stroke="#CC7722" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="60" y1="92" x2="70" y2="92" stroke="#CC7722" stroke-width="3.5" stroke-linecap="round"/>
 </svg>

@@ -1,42 +1,38 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!--
-    Ice Frog — frame B (back legs extended in pre-jump crouch, front arms braced).
-    Head, body, eyes, and ice crystal are identical.
-  -->
-  <!-- Ice platform under frog -->
-  <ellipse cx="32" cy="58" rx="20" ry="7" fill="#AADDFF" opacity="0.7"/>
+  <!-- Ice Frog — frame B: back legs extended in pre-jump crouch, arms braced wider -->
+
+  <!-- Ice platform -->
+  <ellipse cx="32" cy="59" rx="22" ry="6" fill="#AADDFF" opacity="0.6" stroke="#77BBEE" stroke-width="1.5"/>
+
+  <!-- Back legs — EXTENDED in crouch -->
+  <ellipse cx="8" cy="56" rx="11" ry="6" fill="#4488BB" stroke="#2A6690" stroke-width="2.5" transform="rotate(-8,8,56)"/>
+  <ellipse cx="56" cy="56" rx="11" ry="6" fill="#4488BB" stroke="#2A6690" stroke-width="2.5" transform="rotate(8,56,56)"/>
+  <!-- Webbed toes — extended -->
+  <path d="M0,58 L-1,62 L3,60 L1,65 L6,62 L5,66 L9,63" fill="none" stroke="#3377AA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M64,58 L65,62 L61,60 L63,65 L58,62 L59,66 L55,63" fill="none" stroke="#3377AA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 
   <!-- Body (identical) -->
-  <ellipse cx="32" cy="42" rx="20" ry="16" fill="#66AADD"/>
+  <ellipse cx="32" cy="42" rx="21" ry="16" fill="#5599CC" stroke="#2A6690" stroke-width="3.5"/>
   <ellipse cx="32" cy="46" rx="14" ry="10" fill="#BBDDFF"/>
-  <line x1="28" y1="44" x2="36" y2="52" stroke="#88CCFF" stroke-width="1" opacity="0.7"/>
-  <line x1="36" y1="44" x2="28" y2="52" stroke="#88CCFF" stroke-width="1" opacity="0.7"/>
-  <line x1="32" y1="40" x2="32" y2="54" stroke="#88CCFF" stroke-width="1" opacity="0.7"/>
 
-  <!-- Back legs — EXTENDED (crouch position in frame B) -->
-  <ellipse cx="10" cy="56" rx="9" ry="5" fill="#5599CC" transform="rotate(-10,10,56)"/>
-  <ellipse cx="54" cy="56" rx="9" ry="5" fill="#5599CC" transform="rotate(10,54,56)"/>
-  <!-- Extended webbed toes -->
-  <path d="M2,58 Q0,62 4,60 Q2,64 6,62 Q4,66 8,64" fill="none" stroke="#4488BB" stroke-width="1.5"/>
-  <path d="M62,58 Q64,62 60,60 Q62,64 58,62 Q60,66 56,64" fill="none" stroke="#4488BB" stroke-width="1.5"/>
+  <!-- Front arms — BRACED wider in frame B -->
+  <ellipse cx="7"  cy="42" rx="8" ry="5" fill="#4488BB" stroke="#2A6690" stroke-width="2.5" transform="rotate(-35,7,42)"/>
+  <ellipse cx="57" cy="42" rx="8" ry="5" fill="#4488BB" stroke="#2A6690" stroke-width="2.5" transform="rotate(35,57,42)"/>
 
   <!-- Head (identical) -->
-  <ellipse cx="32" cy="24" rx="20" ry="16" fill="#66AADD"/>
-  <circle cx="20" cy="18" r="8" fill="#66AADD"/>
-  <circle cx="44" cy="18" r="8" fill="#66AADD"/>
-  <circle cx="20" cy="17" r="6.5" fill="#CCEEFF"/>
-  <circle cx="44" cy="17" r="6.5" fill="#CCEEFF"/>
-  <circle cx="20" cy="17" r="4"   fill="#2244AA"/>
-  <circle cx="44" cy="17" r="4"   fill="#2244AA"/>
-  <circle cx="21.5" cy="15.5" r="1.5" fill="white"/>
-  <circle cx="45.5" cy="15.5" r="1.5" fill="white"/>
-  <path d="M16,30 Q32,38 48,30" fill="none" stroke="#4477AA" stroke-width="2.5" stroke-linecap="round"/>
+  <ellipse cx="32" cy="24" rx="21" ry="16" fill="#5599CC" stroke="#2A6690" stroke-width="3.5"/>
+  <circle cx="18" cy="16" r="9" fill="#5599CC" stroke="#2A6690" stroke-width="3"/>
+  <circle cx="46" cy="16" r="9" fill="#5599CC" stroke="#2A6690" stroke-width="3"/>
+  <circle cx="18" cy="15" r="7" fill="#CCEEFF" stroke="#2A6690" stroke-width="2"/>
+  <circle cx="46" cy="15" r="7" fill="#CCEEFF" stroke="#2A6690" stroke-width="2"/>
+  <circle cx="18" cy="15" r="4.5" fill="#2244AA"/>
+  <circle cx="46" cy="15" r="4.5" fill="#2244AA"/>
+  <circle cx="20" cy="13" r="2" fill="white"/>
+  <circle cx="48" cy="13" r="2" fill="white"/>
+  <path d="M14,30 Q32,40 50,30" fill="none" stroke="#2A5577" stroke-width="3" stroke-linecap="round"/>
 
-  <!-- Front arms (braced wider in frame B) -->
-  <ellipse cx="9"  cy="42" rx="7" ry="4" fill="#5599CC" transform="rotate(-40,9,42)"/>
-  <ellipse cx="55" cy="42" rx="7" ry="4" fill="#5599CC" transform="rotate(40,55,42)"/>
-
-  <!-- Ice crystal on head (identical) -->
-  <polygon points="32,8 29,14 35,14" fill="#AAEEFF" stroke="#66CCFF" stroke-width="1"/>
-  <polygon points="32,10 28,15 36,15" fill="none" stroke="#AAEEFF" stroke-width="0.5"/>
+  <!-- Ice crystal crown (identical) -->
+  <polygon points="32,6 28,14 36,14" fill="#AAEEFF" stroke="#55BBEE" stroke-width="2"/>
+  <polygon points="24,10 22,16 28,14" fill="#88DDFF" stroke="#55BBEE" stroke-width="1.5"/>
+  <polygon points="40,10 42,16 36,14" fill="#88DDFF" stroke="#55BBEE" stroke-width="1.5"/>
 </svg>

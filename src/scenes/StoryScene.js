@@ -67,6 +67,8 @@ export default class StoryScene extends Phaser.Scene {
   constructor() { super({ key: 'StoryScene' }); }
 
   create() {
+    this.cameras.main.fadeIn(400, 0, 0, 0);
+
     this._idx = 0;
     this._draw();
   }
@@ -93,7 +95,7 @@ export default class StoryScene extends Phaser.Scene {
 
     // Zone A — title
     this.add.text(W / 2, H * TITLE_Y, p.title, {
-      fontSize: '24px', color: p.titleColor, fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '24px', color: p.titleColor, fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 4, align: 'center',
       wordWrap: { width: W - 60 },
     }).setOrigin(0.5, 0.5);
@@ -113,7 +115,7 @@ export default class StoryScene extends Phaser.Scene {
     this.add.rectangle(W / 2, pillY, pillW, pillH, 0x000000, 0.62)
       .setStrokeStyle(1, 0x334466, 0.7);
     this.add.text(W / 2, pillTopY + 14, p.body, {
-      fontSize: hasArt ? '15px' : '16px', color: '#DDEEFF', fontFamily: 'Arial',
+      fontSize: hasArt ? '15px' : '16px', color: '#DDEEFF', fontFamily: "'Nunito', Arial, sans-serif",
       align: 'center', stroke: '#000000', strokeThickness: 2,
       lineSpacing: 5, wordWrap: { width: pillW - 48 },
     }).setOrigin(0.5, 0);
@@ -128,7 +130,7 @@ export default class StoryScene extends Phaser.Scene {
       .setStrokeStyle(2, stroke)
       .setInteractive({ useHandCursor: true });
     this.add.text(W / 2, H * BTN_Y, label, {
-      fontSize: '20px', color: '#FFFFFF', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '20px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
     btn.on('pointerover', () => btn.setFillStyle(isLast ? 0x2A5A10 : 0x162A5A));
@@ -138,7 +140,7 @@ export default class StoryScene extends Phaser.Scene {
     // Skip link
     if (!isLast) {
       const skip = this.add.text(W - 16, H - 8, 'Skip story →', {
-        fontSize: '12px', color: '#445566', fontFamily: 'Arial',
+        fontSize: '12px', color: '#445566', fontFamily: "'Nunito', Arial, sans-serif",
       }).setOrigin(1, 1).setInteractive({ useHandCursor: true });
       skip.on('pointerover', () => skip.setColor('#778899'));
       skip.on('pointerout',  () => skip.setColor('#445566'));
@@ -254,7 +256,10 @@ export default class StoryScene extends Phaser.Scene {
 
   _finish() {
     GameState.reset();
-    this.scene.start('OverworldScene');
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.start('OverworldScene');
+    });
   }
 
   _stars(W, H) {

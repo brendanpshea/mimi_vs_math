@@ -1,46 +1,45 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!--
-    Crystal Bat — frame B (wings angled upward — mid-flap position).
-    Body, head, ears, eyes, fangs are identical.
-  -->
-  <!-- Right wing (raised upward in frame B) -->
-  <polygon points="32,28 58,6 62,28 48,40"  fill="#AA66FF" opacity="0.85"/>
-  <polygon points="32,28 60,4 64,16 54,24"  fill="#CC99FF" opacity="0.7"/>
-  <line x1="32" y1="28" x2="60" y2="4"  stroke="#DDAAFF" stroke-width="1"/>
-  <line x1="32" y1="28" x2="64" y2="16" stroke="#DDAAFF" stroke-width="1"/>
-  <line x1="32" y1="28" x2="62" y2="28" stroke="#DDAAFF" stroke-width="1"/>
-  <line x1="32" y1="28" x2="48" y2="40" stroke="#DDAAFF" stroke-width="1"/>
-  <!-- Left wing (raised upward) -->
-  <polygon points="32,28 6,6 2,28 16,40" fill="#AA66FF" opacity="0.85"/>
-  <polygon points="32,28 4,4 0,16 10,24" fill="#CC99FF" opacity="0.7"/>
-  <line x1="32" y1="28" x2="4"  y2="4"  stroke="#DDAAFF" stroke-width="1"/>
-  <line x1="32" y1="28" x2="0"  y2="16" stroke="#DDAAFF" stroke-width="1"/>
-  <line x1="32" y1="28" x2="2"  y2="28" stroke="#DDAAFF" stroke-width="1"/>
-  <line x1="32" y1="28" x2="16" y2="40" stroke="#DDAAFF" stroke-width="1"/>
+  <!-- Crystal Bat — frame B: wings angled upward in mid-flap -->
 
-  <!-- Body and head (identical to frame A) -->
-  <ellipse cx="32" cy="36" rx="12" ry="14" fill="#7744BB"/>
-  <circle  cx="32" cy="24" r="12" fill="#7744BB"/>
-  <!-- Bat ears -->
-  <polygon points="22,18 18,6 28,16" fill="#8844CC"/>
-  <polygon points="42,18 46,6 36,16" fill="#8844CC"/>
-  <polygon points="23,17 20,9 27,16" fill="#BBAADD"/>
-  <polygon points="41,17 44,9 37,16" fill="#BBAADD"/>
-  <!-- Eyes -->
-  <circle cx="26" cy="22" r="5" fill="#DDAAFF"/>
-  <circle cx="38" cy="22" r="5" fill="#DDAAFF"/>
-  <circle cx="26" cy="22" r="3" fill="#6600CC"/>
-  <circle cx="38" cy="22" r="3" fill="#6600CC"/>
-  <circle cx="27" cy="21" r="1.2" fill="white"/>
-  <circle cx="39" cy="21" r="1.2" fill="white"/>
-  <!-- Snout -->
-  <ellipse cx="32" cy="28" rx="4" ry="3" fill="#9966CC"/>
-  <!-- Fangs -->
-  <polygon points="30,30 28,36 32,30" fill="white"/>
-  <polygon points="34,30 36,36 32,30" fill="white"/>
-  <!-- Gem crystal on forehead (identical) -->
-  <polygon points="32,12 29,17 35,17" fill="#AAEEFF" stroke="#88CCFF" stroke-width="1"/>
-  <line x1="32" y1="12" x2="30" y2="17" stroke="#CCFFFF" stroke-width="0.8"/>
-  <line x1="32" y1="12" x2="34" y2="17" stroke="#CCFFFF" stroke-width="0.8"/>
-  <line x1="32" y1="13" x2="32" y2="17" stroke="#CCFFFF" stroke-width="0.8"/>
+  <!-- Right wing — RAISED upward -->
+  <polygon points="32,28 58,8 62,28 48,40" fill="#9955EE" stroke="#6622AA" stroke-width="3"/>
+  <polygon points="32,28 60,6 64,18 54,24" fill="#BB88FF" opacity="0.8"/>
+  <line x1="32" y1="28" x2="60" y2="6" stroke="#CCAAFF" stroke-width="2"/>
+  <line x1="32" y1="28" x2="62" y2="28" stroke="#CCAAFF" stroke-width="2"/>
+
+  <!-- Left wing — RAISED upward -->
+  <polygon points="32,28 6,8 2,28 16,40" fill="#9955EE" stroke="#6622AA" stroke-width="3"/>
+  <polygon points="32,28 4,6 0,18 10,24" fill="#BB88FF" opacity="0.8"/>
+  <line x1="32" y1="28" x2="4"  y2="6" stroke="#CCAAFF" stroke-width="2"/>
+  <line x1="32" y1="28" x2="2"  y2="28" stroke="#CCAAFF" stroke-width="2"/>
+
+  <!-- Body (identical) -->
+  <ellipse cx="32" cy="36" rx="13" ry="15" fill="#6633AA" stroke="#441188" stroke-width="3.5"/>
+
+  <!-- Head (identical) -->
+  <circle cx="32" cy="22" r="13" fill="#6633AA" stroke="#441188" stroke-width="3.5"/>
+
+  <!-- Ears (identical) -->
+  <polygon points="21,17 16,4 29,15" fill="#7733CC" stroke="#441188" stroke-width="2.5"/>
+  <polygon points="43,17 48,4 35,15" fill="#7733CC" stroke="#441188" stroke-width="2.5"/>
+  <polygon points="22,16 19,8 27,15" fill="#BB99DD"/>
+  <polygon points="42,16 45,8 37,15" fill="#BB99DD"/>
+
+  <!-- Eyes (identical) -->
+  <circle cx="25" cy="21" r="6" fill="#DDAAFF" stroke="#7733CC" stroke-width="2"/>
+  <circle cx="39" cy="21" r="6" fill="#DDAAFF" stroke="#7733CC" stroke-width="2"/>
+  <circle cx="25" cy="21" r="3.5" fill="#5500CC"/>
+  <circle cx="39" cy="21" r="3.5" fill="#5500CC"/>
+  <circle cx="27" cy="19.5" r="1.5" fill="white"/>
+  <circle cx="41" cy="19.5" r="1.5" fill="white"/>
+
+  <!-- Snout (identical) -->
+  <ellipse cx="32" cy="28" rx="5" ry="3.5" fill="#8855CC" stroke="#441188" stroke-width="1.5"/>
+
+  <!-- Fangs (identical) -->
+  <polygon points="29,30 27,37 31,30" fill="white" stroke="#CCCCCC" stroke-width="1"/>
+  <polygon points="35,30 37,37 33,30" fill="white" stroke="#CCCCCC" stroke-width="1"/>
+
+  <!-- Forehead gem (identical) -->
+  <polygon points="32,10 28,17 36,17" fill="#AAEEFF" stroke="#55AADD" stroke-width="2"/>
 </svg>

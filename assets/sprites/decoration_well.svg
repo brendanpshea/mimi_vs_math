@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40">
+  <!-- Ground shadow -->
+  <ellipse cx="16" cy="38" rx="14" ry="3" fill="#2a2a2a" opacity="0.25"/>
+  <!-- Stone base (back wall, darker) -->
+  <ellipse cx="16" cy="32" rx="12" ry="6" fill="#6b6b6b"/>
+  <!-- Dark water inside -->
+  <ellipse cx="16" cy="29" rx="9" ry="4.5" fill="#1a2a3a"/>
+  <ellipse cx="16" cy="29" rx="7" ry="3.5" fill="#0f1e2e"/>
+  <!-- Water highlight shimmer -->
+  <ellipse cx="14" cy="28" rx="2.5" ry="1" fill="#2a4a6a" opacity="0.5"/>
+  <!-- Stone rim (front, lighter) -->
+  <path d="M4,32 Q4,26 16,24 Q28,26 28,32 Q28,36 16,37 Q4,36 4,32Z" fill="#8a8a8a"/>
+  <path d="M6,32 Q6,27 16,25.5 Q26,27 26,32 Q26,35 16,36 Q6,35 6,32Z" fill="#9e9e9e"/>
+  <!-- Stone brick lines -->
+  <path d="M6,29 Q16,27.5 26,29" fill="none" stroke="#737373" stroke-width="0.5" opacity="0.6"/>
+  <path d="M5,32 Q16,30.5 27,32" fill="none" stroke="#737373" stroke-width="0.5" opacity="0.6"/>
+  <path d="M6,35 Q16,33.5 26,35" fill="none" stroke="#737373" stroke-width="0.5" opacity="0.5"/>
+  <line x1="11" y1="25.5" x2="10" y2="36" stroke="#737373" stroke-width="0.4" opacity="0.4"/>
+  <line x1="21" y1="25.5" x2="22" y2="36" stroke="#737373" stroke-width="0.4" opacity="0.4"/>
+  <!-- Left post -->
+  <rect x="7" y="10" width="2.2" height="22" rx="0.5" fill="#6b4a2a"/>
+  <rect x="7.3" y="10" width="0.8" height="22" fill="#7d5a36" opacity="0.5"/>
+  <!-- Right post -->
+  <rect x="22.8" y="10" width="2.2" height="22" rx="0.5" fill="#6b4a2a"/>
+  <rect x="23.1" y="10" width="0.8" height="22" fill="#7d5a36" opacity="0.5"/>
+  <!-- Roof beam -->
+  <polygon points="5,11 16,4 27,11" fill="#7d5a36"/>
+  <polygon points="6,11 16,5.5 26,11" fill="#8b6914"/>
+  <!-- Roof highlight -->
+  <polygon points="7,10.5 16,6.5 16,5.5 6,10.5" fill="#a07a2a" opacity="0.4"/>
+  <!-- Crossbar -->
+  <rect x="8" y="14" width="16" height="1.5" rx="0.5" fill="#5a3a1a"/>
+  <!-- Rope/handle hint -->
+  <rect x="15" y="14.5" width="1.2" height="6" fill="#8a7a5a"/>
+  <rect x="14.5" y="20" width="2.2" height="1.5" rx="0.7" fill="#6a5a3a"/>
+</svg>

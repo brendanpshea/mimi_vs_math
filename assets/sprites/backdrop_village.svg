@@ -1,39 +1,184 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
-  <!-- Sunny Village Backdrop - Grassy field with blue sky -->
-  
-  <!-- Sky gradient -->
+  <!-- Sunny Village Backdrop — rich pastoral scene -->
   <defs>
-    <linearGradient id="skyVillage" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#E0F6FF;stop-opacity:1" />
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4A90D9"/>
+      <stop offset="60%" stop-color="#7CBCE8"/>
+      <stop offset="100%" stop-color="#C8E8FF"/>
     </linearGradient>
-    <linearGradient id="grassVillage" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#7EC850;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#5A9A35;stop-opacity:1" />
+    <linearGradient id="grass" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6BBF3A"/>
+      <stop offset="100%" stop-color="#4A8A22"/>
     </linearGradient>
+    <linearGradient id="hillFar" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7EC850"/>
+      <stop offset="100%" stop-color="#5AA530"/>
+    </linearGradient>
+    <linearGradient id="hillNear" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6DB840"/>
+      <stop offset="100%" stop-color="#4A9A20"/>
+    </linearGradient>
+    <radialGradient id="sunGlow" cx="85%" cy="18%" r="30%">
+      <stop offset="0%" stop-color="#FFF8D0" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#FFE878" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#FFE878" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  
+
   <!-- Sky -->
-  <rect width="800" height="400" fill="url(#skyVillage)"/>
-  
-  <!-- Distant hills -->
-  <ellipse cx="200" cy="380" rx="250" ry="80" fill="#6FB042" opacity="0.6"/>
-  <ellipse cx="600" cy="390" rx="280" ry="70" fill="#6FB042" opacity="0.5"/>
-  
+  <rect width="800" height="600" fill="url(#sky)"/>
+  <rect width="800" height="600" fill="url(#sunGlow)"/>
+
+  <!-- Sun -->
+  <circle cx="680" cy="105" r="40" fill="#FFF0A0" opacity="0.9"/>
+  <circle cx="680" cy="105" r="32" fill="#FFFDE0"/>
+
+  <!-- Clouds -->
+  <g opacity="0.85">
+    <ellipse cx="120" cy="90" rx="65" ry="24" fill="#FFFFFF"/>
+    <ellipse cx="155" cy="82" rx="50" ry="22" fill="#FFFFFF"/>
+    <ellipse cx="88" cy="86" rx="40" ry="18" fill="#F8F8FF"/>
+  </g>
+  <g opacity="0.7">
+    <ellipse cx="420" cy="60" rx="72" ry="22" fill="#FFFFFF"/>
+    <ellipse cx="460" cy="54" rx="55" ry="20" fill="#FFFFFF"/>
+    <ellipse cx="390" cy="56" rx="42" ry="16" fill="#F8F8FF"/>
+  </g>
+  <g opacity="0.55">
+    <ellipse cx="300" cy="120" rx="48" ry="16" fill="#FFFFFF"/>
+    <ellipse cx="330" cy="116" rx="36" ry="14" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Far hills -->
+  <ellipse cx="160" cy="340" rx="220" ry="70" fill="url(#hillFar)"/>
+  <ellipse cx="480" cy="350" rx="260" ry="75" fill="url(#hillFar)"/>
+  <ellipse cx="740" cy="345" rx="180" ry="65" fill="url(#hillFar)"/>
+
+  <!-- Near hills -->
+  <ellipse cx="100" cy="380" rx="180" ry="55" fill="url(#hillNear)"/>
+  <ellipse cx="400" cy="390" rx="240" ry="60" fill="url(#hillNear)"/>
+  <ellipse cx="700" cy="385" rx="200" ry="55" fill="url(#hillNear)"/>
+
   <!-- Ground -->
-  <rect y="400" width="800" height="200" fill="url(#grassVillage)"/>
-  
-  <!-- Grass texture stripes -->
-  <rect y="410" width="800" height="3" fill="#5A9A35" opacity="0.4"/>
-  <rect y="430" width="800" height="2" fill="#5A9A35" opacity="0.3"/>
-  <rect y="455" width="800" height="3" fill="#4A8A25" opacity="0.4"/>
-  <rect y="485" width="800" height="2" fill="#4A8A25" opacity="0.3"/>
-  <rect y="520" width="800" height="3" fill="#3A7A15" opacity="0.4"/>
-  
-  <!-- Flowers scattered -->
-  <circle cx="120" cy="480" r="4" fill="#FFD700"/>
-  <circle cx="280" cy="460" r="4" fill="#FF69B4"/>
-  <circle cx="450" cy="490" r="4" fill="#FFD700"/>
-  <circle cx="620" cy="470" r="4" fill="#FF69B4"/>
-  <circle cx="720" cy="495" r="4" fill="#FFD700"/>
+  <rect y="380" width="800" height="220" fill="url(#grass)"/>
+
+  <!-- Fence posts (background) -->
+  <g opacity="0.55">
+    <rect x="40" y="345" width="5" height="30" rx="1" fill="#8B6B3A"/>
+    <rect x="80" y="348" width="5" height="28" rx="1" fill="#8B6B3A"/>
+    <rect x="120" y="346" width="5" height="29" rx="1" fill="#8B6B3A"/>
+    <rect x="160" y="350" width="5" height="27" rx="1" fill="#8B6B3A"/>
+    <!-- Fence rails -->
+    <rect x="40" y="352" width="125" height="3" rx="1" fill="#9A7A4A"/>
+    <rect x="40" y="362" width="125" height="3" rx="1" fill="#9A7A4A"/>
+  </g>
+
+  <!-- Cottage (background right) -->
+  <g opacity="0.75">
+    <!-- Cottage body -->
+    <rect x="600" y="310" width="70" height="50" rx="2" fill="#E8D0A8"/>
+    <rect x="598" y="308" width="74" height="4" fill="#C8A878"/>
+    <!-- Roof -->
+    <polygon points="590,310 635,275 680,310" fill="#C04030"/>
+    <polygon points="590,310 635,279 680,310" fill="#D05040" opacity="0.7"/>
+    <!-- Chimney -->
+    <rect x="655" y="280" width="12" height="25" fill="#8A6A4A"/>
+    <!-- Door -->
+    <rect x="625" y="335" width="16" height="25" rx="8 8 0 0" fill="#7A5030"/>
+    <!-- Window -->
+    <rect x="608" y="325" width="12" height="12" rx="1" fill="#A8D8FF" opacity="0.8"/>
+    <line x1="614" y1="325" x2="614" y2="337" stroke="#7A5030" stroke-width="1.5"/>
+    <line x1="608" y1="331" x2="620" y2="331" stroke="#7A5030" stroke-width="1.5"/>
+  </g>
+
+  <!-- Background tree left -->
+  <g opacity="0.6">
+    <rect x="45" y="295" width="8" height="45" fill="#7A5A2A"/>
+    <ellipse cx="49" cy="285" rx="25" ry="30" fill="#3A8A2A"/>
+    <ellipse cx="40" cy="278" rx="18" ry="22" fill="#48A838"/>
+    <ellipse cx="58" cy="280" rx="16" ry="20" fill="#42A030"/>
+  </g>
+
+  <!-- Background tree right -->
+  <g opacity="0.5">
+    <rect x="720" y="305" width="7" height="40" fill="#7A5A2A"/>
+    <ellipse cx="724" cy="295" rx="22" ry="26" fill="#3A8A2A"/>
+    <ellipse cx="716" cy="290" rx="16" ry="20" fill="#48A838"/>
+  </g>
+
+  <!-- Grass texture on ground -->
+  <path d="M0,400 Q100,394 200,400 T400,398 T600,402 T800,399" stroke="#4A8A25" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M0,430 Q150,425 300,430 T600,428 T800,432" stroke="#3A7A15" stroke-width="2" fill="none" opacity="0.4"/>
+  <path d="M0,465 Q200,460 400,465 T800,462" stroke="#3A7A15" stroke-width="1.5" fill="none" opacity="0.35"/>
+  <path d="M0,500 Q250,496 500,500 T800,498" stroke="#2A6A10" stroke-width="1.5" fill="none" opacity="0.3"/>
+  <path d="M0,540 Q180,536 360,540 T720,538 T800,540" stroke="#2A6A10" stroke-width="1" fill="none" opacity="0.25"/>
+
+  <!-- Grass tufts -->
+  <g fill="#5AAA30" opacity="0.6">
+    <path d="M60,440 Q63,428 66,440"/>
+    <path d="M62,440 Q68,425 70,440"/>
+    <path d="M200,470 Q203,458 206,470"/>
+    <path d="M202,470 Q208,456 210,470"/>
+    <path d="M500,450 Q503,438 506,450"/>
+    <path d="M502,450 Q508,436 510,450"/>
+    <path d="M680,480 Q683,468 686,480"/>
+    <path d="M350,510 Q353,498 356,510"/>
+    <path d="M750,430 Q753,418 756,430"/>
+  </g>
+
+  <!-- Flowers -->
+  <g>
+    <circle cx="120" cy="460" r="4" fill="#FFD700"/>
+    <circle cx="118" cy="458" r="4" fill="#FFE844"/>
+    <circle cx="122" cy="458" r="4" fill="#FFE844"/>
+    <circle cx="120" cy="460" r="2" fill="#FFF8CC"/>
+
+    <circle cx="300" cy="445" r="4" fill="#FF69B4"/>
+    <circle cx="298" cy="443" r="4" fill="#FF88C8"/>
+    <circle cx="302" cy="443" r="4" fill="#FF88C8"/>
+    <circle cx="300" cy="445" r="2" fill="#FFD0E8"/>
+
+    <circle cx="460" cy="475" r="3.5" fill="#FFD700"/>
+    <circle cx="458" cy="473" r="3.5" fill="#FFE844"/>
+    <circle cx="462" cy="473" r="3.5" fill="#FFE844"/>
+    <circle cx="460" cy="475" r="1.8" fill="#FFF8CC"/>
+
+    <circle cx="620" cy="455" r="4" fill="#FF69B4"/>
+    <circle cx="618" cy="453" r="4" fill="#FF88C8"/>
+    <circle cx="622" cy="453" r="4" fill="#FF88C8"/>
+    <circle cx="620" cy="455" r="2" fill="#FFD0E8"/>
+
+    <circle cx="740" cy="485" r="3.5" fill="#7B68EE"/>
+    <circle cx="738" cy="483" r="3.5" fill="#9A88FF"/>
+    <circle cx="742" cy="483" r="3.5" fill="#9A88FF"/>
+    <circle cx="740" cy="485" r="1.8" fill="#D0C8FF"/>
+  </g>
+
+  <!-- Butterflies -->
+  <g opacity="0.7">
+    <path d="M250,320 Q245,312 250,308 Q255,312 250,320" fill="#FFD700"/>
+    <path d="M250,320 Q255,312 260,308 Q255,312 250,320" fill="#FFAA00"/>
+    <circle cx="250" cy="316" r="1" fill="#333"/>
+  </g>
+  <g opacity="0.55">
+    <path d="M550,280 Q545,272 550,268 Q555,272 550,280" fill="#88CCFF"/>
+    <path d="M550,280 Q555,272 560,268 Q555,272 550,280" fill="#66AADD"/>
+    <circle cx="550" cy="276" r="1" fill="#333"/>
+  </g>
+
+  <!-- Distant birds -->
+  <g stroke="#445566" stroke-width="1.5" fill="none" opacity="0.4">
+    <path d="M360,160 Q365,155 370,160 Q375,155 380,160"/>
+    <path d="M395,145 Q399,141 403,145 Q407,141 411,145"/>
+    <path d="M340,175 Q344,171 348,175 Q352,171 356,175"/>
+  </g>
+
+  <!-- Stone path (foreground) -->
+  <g opacity="0.35">
+    <ellipse cx="380" cy="540" rx="18" ry="8" fill="#B8A888"/>
+    <ellipse cx="410" cy="555" rx="16" ry="7" fill="#A89878"/>
+    <ellipse cx="395" cy="570" rx="14" ry="6" fill="#B8A888"/>
+    <ellipse cx="420" cy="580" rx="17" ry="7" fill="#A89878"/>
+    <ellipse cx="365" cy="558" rx="12" ry="5" fill="#C8B898"/>
+  </g>
 </svg>

@@ -33,6 +33,8 @@ export default class OverworldScene extends Phaser.Scene {
   constructor() { super({ key: 'OverworldScene' }); }
 
   create(data) {
+    this.cameras.main.fadeIn(400, 0, 0, 0);
+
     if (data?.bossDefeated) GameState.defeatBoss(data.regionId);
 
     const W = this.cameras.main.width;
@@ -53,11 +55,16 @@ export default class OverworldScene extends Phaser.Scene {
     this.input.keyboard.on('keydown-ESC', () => {
       if (this._statsItems)  { this._closeStatsOverlay(); }
       else if (this._popup)  { this._closePopup(); }
-      else                   { this.scene.start('TitleScene'); }
+      else {
+        this.cameras.main.fadeOut(300, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          this.scene.start('TitleScene');
+        });
+      }
     });
 
     this.add.text(W / 2, H - 8, 'Click a region to enter  ·  Esc → Title', {
-      fontSize: '11px', color: '#8A7050', fontFamily: 'Arial',
+      fontSize: '11px', color: '#8A7050', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5, 1);
 
     // Auto-show stats after boss defeat
@@ -173,7 +180,7 @@ export default class OverworldScene extends Phaser.Scene {
     gfx.fillRect(W / 2 - 140, 18, 18, 44);
     gfx.fillRect(W / 2 + 122, 18, 18, 44);
     this.add.text(W / 2, 40, '🗺  World Map', {
-      fontSize: '22px', color: '#4A2A0A', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '22px', color: '#4A2A0A', fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
   }
 
@@ -189,7 +196,7 @@ export default class OverworldScene extends Phaser.Scene {
     // North arrow — red; South — grey
     gfx.fillStyle(0xCC2222, 0.9); gfx.fillTriangle(cx, cy - 28, cx - 6, cy, cx + 6, cy);
     gfx.fillStyle(0xBBBBBB, 0.9); gfx.fillTriangle(cx, cy + 28, cx - 6, cy, cx + 6, cy);
-    this.add.text(cx, cy - 36, 'N', { fontSize: '11px', color: '#4A2A0A', fontFamily: 'Arial', fontStyle: 'bold' }).setOrigin(0.5, 1);
+    this.add.text(cx, cy - 36, 'N', { fontSize: '11px', color: '#4A2A0A', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' }).setOrigin(0.5, 1);
   }
 
   _drawPaths() {
@@ -244,7 +251,7 @@ export default class OverworldScene extends Phaser.Scene {
     this.add.circle(pos.x + NODE_RADIUS - 5, pos.y - NODE_RADIUS + 5, 13, 0x110A00)
       .setStrokeStyle(1.5, 0xFFAA22);
     this.add.text(pos.x + NODE_RADIUS - 5, pos.y - NODE_RADIUS + 5, String(region.id + 1), {
-      fontSize: '13px', color: '#FFCC44', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '13px', color: '#FFCC44', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
     // Completed star
@@ -255,12 +262,12 @@ export default class OverworldScene extends Phaser.Scene {
     // Name + subtitle labels
     this.add.text(pos.x, pos.y + NODE_RADIUS + 8, region.name, {
       fontSize: '12px', color: unlocked ? '#FFE8A0' : '#777799',
-      fontFamily: 'Arial', fontStyle: unlocked ? 'bold' : 'normal',
+      fontFamily: "'Nunito', Arial, sans-serif", fontStyle: unlocked ? 'bold' : 'normal',
       stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0.5, 0);
     this.add.text(pos.x, pos.y + NODE_RADIUS + 24, region.subtitle.split('·')[0].trim(), {
       fontSize: '10px', color: unlocked ? '#AACCEE' : '#555577',
-      fontFamily: 'Arial', stroke: '#000000', strokeThickness: 1,
+      fontFamily: "'Nunito', Arial, sans-serif", stroke: '#000000', strokeThickness: 1,
     }).setOrigin(0.5, 0);
 
     // Interaction
@@ -284,21 +291,21 @@ export default class OverworldScene extends Phaser.Scene {
     this.add.rectangle(px, 78, 165, 105, 0x000000, 0.62)
       .setStrokeStyle(1.5, 0x886644);
     this.add.text(px, 40,  '🐱  Mimi',
-      { fontSize: '15px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold' }).setOrigin(0.5);
+      { fontSize: '15px', color: '#FFD700', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' }).setOrigin(0.5);
     this.add.text(px, 59,  `HP: ${hp}/${maxHP}`,
-      { fontSize: '13px', color: '#FF8899', fontFamily: 'Arial' }).setOrigin(0.5);
+      { fontSize: '13px', color: '#FF8899', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     this.add.text(px, 75,  `✓ ${stats.correct}/${stats.answered}`,
-      { fontSize: '11px', color: '#AADDFF', fontFamily: 'Arial' }).setOrigin(0.5);
+      { fontSize: '11px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     this.add.text(px, 89,  `${pct}% accuracy`,
-      { fontSize: '11px', color: '#AADDFF', fontFamily: 'Arial' }).setOrigin(0.5);
+      { fontSize: '11px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     this.add.text(px, 103, `Best streak: ${stats.bestStreak}`,
-      { fontSize: '10px', color: '#AADDFF', fontFamily: 'Arial' }).setOrigin(0.5);
+      { fontSize: '10px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
 
     // Stats button
     const sb = this.add.rectangle(px, 124, 130, 24, 0x0C1A0C)
       .setStrokeStyle(1.5, 0x44AA44).setInteractive({ useHandCursor: true });
     const st = this.add.text(px, 124, '📊 Full Stats',
-      { fontSize: '12px', color: '#88FF88', fontFamily: 'Arial' }).setOrigin(0.5);
+      { fontSize: '12px', color: '#88FF88', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     sb.on('pointerover', () => { sb.setFillStyle(0x153015); st.setColor('#AAFFAA'); });
     sb.on('pointerout',  () => { sb.setFillStyle(0x0C1A0C); st.setColor('#88FF88'); });
     sb.on('pointerdown', () => this._showStatsOverlay());
@@ -323,7 +330,7 @@ export default class OverworldScene extends Phaser.Scene {
       .setDepth(D + 1).setStrokeStyle(2, 0x4488FF));
 
     add(this.add.text(W / 2, H / 2 - 162, '📊  Mimi’s Stats', {
-      fontSize: '24px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '24px', color: '#FFD700', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(D + 2));
 
     // Divider
@@ -354,10 +361,10 @@ export default class OverworldScene extends Phaser.Scene {
     rows.forEach(([label, value]) => {
       if (!label) { ry += 10; return; }
       add(this.add.text(labelX, ry, label,
-        { fontSize: '14px', color: '#CCDDFF', fontFamily: 'Arial' },
+        { fontSize: '14px', color: '#CCDDFF', fontFamily: "'Nunito', Arial, sans-serif" },
       ).setOrigin(0, 0).setDepth(D + 2));
       add(this.add.text(valueX, ry, value,
-        { fontSize: '14px', color: '#FFFFFF', fontFamily: 'Arial', fontStyle: 'bold' },
+        { fontSize: '14px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' },
       ).setOrigin(1, 0).setDepth(D + 2));
       ry += 26;
     });
@@ -366,7 +373,7 @@ export default class OverworldScene extends Phaser.Scene {
     const cb = add(this.add.rectangle(W / 2, H / 2 + 155, 160, 34, 0x2A0A0A)
       .setDepth(D + 2).setStrokeStyle(1.5, 0xCC4444).setInteractive({ useHandCursor: true }));
     const ct = add(this.add.text(W / 2, H / 2 + 155, '✕  Close',
-      { fontSize: '14px', color: '#FF8888', fontFamily: 'Arial', fontStyle: 'bold' },
+      { fontSize: '14px', color: '#FF8888', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' },
     ).setOrigin(0.5).setDepth(D + 3));
     cb.on('pointerover', () => { cb.setFillStyle(0x401515); ct.setColor('#FFAAAA'); });
     cb.on('pointerout',  () => { cb.setFillStyle(0x2A0A0A); ct.setColor('#FF8888'); });
@@ -397,13 +404,13 @@ export default class OverworldScene extends Phaser.Scene {
 
     // Region name
     mk(this.add.text(W / 2, 160, region.name, {
-      fontSize: '28px', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '28px', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
       color: '#FFD700', stroke: '#000', strokeThickness: 4,
     }).setOrigin(0.5).setDepth(102));
 
     // Subtitle (grades + topic)
     mk(this.add.text(W / 2, 199, region.subtitle, {
-      fontSize: '14px', fontFamily: 'Arial', color: '#88CCFF',
+      fontSize: '14px', fontFamily: "'Nunito', Arial, sans-serif", color: '#88CCFF',
     }).setOrigin(0.5).setDepth(102));
 
     // Divider
@@ -412,14 +419,14 @@ export default class OverworldScene extends Phaser.Scene {
 
     // Description
     mk(this.add.text(W / 2, 228, region.description, {
-      fontSize: '13px', fontFamily: 'Arial', color: '#CCDDEE',
+      fontSize: '13px', fontFamily: "'Nunito', Arial, sans-serif", color: '#CCDDEE',
       align: 'center', wordWrap: { width: 445 }, lineSpacing: 4,
     }).setOrigin(0.5, 0).setDepth(102));
 
     // Boss line
     const done = GameState.hasDefeatedBoss(region.id);
     mk(this.add.text(W / 2, 358, `⚔️  Boss: ${region.bossName}${done ? '  ✅ Defeated' : ''}`, {
-      fontSize: '14px', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '14px', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
       color: done ? '#88FF88' : '#FFAA44', stroke: '#000', strokeThickness: 2,
     }).setOrigin(0.5).setDepth(102));
 
@@ -427,21 +434,24 @@ export default class OverworldScene extends Phaser.Scene {
     const eb = mk(this.add.rectangle(308, 418, 204, 46, 0x0A2A0A)
       .setDepth(102).setStrokeStyle(2, 0x44CC44).setInteractive({ useHandCursor: true }));
     const et = mk(this.add.text(308, 418, '▶️  Enter Region', {
-      fontSize: '16px', color: '#88FF88', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '16px', color: '#88FF88', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(103));
     eb.on('pointerover',  () => { eb.setFillStyle(0x154015); et.setColor('#AAFFAA'); });
     eb.on('pointerout',   () => { eb.setFillStyle(0x0A2A0A); et.setColor('#88FF88'); });
     eb.on('pointerdown',  () => {
       GameState.currentRegion = region.id;
       GameState.save();
-      this.scene.start('ExploreScene', { regionId: region.id });
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.scene.start('ExploreScene', { regionId: region.id });
+      });
     });
 
     // Not Yet button
     const cb = mk(this.add.rectangle(512, 418, 158, 46, 0x2A0A0A)
       .setDepth(102).setStrokeStyle(2, 0xCC4444).setInteractive({ useHandCursor: true }));
     const ct = mk(this.add.text(512, 418, '✕  Not Yet', {
-      fontSize: '16px', color: '#FF8888', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '16px', color: '#FF8888', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(103));
     cb.on('pointerover',  () => { cb.setFillStyle(0x401515); ct.setColor('#FFAAAA'); });
     cb.on('pointerout',   () => { cb.setFillStyle(0x2A0A0A); ct.setColor('#FF8888'); });

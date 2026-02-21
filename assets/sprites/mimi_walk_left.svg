@@ -1,70 +1,60 @@
-﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56">
-<!-- Mimi walk left frame A: side view facing left, front paw extended — fierce Link/Puss aesthetic -->
-<!-- Tail up-right behind her -->
-<path d="M34,32 C44,22 47,30 42,42" fill="none" stroke="#505058" stroke-width="4" stroke-linecap="round"/>
-<path d="M34,32 C44,22 47,30 42,42" fill="none" stroke="#A8A8B4" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4,3"/>
-<!-- Cape trailing right (behind her as she moves left) -->
-<path d="M28,30 Q42,36 46,52 Q36,50 32,46 Q28,50 24,46" fill="#2A1A55" stroke="#1A1035" stroke-width="1.2"/>
-<path d="M28,30 Q36,32 42,36" fill="none" stroke="#5533AA" stroke-width="1.2"/>
-<!-- Body side view -->
-<ellipse cx="25" cy="34" rx="13" ry="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<!-- Mimi walk left frame A: side view facing left, front paw extended — bold chibi style -->
+
+<!-- Tail (behind body, pointing right/up) -->
+<path d="M48,42 C58,32 60,44 54,52" fill="none" stroke="#A8A8B4" stroke-width="4" stroke-linecap="round"/>
+<path d="M48,42 C58,32 60,44 54,52" fill="none" stroke="#2A2A36" stroke-width="4" stroke-linecap="round" fill-opacity="0" style="paint-order:stroke"/>
+
+<!-- Body (side view, elongated horizontally) -->
+<ellipse cx="34" cy="44" rx="14" ry="9" fill="#A8A8B4" stroke="#2A2A36" stroke-width="3"/>
 <!-- Belly patch -->
-<ellipse cx="21" cy="37" rx="7" ry="7" fill="#D0D0DC"/>
-<!-- Flank stripe -->
-<path d="M35,25 Q38,34 35,43" fill="none" stroke="#505058" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-<!-- Belt side -->
-<rect x="16" y="41" width="18" height="2.5" rx="1.2" fill="#7A5A12" stroke="#4A3608" stroke-width="0.8"/>
-<!-- Sword hilt on visible right hip (right = back as she faces left; use silhouette) -->
-<rect x="31" y="37" width="5" height="1.2" rx="0.6" fill="#C8A832" stroke="#8B6914" stroke-width="0.5"/>
-<rect x="32.5" y="33" width="1.8" height="6" rx="0.7" fill="#AAAABC" stroke="#2A2A36" stroke-width="0.6"/>
-<!-- Neckerchief side (left-facing) -->
-<path d="M12,25 Q20,29 28,26 Q27,31 20,32 Q13,31 12,25 Z" fill="#DD2222" stroke="#991111" stroke-width="0.8"/>
-<path d="M12,25 Q20,28 28,26" fill="none" stroke="#FF5555" stroke-width="1" stroke-linecap="round"/>
-<!-- Far front arm (static) -->
-<ellipse cx="18" cy="31" rx="3" ry="6" fill="#8C8CA0" stroke="#2A2A36" stroke-width="1" transform="rotate(-5,18,27)"/>
-<ellipse cx="17.5" cy="37" rx="3.5" ry="2" fill="#707080" stroke="#2A2A36" stroke-width="0.8"/>
-<!-- Near front arm extended left -->
-<ellipse cx="7" cy="28" rx="3" ry="7" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(-20,7,24)"/>
-<ellipse cx="4" cy="34.5" rx="4" ry="2.5" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
-<line x1="1"  y1="36" x2="1"  y2="38" stroke="#505058" stroke-width="1"/>
-<line x1="4"  y1="36.5" x2="4" y2="38.5" stroke="#505058" stroke-width="1"/>
-<line x1="7"  y1="36" x2="7"  y2="38" stroke="#505058" stroke-width="1"/>
-<!-- Far back leg -->
-<ellipse cx="26" cy="46" rx="5" ry="5" fill="#8C8CA0" stroke="#2A2A36" stroke-width="1"/>
-<ellipse cx="27" cy="53" rx="6" ry="2.5" fill="#707080" stroke="#2A2A36" stroke-width="0.8"/>
-<!-- Near back leg forward -->
-<ellipse cx="30" cy="46" rx="5" ry="5.5" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.2" transform="rotate(-10,30,42)"/>
-<ellipse cx="29.5" cy="53.5" rx="6.5" ry="2.8" fill="#888894" stroke="#2A2A36" stroke-width="1"/>
-<line x1="23.5" y1="55" x2="23.5" y2="55.5" stroke="#505058" stroke-width="1"/>
-<line x1="29" y1="55.5" x2="29" y2="56" stroke="#505058" stroke-width="1"/>
-<line x1="34.5" y1="55" x2="34.5" y2="55.5" stroke="#505058" stroke-width="1"/>
-<!-- Head side-left -->
-<circle cx="14" cy="14" r="11" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5"/>
-<!-- Left ear (front ear) -->
-<polygon points="6,8 1,0 12,4" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" stroke-linejoin="round"/>
-<polygon points="7,7.5 3,1 12,4.5" fill="#FFAACC"/>
-<!-- Right ear (back, partially hidden) -->
-<polygon points="19,6 21,-1 26,3" fill="#A8A8B4" stroke="#2A2A36" stroke-width="1.5" stroke-linejoin="round"/>
-<!-- Green Link cap (side view, tip droops left) -->
-<ellipse cx="14" cy="8" rx="9" ry="2.5" fill="#3A7034" stroke="#254E23" stroke-width="1"/>
-<path d="M5,8 Q14,4 23,8 Q21,2 18,0 Q14,2 10,0 Q7,2 5,8 Z" fill="#4A9044" stroke="#2A5A28" stroke-width="1"/>
+<ellipse cx="30" cy="46" rx="7" ry="5" fill="#D0D0DC"/>
+
+<!-- Scarf tail (trailing behind to the right) -->
+<path d="M42,34 L48,44 L40,40 Z" fill="#CC2222" stroke="#881111" stroke-width="1.5"/>
+
+<!-- Far back leg (behind, darker) -->
+<ellipse cx="40" cy="54" rx="5.5" ry="3.5" fill="#707080" stroke="#2A2A36" stroke-width="2.5"/>
+<!-- Far front leg (behind, darker) — back position -->
+<ellipse cx="30" cy="53" rx="5.5" ry="3.5" fill="#707080" stroke="#2A2A36" stroke-width="2"/>
+
+<!-- Near back leg (forward stride) -->
+<ellipse cx="42" cy="56" rx="6" ry="4" fill="#888894" stroke="#2A2A36" stroke-width="2.5"/>
+<!-- Near front leg (extended forward left) -->
+<ellipse cx="22" cy="55" rx="6" ry="4" fill="#888894" stroke="#2A2A36" stroke-width="2.5"/>
+
+<!-- Head (left-facing side view) -->
+<circle cx="22" cy="22" r="14" fill="#A8A8B4" stroke="#2A2A36" stroke-width="3"/>
+
+<!-- Front ear (left ear, prominent) -->
+<polygon points="10,14 4,0 18,8" fill="#A8A8B4" stroke="#2A2A36" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="11,12 6,2 17,8" fill="#FFAACC"/>
+<!-- Back ear (right, partially hidden) -->
+<polygon points="30,10 34,0 24,6" fill="#A8A8B4" stroke="#2A2A36" stroke-width="2.5" stroke-linejoin="round"/>
+
+<!-- Green cap (side view, tip droops left) -->
+<path d="M8,14 Q22,7 36,14 Q33,7 28,4 Q24,1 22,5 Q20,1 16,4 Q11,7 8,14 Z" fill="#4A9044" stroke="#2A5A28" stroke-width="2"/>
+<ellipse cx="22" cy="13" rx="13" ry="3" fill="#3A7034" stroke="#254E23" stroke-width="2"/>
 <!-- Cap tip drooping left -->
-<path d="M10,0 Q3,-1 1,5 L5,4 Q6,2 10,0 Z" fill="#4A9044" stroke="#2A5A28" stroke-width="0.8"/>
-<!-- Fierce brow (one brow visible — left side) -->
-<path d="M7,11 Q11,8 14,9.5" fill="none" stroke="#2A2A36" stroke-width="2" stroke-linecap="round"/>
-<!-- One eye visible (left/near eye) — large Puss-in-Boots -->
-<ellipse cx="10" cy="16" rx="4.2" ry="4.5" fill="#1E7A47"/>
-<ellipse cx="10" cy="16" rx="2.8" ry="3.2" fill="#2EAA67"/>
-<ellipse cx="10" cy="16.5" rx="1.5" ry="2.8" fill="#111120"/>
-<circle cx="11.5" cy="14.5" r="1.3" fill="white"/>
-<circle cx="8.8" cy="18" r="0.6" fill="white" opacity="0.4"/>
-<!-- Nose + mouth on left side -->
-<polygon points="4,19 3,21.5 6,21.5" fill="#FF7799"/>
-<path d="M3,21.5 Q4,23 5,22.5" fill="none" stroke="#CC3355" stroke-width="1" stroke-linecap="round"/>
-<path d="M5,22.5 Q5.5,23 6,21.5" fill="none" stroke="#CC3355" stroke-width="1" stroke-linecap="round"/>
-<line x1="3.8" y1="21.5" x2="3.4" y2="23.2" stroke="white" stroke-width="0.9" stroke-linecap="round"/>
-<!-- Whiskers pointing left (angled up) -->
-<line x1="4"  y1="19" x2="-5" y2="16" stroke="#888894" stroke-width="0.8"/>
-<line x1="4"  y1="21" x2="-5" y2="23" stroke="#888894" stroke-width="0.8"/>
-<line x1="8"  y1="19" x2="-3" y2="15" stroke="#888894" stroke-width="0.7"/>
+<path d="M16,4 Q8,2 6,8 L10,7 Q11,4 16,4 Z" fill="#4A9044" stroke="#2A5A28" stroke-width="1.5"/>
+
+<!-- Red scarf (side view) -->
+<path d="M14,33 Q24,37 34,34 Q32,36 24,38 Q16,37 14,33 Z" fill="#DD2222" stroke="#991111" stroke-width="2"/>
+
+<!-- Eyebrow (one visible) -->
+<path d="M10,17 Q16,14 20,16" fill="none" stroke="#2A2A36" stroke-width="2.5" stroke-linecap="round"/>
+
+<!-- Eye (one large eye visible, facing left) -->
+<ellipse cx="15" cy="23" rx="5" ry="5.5" fill="#1E7A47" stroke="#2A2A36" stroke-width="2"/>
+<ellipse cx="14" cy="23.5" rx="2.5" ry="4" fill="#111"/>
+<circle cx="16.5" cy="21" r="2" fill="white"/>
+
+<!-- Nose (on left side of face) -->
+<polygon points="6,27 4,30 9,30" fill="#FF8899" stroke="#2A2A36" stroke-width="1.5"/>
+<!-- Mouth -->
+<path d="M5,30 Q7,33 9,30" fill="none" stroke="#2A2A36" stroke-width="2" stroke-linecap="round"/>
+
+<!-- Whiskers (pointing left) -->
+<line x1="8" y1="26" x2="-4" y2="23" stroke="#2A2A36" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="8" y1="29" x2="-4" y2="32" stroke="#2A2A36" stroke-width="1.5" stroke-linecap="round"/>
 </svg>

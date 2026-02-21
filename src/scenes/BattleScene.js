@@ -25,8 +25,10 @@ const BTN_COLORS = {
   wrong:   0x7A1A1A,
   reveal:  0x1A2E7A,
 };
+const FONT_UI    = "'Nunito', Arial, sans-serif";
+const FONT_TITLE = "'Fredoka', 'Nunito', Arial, sans-serif";
 const TEXT_STYLE = (size, color = '#FFFFFF', bold = false) => ({
-  fontSize: `${size}px`, color, fontFamily: 'Arial',
+  fontSize: `${size}px`, color, fontFamily: FONT_UI,
   fontStyle: bold ? 'bold' : 'normal',
 });
 
@@ -57,6 +59,8 @@ export default class BattleScene extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(400, 0, 0, 0);
+
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
 
@@ -93,12 +97,18 @@ export default class BattleScene extends Phaser.Scene {
     // Subtle overlay — keeps backdrop visible without crushing other UI
     this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.20).setDepth(1);
     
-    // Separator lines
-    const gfx = this.add.graphics();
-    gfx.lineStyle(2, 0xFFFFFF, 0.2);
-    gfx.lineBetween(0, 160, W, 160);
-    gfx.lineBetween(0, H - 110, W, H - 110);
-    gfx.setDepth(2);
+    // Separator lines (gradient fade from center)
+    const gfx = this.add.graphics().setDepth(2);
+    // Top separator
+    gfx.lineStyle(1, 0xFFFFFF, 0.15);
+    gfx.lineBetween(40, 160, W - 40, 160);
+    gfx.lineStyle(1, 0xFFFFFF, 0.08);
+    gfx.lineBetween(20, 161, W - 20, 161);
+    // Bottom separator
+    gfx.lineStyle(1, 0xFFFFFF, 0.15);
+    gfx.lineBetween(40, H - 110, W - 40, H - 110);
+    gfx.lineStyle(1, 0xFFFFFF, 0.08);
+    gfx.lineBetween(20, H - 109, W - 20, H - 109);
   }
 
   // ── Layout ────────────────────────────────────────────────────────────────
@@ -134,12 +144,17 @@ export default class BattleScene extends Phaser.Scene {
       .setOrigin(0.5, 0);
 
     // ── Question display ────────────────────────────────────────────────
-    // Dark pill behind the question text only — guarantees contrast without
-    // darkening the rest of the battle scene.
-    this.questionBg = this.add.rectangle(W / 2, H * 0.43, W - 40, 88, 0x000000, 0.68).setDepth(2);
+    // Dark pill behind the question text — guarantees contrast.
+    const qbg = this.add.graphics().setDepth(2);
+    qbg.fillStyle(0x000000, 0.7);
+    qbg.fillRoundedRect(20, H * 0.43 - 46, W - 40, 92, 12);
+    qbg.lineStyle(2, 0xFFCC44, 0.3);
+    qbg.strokeRoundedRect(20, H * 0.43 - 46, W - 40, 92, 12);
+    this.questionBg = qbg;
 
     this.questionText = this.add.text(W / 2, H * 0.43, '', {
       ...TEXT_STYLE(34, '#FFE44D', true),
+      fontFamily: FONT_TITLE,
       stroke: '#000000', strokeThickness: 4,
       align: 'center',
       wordWrap: { width: W - 80 },
@@ -154,6 +169,7 @@ export default class BattleScene extends Phaser.Scene {
     // ── Feedback / streak ───────────────────────────────────────────────
     this.feedbackText = this.add.text(W / 2, H * 0.27, '', {
       ...TEXT_STYLE(26, '#FFD700', true),
+      fontFamily: FONT_TITLE,
       stroke: '#000000', strokeThickness: 4,
     }).setOrigin(0.5).setAlpha(0);
 
@@ -169,16 +185,38 @@ export default class BattleScene extends Phaser.Scene {
   }
 
   _makeHPBar(cx, cy, maxHP, fillColor) {
-    const BW = 160, BH = 14;
-    this.add.rectangle(cx, cy, BW + 4, BH + 4, 0x111111).setOrigin(0.5);
+    const BW = 160, BH = 16;
+    // Outer border (dark)
+    const border = this.add.graphics();
+    border.fillStyle(0x000000, 0.8);
+    border.fillRoundedRect(cx - BW / 2 - 3, cy - BH / 2 - 3, BW + 6, BH + 6, 4);
+    // Inner track
+    border.fillStyle(0x1A1A2A, 1);
+    border.fillRoundedRect(cx - BW / 2 - 1, cy - BH / 2 - 1, BW + 2, BH + 2, 3);
+
     const fill = this.add.rectangle(cx - BW / 2, cy, BW, BH, fillColor).setOrigin(0, 0.5);
-    const lbl  = this.add.text(cx, cy, `${maxHP}/${maxHP}`, TEXT_STYLE(11)).setOrigin(0.5).setDepth(2);
-    return { fill, lbl, maxHP, bw: BW, bh: BH, fillColor };
+    // Highlight stripe on fill bar
+    const shine = this.add.rectangle(cx - BW / 2, cy - BH / 4, BW, BH / 3, 0xFFFFFF, 0.15).setOrigin(0, 0.5);
+
+    // HP segment markers
+    const seg = this.add.graphics().setDepth(1);
+    for (let i = 1; i < maxHP; i++) {
+      const sx = cx - BW / 2 + (i / maxHP) * BW;
+      seg.lineStyle(1, 0x000000, 0.3);
+      seg.lineBetween(sx, cy - BH / 2, sx, cy + BH / 2);
+    }
+
+    const lbl = this.add.text(cx, cy, `${maxHP}/${maxHP}`, {
+      ...TEXT_STYLE(11, '#FFFFFF', true),
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(2);
+    return { fill, shine, lbl, maxHP, bw: BW, bh: BH, fillColor, cx };
   }
 
   _updateHPBar(bar, currentHP) {
     const ratio = Math.max(0, currentHP) / bar.maxHP;
     bar.fill.setDisplaySize(bar.bw * ratio, bar.bh);
+    bar.shine.setDisplaySize(bar.bw * ratio, bar.bh / 3);
     bar.lbl.setText(`${Math.max(0, currentHP)}/${bar.maxHP}`);
     // Colour shift: green → yellow → red
     const r = Math.round(255 * (1 - ratio));
@@ -196,30 +234,61 @@ export default class BattleScene extends Phaser.Scene {
     ];
 
     this.answerButtons = positions.map((pos, i) => {
+      // Shadow under button
+      const shadow = this.add.rectangle(pos.x + 2, pos.y + 3, BW, BH, 0x000000, 0.4)
+        .setDepth(2);
+
       const bg = this.add.rectangle(pos.x, pos.y, BW, BH, BTN_COLORS.idle)
         .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(2, 0x4466AA);
+        .setStrokeStyle(2, 0x4466AA)
+        .setDepth(3);
+
+      // Top highlight for bevel effect
+      const highlight = this.add.rectangle(pos.x, pos.y - BH / 4, BW - 4, BH / 3, 0xFFFFFF, 0.08)
+        .setDepth(3);
 
       const numLbl = this.add.text(pos.x, pos.y - 18, `[${i + 1}]`, TEXT_STYLE(11, '#6688CC'))
-        .setOrigin(0.5);
+        .setOrigin(0.5).setDepth(4);
 
       const lbl = this.add.text(pos.x, pos.y + 6, '', TEXT_STYLE(22, '#FFFFFF', true))
-        .setOrigin(0.5);
+        .setOrigin(0.5).setDepth(4);
 
-      bg.on('pointerover', () => { if (!this.answering) bg.setFillStyle(BTN_COLORS.hover); });
-      bg.on('pointerout',  () => { if (!this.answering) bg.setFillStyle(BTN_COLORS.idle);  });
+      bg.on('pointerover', () => {
+        if (this.answering) return;
+        bg.setFillStyle(BTN_COLORS.hover).setStrokeStyle(2, 0x66AAFF);
+        this.tweens.add({ targets: [bg, shadow, highlight, numLbl, lbl], scaleX: 1.05, scaleY: 1.05, duration: 80 });
+      });
+      bg.on('pointerout', () => {
+        if (this.answering) return;
+        bg.setFillStyle(BTN_COLORS.idle).setStrokeStyle(2, 0x4466AA);
+        this.tweens.add({ targets: [bg, shadow, highlight, numLbl, lbl], scaleX: 1, scaleY: 1, duration: 80 });
+      });
       bg.on('pointerdown', () => this._selectAnswer(i));
 
-      return { bg, lbl, numLbl };
+      return { bg, lbl, numLbl, shadow, highlight };
     });
   }
 
   _buildTimerBar(W, H) {
     const TW = W - 60, y = H - 60;
-    this.add.rectangle(W / 2, y, TW + 4, 22, 0x111111);
+    // Outer border
+    const timerBorder = this.add.graphics();
+    timerBorder.fillStyle(0x000000, 0.8);
+    timerBorder.fillRoundedRect(W / 2 - TW / 2 - 3, y - 13, TW + 6, 26, 5);
+    timerBorder.fillStyle(0x1A1A2A, 1);
+    timerBorder.fillRoundedRect(W / 2 - TW / 2 - 1, y - 11, TW + 2, 22, 4);
+
     this.timerFill = this.add.rectangle(W / 2 - TW / 2, y, TW, 18, 0x44EE44).setOrigin(0, 0.5);
-    this.timerText = this.add.text(W / 2, y, '', TEXT_STYLE(13)).setOrigin(0.5).setDepth(2);
-    this._timerW   = TW;
+    // Highlight stripe
+    this.add.rectangle(W / 2 - TW / 2, y - 4, TW, 5, 0xFFFFFF, 0.1).setOrigin(0, 0.5);
+    // Glow circle (shown when timer is low)
+    this._timerGlow = this.add.circle(W / 2, y, 12, 0xFF3333, 0).setDepth(1);
+
+    this.timerText = this.add.text(W / 2, y, '', {
+      ...TEXT_STYLE(13, '#FFFFFF', true),
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(2);
+    this._timerW = TW;
   }
 
   _setupKeys() {
@@ -295,10 +364,17 @@ export default class BattleScene extends Phaser.Scene {
         this.timerFill.setDisplaySize(this._timerW * ratio, 18);
         this.timerText.setText(`${Math.ceil(remaining / 1000)}s`);
 
-        // Colour
-        if      (ratio < 0.25) this.timerFill.setFillStyle(0xEE3333);
-        else if (ratio < 0.55) this.timerFill.setFillStyle(0xEEAA33);
-        else                   this.timerFill.setFillStyle(0x44EE44);
+        // Colour + glow when low
+        if (ratio < 0.25) {
+          this.timerFill.setFillStyle(0xEE3333);
+          if (this._timerGlow) this._timerGlow.setAlpha(0.15 + 0.15 * Math.sin(elapsed * 0.008));
+        } else if (ratio < 0.55) {
+          this.timerFill.setFillStyle(0xEEAA33);
+          if (this._timerGlow) this._timerGlow.setAlpha(0);
+        } else {
+          this.timerFill.setFillStyle(0x44EE44);
+          if (this._timerGlow) this._timerGlow.setAlpha(0);
+        }
 
         if (remaining <= 0) {
           this._timerEvent.remove();
@@ -379,12 +455,18 @@ export default class BattleScene extends Phaser.Scene {
       if (this._timerEvent) this._timerEvent.remove();
     }
 
-    // Enemy bounce
+    // Enemy hit flash + bounce
+    this.enemySprite.setTint(0xFFFFFF);
+    this.time.delayedCall(100, () => this.enemySprite.clearTint());
     this.tweens.add({
       targets: this.enemySprite,
-      y: { from: this.enemySprite.y + 12, to: this.enemySprite.y },
-      duration: 120, ease: 'Power2',
+      y: { from: this.enemySprite.y + 14, to: this.enemySprite.y },
+      scaleX: { from: 1.15, to: 1 },
+      scaleY: { from: 0.85, to: 1 },
+      duration: 200, ease: 'Bounce.easeOut',
     });
+    // Screen flash on hit
+    this.cameras.main.flash(150, 255, 255, 255, false, null, null, 0.08);
 
     const label = isFast ? `⚡ Fast! −${dmg}` : `✓ Correct! −${dmg}`;
     this._showFeedback(label, isFast ? 0xFFDD00 : 0x44FF44);
@@ -424,13 +506,17 @@ export default class BattleScene extends Phaser.Scene {
     GameState.hp  = this.playerHP;
     this._updateHPBar(this.playerHPBar, this.playerHP);
 
-    // Shake Mimi
+    // Shake Mimi + red flash
     const ox = this.mimiSprite.x;
+    this.mimiSprite.setTint(0xFF4444);
+    this.time.delayedCall(200, () => this.mimiSprite.clearTint());
     this.tweens.add({
-      targets: this.mimiSprite, x: { from: ox - 10, to: ox + 10 },
-      duration: 60, yoyo: true, repeat: 3,
+      targets: this.mimiSprite, x: { from: ox - 12, to: ox + 12 },
+      duration: 50, yoyo: true, repeat: 4,
       onComplete: () => { this.mimiSprite.x = ox; },
     });
+    // Camera shake on damage
+    this.cameras.main.shake(200, 0.008);
   }
 
   _afterAnswer() {
@@ -500,7 +586,7 @@ export default class BattleScene extends Phaser.Scene {
       );
       this.effectsRow.add(
         this.add.text(x + 34, y, `${tag.icon} ${tag.label}`, {
-          fontSize: '10px', color: tag.color, fontFamily: 'Arial', fontStyle: 'bold',
+          fontSize: '10px', color: tag.color, fontFamily: FONT_UI, fontStyle: 'bold',
         }).setOrigin(0.5),
       );
     });
@@ -530,7 +616,7 @@ export default class BattleScene extends Phaser.Scene {
 
     // Header: correct answer
     add(this.add.text(W / 2, H * 0.20, `✓  Correct answer: ${ans}`, {
-      fontSize: '22px', color: '#FFD700', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '22px', color: '#FFD700', fontFamily: FONT_TITLE, fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 4,
     }).setOrigin(0.5).setDepth(D + 1));
 
@@ -541,7 +627,7 @@ export default class BattleScene extends Phaser.Scene {
 
     // Explanation text
     add(this.add.text(W / 2, H * 0.31, explanation, {
-      fontSize: '16px', color: '#DDEEFF', fontFamily: 'Arial',
+      fontSize: '16px', color: '#DDEEFF', fontFamily: FONT_UI,
       align: 'center', lineSpacing: 5,
       stroke: '#000000', strokeThickness: 2,
       wordWrap: { width: W * 0.74 },
@@ -553,7 +639,7 @@ export default class BattleScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setDepth(D + 1));
     const btnTxt = add(this.add.text(W / 2, H * 0.79, 'Got it!  →', {
-      fontSize: '19px', color: '#88CCFF', fontFamily: 'Arial', fontStyle: 'bold',
+      fontSize: '19px', color: '#88CCFF', fontFamily: FONT_UI, fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(D + 2));
 
     const dismiss = () => {
@@ -610,12 +696,40 @@ export default class BattleScene extends Phaser.Scene {
       btn.bg.removeInteractive().setVisible(false);
       btn.lbl.setVisible(false);
       btn.numLbl.setVisible(false);
+      if (btn.shadow) btn.shadow.setVisible(false);
+      if (btn.highlight) btn.highlight.setVisible(false);
     });
     if (this.timerFill) this.timerFill.setVisible(false);
     if (this.timerText) this.timerText.setVisible(false);
     if (this.feedbackText) this.feedbackText.setAlpha(0);
     if (this.streakText)   this.streakText.setAlpha(0);
     if (this.effectsRow)   this.effectsRow.setVisible(false);
+  }
+
+  /** Spawn confetti particles across the screen. */
+  _spawnConfetti(W, H) {
+    const COLORS = [0xFFD700, 0xFF4488, 0x44AAFF, 0x44FF88, 0xFF8844, 0xAA66FF, 0xFFFFFF];
+    for (let i = 0; i < 50; i++) {
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const size = Phaser.Math.FloatBetween(3, 7);
+      const x = Phaser.Math.Between(0, W);
+      const startY = Phaser.Math.Between(-60, -10);
+      const shape = Math.random() > 0.5
+        ? this.add.rectangle(x, startY, size, size * 1.5, color).setDepth(30)
+        : this.add.circle(x, startY, size / 2, color).setDepth(30);
+
+      this.tweens.add({
+        targets: shape,
+        y: H + 30,
+        x: x + Phaser.Math.Between(-80, 80),
+        angle: Phaser.Math.Between(-360, 360),
+        alpha: { from: 1, to: 0.3 },
+        duration: Phaser.Math.Between(1500, 3500),
+        delay: Phaser.Math.Between(0, 800),
+        ease: 'Sine.easeIn',
+        onComplete: () => shape.destroy(),
+      });
+    }
   }
 
   _endBattle(victory) {
@@ -628,6 +742,10 @@ export default class BattleScene extends Phaser.Scene {
     const H = this.cameras.main.height;
 
     if (victory) {
+      // Victory effects
+      this._spawnConfetti(W, H);
+      this.cameras.main.flash(400, 255, 215, 0, false, null, null, 0.15);
+
       GameState.recordBattle(true, this.battleWrongAnswers === 0, this.streak);
 
       // ── Item drop: 100% for bosses, 30% for regular enemies ──
@@ -668,7 +786,7 @@ export default class BattleScene extends Phaser.Scene {
         .setStrokeStyle(2, 0x4488FF);
 
       this.add.text(W / 2, yVictory, '⭐  Victory!  ⭐', {
-        ...TEXT_STYLE(38, '#FFD700', true), stroke: '#000', strokeThickness: 3,
+        ...TEXT_STYLE(38, '#FFD700', true), fontFamily: FONT_TITLE, stroke: '#000', strokeThickness: 3,
       }).setOrigin(0.5);
 
       // Battle accuracy
@@ -709,59 +827,82 @@ export default class BattleScene extends Phaser.Scene {
       this._makeContinueButton(W, H, 'Continue →', () => {
         GameState.save();
 
-        // Boss victory → go directly to overworld
-        if (this.isBoss) {
-          GameState.defeatBoss(this.regionId);
-          GameState.save();
-          this.scene.start('OverworldScene', { bossDefeated: true, regionId: this.regionId });
-        } else {
-          // Regular enemy → return to exploration
-          this.scene.start(this.returnScene, {
-            ...this.returnData,
-            battleResult: {
-              victory:       true,
-              enemyInstance: this.enemyInstance,
-              isBoss:        this.isBoss,
-            },
-          });
-        }
+        this.cameras.main.fadeOut(300, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          // Boss victory → go directly to overworld
+          if (this.isBoss) {
+            GameState.defeatBoss(this.regionId);
+            GameState.save();
+            this.scene.start('OverworldScene', { bossDefeated: true, regionId: this.regionId });
+          } else {
+            // Regular enemy → return to exploration
+            this.scene.start(this.returnScene, {
+              ...this.returnData,
+              battleResult: {
+                victory:       true,
+                enemyInstance: this.enemyInstance,
+                isBoss:        this.isBoss,
+              },
+            });
+          }
+        });
       }, undefined, undefined, btnYOffset);
 
     } else {
+      // Defeat effects — camera shake and dark red overlay
+      this.cameras.main.shake(500, 0.012);
+      this.cameras.main.flash(300, 180, 0, 0, false, null, null, 0.2);
+
       // Defeat — respawn with half HP
       GameState.recordBattle(false, false, this.streak);
       GameState.hp = Math.max(1, Math.ceil(GameState.maxHP / 2));
       GameState.save();
 
+      // Dark vignette overlay
+      this.add.rectangle(W / 2, H / 2, W, H, 0x110000, 0.4);
+
       this.add.rectangle(W / 2, H / 2, W * 0.78, 200, 0x220000, 0.93)
         .setStrokeStyle(2, 0x882222);
 
       this.add.text(W / 2, H / 2 - 60, '💫  Defeated…', {
-        ...TEXT_STYLE(38, '#FF6666', true), stroke: '#000', strokeThickness: 3,
+        ...TEXT_STYLE(38, '#FF6666', true), fontFamily: FONT_TITLE, stroke: '#000', strokeThickness: 3,
       }).setOrigin(0.5);
 
       this.add.text(W / 2, H / 2 - 14, 'Mimi returns to the region entrance.', TEXT_STYLE(16, '#FFAAAA')).setOrigin(0.5);
       this.add.text(W / 2, H / 2 + 14, `HP restored to ${GameState.hp}/${GameState.maxHP}`, TEXT_STYLE(14, '#FFAAAA')).setOrigin(0.5);
 
       this._makeContinueButton(W, H, 'Try Again →', () => {
-        this.scene.start(this.returnScene, {
-          ...this.returnData,
-          battleResult: { victory: false },
+        this.cameras.main.fadeOut(300, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          this.scene.start(this.returnScene, {
+            ...this.returnData,
+            battleResult: { victory: false },
+          });
         });
       }, 0x660000, 0xAA4444);
     }
   }
 
   _makeContinueButton(W, H, label, cb, bgColor = 0x003366, strokeColor = 0x4488FF, yOffset = 78) {
+    // Shadow
+    this.add.rectangle(W / 2 + 2, H / 2 + yOffset + 3, 220, 48, 0x000000, 0.4);
+
     const bg = this.add.rectangle(W / 2, H / 2 + yOffset, 220, 48, bgColor)
       .setInteractive({ useHandCursor: true })
       .setStrokeStyle(2, strokeColor);
 
+    // Top bevel highlight
+    this.add.rectangle(W / 2, H / 2 + yOffset - 10, 214, 12, 0xFFFFFF, 0.08);
+
     const txt = this.add.text(W / 2, H / 2 + yOffset, label, TEXT_STYLE(22, '#FFFFFF', true))
       .setOrigin(0.5);
 
-    bg.on('pointerover', () => bg.setAlpha(0.75));
-    bg.on('pointerout',  () => bg.setAlpha(1));
+    bg.on('pointerover', () => {
+      this.tweens.add({ targets: [bg, txt], scaleX: 1.06, scaleY: 1.06, duration: 80 });
+    });
+    bg.on('pointerout', () => {
+      this.tweens.add({ targets: [bg, txt], scaleX: 1, scaleY: 1, duration: 80 });
+    });
     bg.on('pointerdown', cb);
 
     // Also allow Enter/Space

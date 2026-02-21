@@ -66,6 +66,17 @@ export default class Enemy {
       paused:   true,
     });
 
+    // Idle bob — subtle float even when standing still
+    this._bobTween = scene.tweens.add({
+      targets:  this.sprite,
+      y:        { from: y - 3, to: y + 3 },
+      duration: Phaser.Math.Between(1200, 2000),
+      yoyo:     true,
+      repeat:   -1,
+      ease:     'Sine.easeInOut',
+      delay:    Phaser.Math.Between(0, 1000),
+    });
+
     // Two-frame walk cycle — flips between spriteKey and spriteKey_b
     this._stepFrame = 0;
     this._stepTimer = scene.time.addEvent({
@@ -192,6 +203,7 @@ export default class Enemy {
   /** Remove this enemy from the scene (after defeat). */
   destroy() {
     if (this._swayTween) this._swayTween.stop();
+    if (this._bobTween)  this._bobTween.stop();
     if (this._stepTimer) this._stepTimer.remove(false);
     this.sprite.destroy();
   }

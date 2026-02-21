@@ -1,6 +1,18 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Sand A — warm flat base, one soft sunlight bloom well inside the tile -->
-  <rect width="32" height="32" fill="#E8D4A0"/>
-  <!-- Broad, very faint highlight ellipse — centre-upper area, inset ≥6 px on all sides -->
-  <ellipse cx="19" cy="12" rx="8" ry="5" fill="#F4E5B8" opacity="0.38"/>
+  <!-- Sand A — Smooth sand with subtle wave ripples -->
+  <rect width="32" height="32" fill="#D4A044"/>
+  <!-- Lighter sand highlight wash -->
+  <ellipse cx="16" cy="14" rx="10" ry="6" fill="#E0B060" opacity="0.3"/>
+  <!-- Wave ripple lines: gentle curves suggesting wind-blown patterns -->
+  <path d="M2,8 Q8,6 16,8 Q24,10 30,8" stroke="#C49038" stroke-width="0.8" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <path d="M2,14 Q10,12 18,14 Q26,16 30,14" stroke="#C49038" stroke-width="0.8" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <path d="M2,20 Q8,18 16,20 Q24,22 30,20" stroke="#C49038" stroke-width="0.7" fill="none" opacity="0.3" stroke-linecap="round"/>
+  <path d="M2,26 Q10,24 18,26 Q26,28 30,26" stroke="#C49038" stroke-width="0.7" fill="none" opacity="0.28" stroke-linecap="round"/>
+  <!-- Subtle lighter ridges on the other side of ripples -->
+  <path d="M2,9 Q8,7 16,9 Q24,11 30,9" stroke="#E0B860" stroke-width="0.6" fill="none" opacity="0.25" stroke-linecap="round"/>
+  <path d="M2,15 Q10,13 18,15 Q26,17 30,15" stroke="#E0B860" stroke-width="0.6" fill="none" opacity="0.22" stroke-linecap="round"/>
+  <!-- Tiny sand grain specks -->
+  <circle cx="8" cy="5" r="0.5" fill="#BA8838" opacity="0.35"/>
+  <circle cx="22" cy="23" r="0.5" fill="#BA8838" opacity="0.3"/>
+  <circle cx="26" cy="11" r="0.4" fill="#E8C468" opacity="0.3"/>
 </svg>

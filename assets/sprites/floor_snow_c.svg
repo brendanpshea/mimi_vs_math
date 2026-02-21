@@ -1,18 +1,23 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Snow C  frost crystals: spiderweb crack pattern, off-white tint -->
-  <!-- Base: slightly warmer off-white -->
-  <rect width="32" height="32" fill="#D4EAF6"/>
-  <!-- Spiderweb crack hub, left-center -->
-  <circle cx="11" cy="17" r="1.5" fill="#7AAEC8" opacity="0.7"/>
-  <!-- Radiating crack lines from hub -->
-  <line x1="11" y1="17" x2="22" y2="8"  stroke="#90BCD4" stroke-width="1.2" opacity="0.55"/>
-  <line x1="11" y1="17" x2="26" y2="19" stroke="#90BCD4" stroke-width="1.2" opacity="0.50"/>
-  <line x1="11" y1="17" x2="16" y2="29" stroke="#90BCD4" stroke-width="1"   opacity="0.45"/>
-  <line x1="11" y1="17" x2="2"  y2="28" stroke="#90BCD4" stroke-width="1"   opacity="0.40"/>
-  <line x1="11" y1="17" x2="4"  y2="7"  stroke="#90BCD4" stroke-width="1"   opacity="0.40"/>
-  <!-- Frost sparkle, upper-right area -->
-  <line x1="26" y1="6"  x2="26" y2="10" stroke="#FFFFFF" stroke-width="1.2" opacity="0.85"/>
-  <line x1="24" y1="8"  x2="28" y2="8"  stroke="#FFFFFF" stroke-width="1.2" opacity="0.85"/>
-  <!-- Slushy smear, lower-right (slight grey) -->
-  <ellipse cx="25" cy="26" rx="5" ry="3" fill="#A8C0CC" opacity="0.25"/>
+  <!-- Snow C — Snow with faint footprint and drift texture -->
+  <rect width="32" height="32" fill="#B8D8EA"/>
+  <!-- Snow drift: slightly raised area upper-right -->
+  <ellipse cx="24" cy="8" rx="8" ry="5" fill="#D0E8F6" opacity="0.35"/>
+  <!-- Drift shadow underneath -->
+  <ellipse cx="24" cy="12" rx="7" ry="2" fill="#A0C4DA" opacity="0.2"/>
+  <!-- Faint footprint impression, lower-left area -->
+  <!-- Boot shape: two ovals (toe and heel) with slight depression shading -->
+  <ellipse cx="10" cy="20" rx="2.5" ry="3.5" fill="#A8CCE0" opacity="0.35" transform="rotate(-10 10 20)"/>
+  <ellipse cx="10" cy="20" rx="1.8" ry="2.8" fill="#B0D0E4" opacity="0.2" transform="rotate(-10 10 20)"/>
+  <ellipse cx="12" cy="26" rx="2" ry="2.5" fill="#A8CCE0" opacity="0.3" transform="rotate(-10 12 26)"/>
+  <ellipse cx="12" cy="26" rx="1.3" ry="1.8" fill="#B0D0E4" opacity="0.18" transform="rotate(-10 12 26)"/>
+  <!-- Subtle wind-blown texture lines -->
+  <path d="M4,14 Q8,13 12,14" stroke="#C8E0F0" stroke-width="0.6" fill="none" opacity="0.3"/>
+  <path d="M20,22 Q24,21 28,22" stroke="#C8E0F0" stroke-width="0.5" fill="none" opacity="0.25"/>
+  <!-- Small sparkle -->
+  <line x1="20" y1="16" x2="20" y2="18.5" stroke="#FFFFFF" stroke-width="0.9" opacity="0.65" stroke-linecap="round"/>
+  <line x1="18.8" y1="17.2" x2="21.2" y2="17.2" stroke="#FFFFFF" stroke-width="0.9" opacity="0.65" stroke-linecap="round"/>
+  <!-- Snow granule dots -->
+  <circle cx="16" cy="6" r="0.4" fill="#A8C8DC" opacity="0.25"/>
+  <circle cx="28" cy="28" r="0.4" fill="#FFFFFF" opacity="0.45"/>
 </svg>

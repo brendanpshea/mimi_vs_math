@@ -1,8 +1,20 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Grass B — small dirt smudge, upper-left corner -->
+  <!-- Grass B — Grass with a small pebble and bare dirt spot -->
   <rect width="32" height="32" fill="#5FA827"/>
-  <!-- Small bare-dirt smudge — noticeable but not dominant -->
-  <ellipse cx="7" cy="7" rx="4.5" ry="3" fill="#7A5010" opacity="0.50"/>
-  <!-- Faint green variation, opposite corner -->
-  <ellipse cx="26" cy="26" rx="5" ry="4" fill="#4A8A1E" opacity="0.16"/>
+  <!-- Subtle darker grass patches -->
+  <ellipse cx="6" cy="10" rx="5" ry="4" fill="#4E9020" opacity="0.22"/>
+  <ellipse cx="26" cy="26" rx="4" ry="3" fill="#4E9020" opacity="0.18"/>
+  <!-- Small bare dirt spot, center-right -->
+  <ellipse cx="20" cy="14" rx="4" ry="3" fill="#8B6B30" opacity="0.45"/>
+  <ellipse cx="20" cy="14" rx="3" ry="2" fill="#7A5C28" opacity="0.35"/>
+  <!-- Tiny pebble near dirt spot -->
+  <ellipse cx="17" cy="17" rx="1.5" ry="1.2" fill="#9A8A6A" opacity="0.6"/>
+  <ellipse cx="17" cy="16.6" rx="1.2" ry="0.7" fill="#AE9E7E" opacity="0.3"/>
+  <!-- Another small pebble -->
+  <circle cx="23" cy="18" r="1" fill="#8A7A5A" opacity="0.5"/>
+  <!-- Grass blades around dirt edge -->
+  <line x1="15" y1="13" x2="14" y2="10.5" stroke="#4A8A1E" stroke-width="0.8" stroke-linecap="round" opacity="0.6"/>
+  <line x1="24" y1="12" x2="25.5" y2="10" stroke="#6FBB30" stroke-width="0.8" stroke-linecap="round" opacity="0.5"/>
+  <!-- Lighter grass area -->
+  <ellipse cx="10" cy="24" rx="5" ry="3" fill="#6FBB30" opacity="0.15"/>
 </svg>

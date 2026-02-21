@@ -1,9 +1,24 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Grass C — two tiny weed blades, lower-right -->
+  <!-- Grass C — Grass with tiny wildflower dots and a clover detail -->
   <rect width="32" height="32" fill="#5FA827"/>
-  <!-- Two short pale weed blades (subtle, not dominant) -->
-  <line x1="24" y1="26" x2="22" y2="22" stroke="#368010" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
-  <line x1="24" y1="26" x2="26" y2="21" stroke="#3A8818" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
-  <!-- Faint lighter patch, upper area -->
-  <ellipse cx="12" cy="8" rx="6" ry="4" fill="#6FC830" opacity="0.14"/>
+  <!-- Subtle tonal variation -->
+  <ellipse cx="22" cy="10" rx="6" ry="5" fill="#4E9020" opacity="0.2"/>
+  <ellipse cx="8" cy="24" rx="5" ry="4" fill="#6FBB30" opacity="0.15"/>
+  <!-- Clover detail: three small leaves in a cluster, center-left -->
+  <circle cx="10" cy="15" r="1.4" fill="#3D8B18" opacity="0.7"/>
+  <circle cx="12" cy="14" r="1.4" fill="#3D8B18" opacity="0.7"/>
+  <circle cx="11" cy="16.5" r="1.4" fill="#3D8B18" opacity="0.7"/>
+  <!-- Tiny clover stem -->
+  <line x1="11" y1="17.5" x2="11.5" y2="20" stroke="#3D8B18" stroke-width="0.7" stroke-linecap="round" opacity="0.6"/>
+  <!-- Wildflower dots: tiny colorful circles -->
+  <circle cx="22" cy="20" r="1" fill="#E8E850" opacity="0.7"/>
+  <circle cx="22" cy="20" r="0.5" fill="#FFFFFF" opacity="0.5"/>
+  <circle cx="7" cy="8" r="0.9" fill="#D85088" opacity="0.6"/>
+  <circle cx="7" cy="8" r="0.4" fill="#FFFFFF" opacity="0.4"/>
+  <circle cx="26" cy="12" r="0.8" fill="#9060D0" opacity="0.55"/>
+  <circle cx="18" cy="26" r="0.9" fill="#E8E850" opacity="0.6"/>
+  <circle cx="18" cy="26" r="0.4" fill="#FFFFFF" opacity="0.4"/>
+  <!-- Grass blades -->
+  <line x1="16" y1="10" x2="15" y2="7.5" stroke="#4A8A1E" stroke-width="0.8" stroke-linecap="round" opacity="0.5"/>
+  <line x1="27" y1="24" x2="28.5" y2="21.5" stroke="#6FBB30" stroke-width="0.8" stroke-linecap="round" opacity="0.45"/>
 </svg>

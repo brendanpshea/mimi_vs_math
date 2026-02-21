@@ -7,6 +7,14 @@
 
 const SAVE_KEY = 'mimi_vs_math_save';
 
+/**
+ * Bump this whenever region enemy layouts change (spawns added/removed/reordered).
+ * On load, if the stored version doesn't match, defeatedEnemies is cleared so
+ * stale keys from old configs can't keep boss doors permanently locked.
+ * All other progress (stats, inventory, bosses, currentRegion) is preserved.
+ */
+const SAVE_VERSION = 2;
+
 const GameState = {
   // ── Player stats ──────────────────────────────────────────────────────
   hp: 12,
@@ -54,6 +62,7 @@ const GameState = {
 
   save() {
     const data = {
+      saveVersion:     SAVE_VERSION,
       hp:              this.hp,
       maxHP:           this.maxHP,
       stats:           this.stats,
@@ -82,6 +91,13 @@ const GameState = {
       delete this.xp;
       delete this.level;
       delete this.mathPower;
+      // Version migration: if the save predates the current enemy layout,
+      // clear defeatedEnemies so stale keys can't lock boss doors forever.
+      // All other progress (stats, bosses, inventory, region) is kept.
+      if ((data.saveVersion ?? 0) !== SAVE_VERSION) {
+        this.defeatedEnemies = {};
+        this.save();  // write the migrated save immediately
+      }
       return true;
     } catch {
       return false;

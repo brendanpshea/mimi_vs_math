@@ -4,7 +4,10 @@
  *
  * Uses WALK_GRIDS — the exact blocked-tile Sets produced by the procedural
  * map generator — to run BFS from mimiStart and assert that every key
- * position (enemies, NPC, chest, boss) is reachable.
+ * position (enemies, NPC, boss) is reachable.
+ *
+ * Note: chestTile is intentionally excluded. It was removed from the MST
+ * so the SE corner no longer gets a carved glade or connecting corridor.
  *
  * Run with:  node test_connectivity.mjs
  */
@@ -91,10 +94,6 @@ for (const region of REGIONS) {
   // Boss tile
   assert(canReach(region.bossTile),
     `boss (col ${region.bossTile.col}, row ${region.bossTile.row}) reachable`);
-
-  // Chest tile
-  assert(canReach(region.chestTile),
-    `chest (col ${region.chestTile.col}, row ${region.chestTile.row}) reachable`);
 
   // NPC tile
   assert(canReach(region.npcTile),

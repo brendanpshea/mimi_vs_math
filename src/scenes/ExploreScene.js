@@ -45,6 +45,11 @@ export default class ExploreScene extends Phaser.Scene {
     // Restore NPC position from before the battle (so the wizard doesn’t reset)
     this._returnNpcX = isDefeat ? null : (data?.npcX ?? null);
     this._returnNpcY = isDefeat ? null : (data?.npcY ?? null);
+    // Phaser reuses the same scene instance across scene.start() calls, so
+    // instance properties set in a previous run persist into the next.
+    // Explicitly reset every flag that guards per-run behaviour.
+    this._bossBattleStarted = false;
+    this._bossOpen          = false;
   }
 
   create() {
@@ -490,8 +495,13 @@ export default class ExploreScene extends Phaser.Scene {
     this._doorDeco.clear();
 
     if (this._bossOpen) {
-      // Disable the physics body so Mimi can walk through
-      if (this._doorBodyRect?.body) this._doorBodyRect.body.enable = false;
+      // Disable the physics body so Mimi can walk through.
+      // Use all available mechanisms: enable flag + checkCollision.none + group refresh.
+      if (this._doorBodyRect?.body) {
+        this._doorBodyRect.body.enable = false;
+        this._doorBodyRect.body.checkCollision.none = true;
+        this._doorGroup.refresh();
+      }
 
       // Purple portal glow
       this._doorFill.fillStyle(0x110022);
@@ -515,7 +525,11 @@ export default class ExploreScene extends Phaser.Scene {
 
     } else {
       // Re-enable physics body if it was disabled (shouldn't happen, but safe)
-      if (this._doorBodyRect?.body) this._doorBodyRect.body.enable = true;
+      if (this._doorBodyRect?.body) {
+        this._doorBodyRect.body.enable = true;
+        this._doorBodyRect.body.checkCollision.none = false;
+        this._doorGroup.refresh();
+      }
 
       // Stone door fill
       this._doorFill.fillStyle(0x2A2A36);
@@ -689,7 +703,8 @@ export default class ExploreScene extends Phaser.Scene {
       const { px, py } = this._doorGeom;
       const dx = this.mimi.x - px;
       const dy = this.mimi.y - py;
-      if (dx * dx + dy * dy < 40 * 40) {
+      const dist2 = dx * dx + dy * dy;
+      if (dist2 < 40 * 40) {
         this._startBossBattle();
       }
     }

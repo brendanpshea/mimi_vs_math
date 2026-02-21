@@ -5,7 +5,12 @@
  *
  * Tests the exact key format ExploreScene uses and the GameState tracking,
  * without needing a browser or Phaser.
+ *
+ * REGIONS is imported from the real data file so enemy counts can never
+ * silently drift out of sync with these tests.
  */
+
+import REGIONS from './src/data/regions.js';
 
 // ── Minimal GameState stub ─────────────────────────────────────────────────
 const GameState = {
@@ -28,42 +33,6 @@ const GameState = {
     this.defeatedBosses  = [];
   },
 };
-
-// ── Region stub (mirrors regions.js enemySpawns format) ─────────────────────
-const REGIONS = [
-  { // Region 0 — 5 enemies (3 native + 2 harder reviews)
-    enemySpawns: [
-      { id: 'counting_caterpillar' },   // 0
-      { id: 'number_gnome'         },   // 1
-      { id: 'minus_mole'           },   // 2
-      { id: 'counting_caterpillar' },   // 3  D2 review
-      { id: 'number_gnome'         },   // 4  D1 review
-    ],
-    boss: 'subtraction_witch',
-  },
-  { // Region 1 — 6 enemies (3 native + 3 D3 reviews from R0)
-    enemySpawns: [
-      { id: 'slime_pup'            },   // 0
-      { id: 'cactus_sprite'        },   // 1
-      { id: 'cloud_bully'          },   // 2
-      { id: 'counting_caterpillar' },   // 3  R0 review
-      { id: 'number_gnome'         },   // 4  R0 review
-      { id: 'minus_mole'           },   // 5  R0 review
-    ],
-    boss: 'count_multiplico',
-  },
-  { // Region 2 — 6 enemies (3 native + 3 D3 reviews from R1)
-    enemySpawns: [
-      { id: 'sand_scarab'   },          // 0
-      { id: 'mummy_cat'     },          // 1
-      { id: 'mirage_fox'    },          // 2
-      { id: 'slime_pup'     },          // 3  R1 review
-      { id: 'cactus_sprite' },          // 4  R1 review
-      { id: 'cloud_bully'   },          // 5  R1 review
-    ],
-    boss: 'the_diviner',
-  },
-];
 
 // ── Reproduces ExploreScene's key formula: spawn.id + index ─────────────────
 function instanceKey(regionId, slotIndex) {
@@ -106,8 +75,11 @@ test('instanceKey region 0 produces correct keys', () => {
   assertEqual(instanceKey(0, 0), 'counting_caterpillar0');
   assertEqual(instanceKey(0, 1), 'number_gnome1');
   assertEqual(instanceKey(0, 2), 'minus_mole2');
-  assertEqual(instanceKey(0, 3), 'counting_caterpillar3'); // review spawn
-  assertEqual(instanceKey(0, 4), 'number_gnome4');          // review spawn
+  assertEqual(instanceKey(0, 3), 'counting_caterpillar3'); // D2 review
+  assertEqual(instanceKey(0, 4), 'number_gnome4');          // D1 south guard
+  assertEqual(instanceKey(0, 5), 'minus_mole5');            // D1 SE patrol
+  // Verify count matches the live data
+  assertEqual(REGIONS[0].enemySpawns.length, 6, 'R0 should have 6 spawns');
 });
 
 test('instanceKey region 1 produces correct keys', () => {
@@ -117,6 +89,9 @@ test('instanceKey region 1 produces correct keys', () => {
   assertEqual(instanceKey(1, 3), 'counting_caterpillar3'); // R0 review
   assertEqual(instanceKey(1, 4), 'number_gnome4');          // R0 review
   assertEqual(instanceKey(1, 5), 'minus_mole5');            // R0 review
+  assertEqual(instanceKey(1, 6), 'slime_pup6');             // D1 north patrol
+  // Verify count matches the live data
+  assertEqual(REGIONS[1].enemySpawns.length, 7, 'R1 should have 7 spawns');
 });
 
 test('instanceKey region 2 produces correct keys', () => {
@@ -126,6 +101,9 @@ test('instanceKey region 2 produces correct keys', () => {
   assertEqual(instanceKey(2, 3), 'slime_pup3');    // R1 review
   assertEqual(instanceKey(2, 4), 'cactus_sprite4');// R1 review
   assertEqual(instanceKey(2, 5), 'cloud_bully5');  // R1 review
+  assertEqual(instanceKey(2, 6), 'sand_scarab6');  // D1 north patrol
+  // Verify count matches the live data
+  assertEqual(REGIONS[2].enemySpawns.length, 7, 'R2 should have 7 spawns');
 });
 
 console.log('\ndefeatEnemy / isEnemyDefeated round-trip');
@@ -144,31 +122,28 @@ test('region 1 keys do not collide with region 0', () => {
 
 console.log('\nremainingEnemyCount logic');
 
-test('all 6 alive at start (region 1)', () => {
-  assertEqual(remainingEnemyCount(1), 6);
+test('all enemies alive at start (region 1)', () => {
+  const expected = REGIONS[1].enemySpawns.length;
+  assertEqual(remainingEnemyCount(1), expected);
 });
 
 test('count decreases as enemies die (region 1)', () => {
-  GameState.defeatEnemy(1, 'slime_pup0');
-  assertEqual(remainingEnemyCount(1), 5);
-  GameState.defeatEnemy(1, 'cactus_sprite1');
-  assertEqual(remainingEnemyCount(1), 4);
-  GameState.defeatEnemy(1, 'cloud_bully2');
-  assertEqual(remainingEnemyCount(1), 3);
-  GameState.defeatEnemy(1, 'counting_caterpillar3');
-  assertEqual(remainingEnemyCount(1), 2);
-  GameState.defeatEnemy(1, 'number_gnome4');
-  assertEqual(remainingEnemyCount(1), 1);
-  GameState.defeatEnemy(1, 'minus_mole5');
-  assertEqual(remainingEnemyCount(1), 0);
+  const spawns = REGIONS[1].enemySpawns;
+  for (let i = 0; i < spawns.length; i++) {
+    GameState.defeatEnemy(1, instanceKey(1, i));
+    assertEqual(remainingEnemyCount(1), spawns.length - (i + 1),
+      `after defeating spawn ${i}`);
+  }
+  assertEqual(remainingEnemyCount(1), 0, 'all defeated — count must be 0');
 });
 
 test('count in region 1 unaffected by region 0 defeats', () => {
-  // Defeat all 6 region-0 enemies using region-0 keys
+  // Defeat all region-0 enemies using region-0 keys
   for (let i = 0; i < REGIONS[0].enemySpawns.length; i++) {
     GameState.defeatEnemy(0, instanceKey(0, i));
   }
-  assertEqual(remainingEnemyCount(1), 6, 'region 1 should still show 6 alive');
+  const expected = REGIONS[1].enemySpawns.length;
+  assertEqual(remainingEnemyCount(1), expected, `region 1 should still show ${expected} alive`);
 });
 
 console.log('\njustUnlocked logic (the bug under test)');

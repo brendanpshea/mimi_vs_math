@@ -87,7 +87,6 @@ export default class ExploreScene extends Phaser.Scene {
     // Game objects
     this._setupEnemies();
     this._setupNPC();
-    this._setupChest();
     this._setupBossDoor();
 
     // UI (scrollFactor(0) set inside these classes)
@@ -173,7 +172,7 @@ export default class ExploreScene extends Phaser.Scene {
    * Place hand-designed decorations from maps.js.
    *
    * - Runtime clearance guard: skips any item that lands within CLEAR_R tiles
-   *   of a key game position (Mimi spawn, NPC, enemies, chest, boss).  This
+   *   of a key game position (Mimi spawn, NPC, enemies, boss).  This
    *   is a safety net on top of the hand-designed layouts so enemies / NPCs
    *   can never be obscured or physically blocked by a decoration.
    * - Deduplicates same-tile positions so rocks and trees never stack.
@@ -191,7 +190,6 @@ export default class ExploreScene extends Phaser.Scene {
     const keyPositions = [
       this.regionData.mimiStart,
       this.regionData.npcTile,
-      this.regionData.chestTile,
       this.regionData.bossTile,
       ...this.regionData.enemySpawns.map(s => ({ col: s.col, row: s.row })),
     ];
@@ -603,45 +601,6 @@ export default class ExploreScene extends Phaser.Scene {
       },
     );
     this._npc.registerOverlap(this.mimi.sprite);
-  }
-
-  //  Treasure chest 
-
-  _setupChest() {
-    if (GameState.isEnemyDefeated(this.regionId, 'chest')) return;
-
-    const px = tx(this.regionData.chestTile.col);
-    const py = ty(this.regionData.chestTile.row);
-    const chest = this.add.image(px, py, 'tile_chest').setDepth(8);
-
-    const zone = this.add.zone(px, py, 40, 40).setDepth(5);
-    this.physics.world.enable(zone);
-    zone.body.setAllowGravity(false);
-
-    const items = ['sardine', 'yarn_ball', 'catnip', 'lucky_collar', 'fish_fossil'];
-    let opened = false;
-
-    this.physics.add.overlap(this.mimi.sprite, zone, () => {
-      if (opened) return;
-      opened = true;
-      const item = items[Phaser.Math.Between(0, items.length - 1)];
-      GameState.addItem(item);
-      GameState.defeatEnemy(this.regionId, 'chest');
-      chest.setTint(0x666666);
-
-      const ITEM_NAMES = {
-        sardine:       'Sardine  (+2 HP)',
-        yarn_ball:     'Yarn Ball  (+5s timer)',
-        catnip:        'Catnip  (double hit)',
-        lucky_collar:  'Lucky Collar  (shield)',
-        fish_fossil:   'Fish Fossil  (hint)',
-      };
-      this.dialog.show(
-        `You opened a chest!\nFound: ${ITEM_NAMES[item]}`,
-        null, ' Treasure!',
-      );
-      this.hud.refresh();
-    });
   }
 
   //  Scene lifecycle 

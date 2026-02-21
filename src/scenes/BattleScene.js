@@ -621,34 +621,81 @@ export default class BattleScene extends Phaser.Scene {
       const xpGain  = this.enemyData.xp ?? 10;
       const levelUp = GameState.addXP(xpGain);
 
-      // Victory overlay
-      this.add.rectangle(W / 2, H / 2, W * 0.78, 230, 0x000033, 0.93)
+      // ── Item drop: 100% for bosses, 30% for regular enemies ──
+      const ITEM_IDS    = Object.keys(ITEMS);
+      const dropChance  = this.isBoss ? 1.0 : 0.30;
+      const droppedItem = Math.random() < dropChance
+        ? ITEM_IDS[Phaser.Math.Between(0, ITEM_IDS.length - 1)]
+        : null;
+      if (droppedItem) GameState.addItem(droppedItem);
+
+      // ── Build victory overlay with a flowing y cursor ──────────────────
+      // First pass: measure how many optional lines appear so we can size
+      // the overlay and centre everything before drawing.
+      let nextY = H / 2 - 80; // top of content
+
+      // Reserve space for fixed lines
+      const yVictory = nextY;       nextY += 52;  // "Victory!"
+      const yXP      = nextY;       nextY += 34;  // "+XP"
+
+      let yLevelUp = null;
+      if (levelUp)          { yLevelUp = nextY; nextY += 28; }
+
+      let yStreak = null;
+      if (this.streak >= 5) { yStreak  = nextY; nextY += 26; }
+
+      let yBoss = null;
+      if (this.isBoss)      { yBoss    = nextY; nextY += 24; }
+
+      let yItemTitle = null, yItemDesc = null;
+      if (droppedItem) {
+        nextY += 8;             // visual gap before item section
+        yItemTitle = nextY; nextY += 22;
+        yItemDesc  = nextY; nextY += 20;
+      }
+
+      const btnY     = nextY + 18;   // centre of Continue button
+      const overlayH = (btnY + 30) - (H / 2 - 80 - 14) + 14; // top-pad + content + bottom-pad
+      const overlayY = (H / 2 - 80 - 14) + overlayH / 2;     // re-centre rectangle
+
+      this.add.rectangle(W / 2, overlayY, W * 0.78, overlayH, 0x000033, 0.93)
         .setStrokeStyle(2, 0x4488FF);
 
-      this.add.text(W / 2, H / 2 - 72, '⭐  Victory!  ⭐', {
+      this.add.text(W / 2, yVictory, '⭐  Victory!  ⭐', {
         ...TEXT_STYLE(38, '#FFD700', true), stroke: '#000', strokeThickness: 3,
       }).setOrigin(0.5);
 
-      this.add.text(W / 2, H / 2 - 24, `+${xpGain} XP`, TEXT_STYLE(22, '#AAFFCC')).setOrigin(0.5);
+      this.add.text(W / 2, yXP, `+${xpGain} XP`, TEXT_STYLE(22, '#AAFFCC')).setOrigin(0.5);
 
-      if (levelUp) {
-        this.add.text(W / 2, H / 2 + 14, `Level Up! Now Level ${GameState.level} 🎉`, TEXT_STYLE(18, '#FFDD44')).setOrigin(0.5);
+      if (yLevelUp !== null) {
+        this.add.text(W / 2, yLevelUp, `Level Up! Now Level ${GameState.level} 🎉`, TEXT_STYLE(18, '#FFDD44')).setOrigin(0.5);
       }
 
-      // Streak celebration
-      if (this.streak >= 5) {
-        this.add.text(W / 2, H / 2 + (levelUp ? 44 : 20), `🔥 Incredible ${this.streak}-streak!`, TEXT_STYLE(16, '#FF9900')).setOrigin(0.5);
+      if (yStreak !== null) {
+        this.add.text(W / 2, yStreak, `🔥 Incredible ${this.streak}-streak!`, TEXT_STYLE(16, '#FF9900')).setOrigin(0.5);
       }
 
-      // Boss victory message
-      if (this.isBoss) {
-        const yPos = H / 2 + (this.streak >= 5 ? 70 : (levelUp ? 50 : 35));
-        this.add.text(W / 2, yPos, 'The path to the next region is open!', TEXT_STYLE(14, '#88FFAA')).setOrigin(0.5);
+      if (yBoss !== null) {
+        this.add.text(W / 2, yBoss, 'The path to the next region is open!', TEXT_STYLE(14, '#88FFAA')).setOrigin(0.5);
       }
 
+      // Item drop notification
+      if (droppedItem && yItemTitle !== null) {
+        const itm = ITEMS[droppedItem];
+        this.add.text(W / 2, yItemTitle,
+          `🎁 ${itm.emoji} ${itm.name} dropped!`,
+          TEXT_STYLE(15, '#FFE88A', true),
+        ).setOrigin(0.5);
+        this.add.text(W / 2, yItemDesc,
+          itm.description,
+          TEXT_STYLE(12, '#CCDDFF'),
+        ).setOrigin(0.5);
+      }
+
+      const btnYOffset = btnY - H / 2;
       this._makeContinueButton(W, H, 'Continue →', () => {
         GameState.save();
-        
+
         // Boss victory → go directly to overworld
         if (this.isBoss) {
           GameState.defeatBoss(this.regionId);
@@ -666,7 +713,7 @@ export default class BattleScene extends Phaser.Scene {
             },
           });
         }
-      });
+      }, undefined, undefined, btnYOffset);
 
     } else {
       // Defeat — respawn with half HP
@@ -692,12 +739,12 @@ export default class BattleScene extends Phaser.Scene {
     }
   }
 
-  _makeContinueButton(W, H, label, cb, bgColor = 0x003366, strokeColor = 0x4488FF) {
-    const bg = this.add.rectangle(W / 2, H / 2 + 78, 220, 48, bgColor)
+  _makeContinueButton(W, H, label, cb, bgColor = 0x003366, strokeColor = 0x4488FF, yOffset = 78) {
+    const bg = this.add.rectangle(W / 2, H / 2 + yOffset, 220, 48, bgColor)
       .setInteractive({ useHandCursor: true })
       .setStrokeStyle(2, strokeColor);
 
-    const txt = this.add.text(W / 2, H / 2 + 78, label, TEXT_STYLE(22, '#FFFFFF', true))
+    const txt = this.add.text(W / 2, H / 2 + yOffset, label, TEXT_STYLE(22, '#FFFFFF', true))
       .setOrigin(0.5);
 
     bg.on('pointerover', () => bg.setAlpha(0.75));

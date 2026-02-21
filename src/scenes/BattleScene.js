@@ -706,6 +706,32 @@ export default class BattleScene extends Phaser.Scene {
     if (this.effectsRow)   this.effectsRow.setVisible(false);
   }
 
+  /** Spawn confetti particles across the screen. */
+  _spawnConfetti(W, H) {
+    const COLORS = [0xFFD700, 0xFF4488, 0x44AAFF, 0x44FF88, 0xFF8844, 0xAA66FF, 0xFFFFFF];
+    for (let i = 0; i < 50; i++) {
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const size = Phaser.Math.FloatBetween(3, 7);
+      const x = Phaser.Math.Between(0, W);
+      const startY = Phaser.Math.Between(-60, -10);
+      const shape = Math.random() > 0.5
+        ? this.add.rectangle(x, startY, size, size * 1.5, color).setDepth(30)
+        : this.add.circle(x, startY, size / 2, color).setDepth(30);
+
+      this.tweens.add({
+        targets: shape,
+        y: H + 30,
+        x: x + Phaser.Math.Between(-80, 80),
+        angle: Phaser.Math.Between(-360, 360),
+        alpha: { from: 1, to: 0.3 },
+        duration: Phaser.Math.Between(1500, 3500),
+        delay: Phaser.Math.Between(0, 800),
+        ease: 'Sine.easeIn',
+        onComplete: () => shape.destroy(),
+      });
+    }
+  }
+
   _endBattle(victory) {
     this.battleOver = true;
     if (this._timerEvent) this._timerEvent.remove();
@@ -716,6 +742,10 @@ export default class BattleScene extends Phaser.Scene {
     const H = this.cameras.main.height;
 
     if (victory) {
+      // Victory effects
+      this._spawnConfetti(W, H);
+      this.cameras.main.flash(400, 255, 215, 0, false, null, null, 0.15);
+
       GameState.recordBattle(true, this.battleWrongAnswers === 0, this.streak);
 
       // ── Item drop: 100% for bosses, 30% for regular enemies ──
@@ -819,10 +849,17 @@ export default class BattleScene extends Phaser.Scene {
       }, undefined, undefined, btnYOffset);
 
     } else {
+      // Defeat effects — camera shake and dark red overlay
+      this.cameras.main.shake(500, 0.012);
+      this.cameras.main.flash(300, 180, 0, 0, false, null, null, 0.2);
+
       // Defeat — respawn with half HP
       GameState.recordBattle(false, false, this.streak);
       GameState.hp = Math.max(1, Math.ceil(GameState.maxHP / 2));
       GameState.save();
+
+      // Dark vignette overlay
+      this.add.rectangle(W / 2, H / 2, W, H, 0x110000, 0.4);
 
       this.add.rectangle(W / 2, H / 2, W * 0.78, 200, 0x220000, 0.93)
         .setStrokeStyle(2, 0x882222);

@@ -100,7 +100,7 @@ const ACCENT_LAYERS = [
   ],
   [ // R1 — Meadow Maze: mushroom groves + lily clusters
     { key: 'decoration_mushroom', freq: 0.10, threshold: 0.80, seed: 300 },
-    { key: 'decoration_lily',     freq: 0.14, threshold: 0.84, seed: 400 },
+    { key: 'decoration_clover',   freq: 0.14, threshold: 0.84, seed: 400 },
   ],
   [ // R2 — Desert Dunes: bone fields + tumbleweeds
     { key: 'decoration_bones',       freq: 0.11, threshold: 0.82, seed: 500 },

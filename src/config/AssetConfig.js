@@ -143,7 +143,7 @@ export const TERRAIN_DEFS = [
   { key: 'decoration_well',        file: 'decoration_well',        size: { width: 32, height: 40 } },
   // New decorations — Region 1 (Meadow)
   { key: 'decoration_vine',        file: 'decoration_vine',        size: { width: 32, height: 48 } },
-  { key: 'decoration_lily',        file: 'decoration_lily',        size: 32 },
+  { key: 'decoration_clover',      file: 'decoration_clover',      size: 32 },
   // New decorations — Region 2 (Desert)
   { key: 'decoration_bones',       file: 'decoration_bones',       size: 32 },
   { key: 'decoration_tumbleweed',  file: 'decoration_tumbleweed',  size: 32 },

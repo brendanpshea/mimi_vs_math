@@ -91,6 +91,9 @@ export default class ExploreScene extends Phaser.Scene {
     this._setupNPC();
     this._setupBossDoor();
 
+    // Ambient particles
+    this._createAmbientParticles();
+
     // UI (scrollFactor(0) set inside these classes)
     this.hud    = new HUD(this, this.regionData.name);
     this.dialog = new DialogBox(this);
@@ -597,7 +600,55 @@ export default class ExploreScene extends Phaser.Scene {
     this._npc.registerOverlap(this.mimi.sprite);
   }
 
-  //  Scene lifecycle 
+  // ── Ambient particles ──────────────────────────────────────────────────
+
+  _createAmbientParticles() {
+    const worldW = MAP_W * T;
+    const worldH = MAP_H * T;
+    const PARTICLE_COUNT = 40;
+
+    // Region-themed particle configs
+    const configs = [
+      // R0 Sunny Village — floating leaves and pollen
+      { colors: [0x88CC44, 0xAADD66, 0xFFDD44], sizeMin: 2, sizeMax: 4, speedY: [8, 25], speedX: [-12, 12], alpha: [0.3, 0.7] },
+      // R1 Meadow Maze — fireflies and pollen
+      { colors: [0xFFFFAA, 0xAAFF88, 0xFFEE66], sizeMin: 1.5, sizeMax: 3.5, speedY: [-8, 8], speedX: [-6, 6], alpha: [0.2, 0.8] },
+      // R2 Desert Dunes — sand particles
+      { colors: [0xD4A044, 0xE8C868, 0xC89838], sizeMin: 1, sizeMax: 3, speedY: [5, 15], speedX: [10, 30], alpha: [0.2, 0.5] },
+      // R3 Frostbite Cavern — snowflakes
+      { colors: [0xFFFFFF, 0xCCEEFF, 0xAADDFF], sizeMin: 2, sizeMax: 5, speedY: [10, 30], speedX: [-8, 8], alpha: [0.3, 0.8] },
+      // R4 Shadow Castle — purple magic motes
+      { colors: [0x9944FF, 0xBB66FF, 0x6622CC], sizeMin: 1.5, sizeMax: 4, speedY: [-15, 15], speedX: [-10, 10], alpha: [0.2, 0.7] },
+    ];
+    const cfg = configs[this.regionId] ?? configs[0];
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const color = cfg.colors[Math.floor(Math.random() * cfg.colors.length)];
+      const size = Phaser.Math.FloatBetween(cfg.sizeMin, cfg.sizeMax);
+      const alpha = Phaser.Math.FloatBetween(cfg.alpha[0], cfg.alpha[1]);
+
+      const px = Phaser.Math.Between(0, worldW);
+      const py = Phaser.Math.Between(0, worldH);
+      const particle = this.add.circle(px, py, size, color, alpha).setDepth(20);
+
+      const vx = Phaser.Math.FloatBetween(cfg.speedX[0], cfg.speedX[1]);
+      const vy = Phaser.Math.FloatBetween(cfg.speedY[0], cfg.speedY[1]);
+
+      // Drift + fade cycle
+      this.tweens.add({
+        targets: particle,
+        x: particle.x + vx * 20,
+        y: particle.y + vy * 20,
+        alpha: { from: alpha, to: alpha * 0.2 },
+        duration: Phaser.Math.Between(4000, 9000),
+        yoyo: true,
+        repeat: -1,
+        delay: Phaser.Math.Between(0, 3000),
+      });
+    }
+  }
+
+  //  Scene lifecycle
 
   update() {
     if (this.dialog.isOpen) {

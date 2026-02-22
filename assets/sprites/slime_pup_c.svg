@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!--
+    Slime Pup – frame C (mid-lean, between A and B).
+    Blob outline and tendrils shifted halfway toward the left lean of frame B.
+    TINT ZONE: slime fill (#44BB22) responds to setTint().
+  -->
+  <!-- Acid pool shadow -->
+  <ellipse cx="32" cy="59" rx="24" ry="5" fill="#2A7000" opacity="0.35"/>
+
+  <!-- === DRIP TENDRILS (midpoint shift: cx between A and B) === -->
+  <ellipse cx="14" cy="56" rx="5" ry="7" fill="#44BB22" stroke="#0A2200" stroke-width="2.5"/>
+  <ellipse cx="30" cy="58" rx="4" ry="6" fill="#44BB22" stroke="#0A2200" stroke-width="2.5"/>
+  <ellipse cx="46" cy="56" rx="5" ry="7" fill="#44BB22" stroke="#0A2200" stroke-width="2.5"/>
+
+  <!-- === MAIN BODY (slight lean left — between A:cx=32 and B:cx=30) === -->
+  <path d="M7,42 Q3,26 11,15 Q19,5 31,4 Q43,5 51,15 Q59,25 56,41 Q54,56 31,59 Q9,57 7,42 Z"
+        fill="#44BB22" stroke="#0A2200" stroke-width="3.5"/>
+  <!-- Glossy highlight (shifted toward B) -->
+  <ellipse cx="22" cy="15" rx="10" ry="6" fill="#88EE44" opacity="0.45"/>
+
+  <!-- === ANTENNAE (mid-shift) === -->
+  <line x1="20" y1="7" x2="14" y2="1" stroke="#0A2200" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="7" x2="46" y2="1" stroke="#0A2200" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="14" cy="1" r="3.5" fill="#AAFF44" stroke="#0A2200" stroke-width="2"/>
+  <circle cx="46" cy="1" r="3.5" fill="#AAFF44" stroke="#0A2200" stroke-width="2"/>
+
+  <!-- === EYES (shifted slightly with body lean) === -->
+  <ellipse cx="21" cy="26" rx="8" ry="7" fill="#0A2200"/>
+  <ellipse cx="41" cy="26" rx="8" ry="7" fill="#0A2200"/>
+  <!-- Iris (toxic orange) -->
+  <ellipse cx="21" cy="26" rx="5.5" ry="5" fill="#FF7700"/>
+  <ellipse cx="41" cy="26" rx="5.5" ry="5" fill="#FF7700"/>
+  <!-- Slit pupils -->
+  <ellipse cx="21" cy="26" rx="1.5" ry="4" fill="#0A2200"/>
+  <ellipse cx="41" cy="26" rx="1.5" ry="4" fill="#0A2200"/>
+  <!-- Eye shine -->
+  <circle cx="23" cy="23" r="2" fill="#FFEE44" opacity="0.7"/>
+  <circle cx="43" cy="23" r="2" fill="#FFEE44" opacity="0.7"/>
+  <!-- Angry brows -->
+  <line x1="13" y1="19" x2="21" y2="22" stroke="#0A2200" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="49" y1="19" x2="41" y2="22" stroke="#0A2200" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- === MOUTH (mid-shift) === -->
+  <path d="M14,42 Q30,52 46,42" fill="#1A5A08" stroke="#0A2200" stroke-width="2.5"/>
+  <!-- Bold triangular teeth -->
+  <polygon points="18,42 21,36 24,42" fill="white" stroke="#0A2200" stroke-width="1.5"/>
+  <polygon points="26,43 29,36 32,43" fill="white" stroke="#0A2200" stroke-width="1.5"/>
+  <polygon points="34,43 37,36 40,43" fill="white" stroke="#0A2200" stroke-width="1.5"/>
+  <polygon points="42,42 45,37 47,42" fill="white" stroke="#0A2200" stroke-width="1.5"/>
+
+  <!-- Drool drips (mid-shift) -->
+  <line x1="24" y1="48" x2="22" y2="56" stroke="#88EE44" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+  <line x1="36" y1="50" x2="35" y2="58" stroke="#88EE44" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+</svg>

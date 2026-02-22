@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!--
+    Minus Mole – frame C (mid-waddle, between A and B).
+    Left claw rising, right claw lowering. Feet at intermediate positions.
+    TINT ZONE: fur fill (#996644) responds to setTint().
+  -->
+  <!-- Ground shadow + dirt mounds -->
+  <ellipse cx="32" cy="61" rx="24" ry="3.5" fill="#00000030"/>
+  <ellipse cx="14" cy="59" r="5" fill="#8A6633" opacity="0.3"/>
+  <ellipse cx="52" cy="59" r="4" fill="#8A6633" opacity="0.3"/>
+
+  <!-- === FEET (mid-waddle: left slightly forward, right slightly back) === -->
+  <ellipse cx="20" cy="58" rx="8" ry="4.5" fill="#775533" stroke="#1A0A00" stroke-width="3"/>
+  <ellipse cx="44" cy="57" rx="8" ry="4.5" fill="#775533" stroke="#1A0A00" stroke-width="3"/>
+
+  <!-- === BODY (identical) === -->
+  <ellipse cx="32" cy="44" rx="20" ry="14" fill="#996644" stroke="#1A0A00" stroke-width="3"/>
+  <ellipse cx="32" cy="46" rx="12" ry="8" fill="#553322" stroke="#1A0A00" stroke-width="2.5"/>
+  <rect x="23" y="44" width="18" height="5" rx="2.5" fill="#EE3333" stroke="#1A0A00" stroke-width="2"/>
+
+  <!-- === LEFT CLAW (between A:cy=44 and B:cy=40 — at cy=42, mid-rising) === -->
+  <ellipse cx="8" cy="42" rx="8" ry="6" fill="#996644" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="2,48 0,57 6,48" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="7,49 6,59 12,49" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="12,48 12,57 17,48" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
+
+  <!-- === RIGHT CLAW (between A:cy=44 and B:cy=48 — at cy=46, mid-lowering) === -->
+  <ellipse cx="56" cy="46" rx="8" ry="6" fill="#996644" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="50,52 48,61 54,52" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="55,53 54,63 60,53" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="60,52 60,61 64,52" fill="#DDBB88" stroke="#1A0A00" stroke-width="2.5"/>
+
+  <!-- === MINING HELMET (identical) === -->
+  <ellipse cx="32" cy="22" rx="17" ry="14" fill="#664422" stroke="#1A0A00" stroke-width="3"/>
+  <rect x="15" y="28" width="34" height="5" rx="2.5" fill="#553311" stroke="#1A0A00" stroke-width="2.5"/>
+  <rect x="20" y="24" width="24" height="7" rx="3" fill="#1A0A00"/>
+  <ellipse cx="27" cy="27.5" rx="4.5" ry="3" fill="#FF4400"/>
+  <ellipse cx="37" cy="27.5" rx="4.5" ry="3" fill="#FF4400"/>
+  <ellipse cx="27" cy="27.5" rx="2" ry="1.5" fill="#FFCC44"/>
+  <ellipse cx="37" cy="27.5" rx="2" ry="1.5" fill="#FFCC44"/>
+  <circle cx="32" cy="12" r="5.5" fill="#FFCC44" stroke="#1A0A00" stroke-width="2.5"/>
+  <circle cx="32" cy="12" r="3" fill="#FFEE88"/>
+  <ellipse cx="32" cy="35" rx="8" ry="5" fill="#BB9977" stroke="#1A0A00" stroke-width="2.5"/>
+  <circle cx="29" cy="34" r="2" fill="#553322"/>
+  <circle cx="35" cy="34" r="2" fill="#553322"/>
+</svg>

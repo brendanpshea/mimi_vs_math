@@ -102,6 +102,16 @@ export const SPRITE_DEFS = [
   { key: 'ratio_raven_b',          file: 'ratio_raven_b',          size: 64 },
   { key: 'percent_wraith_b',       file: 'percent_wraith_b',       size: 64 },
   { key: 'shadow_knight_b',        file: 'shadow_knight_b',        size: 64 },
+
+  // Frame-C mid-stride sprites (8 priority enemies only; absent enemies fall back to frame A)
+  { key: 'counting_caterpillar_c', file: 'counting_caterpillar_c', size: 64 },
+  { key: 'number_gnome_c',         file: 'number_gnome_c',         size: 64 },
+  { key: 'minus_mole_c',           file: 'minus_mole_c',           size: 64 },
+  { key: 'number_bee_c',           file: 'number_bee_c',           size: 64 },
+  { key: 'slime_pup_c',            file: 'slime_pup_c',            size: 64 },
+  { key: 'double_bunny_c',         file: 'double_bunny_c',         size: 64 },
+  { key: 'crystal_bat_c',          file: 'crystal_bat_c',          size: 64 },
+  { key: 'mirage_fox_c',           file: 'mirage_fox_c',           size: 64 },
 ];
 
 /**

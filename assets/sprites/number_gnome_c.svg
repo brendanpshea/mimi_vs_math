@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!--
+    Number Gnome – frame C (mid-stride, between A and B).
+    Left boot slightly forward, right boot slightly back — passing phase.
+    TINT ZONE: skin fill (#88AA44) responds to setTint().
+  -->
+  <!-- Ground shadow -->
+  <ellipse cx="32" cy="61" rx="16" ry="3" fill="#00000030"/>
+
+  <!-- === BOOTS (mid-stride: left slightly forward, right slightly back) === -->
+  <ellipse cx="21" cy="59" rx="7" ry="4" fill="#553311" stroke="#1A0A00" stroke-width="3"/>
+  <ellipse cx="43" cy="57" rx="7" ry="4" fill="#553311" stroke="#1A0A00" stroke-width="3"/>
+
+  <!-- === LEGS (mid-stride positions) === -->
+  <rect x="17" y="50" width="8" height="10" rx="3" fill="#88AA44" stroke="#1A0A00" stroke-width="2.5"/>
+  <rect x="39" y="48" width="8" height="10" rx="3" fill="#88AA44" stroke="#1A0A00" stroke-width="2.5"/>
+
+  <!-- === BODY (identical) === -->
+  <ellipse cx="32" cy="42" rx="16" ry="12" fill="#334411" stroke="#1A0A00" stroke-width="3"/>
+  <rect x="16" y="42" width="32" height="4" rx="2" fill="#665522" stroke="#1A0A00" stroke-width="2"/>
+  <rect x="27" y="41" width="10" height="6" rx="1" fill="#FFCC33" stroke="#1A0A00" stroke-width="1.5"/>
+  <text x="32" y="46" font-size="6" fill="#1A0A00" text-anchor="middle" font-family="Arial" font-weight="bold">#</text>
+
+  <!-- === ARMS (identical) === -->
+  <ellipse cx="12" cy="40" rx="6" ry="5" fill="#88AA44" stroke="#1A0A00" stroke-width="2.5"/>
+  <ellipse cx="52" cy="40" rx="6" ry="5" fill="#88AA44" stroke="#1A0A00" stroke-width="2.5"/>
+
+  <!-- === HEAD (identical) === -->
+  <circle cx="32" cy="22" r="13" fill="#88AA44" stroke="#1A0A00" stroke-width="3"/>
+
+  <!-- Pointy ears -->
+  <polygon points="19,20 10,14 19,26" fill="#88AA44" stroke="#1A0A00" stroke-width="2.5"/>
+  <polygon points="45,20 54,14 45,26" fill="#88AA44" stroke="#1A0A00" stroke-width="2.5"/>
+
+  <!-- Angry brow -->
+  <line x1="23" y1="17" x2="29" y2="20" stroke="#1A0A00" stroke-width="3" stroke-linecap="round"/>
+  <line x1="41" y1="17" x2="35" y2="20" stroke="#1A0A00" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Eyes -->
+  <ellipse cx="27" cy="22" rx="4" ry="3.5" fill="#EECC00" stroke="#1A0A00" stroke-width="2"/>
+  <ellipse cx="37" cy="22" rx="4" ry="3.5" fill="#EECC00" stroke="#1A0A00" stroke-width="2"/>
+  <circle cx="27" cy="22" r="2" fill="#1A0A00"/>
+  <circle cx="37" cy="22" r="2" fill="#1A0A00"/>
+  <circle cx="28" cy="21" r="0.8" fill="white"/>
+  <circle cx="38" cy="21" r="0.8" fill="white"/>
+
+  <!-- Big round nose -->
+  <circle cx="32" cy="27" r="3.5" fill="#6A8833" stroke="#1A0A00" stroke-width="2"/>
+
+  <!-- Grumpy mouth -->
+  <path d="M26,31 Q32,28 38,31" fill="none" stroke="#1A0A00" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- === POINTY HAT (identical) === -->
+  <polygon points="32,0 18,14 46,14" fill="#1A2200" stroke="#1A0A00" stroke-width="3"/>
+  <rect x="18" y="11" width="28" height="5" rx="2" fill="#334400" stroke="#1A0A00" stroke-width="2"/>
+  <text x="32" y="15.5" font-size="5" fill="#FFDD33" text-anchor="middle" font-family="Arial" font-weight="bold">+</text>
+</svg>

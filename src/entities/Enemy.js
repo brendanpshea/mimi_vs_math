@@ -27,8 +27,9 @@ const WAYPOINT_NEAR = 14;   // px — "arrived at waypoint" threshold
 const PATROL_PAUSE  = 700;  // ms to stand still at each waypoint end
 
 // ── Animation constants ───────────────────────────────────────────────────────
-const STEP_MS   = 200; // ms between walk-frame flips (A → B → A …)
-const STEP_BOB  = 2;   // px the body drops on the contact frame
+const STEP_MS       = 200; // ms between walk-frame flips during patrol
+const STEP_MS_AGGRO = 130; // ms between walk-frame flips while chasing (snappier)
+const STEP_BOB      = 2;   // px the body drops on the contact frame
 
 // Eight compass directions (N/NE/E/SE/S/SW/W/NW) for cardinal-snap movement
 const DIRECTIONS = [
@@ -89,9 +90,10 @@ export default class Enemy {
     this._mode       = 'patrol'; // 'patrol' | 'aggro'
     this._mimiSprite = null;     // set via setMimi() after construction
 
-    // Two-frame walk cycle — flips between spriteKey and spriteKey_b
-    this._stepFrame     = 0;
-    this._stepBobOffset = 0; // net px currently applied as step-bob
+    // Three-frame walk cycle: A → C → B → A … (C = mid-stride; falls back to A if absent)
+    this._stepFrame      = 0;
+    this._stepBobOffset  = 0;    // net px currently applied as step-bob
+    this._stepTimerDelay = STEP_MS;
     this._stepTimer = scene.time.addEvent({
       delay:         STEP_MS,
       callback:      this._onStep,
@@ -109,8 +111,10 @@ export default class Enemy {
   // ── Private helpers ────────────────────────────────────────────────────────
 
   /**
-   * Called every STEP_MS by the step timer.
-   * Advances the walk frame while the body is moving; resets to frame A while idle.
+   * Called every _stepTimerDelay ms by the step timer.
+   * Advances the 3-frame walk cycle (A → C → B → A …) while moving;
+   * resets to frame A while idle.  The _c frame is optional — enemies
+   * without a matching texture silently stay on frame A for that tick.
    */
   _onStep() {
     const body = this.sprite.body;
@@ -118,10 +122,11 @@ export default class Enemy {
       (Math.abs(body.velocity.x) > 1 || Math.abs(body.velocity.y) > 1);
 
     if (isMoving) {
-      this._stepFrame = 1 - this._stepFrame;
+      // 0 = A (base), 1 = C (_c mid-stride), 2 = B (_b contact)
+      this._stepFrame = (this._stepFrame + 1) % 3;
 
-      // Step-bob: drop on the contact frame (B), rise back on the lift frame (A)
-      const targetBob = this._stepFrame === 1 ? STEP_BOB : 0;
+      // Step-bob: drop on the contact frame (2 = B), lift on all others
+      const targetBob = this._stepFrame === 2 ? STEP_BOB : 0;
       const delta     = targetBob - this._stepBobOffset;
       this.sprite.y  += delta;
       this._stepBobOffset = targetBob;
@@ -134,13 +139,33 @@ export default class Enemy {
       }
     }
 
-    const key = this._stepFrame === 1
-      ? `${this.data.spriteKey}_b`
-      : this.data.spriteKey;
+    // Map frame index → texture key; _c falls back to base if not loaded
+    const SUFFIXES = ['', '_c', '_b'];
+    const suffix   = SUFFIXES[this._stepFrame];
+    const key      = suffix ? `${this.data.spriteKey}${suffix}` : this.data.spriteKey;
 
     if (this.scene.textures.exists(key)) {
       this.sprite.setTexture(key);
+    } else {
+      // _c frame absent for this enemy — hold on base texture
+      this.sprite.setTexture(this.data.spriteKey);
     }
+  }
+
+  /**
+   * Swap the step-timer delay (recreates the looping event).
+   * No-op if the delay is already at the requested value.
+   */
+  _setStepDelay(ms) {
+    if (this._stepTimerDelay === ms) return;
+    this._stepTimerDelay = ms;
+    if (this._stepTimer) this._stepTimer.remove(false);
+    this._stepTimer = this.scene.time.addEvent({
+      delay:         ms,
+      callback:      this._onStep,
+      callbackScope: this,
+      loop:          true,
+    });
   }
 
   /** Switch to moving-animation state. */
@@ -213,10 +238,22 @@ export default class Enemy {
         // Mimi stepped into detection range — start chasing
         this._mode = 'aggro';
         this._enterMoveAnim();
+        this._setStepDelay(STEP_MS_AGGRO);
+        // Squash-and-stretch pop so the player knows they've been spotted
+        this.scene.tweens.add({
+          targets:  this.sprite,
+          scaleX:   1.18,
+          scaleY:   0.82,
+          duration: 55,
+          ease:     'Quad.easeOut',
+          yoyo:     true,
+          onComplete: () => { this.sprite.setScale(1); },
+        });
       } else if (this._mode === 'aggro' && mdist > AGGRO_LEASH) {
         // Mimi escaped — break off and resume patrol
         this._mode = 'patrol';
         this._stopMoving();
+        this._setStepDelay(STEP_MS);
         // Short pause before resuming patrol so the break-off feels deliberate
         this.scene.time.delayedCall(400, this._think, [], this);
       }

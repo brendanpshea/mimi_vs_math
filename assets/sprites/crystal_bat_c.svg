@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Crystal Bat – frame C: wings at mid-flap (between A:down and B:raised) -->
+
+  <!-- Right wing — mid-flap position -->
+  <polygon points="32,29 57,11 61,32 46,43" fill="#9955EE" stroke="#6622AA" stroke-width="3"/>
+  <polygon points="32,29 59,9 63,20 53,26" fill="#BB88FF" opacity="0.8"/>
+  <!-- Wing vein lines -->
+  <line x1="32" y1="29" x2="59" y2="9"  stroke="#CCAAFF" stroke-width="2"/>
+  <line x1="32" y1="29" x2="61" y2="32" stroke="#CCAAFF" stroke-width="2"/>
+
+  <!-- Left wing — mid-flap position -->
+  <polygon points="32,29 7,11 3,32 18,43" fill="#9955EE" stroke="#6622AA" stroke-width="3"/>
+  <polygon points="32,29 5,9 1,20 11,26" fill="#BB88FF" opacity="0.8"/>
+  <line x1="32" y1="29" x2="5"  y2="9"  stroke="#CCAAFF" stroke-width="2"/>
+  <line x1="32" y1="29" x2="3"  y2="32" stroke="#CCAAFF" stroke-width="2"/>
+
+  <!-- Body (identical) -->
+  <ellipse cx="32" cy="36" rx="13" ry="15" fill="#6633AA" stroke="#441188" stroke-width="3.5"/>
+
+  <!-- Head (identical) -->
+  <circle cx="32" cy="22" r="13" fill="#6633AA" stroke="#441188" stroke-width="3.5"/>
+
+  <!-- Bat ears (identical) -->
+  <polygon points="21,17 16,4 29,15" fill="#7733CC" stroke="#441188" stroke-width="2.5"/>
+  <polygon points="43,17 48,4 35,15" fill="#7733CC" stroke="#441188" stroke-width="2.5"/>
+  <polygon points="22,16 19,8 27,15" fill="#BB99DD"/>
+  <polygon points="42,16 45,8 37,15" fill="#BB99DD"/>
+
+  <!-- Eyes (identical) -->
+  <circle cx="25" cy="21" r="6" fill="#DDAAFF" stroke="#7733CC" stroke-width="2"/>
+  <circle cx="39" cy="21" r="6" fill="#DDAAFF" stroke="#7733CC" stroke-width="2"/>
+  <circle cx="25" cy="21" r="3.5" fill="#5500CC"/>
+  <circle cx="39" cy="21" r="3.5" fill="#5500CC"/>
+  <circle cx="27" cy="19.5" r="1.5" fill="white"/>
+  <circle cx="41" cy="19.5" r="1.5" fill="white"/>
+
+  <!-- Snout (identical) -->
+  <ellipse cx="32" cy="28" rx="5" ry="3.5" fill="#8855CC" stroke="#441188" stroke-width="1.5"/>
+
+  <!-- Fangs (identical) -->
+  <polygon points="29,30 27,37 31,30" fill="white" stroke="#CCCCCC" stroke-width="1"/>
+  <polygon points="35,30 37,37 33,30" fill="white" stroke="#CCCCCC" stroke-width="1"/>
+
+  <!-- Forehead gem (identical) -->
+  <polygon points="32,10 28,17 36,17" fill="#AAEEFF" stroke="#55AADD" stroke-width="2"/>
+</svg>

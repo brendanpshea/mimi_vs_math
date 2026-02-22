@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<!-- Mimi walk up frame D: mid-stride passing phase 2 (body low, legs centered, tail right) -->
+
+<!-- Tail (behind body, gentle right curve) -->
+<path d="M38,45 C48,38 54,48 48,54" fill="none" stroke="#A8A8B4" stroke-width="4" stroke-linecap="round"/>
+<path d="M38,45 C48,38 54,48 48,54" fill="none" stroke="#2A2A36" stroke-width="4" stroke-linecap="round" fill-opacity="0" style="paint-order:stroke"/>
+
+<!-- Body (1px lower — passing-phase crouch) -->
+<ellipse cx="32" cy="45" rx="12" ry="9" fill="#A8A8B4" stroke="#2A2A36" stroke-width="3"/>
+<!-- Back fur stripe detail -->
+<path d="M32,37 L32,53" fill="none" stroke="#9898A4" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+
+<!-- Scarf tails (shifted with body) -->
+<path d="M25,36 L22,47 L28,43 Z" fill="#CC2222" stroke="#881111" stroke-width="1.5"/>
+<path d="M39,36 L42,47 L36,43 Z" fill="#CC2222" stroke="#881111" stroke-width="1.5"/>
+
+<!-- Both legs near center (passing phase — equal height) -->
+<ellipse cx="29" cy="55" rx="6" ry="3.5" fill="#888894" stroke="#2A2A36" stroke-width="2.5"/>
+<ellipse cx="35" cy="55" rx="6" ry="3.5" fill="#888894" stroke="#2A2A36" stroke-width="2.5"/>
+
+<!-- Head (back view) -->
+<circle cx="32" cy="21" r="14" fill="#A8A8B4" stroke="#2A2A36" stroke-width="3"/>
+
+<!-- Ears -->
+<polygon points="18,14 12,0 26,9" fill="#A8A8B4" stroke="#2A2A36" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="46,14 52,0 38,9" fill="#A8A8B4" stroke="#2A2A36" stroke-width="3" stroke-linejoin="round"/>
+
+<!-- Green cap (back view) -->
+<path d="M18,14 Q32,8 46,14 Q43,7 38,4 Q34,1 32,5 Q30,1 26,4 Q21,7 18,14 Z" fill="#3A7034" stroke="#254E23" stroke-width="2"/>
+<ellipse cx="32" cy="13" rx="13" ry="3" fill="#2E5A28" stroke="#254E23" stroke-width="2"/>
+<!-- Cap tip -->
+<path d="M38,4 Q47,2 49,8 L44,7 Q43,4 38,4 Z" fill="#3A7034" stroke="#254E23" stroke-width="1.5"/>
+
+<!-- Red scarf (back of neck) -->
+<path d="M20,33 Q32,37 44,33 Q42,36 32,38 Q22,36 20,33 Z" fill="#DD2222" stroke="#991111" stroke-width="2"/>
+
+<!-- Back of head fur texture -->
+<path d="M24,8 Q32,20 40,8" fill="none" stroke="#9898A4" stroke-width="2.5" stroke-linecap="round" opacity="0.35"/>
+</svg>

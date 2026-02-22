@@ -41,8 +41,9 @@ export default class Mimi {
       ease:      'Sine.easeInOut',
     });
 
-    // Leg animation state — alternates frame A / B every STEP_INTERVAL ticks
-    this._stepFrame   = 0;   // 0 = frame A, 1 = frame B
+    // Leg animation state — cycles through 4 frames every STEP_INTERVAL ticks
+    // Sequence: 0=A (contact), 1=C (mid-stride), 2=B (contact), 3=D (mid-stride)
+    this._stepFrame   = 0;
     this._stepCounter = 0;
     this._lastDir     = '';  // detect direction changes so steps reset cleanly
 
@@ -97,19 +98,24 @@ export default class Mimi {
         this._lastDir     = dir;
       }
 
-      // Advance step counter — swap leg frame every 9 ticks (~150 ms at 60 fps)
+      // Advance step counter — advance frame every 5 ticks (~83 ms at 60 fps)
+      // 4 frames × 5 ticks = 20-tick cycle ≈ 333 ms per full stride
       this._stepCounter++;
-      if (this._stepCounter >= 9) {
+      if (this._stepCounter >= 5) {
         this._stepCounter = 0;
-        this._stepFrame   = 1 - this._stepFrame;
-        // Footstep sound with slight pitch detune for variety
-        this.scene.sound.play('sfx_footstep', {
-          volume: 0.18,
-          detune: Phaser.Math.Between(-120, 120),
-        });
+        this._stepFrame   = (this._stepFrame + 1) % 4;
+        // Footstep sound only on contact frames (0=A and 2=B)
+        if (this._stepFrame === 0 || this._stepFrame === 2) {
+          this.scene.sound.play('sfx_footstep', {
+            volume: 0.18,
+            detune: Phaser.Math.Between(-120, 120),
+          });
+        }
       }
 
-      const suffix     = this._stepFrame === 1 ? '_b' : '';
+      // Map frame index to texture suffix: A='', C='_c', B='_b', D='_d'
+      const WALK_SUFFIXES = ['', '_c', '_b', '_d'];
+      const suffix     = WALK_SUFFIXES[this._stepFrame];
       const newTexture = `mimi_walk_${dir}${suffix}`;
       if (this.scene.textures.exists(newTexture)) {
         sprite.setTexture(newTexture);

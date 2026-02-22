@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<!-- Mimi walk down frame C: mid-stride passing phase 1 (body low, legs centered) -->
+
+<!-- Tail (behind body, gentle right swing) -->
+<path d="M40,47 C50,42 54,52 48,56" fill="none" stroke="#A8A8B4" stroke-width="4" stroke-linecap="round"/>
+<path d="M40,47 C50,42 54,52 48,56" fill="none" stroke="#2A2A36" stroke-width="4" stroke-linecap="round" fill-opacity="0" style="paint-order:stroke"/>
+
+<!-- Body (1px lower — passing-phase crouch) -->
+<ellipse cx="32" cy="45" rx="12" ry="9" fill="#A8A8B4" stroke="#2A2A36" stroke-width="3"/>
+<!-- Belly -->
+<ellipse cx="32" cy="47" rx="6" ry="5" fill="#D0D0DC"/>
+
+<!-- Scarf tails -->
+<path d="M25,36 L21,45 L27,41 Z" fill="#CC2222" stroke="#881111" stroke-width="1.5"/>
+<path d="M39,36 L43,45 L37,41 Z" fill="#CC2222" stroke="#881111" stroke-width="1.5"/>
+
+<!-- Both legs near center (passing phase — equal height) -->
+<ellipse cx="28" cy="55" rx="6" ry="3.5" fill="#888894" stroke="#2A2A36" stroke-width="2.5"/>
+<ellipse cx="36" cy="55" rx="6" ry="3.5" fill="#888894" stroke="#2A2A36" stroke-width="2.5"/>
+
+<!-- Head -->
+<circle cx="32" cy="21" r="14" fill="#A8A8B4" stroke="#2A2A36" stroke-width="3"/>
+
+<!-- Ears -->
+<polygon points="18,14 12,0 26,9" fill="#A8A8B4" stroke="#2A2A36" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="19,12 14,2 25,9" fill="#FFAACC"/>
+<polygon points="46,14 52,0 38,9" fill="#A8A8B4" stroke="#2A2A36" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="45,12 50,2 39,9" fill="#FFAACC"/>
+
+<!-- Green cap -->
+<path d="M18,14 Q32,8 46,14 Q43,7 38,4 Q34,1 32,5 Q30,1 26,4 Q21,7 18,14 Z" fill="#4A9044" stroke="#2A5A28" stroke-width="2"/>
+<ellipse cx="32" cy="13" rx="13" ry="3" fill="#3A7034" stroke="#254E23" stroke-width="2"/>
+<!-- Cap tip -->
+<path d="M38,4 Q47,2 49,8 L44,7 Q43,4 38,4 Z" fill="#4A9044" stroke="#2A5A28" stroke-width="1.5"/>
+
+<!-- Red scarf -->
+<path d="M20,33 Q32,37 44,33 Q42,36 32,38 Q22,36 20,33 Z" fill="#DD2222" stroke="#991111" stroke-width="2"/>
+
+<!-- Eyebrows -->
+<path d="M21,17 Q26,14 29,16" fill="none" stroke="#2A2A36" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M43,17 Q38,14 35,16" fill="none" stroke="#2A2A36" stroke-width="2.5" stroke-linecap="round"/>
+
+<!-- Eyes -->
+<ellipse cx="26" cy="22" rx="4.5" ry="5" fill="#1E7A47" stroke="#2A2A36" stroke-width="2"/>
+<ellipse cx="38" cy="22" rx="4.5" ry="5" fill="#1E7A47" stroke="#2A2A36" stroke-width="2"/>
+<ellipse cx="26" cy="22.5" rx="2.2" ry="3.5" fill="#111"/>
+<ellipse cx="38" cy="22.5" rx="2.2" ry="3.5" fill="#111"/>
+<circle cx="28" cy="20" r="1.8" fill="white"/>
+<circle cx="40" cy="20" r="1.8" fill="white"/>
+
+<!-- Nose -->
+<polygon points="32,27 29.5,30 34.5,30" fill="#FF8899" stroke="#2A2A36" stroke-width="1.5"/>
+<!-- Mouth -->
+<path d="M30,30 Q32,33 34,30" fill="none" stroke="#2A2A36" stroke-width="2" stroke-linecap="round"/>
+
+<!-- Whiskers -->
+<line x1="22" y1="26" x2="8" y2="23" stroke="#2A2A36" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="22" y1="29" x2="8" y2="32" stroke="#2A2A36" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="42" y1="26" x2="56" y2="23" stroke="#2A2A36" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="42" y1="29" x2="56" y2="32" stroke="#2A2A36" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

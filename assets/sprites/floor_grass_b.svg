@@ -1,20 +1,15 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
   <!-- Grass B — Grass with a small pebble and bare dirt spot -->
-  <rect width="32" height="32" fill="#5FA827"/>
-  <!-- Subtle darker grass patches -->
-  <ellipse cx="6" cy="10" rx="5" ry="4" fill="#4E9020" opacity="0.22"/>
-  <ellipse cx="26" cy="26" rx="4" ry="3" fill="#4E9020" opacity="0.18"/>
-  <!-- Small bare dirt spot, center-right -->
-  <ellipse cx="20" cy="14" rx="4" ry="3" fill="#8B6B30" opacity="0.45"/>
-  <ellipse cx="20" cy="14" rx="3" ry="2" fill="#7A5C28" opacity="0.35"/>
-  <!-- Tiny pebble near dirt spot -->
-  <ellipse cx="17" cy="17" rx="1.5" ry="1.2" fill="#9A8A6A" opacity="0.6"/>
-  <ellipse cx="17" cy="16.6" rx="1.2" ry="0.7" fill="#AE9E7E" opacity="0.3"/>
-  <!-- Another small pebble -->
-  <circle cx="23" cy="18" r="1" fill="#8A7A5A" opacity="0.5"/>
-  <!-- Grass blades around dirt edge -->
-  <line x1="15" y1="13" x2="14" y2="10.5" stroke="#4A8A1E" stroke-width="0.8" stroke-linecap="round" opacity="0.6"/>
-  <line x1="24" y1="12" x2="25.5" y2="10" stroke="#6FBB30" stroke-width="0.8" stroke-linecap="round" opacity="0.5"/>
+  <rect width="32" height="32" fill="#5FA827"/>  <ellipse cx="22" cy="22" rx="10" ry="8" fill="#35600F" opacity="0.22"/>
+  <ellipse cx="8" cy="8" rx="8" ry="6" fill="#5A9025" opacity="0.18"/>
+  <ellipse cx="19" cy="18" rx="4" ry="3" fill="#7A6040" opacity="0.28"/>
+  <ellipse cx="18" cy="18" rx="1.5" ry="1.0" fill="#908070" opacity="0.42"/>
+  <circle cx="21" cy="17" r="0.9" fill="#A09080" opacity="0.35"/>
+  <line x1="11" y1="15" x2="10" y2="12" stroke="#3A6A14" stroke-width="1.0" stroke-linecap="round" opacity="0.48"/>
+  <line x1="13" y1="15" x2="14" y2="12" stroke="#5A9025" stroke-width="1.0" stroke-linecap="round" opacity="0.42"/>
+  <line x1="5" y1="22" x2="4" y2="19" stroke="#3A6A14" stroke-width="0.9" stroke-linecap="round" opacity="0.45"/>
+  <line x1="25" y1="9" x2="26" y2="6" stroke="#4E8820" stroke-width="0.9" stroke-linecap="round" opacity="0.40"/>
+5.5" y2="10" stroke="#6FBB30" stroke-width="0.8" stroke-linecap="round" opacity="0.5"/>
   <!-- Lighter grass area -->
   <ellipse cx="10" cy="24" rx="5" ry="3" fill="#6FBB30" opacity="0.15"/>
 </svg>

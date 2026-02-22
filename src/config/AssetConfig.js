@@ -29,11 +29,20 @@ export const SPRITE_DEFS = [
   { key: 'mimi_walk_up',          file: 'mimi_walk_up',          size: 64 },
   { key: 'mimi_walk_left',        file: 'mimi_walk_left',        size: 64 },
   { key: 'mimi_walk_right',       file: 'mimi_walk_right',       size: 64 },
-  // Frame-B walk sprites (opposite leg phase — cycled by Mimi.js step timer)
+  // 4-frame walk sprites (cycled by Mimi.js step timer: A→C→B→D)
   { key: 'mimi_walk_down_b',      file: 'mimi_walk_down_b',      size: 64 },
   { key: 'mimi_walk_up_b',        file: 'mimi_walk_up_b',        size: 64 },
   { key: 'mimi_walk_left_b',      file: 'mimi_walk_left_b',      size: 64 },
   { key: 'mimi_walk_right_b',     file: 'mimi_walk_right_b',     size: 64 },
+  // Frame-C/D: mid-stride passing phase (body low, legs centered)
+  { key: 'mimi_walk_down_c',      file: 'mimi_walk_down_c',      size: 64 },
+  { key: 'mimi_walk_up_c',        file: 'mimi_walk_up_c',        size: 64 },
+  { key: 'mimi_walk_left_c',      file: 'mimi_walk_left_c',      size: 64 },
+  { key: 'mimi_walk_right_c',     file: 'mimi_walk_right_c',     size: 64 },
+  { key: 'mimi_walk_down_d',      file: 'mimi_walk_down_d',      size: 64 },
+  { key: 'mimi_walk_up_d',        file: 'mimi_walk_up_d',        size: 64 },
+  { key: 'mimi_walk_left_d',      file: 'mimi_walk_left_d',      size: 64 },
+  { key: 'mimi_walk_right_d',     file: 'mimi_walk_right_d',     size: 64 },
 
   // Region 0 — Sunny Village
   { key: 'counting_caterpillar',  file: 'counting_caterpillar',  size: 64 },

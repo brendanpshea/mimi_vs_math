@@ -2,7 +2,7 @@
 
 Mimi the cat goes on Zelda-style adventures and battles enemies by answering math questions.
 
-**Grades 1–5 · Browser-based · No install required**
+**Grades 1–7 · Browser-based · No install required**
 
 ---
 
@@ -22,13 +22,17 @@ Or host via **GitHub Pages** — see setup notes below.
 
 ## Regions & Math Topics
 
-| # | Region | Grades | Topic |
-|---|--------|--------|-------|
-| 0 | Sunny Village | 1–3 | Addition & Subtraction |
-| 1 | Meadow Maze | 4–5 | Multiplication |
-| 2 | Desert Dunes | 4–5 | Division |
-| 3 | Frostbite Cavern | 5–6 | Fractions & Decimals |
-| 4 | Shadow Castle | 6–7 | Mixed Challenge |
+Each region has multiple enemy types, each with its own question sub-type(s) and difficulty. Three difficulty levels (D1–D3) apply within every topic.
+
+| # | Region | Grades | Topics |
+|---|--------|--------|--------|
+| 0 | Sunny Village | 1–3 | Addition, Subtraction, Number Comparison, Number Ordering |
+| 1 | Meadow Maze | 3–5 | Times Tables, Skip Counting, Doubling & Halving, Multiplication |
+| 2 | Desert Dunes | 4–5 | Division, Division Word Problems, Missing Number |
+| 3 | Frostbite Cavern | 5–6 | Fraction Comparison, Fraction Addition, Decimals |
+| 4 | Shadow Castle | 6–7 | Order of Operations, Percentages, Ratios & Proportions, Mixed |
+
+Word problems receive an automatic +8 second reading bonus on top of the base timer.
 
 ---
 
@@ -39,14 +43,43 @@ Or host via **GitHub Pages** — see setup notes below.
 | WASD / Arrow keys | Move Mimi |
 | Space / Enter | Interact (NPC, boss door) |
 | 1 / 2 / 3 / 4 | Select battle answer |
-| Esc | Return to overworld / close overlay |
+| Esc | Run away from battle / return to overworld / close overlay |
+
+---
+
+## Battle System
+
+Walking into an enemy starts a turn-based math battle:
+
+- A question is displayed with four answer choices and a countdown timer.
+- **Correct (fast, < ⅓ of timer):** deal 3 damage + an ⚡FAST! bonus flash.
+- **Correct (normal):** deal 2 damage.
+- **3-answer streak:** all subsequent correct answers deal +1 bonus damage.
+- **Wrong or timeout:** enemy deals 1–2 damage; the correct answer is revealed; an explanation overlay shows the working-out.
+- **Run away** (non-boss only, [Esc] or the on-screen button): exit at a cost of 1 HP.
+
+Visual feedback on every event: floating damage numbers, enemy squash-and-bounce, camera shake, screen flash, HP bars animated with a colour drain (green → yellow → red).
+
+### Difficulty levels per enemy
+
+All question generators have three difficulty levels:
+
+| Level | Used for |
+|-------|---------|
+| D1 | Common enemies in early encounters |
+| D2 | Elite enemies and mid-region common enemies |
+| D3 | Boss battles and Hard Mode |
+
+### Post-battle
+
+The victory overlay shows accuracy, streak badge (if ≥ 3 consecutive), perfect-battle badge, star rating, any item dropped, and a boss-unlock message where applicable.
 
 ---
 
 ## Progression
 
 - Select **New Game** from the title screen to choose a starting world (all prior worlds unlock automatically).
-- Each region has 3–5 enemies and a boss. Defeat all enemies to unseal the boss door.
+- Each region has a set of regular enemies and a boss door sealed until all regular enemies are defeated.
 - Beating a boss unlocks the next region, awards a **star rating (1–3 ★)**, and opens the Stats overview.
 - Select **Continue** to return to the world map from a save.
 
@@ -66,8 +99,8 @@ Ratings only improve — replaying a boss can never lower your star count.
 
 After clearing a region, click its overworld node and choose **⚔ Hard Mode (Boss Rematch)**:
 
-- Question difficulty is raised by one level (D1→D2, D2→D3, etc.)
-- Timer is reduced by 5 seconds per question
+- Question difficulty is raised by one level (D1→D2, D2→D3, capped at D3)
+- Timer is reduced by 5 seconds per question (floor: 8 s)
 - A **🗡 HARD MODE** banner appears in the battle HUD
 - Completion marks the node with a ⚔ badge
 
@@ -77,13 +110,29 @@ Mimi has **9 lives** per save. Each defeat in battle uses one life — the world
 
 ---
 
+## Audio
+
+All music is generated in real time via **Tone.js** using sampled piano, guitar, violin, and cello.
+
+| Track | Plays during |
+|-------|-------------|
+| Title | Title screen |
+| Overworld | World map |
+| Explore | Exploration (in-region walking) |
+| Battle | Regular enemy battles |
+| Boss | Boss battles |
+
+Sound effects cover: battle start, correct answer, wrong answer, hitting the enemy, taking damage, timer warning (at 5 seconds), and level-up / victory fanfares.
+
+---
+
 ## Stats Tracking
 
 Mimi's math performance is tracked throughout the entire save and is visible from:
 
-- The **world map** (📊 Full Stats button in the player card and auto-shown after a boss defeat)
-- The **title screen** (📊 View Stats button, shown once any questions have been answered)
-- The **world-select overlay** (same Stats button)
+- The **world map** (📊 Full Stats button in the player card, auto-shown after a boss defeat)
+- The **title screen** (📊 View Stats, shown once any questions have been answered)
+- The **world-select overlay**
 
 Tracked stats:
 
@@ -116,6 +165,7 @@ Enemies drop items at the end of battle (30% chance for regular enemies, 100% fo
 ## Tech Stack
 
 - **Engine:** [Phaser 3](https://phaser.io/) — loaded from CDN, no build step
+- **Music:** [Tone.js](https://tonejs.github.io/) — procedural BGM using sampled instruments
 - **Assets:** SVG sprites (see `assets/sprites/`)
 - **Persistence:** `localStorage`
 - **Hosting:** GitHub Pages (static files from repo root)
@@ -149,13 +199,18 @@ mimi_vs_math/
 ├── .nojekyll
 ├── src/
 │   ├── main.js
+│   ├── audio/
+│   │   └── BGM.js           ← Tone.js BGM manager (5 tracks, 4 instruments)
 │   ├── config/
 │   │   ├── AssetConfig.js   ← SVG/PNG switch lives here
 │   │   └── GameState.js     ← save/load + stats tracking
 │   ├── scenes/              ← Boot, Title, Overworld, Explore, Battle, Story, BossIntro
-│   ├── entities/            ← Mimi, Enemy, NPC
-│   ├── math/                ← QuestionBank, Distractors, Explanations
+│   ├── entities/            ← Mimi (4-frame walk cycles), Enemy (patrol/aggro AI), NPC
+│   ├── math/                ← QuestionBank (18+ topic generators, D1–D3), Distractors, Explanations
 │   ├── data/                ← regions.js, enemies.js, items.js, maps.js
-│   └── ui/                  ← HUD (accuracy display), DialogBox
-└── assets/sprites/          ← SVG files (walk cycles, battle pose, bosses, UI)
+│   └── ui/                  ← HUD, DialogBox
+└── assets/
+    ├── sprites/             ← SVG files (walk cycles A/B/C frames, battle poses, bosses, UI)
+    └── audio/
+        └── samples/         ← MP3 instrument samples (piano, guitar, violin, cello)
 ```

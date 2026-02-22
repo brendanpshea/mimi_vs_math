@@ -191,9 +191,12 @@ export default class BattleScene extends Phaser.Scene {
     // ── Player (Mimi) side ──────────────────────────────────────────────
     this.mimiSprite = this.add.image(W * 0.28, 88, 'mimi_battle')
       .setDisplaySize(100, 100).setFlipX(true);
+    // Store home position so attack animation can return precisely
+    this._mimiBaseX = this.mimiSprite.x;
+    this._mimiBaseY = this.mimiSprite.y;
 
     // Gentle idle bob for Mimi
-    this.tweens.add({
+    this._mimiIdleBob = this.tweens.add({
       targets:  this.mimiSprite,
       y:        this.mimiSprite.y - 4,
       duration: 1600,
@@ -545,8 +548,7 @@ export default class BattleScene extends Phaser.Scene {
 
   _onCorrect(isFast) {
     GameState.recordAnswer(true, this.time.now - this._qStartTime);
-    this.sound.play('sfx_hit_enemy', { volume: 0.70 });
-    this.sound.play('sfx_correct',   { volume: 0.55 });
+    this.sound.play('sfx_correct', { volume: 0.55 });
 
     this.streak++;
     let dmg = isFast ? 3 : 2;
@@ -567,31 +569,36 @@ export default class BattleScene extends Phaser.Scene {
       if (this._timerEvent) this._timerEvent.remove();
     }
 
-    // Enemy hit flash + bounce (restore boss tint afterwards instead of clearing)
-    this.enemySprite.setTint(0xFFFFFF);
-    this.time.delayedCall(100, () => {
-      if (this._bossTint) this.enemySprite.setTint(this._bossTint);
-      else this.enemySprite.clearTint();
-    });
-    this.tweens.add({
-      targets: this.enemySprite,
-      y: { from: this.enemySprite.y + 14, to: this.enemySprite.y },
-      scaleX: { from: 1.15, to: 1 },
-      scaleY: { from: 0.85, to: 1 },
-      duration: 200, ease: 'Bounce.easeOut',
-    });
-    // Screen flash on hit
-    this.cameras.main.flash(150, 255, 255, 255, false, null, null, 0.08);
-
-    // Floating damage number from the enemy sprite
-    const floatColor = isFast ? 0xFFDD00 : (dmg >= 4 ? 0xFF8800 : 0x44FF44);
-    const floatScale = dmg >= 4 ? 1.3 : 1.0;
-    this._floatText(this.enemySprite.x, this.enemySprite.y - 20, `−${dmg}`, floatColor, floatScale);
-    if (isFast) this._floatText(this.enemySprite.x + 28, this.enemySprite.y - 44, '⚡FAST!', 0xFFDD00, 0.75);
-
     const label = isFast ? `⚡ Fast! −${dmg}` : `✓ Correct! −${dmg}`;
     this._showFeedback(label, isFast ? 0xFFDD00 : 0x44FF44);
     this._updateStreakDisplay();
+
+    // Mimi lunges and launches a projectile; enemy hit effects fire on impact.
+    this._mimiAttack(isFast, dmg, () => {
+      this.sound.play('sfx_hit_enemy', { volume: 0.70 });
+
+      // Enemy hit flash + bounce (restore boss tint afterwards)
+      this.enemySprite.setTint(0xFFFFFF);
+      this.time.delayedCall(100, () => {
+        if (this._bossTint) this.enemySprite.setTint(this._bossTint);
+        else this.enemySprite.clearTint();
+      });
+      this.tweens.add({
+        targets: this.enemySprite,
+        y: { from: this.enemySprite.y + 14, to: this.enemySprite.y },
+        scaleX: { from: 1.15, to: 1 },
+        scaleY: { from: 0.85, to: 1 },
+        duration: 200, ease: 'Bounce.easeOut',
+      });
+      // Screen flash on impact
+      this.cameras.main.flash(150, 255, 255, 255, false, null, null, 0.08);
+
+      // Floating damage number at the enemy
+      const floatColor = isFast ? 0xFFDD00 : (dmg >= 4 ? 0xFF8800 : 0x44FF44);
+      const floatScale = dmg >= 4 ? 1.3 : 1.0;
+      this._floatText(this.enemySprite.x, this.enemySprite.y - 20, `−${dmg}`, floatColor, floatScale);
+      if (isFast) this._floatText(this.enemySprite.x + 28, this.enemySprite.y - 44, '⚡FAST!', 0xFFDD00, 0.75);
+    });
 
     // Use a longer pause on a kill so the player can see the enemy defeated
     // before the victory overlay appears.  Call _endBattle directly so the
@@ -784,6 +791,87 @@ export default class BattleScene extends Phaser.Scene {
   }
 
   // ── Feedback / streak display ─────────────────────────────────────────────
+
+  // ── Mimi attack animation ───────────────────────────────────────────────
+
+  /**
+   * Lunge Mimi toward the enemy and fire a glowing projectile orb.
+   * Calls onHit() when the orb reaches the enemy sprite.
+   * @param {boolean} isFast
+   * @param {number}  dmg
+   * @param {Function} onHit
+   */
+  _mimiAttack(isFast, dmg, onHit) {
+    const baseX = this._mimiBaseX;
+    const baseY = this._mimiBaseY;
+
+    // Pause idle bob and snap to the clean home position
+    this.tweens.killTweensOf(this.mimiSprite);
+    this.mimiSprite.setPosition(baseX, baseY);
+
+    // Phase 1 — forward lunge toward the enemy
+    this.tweens.add({
+      targets:  this.mimiSprite,
+      x:        baseX + 50,
+      y:        baseY - 10,
+      duration: 110,
+      ease:     'Quad.easeOut',
+      onComplete: () => {
+        // Fire the orb at the peak of the lunge
+        const orbColor = isFast ? 0xFFDD00 : (dmg >= 4 ? 0xFF8800 : 0x55FF88);
+        const orbSize  = dmg >= 4 ? 10 : 7;
+        this._launchProjectile(
+          this.mimiSprite.x, this.mimiSprite.y,
+          this.enemySprite.x, this.enemySprite.y,
+          orbColor, orbSize, onHit,
+        );
+        // Phase 2 — spring back to home
+        this.tweens.add({
+          targets:  this.mimiSprite,
+          x:        baseX,
+          y:        baseY,
+          duration: 190,
+          ease:     'Back.easeOut',
+          onComplete: () => {
+            if (this.battleOver) return;
+            // Restart idle bob
+            this.tweens.add({
+              targets:  this.mimiSprite,
+              y:        baseY - 4,
+              duration: 1600,
+              yoyo:     true,
+              repeat:   -1,
+              ease:     'Sine.easeInOut',
+              delay:    200,
+            });
+          },
+        });
+      },
+    });
+  }
+
+  /**
+   * Spawn a glowing orb that travels from (x1,y1) to (x2,y2) then calls onHit.
+   */
+  _launchProjectile(x1, y1, x2, y2, color, size, onHit) {
+    const gfx = this.add.graphics().setDepth(20);
+    gfx.fillStyle(color, 0.30);
+    gfx.fillCircle(0, 0, size + 6);   // outer halo
+    gfx.fillStyle(color, 1);
+    gfx.fillCircle(0, 0, size);        // core
+    gfx.fillStyle(0xFFFFFF, 0.85);
+    gfx.fillCircle(0, 0, Math.ceil(size * 0.42));  // bright centre spark
+    gfx.setPosition(x1, y1);
+
+    this.tweens.add({
+      targets:  gfx,
+      x:        x2,
+      y:        y2,
+      duration: 180,
+      ease:     'Quad.easeIn',
+      onComplete: () => { gfx.destroy(); onHit(); },
+    });
+  }
 
   /**
    * Spawn a floating damage/status text that arcs up from (x, y) and fades.

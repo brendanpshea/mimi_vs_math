@@ -48,6 +48,9 @@ export default class Enemy {
     this.sprite.body.allowGravity = false;
     this.sprite.setDepth(8);
 
+    // Ground shadow
+    this._shadow = scene.add.ellipse(x, y + 16, 28, 9, 0x000000, 0.25).setDepth(7);
+
     // Tint sprite body by difficulty so players can gauge threat at a glance.
     // Bosses are visually distinct already — skip tinting them.
     if (!data.isBoss) {
@@ -177,6 +180,7 @@ export default class Enemy {
    * Enforces the home-clamp so the enemy never drifts too far.
    */
   update() {
+    if (this._shadow) this._shadow.setPosition(this.sprite.x, this.sprite.y + 16);
     if (this._touched) return;
 
     const dx   = this._homeX - this.sprite.x;
@@ -205,6 +209,7 @@ export default class Enemy {
     if (this._swayTween) this._swayTween.stop();
     if (this._bobTween)  this._bobTween.stop();
     if (this._stepTimer) this._stepTimer.remove(false);
+    if (this._shadow)    this._shadow.destroy();
     this.sprite.destroy();
   }
 

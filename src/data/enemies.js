@@ -73,7 +73,7 @@ const ENEMIES = {
   number_bee: {
     id: 'number_bee',
     name: 'Number Bee',
-    spriteKey: 'counting_caterpillar',     // reuses caterpillar sprite
+    spriteKey: 'number_bee',
     region: 0,
     hp: 5,
     damage: 1,
@@ -147,7 +147,7 @@ const ENEMIES = {
   double_bunny: {
     id: 'double_bunny',
     name: 'Double Bunny',
-    spriteKey: 'slime_pup',               // reuses slime pup sprite
+    spriteKey: 'double_bunny',
     region: 1,
     hp: 5,
     damage: 1,
@@ -221,7 +221,7 @@ const ENEMIES = {
   riddle_scarab: {
     id: 'riddle_scarab',
     name: 'Riddle Scarab',
-    spriteKey: 'sand_scarab',              // reuses sand scarab sprite
+    spriteKey: 'riddle_scarab',
     region: 2,
     hp: 6,
     damage: 2,

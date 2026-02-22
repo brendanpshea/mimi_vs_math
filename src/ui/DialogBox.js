@@ -12,6 +12,10 @@ export default class DialogBox {
   constructor(scene) {
     this.scene   = scene;
     this._active = false;
+    this._typing = false;
+    this._typeEvent   = null;
+    this._fullText    = '';
+    this._displayText = '';
 
     const W = scene.cameras.main.width;
     const H = scene.cameras.main.height;
@@ -60,17 +64,51 @@ export default class DialogBox {
    * @param {string}   [speaker] - optional speaker name
    */
   show(text, onClose, speaker = '') {
-    this._active   = true;
-    this._onClose  = onClose;
+    this._active  = true;
+    this._onClose = onClose;
 
     this._panel.setVisible(true);
     this._border.setVisible(true);
     this._speaker.setVisible(true).setText(speaker);
-    this._body.setVisible(true).setText(text);
+    this._body.setVisible(true).setText('');
+    this._prompt.setVisible(false);  // hidden while typing
+
+    // Cancel any in-progress typewriter from a previous show()
+    if (this._typeEvent) {
+      this._typeEvent.remove(false);
+      this._typeEvent = null;
+    }
+
+    // Typewriter: reveal one character every 28 ms
+    this._fullText    = text;
+    this._displayText = '';
+    this._typing      = true;
+
+    this._typeEvent = this.scene.time.addEvent({
+      delay:    28,
+      repeat:   text.length - 1,
+      callback: () => {
+        this._displayText += this._fullText[this._displayText.length];
+        this._body.setText(this._displayText);
+        if (this._displayText.length >= this._fullText.length) {
+          this._finishTyping();
+        }
+      },
+    });
+  }
+
+  /** Complete the typewriter immediately and show the continue prompt. */
+  _finishTyping() {
+    if (this._typeEvent) { this._typeEvent.remove(false); this._typeEvent = null; }
+    this._displayText = this._fullText;
+    this._body.setText(this._fullText);
+    this._typing = false;
     this._prompt.setVisible(true);
   }
 
   hide() {
+    if (this._typeEvent) { this._typeEvent.remove(false); this._typeEvent = null; }
+    this._typing = false;
     this._active = false;
     this._panel.setVisible(false);
     this._border.setVisible(false);
@@ -86,7 +124,13 @@ export default class DialogBox {
       Phaser.Input.Keyboard.JustDown(this._spaceKey) ||
       Phaser.Input.Keyboard.JustDown(this._enterKey)
     ) {
-      this.hide();
+      if (this._typing) {
+        // First press: skip to full text
+        this._finishTyping();
+      } else {
+        // Second press: close
+        this.hide();
+      }
     }
   }
 

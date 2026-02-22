@@ -39,18 +39,21 @@ export const SPRITE_DEFS = [
   { key: 'counting_caterpillar',  file: 'counting_caterpillar',  size: 64 },
   { key: 'number_gnome',          file: 'number_gnome',          size: 64 },
   { key: 'minus_mole',            file: 'minus_mole',            size: 64 },
+  { key: 'number_bee',            file: 'number_bee',            size: 64 },
   { key: 'subtraction_witch',     file: 'subtraction_witch',     size: 96 },
 
   // Region 1 — Meadow Maze
   { key: 'slime_pup',             file: 'slime_pup',             size: 64 },
   { key: 'cactus_sprite',         file: 'cactus_sprite',         size: 64 },
   { key: 'cloud_bully',           file: 'cloud_bully',           size: 64 },
+  { key: 'double_bunny',          file: 'double_bunny',          size: 64 },
   { key: 'count_multiplico',      file: 'count_multiplico',      size: 96 },
 
   // Region 2 — Desert Dunes
   { key: 'sand_scarab',           file: 'sand_scarab',           size: 64 },
   { key: 'mummy_cat',             file: 'mummy_cat',             size: 64 },
   { key: 'mirage_fox',            file: 'mirage_fox',            size: 64 },
+  { key: 'riddle_scarab',         file: 'riddle_scarab',         size: 64 },
   { key: 'the_diviner',           file: 'the_diviner',           size: 96 },
 
   // Region 3 — Frostbite Cavern
@@ -72,14 +75,17 @@ export const SPRITE_DEFS = [
   { key: 'number_gnome_b',         file: 'number_gnome_b',         size: 64 },
   { key: 'minus_mole_b',           file: 'minus_mole_b',           size: 64 },
   { key: 'subtraction_witch_b',    file: 'subtraction_witch_b',    size: 96 },
+  { key: 'number_bee_b',           file: 'number_bee_b',           size: 64 },
   { key: 'slime_pup_b',            file: 'slime_pup_b',            size: 64 },
   { key: 'cactus_sprite_b',        file: 'cactus_sprite_b',        size: 64 },
   { key: 'cloud_bully_b',          file: 'cloud_bully_b',          size: 64 },
   { key: 'count_multiplico_b',     file: 'count_multiplico_b',     size: 96 },
+  { key: 'double_bunny_b',         file: 'double_bunny_b',         size: 64 },
   { key: 'sand_scarab_b',          file: 'sand_scarab_b',          size: 64 },
   { key: 'mummy_cat_b',            file: 'mummy_cat_b',            size: 64 },
   { key: 'mirage_fox_b',           file: 'mirage_fox_b',           size: 64 },
   { key: 'the_diviner_b',          file: 'the_diviner_b',          size: 96 },
+  { key: 'riddle_scarab_b',        file: 'riddle_scarab_b',        size: 64 },
   { key: 'ice_frog_b',             file: 'ice_frog_b',             size: 64 },
   { key: 'snow_golem_b',           file: 'snow_golem_b',           size: 64 },
   { key: 'crystal_bat_b',          file: 'crystal_bat_b',          size: 64 },
@@ -203,7 +209,7 @@ export const AUDIO_KEYS = [
   'sfx_hit_enemy', 'sfx_hit_player', 'sfx_chest_open',
   'sfx_battle_start', 'sfx_victory', 'sfx_boss_intro',
   'sfx_page_turn', 'sfx_level_up', 'sfx_npc_talk',
-  'sfx_damage_critical',
+  'sfx_damage_critical', 'sfx_timer_warn', 'sfx_footstep',
 ];
 
 /**

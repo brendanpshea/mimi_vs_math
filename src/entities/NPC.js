@@ -57,6 +57,9 @@ export default class NPC {
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setDepth(8);
 
+    // Ground shadow
+    this._shadow = scene.add.ellipse(x, y + 14, 26, 8, 0x000000, 0.25).setDepth(7);
+
     // Walking sway tween — starts paused, resumed while moving
     this._swayTween = scene.tweens.add({
       targets:  this.sprite,
@@ -158,6 +161,7 @@ export default class NPC {
    * No home-clamp — wizard roams freely within world bounds.
    */
   update() {
+    if (this._shadow) this._shadow.setPosition(this.sprite.x, this.sprite.y + 14);
     // Nothing to clamp — setCollideWorldBounds handles the walls.
   }
 
@@ -184,6 +188,7 @@ export default class NPC {
     if (this._frameTimer) this._frameTimer.remove(false);
     if (this._swayTween)  this._swayTween.stop();
     if (this._bobTween)   this._bobTween.stop();
+    if (this._shadow)     this._shadow.destroy();
     this.sprite.destroy();
   }
 }

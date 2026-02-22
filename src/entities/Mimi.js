@@ -28,6 +28,9 @@ export default class Mimi {
     // body makes corridors feel impossibly narrow.
     this.sprite.setSize(28, 28);
 
+    // Ground shadow — short semi-transparent ellipse beneath the feet
+    this._shadow = scene.add.ellipse(x, y + 16, 28, 9, 0x000000, 0.28).setDepth(9);
+
     // Bobbing tween - will be paused when moving
     this._bobbingTween = scene.tweens.add({
       targets:   this.sprite,
@@ -57,6 +60,9 @@ export default class Mimi {
   }
 
   update() {
+    // Shadow always tracks the sprite even when frozen/bobbing
+    if (this._shadow) this._shadow.setPosition(this.sprite.x, this.sprite.y + 16);
+
     if (this._frozen) return;
 
     const { cursors, wasd, sprite, speed } = this;
@@ -96,6 +102,11 @@ export default class Mimi {
       if (this._stepCounter >= 9) {
         this._stepCounter = 0;
         this._stepFrame   = 1 - this._stepFrame;
+        // Footstep sound with slight pitch detune for variety
+        this.scene.sound.play('sfx_footstep', {
+          volume: 0.18,
+          detune: Phaser.Math.Between(-120, 120),
+        });
       }
 
       const suffix     = this._stepFrame === 1 ? '_b' : '';

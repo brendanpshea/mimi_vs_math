@@ -154,6 +154,26 @@ export default class BattleScene extends Phaser.Scene {
       .setDisplaySize(enemySz, enemySz).setDepth(3);
     if (this._bossTint) this.enemySprite.setTint(this._bossTint);
 
+    // Idle float + gentle breathe for the enemy
+    this.tweens.add({
+      targets:  this.enemySprite,
+      y:        this.enemySprite.y - 6,
+      duration: 1400,
+      yoyo:     true,
+      repeat:   -1,
+      ease:     'Sine.easeInOut',
+    });
+    this.tweens.add({
+      targets:  this.enemySprite,
+      scaleX:   { from: 1.0, to: 0.97 },
+      scaleY:   { from: 1.0, to: 1.03 },
+      duration: 1800,
+      yoyo:     true,
+      repeat:   -1,
+      ease:     'Sine.easeInOut',
+      delay:    400,
+    });
+
     this.add.text(W * 0.72, 144, this.enemyData.name, TEXT_STYLE(16, '#FFCCEE', true))
       .setOrigin(0.5);
 
@@ -171,6 +191,17 @@ export default class BattleScene extends Phaser.Scene {
     // ── Player (Mimi) side ──────────────────────────────────────────────
     this.mimiSprite = this.add.image(W * 0.28, 88, 'mimi_battle')
       .setDisplaySize(100, 100).setFlipX(true);
+
+    // Gentle idle bob for Mimi
+    this.tweens.add({
+      targets:  this.mimiSprite,
+      y:        this.mimiSprite.y - 4,
+      duration: 1600,
+      yoyo:     true,
+      repeat:   -1,
+      ease:     'Sine.easeInOut',
+      delay:    200,
+    });
 
     this.add.text(W * 0.28, 144, 'Mimi', TEXT_STYLE(16, '#AAFFCC', true)).setOrigin(0.5);
     this.playerHPBar = this._makeHPBar(W * 0.28, 162, GameState.maxHP, 0x33CC66);
@@ -410,6 +441,7 @@ export default class BattleScene extends Phaser.Scene {
   _startTimer(totalMs) {
     if (this._timerEvent) this._timerEvent.remove();
     const startTime = this.time.now;
+    this._warnPlayed = false;
 
     this._timerEvent = this.time.addEvent({
       delay: 50, repeat: -1,
@@ -421,6 +453,12 @@ export default class BattleScene extends Phaser.Scene {
 
         this.timerFill.setDisplaySize(this._timerW * ratio, 18);
         this.timerText.setText(`${Math.ceil(remaining / 1000)}s`);
+
+        // Single warning tick when 5 seconds remain
+        if (remaining <= 5000 && !this._warnPlayed) {
+          this._warnPlayed = true;
+          this.sound.play('sfx_timer_warn', { volume: 0.45 });
+        }
 
         // Colour + glow when low
         if (ratio < 0.25) {

@@ -5,9 +5,9 @@
   -->
   <!-- Ground shadow -->
   <ellipse cx="16" cy="45" rx="14" ry="3.5" fill="#000000" opacity="0.18"/>
-  <!-- Wide merge base mound -->
-  <ellipse cx="16" cy="44" rx="15" ry="5"   fill="#7AA8C4" opacity="0.6"/>
-  <ellipse cx="16" cy="43" rx="12" ry="3"   fill="#C8E8FF" opacity="0.7"/>
+  <!-- Wide merge base mound — saturated blue-ice, distinct from snowpile -->
+  <ellipse cx="16" cy="44" rx="15" ry="5"   fill="#3A7AA0" opacity="0.75"/>
+  <ellipse cx="16" cy="43" rx="12" ry="3"   fill="#7ABEDE" opacity="0.82"/>
 
   <!-- FAR-LEFT spike (shorter, steeper lean) -->
   <polygon points="5,28  2,44  11,44"  fill="#2A5870"/>

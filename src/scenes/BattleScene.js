@@ -179,6 +179,17 @@ export default class BattleScene extends Phaser.Scene {
     const livesStr = '🐾 '.repeat(Math.max(0, GameState.lives));
     this.add.text(W * 0.28, 176, `${livesStr}`, TEXT_STYLE(11, '#FFCC88'))
       .setOrigin(0.5, 0);
+
+    // ── Run Away button (bottom-left; hidden for boss battles) ───────────────
+    if (!this.isBoss) {
+      this._runBtn = this.add.rectangle(46, H - 80, 90, 30, 0x0A0A1A)
+        .setStrokeStyle(1.5, 0x446688).setInteractive({ useHandCursor: true }).setDepth(3);
+      this._runTxt = this.add.text(46, H - 80, '🏃 Run  [Esc]', TEXT_STYLE(11, '#88AACC'))
+        .setOrigin(0.5).setDepth(4);
+      this._runBtn.on('pointerover', () => { this._runBtn.setFillStyle(0x0F1F2F); this._runTxt.setColor('#AACCEE'); });
+      this._runBtn.on('pointerout',  () => { this._runBtn.setFillStyle(0x0A0A1A); this._runTxt.setColor('#88AACC'); });
+      this._runBtn.on('pointerdown', () => this._tryRunAway());
+    }
     const topicLabels = {
       addSub: 'Addition & Subtraction', multiplication: 'Multiplication',
       division: 'Division', fractions: 'Fractions', mixed: 'Mixed',
@@ -342,6 +353,7 @@ export default class BattleScene extends Phaser.Scene {
       kb.addKey(Phaser.Input.Keyboard.KeyCodes.THREE),
       kb.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR),
     ];
+    this.escKey = kb.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
   }
 
   // ── Question flow ─────────────────────────────────────────────────────────
@@ -1039,5 +1051,82 @@ export default class BattleScene extends Phaser.Scene {
     this.keys.forEach((key, i) => {
       if (Phaser.Input.Keyboard.JustDown(key)) this._selectAnswer(i);
     });
+    if (Phaser.Input.Keyboard.JustDown(this.escKey)) this._tryRunAway();
+  }
+
+  // ── Run Away ──────────────────────────────────────────────────────────────
+
+  /** Attempt to flee the current battle. Blocked for bosses; costs 1 HP otherwise. */
+  _tryRunAway() {
+    if (this.battleOver || this.answering) return;
+
+    if (this.isBoss) {
+      const W = this.cameras.main.width;
+      const H = this.cameras.main.height;
+      const flash = this.add.text(W / 2, H * 0.43, "Can't escape a boss!",
+        { ...TEXT_STYLE(20, '#FF6644', true), stroke: '#000', strokeThickness: 3 },
+      ).setOrigin(0.5).setDepth(20);
+      this.tweens.add({ targets: flash, alpha: 0, delay: 1000, duration: 500, onComplete: () => flash.destroy() });
+      return;
+    }
+
+    // Cost: 1 HP (floor at 1 — running can't kill Mimi)
+    const cost = this.playerHP > 1 ? 1 : 0;
+    this.playerHP       = Math.max(1, this.playerHP - 1);
+    GameState.hp        = Math.max(1, GameState.hp - 1);
+    GameState.save();
+    this._updateHPBar(this.playerHPBar, this.playerHP);
+
+    this._endRunAway(cost);
+  }
+
+  _endRunAway(hpCost) {
+    this.battleOver = true;
+    if (this._timerEvent) this._timerEvent.remove();
+    this._hideQuestionUI();
+
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+
+    const RUN_QUIPS = [
+      'Living to fight another day.',
+      'Strategic retreat. Very strategic.',
+      'Mimi has decided this is not her problem.',
+      'Sometimes the best answer is running.',
+      "Technically, 'not losing' counts as not losing.",
+      'She\'ll be back. With a plan. Maybe.',
+    ];
+    const quip = RUN_QUIPS[Phaser.Math.Between(0, RUN_QUIPS.length - 1)];
+
+    const boxH  = hpCost > 0 ? 188 : 168;
+    const boxY  = H / 2 - 10;
+    this.add.rectangle(W / 2, boxY, W * 0.78, boxH, 0x001122, 0.93)
+      .setStrokeStyle(2, 0x446688);
+
+    this.add.text(W / 2, boxY - boxH / 2 + 28, '🏃  Mimi Fled!', {
+      ...TEXT_STYLE(34, '#88CCFF', true), fontFamily: FONT_TITLE, stroke: '#000', strokeThickness: 3,
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, boxY - boxH / 2 + 72, quip,
+      { ...TEXT_STYLE(15, '#AACCFF'), wordWrap: { width: W * 0.65 }, align: 'center' },
+    ).setOrigin(0.5);
+
+    if (hpCost > 0) {
+      this.add.text(W / 2, boxY - boxH / 2 + 100,
+        `−${hpCost} HP from the hasty retreat`,
+        TEXT_STYLE(13, '#FF9988'),
+      ).setOrigin(0.5);
+    }
+
+    const btnOffset = boxH / 2 - 34;
+    this._makeContinueButton(W, H, 'Back to it →', () => {
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.scene.start(this.returnScene, {
+          ...this.returnData,
+          battleResult: { victory: false, ranAway: true },
+        });
+      });
+    }, 0x001133, 0x4466AA, boxY - H / 2 + btnOffset);
   }
 }

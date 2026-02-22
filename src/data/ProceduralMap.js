@@ -110,9 +110,10 @@ const ACCENT_LAYERS = [
     { key: 'decoration_snowpile',    freq: 0.10, threshold: 0.78, seed: 700 },
     { key: 'decoration_frost_flower',freq: 0.13, threshold: 0.84, seed: 800 },
   ],
-  [ // R4 — Shadow Castle: skulls + torches
-    { key: 'decoration_skull',  freq: 0.12, threshold: 0.82, seed: 900 },
-    { key: 'decoration_torch',  freq: 0.08, threshold: 0.86, seed: 1000 },
+  [ // R4 — Shadow Castle: skulls (moderate blobs — floor scatter looks fine)
+    // + torches (very sparse: high threshold + low freq = solitary wall punctuation)
+    { key: 'decoration_skull',  freq: 0.12, threshold: 0.84, seed: 900 },
+    { key: 'decoration_torch',  freq: 0.05, threshold: 0.92, seed: 1000 },
   ],
 ];
 

@@ -9,8 +9,9 @@
   <ellipse cx="16" cy="45" rx="15" ry="3.5" fill="#000000" opacity="0.18"/>
 
   <!-- Wide merge base mound — extends to tile edges for cluster merging -->
-  <ellipse cx="16" cy="44" rx="15" ry="5"   fill="#7AA8C4" opacity="0.6"/>
-  <ellipse cx="16" cy="43" rx="12" ry="3"   fill="#D4EEFF" opacity="0.75"/>
+  <!-- Darker, more saturated blue-ice so wall reads distinct from white snowpile accents -->
+  <ellipse cx="16" cy="44" rx="15" ry="5"   fill="#3A7AA0" opacity="0.75"/>
+  <ellipse cx="16" cy="43" rx="12" ry="3"   fill="#88CCEE" opacity="0.80"/>
 
   <!-- LEFT spike (shorter, leans slightly left) -->
   <!-- Outer body -->

@@ -54,19 +54,15 @@ export default class OverworldScene extends Phaser.Scene {
 
     this._drawPlayerInfo(W, H);
 
-    // ESC: close overlay first, then popup, then return to title
+    // ESC: close overlay/popup first; then confirm before returning to title
     this.input.keyboard.on('keydown-ESC', () => {
-      if (this._statsItems)  { this._closeStatsOverlay(); }
-      else if (this._popup)  { this._closePopup(); }
-      else {
-        this.cameras.main.fadeOut(300, 0, 0, 0);
-        this.cameras.main.once('camerafadeoutcomplete', () => {
-          this.scene.start('TitleScene');
-        });
-      }
+      if (this._statsItems)      { this._closeStatsOverlay(); }
+      else if (this._popup)      { this._closePopup(); }
+      else if (this._exitConfirm){ this._closeExitConfirm(); }
+      else                       { this._showExitConfirm(); }
     });
 
-    this.add.text(W / 2, H - 8, 'Click a region to enter  ·  Esc → Title', {
+    this.add.text(W / 2, H - 8, 'Click a region to enter  ·  Esc → Exit prompt', {
       fontSize: '11px', color: '#8A7050', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5, 1);
 
@@ -314,13 +310,22 @@ export default class OverworldScene extends Phaser.Scene {
       { fontSize: '10px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
 
     // Stats button
-    const sb = this.add.rectangle(px, 124, 130, 24, 0x0C1A0C)
+    const sb = this.add.rectangle(px, 120, 130, 22, 0x0C1A0C)
       .setStrokeStyle(1.5, 0x44AA44).setInteractive({ useHandCursor: true });
-    const st = this.add.text(px, 124, '📊 Full Stats',
+    const st = this.add.text(px, 120, '📊 Full Stats',
       { fontSize: '12px', color: '#88FF88', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     sb.on('pointerover', () => { sb.setFillStyle(0x153015); st.setColor('#AAFFAA'); });
     sb.on('pointerout',  () => { sb.setFillStyle(0x0C1A0C); st.setColor('#88FF88'); });
     sb.on('pointerdown', () => this._showStatsOverlay());
+
+    // Exit to Title button
+    const eb = this.add.rectangle(px, 146, 130, 22, 0x1A0C0C)
+      .setStrokeStyle(1.5, 0xAA4444).setInteractive({ useHandCursor: true });
+    const et = this.add.text(px, 146, '🚪 Exit to Title',
+      { fontSize: '12px', color: '#FF8888', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+    eb.on('pointerover', () => { eb.setFillStyle(0x3A1515); et.setColor('#FFAAAA'); });
+    eb.on('pointerout',  () => { eb.setFillStyle(0x1A0C0C); et.setColor('#FF8888'); });
+    eb.on('pointerdown', () => this._showExitConfirm());
   }
 
   // ── Stats overlay ────────────────────────────────────────────────────────
@@ -514,6 +519,58 @@ export default class OverworldScene extends Phaser.Scene {
     if (!this._popup) return;
     this._popup.forEach(o => o.destroy());
     this._popup = null;
+  }
+
+  // ── Exit confirm overlay ──────────────────────────────────────────────────
+
+  _showExitConfirm() {
+    if (this._exitConfirm) return;
+    const W = 800, H = 600, D = 200;
+    const items = this._exitConfirm = [];
+    const mk = o => { items.push(o); return o; };
+
+    mk(this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.6)
+      .setDepth(D).setInteractive());
+
+    mk(this.add.rectangle(W / 2, H / 2, 360, 170, 0x0C0C24)
+      .setDepth(D + 1).setStrokeStyle(2, 0x4488FF));
+
+    mk(this.add.text(W / 2, H / 2 - 52, 'Exit to Title Screen?', {
+      fontSize: '21px', color: '#FFFFFF',
+      fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(D + 2));
+
+    mk(this.add.text(W / 2, H / 2 - 22, 'Your save is kept. Come back any time.', {
+      fontSize: '13px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif",
+    }).setOrigin(0.5).setDepth(D + 2));
+
+    const yb = mk(this.add.rectangle(W / 2 - 72, H / 2 + 38, 128, 40, 0x2A0A0A)
+      .setDepth(D + 2).setStrokeStyle(2, 0xAA4444).setInteractive({ useHandCursor: true }));
+    const yt = mk(this.add.text(W / 2 - 72, H / 2 + 38, '🚪  Yes, Exit',
+      { fontSize: '15px', color: '#FF8888', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' },
+    ).setOrigin(0.5).setDepth(D + 3));
+    yb.on('pointerover', () => { yb.setFillStyle(0x401515); yt.setColor('#FFAAAA'); });
+    yb.on('pointerout',  () => { yb.setFillStyle(0x2A0A0A); yt.setColor('#FF8888'); });
+    yb.on('pointerdown', () => {
+      this._closeExitConfirm();
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('TitleScene'));
+    });
+
+    const nb = mk(this.add.rectangle(W / 2 + 72, H / 2 + 38, 128, 40, 0x0A1A0A)
+      .setDepth(D + 2).setStrokeStyle(2, 0x44AA44).setInteractive({ useHandCursor: true }));
+    const nt = mk(this.add.text(W / 2 + 72, H / 2 + 38, '✓  Stay',
+      { fontSize: '15px', color: '#88FF88', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' },
+    ).setOrigin(0.5).setDepth(D + 3));
+    nb.on('pointerover', () => { nb.setFillStyle(0x153015); nt.setColor('#AAFFAA'); });
+    nb.on('pointerout',  () => { nb.setFillStyle(0x0A1A0A); nt.setColor('#88FF88'); });
+    nb.on('pointerdown', () => this._closeExitConfirm());
+  }
+
+  _closeExitConfirm() {
+    if (!this._exitConfirm) return;
+    this._exitConfirm.forEach(o => o.destroy());
+    this._exitConfirm = null;
   }
 
   _isUnlocked(regionId) {

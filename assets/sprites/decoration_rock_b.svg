@@ -1,26 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <!--
-    Desert rock B  single dominant boulder with a small flanking stone.
-    Dark silhouette fill causes adjacent rocks to merge visually.
+    Desert rock B — single large dome monolith (warm sandstone).
+    Contrast with rock A (two boulders): lone smooth hump creates variety
+    at wall-edge transitions where blocks dissolve into open corridor.
   -->
   <!-- Shadow -->
   <ellipse cx="17" cy="31" rx="14" ry="2" fill="#000" opacity="0.28"/>
-  <!-- Near-full-tile dark silhouette (merge fill) -->
-  <ellipse cx="16" cy="17" rx="16" ry="15" fill="#18181E"/>
-  <!-- Small flanking stone, left-front -->
-  <ellipse cx="8"  cy="22" rx="7"  ry="6"  fill="#363644"/>
-  <!-- Dominant main boulder -->
-  <ellipse cx="18" cy="16" rx="12" ry="11" fill="#484258"/>
-  <!-- Top-lit surface of main boulder -->
-  <path d="M8,12 Q12,4 20,3 Q28,2 30,10 Q25,4 18,3.5 Q10,4 8,12 Z" fill="#7878A0"/>
-  <ellipse cx="16" cy="8"  rx="7"  ry="3.5" fill="#9494B8"/>
-  <!-- Specular highlight  upper-right on big boulder -->
-  <ellipse cx="22" cy="6.5" rx="3.5" ry="2" fill="#B8B8D4"/>
-  <ellipse cx="24" cy="5.5" rx="1.8" ry="1.1" fill="#D4D4E8"/>
-  <!-- Front shadow -->
-  <ellipse cx="18" cy="24" rx="10" ry="5" fill="#0E0E14" opacity="0.45"/>
-  <!-- Crack on main boulder -->
-  <path d="M20,9 L22,15 L20,21" stroke="#0A0A10" stroke-width="1" fill="none" opacity="0.7"/>
-  <!-- Small flanking stone top highlight -->
-  <ellipse cx="6" cy="18" rx="3.5" ry="2.2" fill="#7878A0" opacity="0.7"/>
+  <!-- Full-tile dark merge base -->
+  <ellipse cx="16" cy="22" rx="16" ry="12" fill="#120C06"/>
+  <!-- Boulder body — large single dome -->
+  <ellipse cx="16" cy="15" rx="13" ry="11" fill="#4A3C22"/>
+  <!-- Broad upper lit surface -->
+  <ellipse cx="13" cy="9"  rx="9"  ry="5"  fill="#947030"/>
+  <!-- Top highlight arc -->
+  <path d="M5,12 Q7,4 16,3 Q25,2 28,10 Q22,4 16,3.5 Q9,4 5,12 Z" fill="#AA8840"/>
+  <!-- Central lit face -->
+  <ellipse cx="12" cy="7.5" rx="6" ry="3.5" fill="#C0A458"/>
+  <!-- Specular highlight -->
+  <ellipse cx="9"  cy="5.5" rx="3.5" ry="2"   fill="#D8BC70"/>
+  <ellipse cx="7"  cy="4"   rx="1.8" ry="1.2" fill="#ECCF80"/>
+  <!-- Front shadow belly -->
+  <ellipse cx="18" cy="22" rx="11" ry="6" fill="#0A0804" opacity="0.5"/>
+  <!-- Single worn crack -->
+  <path d="M16,8 L18,15 L15,22" stroke="#080602" stroke-width="1.1" fill="none" opacity="0.7"/>
 </svg>

@@ -1,38 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 40">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <!--
-    Shadow Castle pillar  dark obsidian stone.
-    Wide near-black base fill so adjacent pillars merge into a solid wall/cluster.
-    Gold accent at capital for contrast vs the grey-purple floor.
+    Shadow Castle wall block (32×32) — replaces the narrow 24×40 pillar.
+    Full-width dark base so adjacent blocks merge into seamless castle walls.
+    Staggered mortar joints give brickwork depth; gold band near top for contrast.
   -->
-  <!-- Wide merge base (near-black)  extends to tile edges so adjacent pillars fuse -->
-  <ellipse cx="12" cy="38" rx="12" ry="5" fill="#08060C"/>
+  <!-- Full-width merge base — reaches both tile edges -->
+  <rect x="0" y="27" width="32" height="5" fill="#07050B"/>
+  <ellipse cx="16" cy="31.5" rx="16" ry="2.5" fill="#07050B"/>
   <!-- Ground shadow -->
-  <ellipse cx="12" cy="39.5" rx="10" ry="1.5" fill="#000000" opacity="0.4"/>
-  <!-- Base plinth  near-black charcoal -->
-  <rect x="2"  y="32" width="20" height="6" fill="#0E0B16" rx="1"/>
-  <!-- Plinth top bevel (faint silver) -->
-  <rect x="3"  y="32" width="18" height="1.5" fill="#2A2438" opacity="0.9"/>
-  <!-- Shaft dark outer -->
-  <rect x="4"  y="8"  width="16" height="25" fill="#0E0A14"/>
-  <!-- Shaft main face  very dark charcoal, clearly darker than #5A5268 floor -->
-  <rect x="5"  y="8"  width="14" height="25" fill="#1A1525"/>
-  <!-- Left highlight strip (faint cool silver) -->
-  <rect x="5.5" y="9" width="3.5" height="23" fill="#3A3250" opacity="0.7"/>
-  <!-- Right deep shadow strip -->
-  <rect x="16"  y="8" width="2"   height="25" fill="#050308" opacity="0.9"/>
-  <!-- Fluting grooves -->
-  <line x1="10" y1="8"  x2="10" y2="33" stroke="#080610" stroke-width="0.8" opacity="0.8"/>
-  <line x1="14" y1="8"  x2="14" y2="33" stroke="#080610" stroke-width="0.8" opacity="0.8"/>
-  <!-- Gold accent band just below capital  warm contrast against dark stone -->
-  <rect x="4" y="10" width="16" height="2.5" fill="#8C7020"/>
-  <rect x="4" y="10" width="16" height="1"   fill="#C4A830" opacity="0.7"/>
-  <!-- Capital dark outer -->
-  <rect x="2"  y="5"  width="20" height="4"  fill="#0E0B16" rx="1"/>
-  <rect x="3"  y="5"  width="18" height="1.5" fill="#2A2438" opacity="0.9"/>
-  <rect x="2"  y="7"  width="20" height="2"  fill="#14101E"/>
-  <!-- Broken/jagged top  obsidian shards -->
-  <polygon points="4,5 8,0 11,3 15,-1 20,5" fill="#0E0A14"/>
-  <polygon points="8,0 11,3 9,1.5" fill="#050308" opacity="0.8"/>
-  <!-- Worn crack down shaft -->
-  <path d="M12,13 L13,19 L12,26" stroke="#050308" stroke-width="1" fill="none" opacity="0.9"/>
+  <ellipse cx="16" cy="31.5" rx="13" ry="1.5" fill="#000000" opacity="0.4"/>
+  <!-- Block main body -->
+  <rect x="0" y="2" width="32" height="28" fill="#16121E"/>
+  <!-- Left highlight face (top-left light source) -->
+  <rect x="0" y="2" width="5" height="26" fill="#2A2438" opacity="0.8"/>
+  <!-- Top surface -->
+  <rect x="0" y="2" width="32" height="4" fill="#2E2844"/>
+  <!-- Right deep shadow -->
+  <rect x="27" y="2" width="5" height="26" fill="#07050B" opacity="0.8"/>
+  <!-- Mortar joints — horizontal -->
+  <line x1="0" y1="12" x2="32" y2="12" stroke="#08060E" stroke-width="0.9" opacity="0.75"/>
+  <line x1="0" y1="21" x2="32" y2="21" stroke="#08060E" stroke-width="0.9" opacity="0.75"/>
+  <!-- Mortar joints — vertical (staggered brickwork) -->
+  <line x1="16" y1="2"  x2="16" y2="12" stroke="#08060E" stroke-width="0.8" opacity="0.6"/>
+  <line x1="8"  y1="12" x2="8"  y2="21" stroke="#08060E" stroke-width="0.8" opacity="0.6"/>
+  <line x1="24" y1="12" x2="24" y2="21" stroke="#08060E" stroke-width="0.8" opacity="0.6"/>
+  <line x1="16" y1="21" x2="16" y2="27" stroke="#08060E" stroke-width="0.8" opacity="0.6"/>
+  <!-- Gold accent band near top -->
+  <rect x="0" y="5" width="32" height="2"   fill="#7A6018"/>
+  <rect x="0" y="5" width="32" height="0.8" fill="#C4A830" opacity="0.6"/>
+  <!-- Worn diagonal crack -->
+  <path d="M20,7 L22,14 L19,21" stroke="#040308" stroke-width="1" fill="none" opacity="0.85"/>
 </svg>

@@ -39,18 +39,21 @@ export default class ExploreScene extends Phaser.Scene {
     this.regionId     = data?.regionId ?? GameState.currentRegion;
     this.regionData   = REGIONS[this.regionId];
     this.battleResult = data?.battleResult ?? null;
-    // On defeat, always restart from the region spawn — never restore battle position
-    const isDefeat = data?.battleResult?.victory === false;
-    this._returnX   = isDefeat ? null : (data?.mimiX ?? null);
-    this._returnY   = isDefeat ? null : (data?.mimiY ?? null);
-    // Restore NPC position from before the battle (so the wizard doesn’t reset)
-    this._returnNpcX = isDefeat ? null : (data?.npcX ?? null);
-    this._returnNpcY = isDefeat ? null : (data?.npcY ?? null);
+    // Hard defeat (no lives left, not ran away) → reset to spawn so position is 
+    // not restored. Soft defeat (usedLife) and ran-away restore world/position.
+    const isHardDefeat = data?.battleResult?.victory === false
+                      && !data?.battleResult?.usedLife
+                      && !data?.battleResult?.ranAway;
+    this._returnX    = isHardDefeat ? null : (data?.mimiX ?? null);
+    this._returnY    = isHardDefeat ? null : (data?.mimiY ?? null);
+    this._returnNpcX = isHardDefeat ? null : (data?.npcX ?? null);
+    this._returnNpcY = isHardDefeat ? null : (data?.npcY ?? null);
     // Phaser reuses the same scene instance across scene.start() calls, so
     // instance properties set in a previous run persist into the next.
     // Explicitly reset every flag that guards per-run behaviour.
     this._bossBattleStarted = false;
     this._bossOpen          = false;
+    this._exitConfirm       = null;
   }
 
   create() {
@@ -112,6 +115,18 @@ export default class ExploreScene extends Phaser.Scene {
     this.dialog = new DialogBox(this);
 
     this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+
+    // ── "Return to Map" button in the HUD strip ─────────────────────────────
+    const mapBtn = this.add.rectangle(52, 48, 88, 22, 0x0A1A0A, 0.9)
+      .setScrollFactor(0).setDepth(52)
+      .setStrokeStyle(1, 0x44AA44)
+      .setInteractive({ useHandCursor: true });
+    const mapTxt = this.add.text(52, 48, '🗺 Map', {
+      fontSize: '12px', color: '#88EE88', fontFamily: "'Nunito', Arial, sans-serif",
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(53);
+    mapBtn.on('pointerover', () => { mapBtn.setFillStyle(0x153015); mapTxt.setColor('#AAFFAA'); });
+    mapBtn.on('pointerout',  () => { mapBtn.setFillStyle(0x0A1A0A, 0.9); mapTxt.setColor('#88EE88'); });
+    mapBtn.on('pointerdown', () => this._showExitConfirm());
 
     if (this.battleResult) {
       this.hud.refresh();
@@ -361,16 +376,39 @@ export default class ExploreScene extends Phaser.Scene {
       if (key !== undefined) {
         GameState.defeatEnemy(this.regionId, key);
       }
-    } else if (!battleResult.usedLife) {
+    } else if (!battleResult.usedLife && !battleResult.ranAway) {
       // Hard defeat (no lives left) — clear enemies so they respawn at entrance
       GameState.clearRegionEnemies(this.regionId);
     }
-    // usedLife defeat: enemy positions and progress are preserved
+    // usedLife / ranAway: enemy positions and progress are preserved
   }
 
   _showBattleMessages() {
     const { battleResult } = this;
     if (!battleResult) return;
+
+    // Ran away — brief floating quip
+    if (battleResult.ranAway) {
+      const RAN_QUIPS = [
+        'Mimi retreated. Boldly.',
+        'Discretion: the better part of valour.',
+        'She\'ll be back. Probably.',
+        'Strategic repositioning complete.',
+        'The enemy is still out there. Waiting.',
+      ];
+      const quip = RAN_QUIPS[Math.floor(Math.random() * RAN_QUIPS.length)];
+      const W = this.cameras.main.width;
+      const toast = this.add.text(W / 2, 80, `🏃 ${quip}`, {
+        fontSize: '15px', color: '#AACCFF', fontFamily: "'Nunito', Arial, sans-serif",
+        fontStyle: 'italic', stroke: '#000', strokeThickness: 3, align: 'center',
+      }).setOrigin(0.5).setScrollFactor(0).setDepth(60);
+      this.tweens.add({
+        targets: toast, y: 50, alpha: 0,
+        delay: 1800, duration: 800, ease: 'Sine.easeIn',
+        onComplete: () => toast.destroy(),
+      });
+      return;
+    }
 
     // Life-used respawn — brief floating quip so the world reinforces the event
     if (battleResult.usedLife) {
@@ -822,10 +860,64 @@ export default class ExploreScene extends Phaser.Scene {
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
-      this.cameras.main.fadeOut(300, 0, 0, 0);
-      this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start('OverworldScene');
-      });
+      if (this._exitConfirm) {
+        this._closeExitConfirm(); // ESC while confirm open = cancel
+      } else {
+        this._showExitConfirm();
+      }
     }
+  }
+
+  // ── Exit confirm overlay ──────────────────────────────────────────────────
+
+  _showExitConfirm() {
+    if (this._exitConfirm) return;
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+    const items = this._exitConfirm = [];
+    const add = o => { items.push(o); return o; };
+
+    add(this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.55)
+      .setScrollFactor(0).setDepth(80).setInteractive()); // blocks world clicks
+
+    add(this.add.rectangle(W / 2, H / 2, 360, 170, 0x0C0C24)
+      .setScrollFactor(0).setDepth(81).setStrokeStyle(2, 0x4488FF));
+
+    add(this.add.text(W / 2, H / 2 - 50, 'Return to World Map?', {
+      fontSize: '20px', color: '#FFFFFF',
+      fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(82));
+
+    add(this.add.text(W / 2, H / 2 - 20, 'Progress in this region is saved.', {
+      fontSize: '13px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif",
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(82));
+
+    const yb = add(this.add.rectangle(W / 2 - 72, H / 2 + 38, 128, 40, 0x0A3A0A)
+      .setScrollFactor(0).setDepth(82).setStrokeStyle(2, 0x44AA44).setInteractive({ useHandCursor: true }));
+    const yt = add(this.add.text(W / 2 - 72, H / 2 + 38, '✓  Yes, go to Map', {
+      fontSize: '14px', color: '#88FF88', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(83));
+    yb.on('pointerover', () => { yb.setFillStyle(0x155A15); yt.setColor('#AAFFAA'); });
+    yb.on('pointerout',  () => { yb.setFillStyle(0x0A3A0A); yt.setColor('#88FF88'); });
+    yb.on('pointerdown', () => {
+      this._closeExitConfirm();
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('OverworldScene'));
+    });
+
+    const nb = add(this.add.rectangle(W / 2 + 72, H / 2 + 38, 104, 40, 0x2A0A0A)
+      .setScrollFactor(0).setDepth(82).setStrokeStyle(2, 0xAA4444).setInteractive({ useHandCursor: true }));
+    const nt = add(this.add.text(W / 2 + 72, H / 2 + 38, '✕  Stay', {
+      fontSize: '14px', color: '#FF8888', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(83));
+    nb.on('pointerover', () => { nb.setFillStyle(0x401515); nt.setColor('#FFAAAA'); });
+    nb.on('pointerout',  () => { nb.setFillStyle(0x2A0A0A); nt.setColor('#FF8888'); });
+    nb.on('pointerdown', () => this._closeExitConfirm());
+  }
+
+  _closeExitConfirm() {
+    if (!this._exitConfirm) return;
+    this._exitConfirm.forEach(o => o.destroy());
+    this._exitConfirm = null;
   }
 }

@@ -1,34 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 40">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <!--
-    Shadow Castle pillar B  variant: runic glyph instead of crack,
-    slightly wider capital, different shard pattern on broken top.
+    Shadow Castle wall block B (32×32) — alternate mortar offset + runic glyph.
+    Full-width base for seamless wall merging.
   -->
-  <!-- Wide merge base -->
-  <ellipse cx="12" cy="38" rx="12" ry="5" fill="#08060C"/>
-  <ellipse cx="12" cy="39.5" rx="10" ry="1.5" fill="#000000" opacity="0.4"/>
-  <!-- Base plinth -->
-  <rect x="2"  y="32" width="20" height="6" fill="#100D1A" rx="1"/>
-  <rect x="3"  y="32" width="18" height="1.5" fill="#2E2844" opacity="0.9"/>
-  <!-- Shaft -->
-  <rect x="4"  y="8"  width="16" height="25" fill="#0E0A14"/>
-  <rect x="5"  y="8"  width="14" height="25" fill="#1C1728"/>
-  <rect x="5.5" y="9" width="3"  height="23" fill="#38305A" opacity="0.65"/>
-  <rect x="16"  y="8" width="2"   height="25" fill="#050308" opacity="0.9"/>
-  <!-- Fluting grooves (shifted positions for visual variety) -->
-  <line x1="9"  y1="8"  x2="9"  y2="33" stroke="#080610" stroke-width="0.8" opacity="0.8"/>
-  <line x1="15" y1="8"  x2="15" y2="33" stroke="#080610" stroke-width="0.8" opacity="0.8"/>
-  <!-- Gold accent band (slightly thicker) -->
-  <rect x="4" y="10" width="16" height="3" fill="#7A6018"/>
-  <rect x="4" y="10" width="16" height="1" fill="#C4A830" opacity="0.65"/>
-  <!-- Capital -->
-  <rect x="2"  y="5"  width="20" height="4" fill="#0E0B16" rx="1"/>
-  <rect x="3"  y="5"  width="18" height="1.5" fill="#2A2438" opacity="0.9"/>
-  <!-- Different jagged top  fewer, wider shards -->
-  <polygon points="3,5 7,1 13,3.5 18,0 22,5" fill="#0E0A14"/>
-  <polygon points="13,3.5 18,0 16,2" fill="#050308" opacity="0.8"/>
-  <!-- Runic glyph (faint purple glow, carved-in look)  instead of crack -->
-  <rect x="10" y="18" width="4" height="7" fill="#0A0812" rx="0.5"/>
-  <rect x="8"  y="21" width="8" height="2" fill="#0A0812" rx="0.5"/>
-  <!-- Faint magical glow behind rune -->
-  <rect x="9"  y="17" width="6" height="9" fill="#6030C8" opacity="0.12" rx="1"/>
+  <!-- Full-width merge base -->
+  <rect x="0" y="27" width="32" height="5" fill="#07050B"/>
+  <ellipse cx="16" cy="31.5" rx="16" ry="2.5" fill="#07050B"/>
+  <ellipse cx="16" cy="31.5" rx="13" ry="1.5" fill="#000000" opacity="0.4"/>
+  <!-- Block main body -->
+  <rect x="0" y="2" width="32" height="28" fill="#18141F"/>
+  <!-- Left highlight -->
+  <rect x="0" y="2" width="4" height="26" fill="#30285A" opacity="0.65"/>
+  <!-- Top surface -->
+  <rect x="0" y="2" width="32" height="4" fill="#242040"/>
+  <!-- Right deep shadow -->
+  <rect x="28" y="2" width="4" height="26" fill="#07050B" opacity="0.8"/>
+  <!-- Mortar — horizontal (different row heights from variant A) -->
+  <line x1="0" y1="11" x2="32" y2="11" stroke="#08060E" stroke-width="0.9" opacity="0.75"/>
+  <line x1="0" y1="20" x2="32" y2="20" stroke="#08060E" stroke-width="0.9" opacity="0.75"/>
+  <!-- Mortar — vertical (offset from variant A for visual variety) -->
+  <line x1="8"  y1="2"  x2="8"  y2="11" stroke="#08060E" stroke-width="0.8" opacity="0.6"/>
+  <line x1="24" y1="2"  x2="24" y2="11" stroke="#08060E" stroke-width="0.8" opacity="0.6"/>
+  <line x1="16" y1="11" x2="16" y2="20" stroke="#08060E" stroke-width="0.8" opacity="0.6"/>
+  <line x1="8"  y1="20" x2="8"  y2="27" stroke="#08060E" stroke-width="0.8" opacity="0.6"/>
+  <line x1="24" y1="20" x2="24" y2="27" stroke="#08060E" stroke-width="0.8" opacity="0.6"/>
+  <!-- Gold accent band -->
+  <rect x="0" y="5" width="32" height="2"   fill="#6A5214"/>
+  <rect x="0" y="5" width="32" height="0.8" fill="#C4A830" opacity="0.55"/>
+  <!-- Runic glyph (carved-in, faint purple glow) -->
+  <rect x="13" y="14" width="6" height="8"  fill="#0A0816" rx="0.5"/>
+  <rect x="11" y="17" width="10" height="2" fill="#0A0816" rx="0.5"/>
+  <rect x="12" y="13" width="8" height="10" fill="#5828A8" opacity="0.11" rx="1"/>
 </svg>

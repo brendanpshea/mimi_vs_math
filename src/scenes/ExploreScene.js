@@ -338,6 +338,7 @@ export default class ExploreScene extends Phaser.Scene {
         (d) => this._startBattle(d, instanceKey),
       );
       enemy.registerOverlap(this.mimi.sprite);
+      enemy.setMimi(this.mimi.sprite);
       this._enemies.push(enemy);
       this._liveCount++;
     });

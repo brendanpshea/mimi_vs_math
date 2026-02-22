@@ -28,6 +28,14 @@ export default class DialogBox {
     this._border = scene.add.rectangle(W / 2, H - 90, W - 36, 124, 0x4488FF, 0)
       .setScrollFactor(0).setDepth(80).setStrokeStyle(2, 0x4488FF).setVisible(false);
 
+    // Portrait frame (sits in the left side of the panel)
+    this._portraitBg = scene.add.rectangle(52, H - 90, 52, 52, 0x0A0A33)
+      .setScrollFactor(0).setDepth(81).setStrokeStyle(2, 0x6699FF).setVisible(false);
+    // Portrait image (texture set dynamically in show())
+    this._portrait = scene.add.image(52, H - 90, '__DEFAULT')
+      .setDisplaySize(44, 44)
+      .setScrollFactor(0).setDepth(82).setVisible(false);
+
     // Speaker name
     this._speaker = scene.add.text(30, H - 148, '', {
       fontSize: '13px', color: '#FFDD88', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
@@ -38,6 +46,9 @@ export default class DialogBox {
       fontSize: '15px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif",
       wordWrap: { width: W - 80 },
     }).setScrollFactor(0).setDepth(81).setVisible(false);
+
+    this._baseBodyW = W - 80;
+    this._portBodyW = W - 132;
 
     // Continue prompt
     this._prompt = scene.add.text(W - 30, H - 42, '▶ Press SPACE', {
@@ -59,13 +70,30 @@ export default class DialogBox {
   }
 
   /**
-   * @param {string} text
+   * @param {string}   text
    * @param {Function} [onClose]
-   * @param {string}   [speaker] - optional speaker name
+   * @param {string}   [speaker]    - optional speaker name label
+   * @param {string}   [portraitKey] - optional Phaser texture key for portrait image
    */
-  show(text, onClose, speaker = '') {
+  show(text, onClose, speaker = '', portraitKey = '') {
     this._active  = true;
     this._onClose = onClose;
+
+    // Portrait
+    const hasPortrait = portraitKey &&
+      this.scene.textures.exists(portraitKey) &&
+      portraitKey !== '__DEFAULT';
+    if (hasPortrait) {
+      this._portrait.setTexture(portraitKey).setVisible(true);
+      this._portraitBg.setVisible(true);
+      this._speaker.setX(86);
+      this._body.setX(86).setWordWrapWidth(this._portBodyW);
+    } else {
+      this._portrait.setVisible(false);
+      this._portraitBg.setVisible(false);
+      this._speaker.setX(30);
+      this._body.setX(30).setWordWrapWidth(this._baseBodyW);
+    }
 
     this._panel.setVisible(true);
     this._border.setVisible(true);
@@ -112,6 +140,8 @@ export default class DialogBox {
     this._active = false;
     this._panel.setVisible(false);
     this._border.setVisible(false);
+    this._portrait.setVisible(false);
+    this._portraitBg.setVisible(false);
     this._speaker.setVisible(false);
     this._body.setVisible(false);
     this._prompt.setVisible(false);

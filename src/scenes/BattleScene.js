@@ -299,14 +299,28 @@ export default class BattleScene extends Phaser.Scene {
   }
 
   _updateHPBar(bar, currentHP) {
-    const ratio = Math.max(0, currentHP) / bar.maxHP;
-    bar.fill.setDisplaySize(bar.bw * ratio, bar.bh);
-    bar.shine.setDisplaySize(bar.bw * ratio, bar.bh / 3);
-    bar.lbl.setText(`${Math.max(0, currentHP)}/${bar.maxHP}`);
-    // Colour shift: green → yellow → red
-    const r = Math.round(255 * (1 - ratio));
-    const g = Math.round(255 * ratio);
-    bar.fill.setFillStyle(Phaser.Display.Color.GetColor(r, g, 40));
+    const targetHP    = Math.max(0, currentHP);
+    const targetRatio = targetHP / bar.maxHP;
+    const targetW     = bar.bw * targetRatio;
+
+    bar.lbl.setText(`${targetHP}/${bar.maxHP}`);
+
+    // Animate the bar width rather than snapping — DS-style drain
+    this.tweens.killTweensOf(bar.fill);
+    this.tweens.add({
+      targets:  bar.fill,
+      displayWidth: targetW,
+      duration: 420,
+      ease:     'Sine.easeOut',
+      onUpdate: () => {
+        const w     = bar.fill.displayWidth;
+        bar.shine.setDisplaySize(w, bar.bh / 3);
+        const ratio = w / bar.bw;
+        const r = Math.round(255 * (1 - ratio));
+        const g = Math.round(255 * ratio);
+        bar.fill.setFillStyle(Phaser.Display.Color.GetColor(r, g, 40));
+      },
+    });
   }
 
   _buildAnswerButtons(W, H) {
@@ -569,6 +583,12 @@ export default class BattleScene extends Phaser.Scene {
     // Screen flash on hit
     this.cameras.main.flash(150, 255, 255, 255, false, null, null, 0.08);
 
+    // Floating damage number from the enemy sprite
+    const floatColor = isFast ? 0xFFDD00 : (dmg >= 4 ? 0xFF8800 : 0x44FF44);
+    const floatScale = dmg >= 4 ? 1.3 : 1.0;
+    this._floatText(this.enemySprite.x, this.enemySprite.y - 20, `−${dmg}`, floatColor, floatScale);
+    if (isFast) this._floatText(this.enemySprite.x + 28, this.enemySprite.y - 44, '⚡FAST!', 0xFFDD00, 0.75);
+
     const label = isFast ? `⚡ Fast! −${dmg}` : `✓ Correct! −${dmg}`;
     this._showFeedback(label, isFast ? 0xFFDD00 : 0x44FF44);
     this._updateStreakDisplay();
@@ -620,6 +640,9 @@ export default class BattleScene extends Phaser.Scene {
     });
     // Camera shake on damage
     this.cameras.main.shake(200, 0.008);
+
+    // Floating damage number from Mimi's position
+    this._floatText(this.mimiSprite.x, this.mimiSprite.y - 20, `−${dmg}`, 0xFF4444);
   }
 
   _afterAnswer() {
@@ -761,6 +784,38 @@ export default class BattleScene extends Phaser.Scene {
   }
 
   // ── Feedback / streak display ─────────────────────────────────────────────
+
+  /**
+   * Spawn a floating damage/status text that arcs up from (x, y) and fades.
+   * @param {number} x
+   * @param {number} y
+   * @param {string} msg
+   * @param {number} color  hex integer
+   * @param {number} [scale=1]
+   */
+  _floatText(x, y, msg, color, scale = 1) {
+    const colorStr = '#' + color.toString(16).padStart(6, '0');
+    const t = this.add.text(x, y, msg, {
+      fontSize: `${Math.round(22 * scale)}px`,
+      color: colorStr,
+      fontFamily: FONT_TITLE,
+      fontStyle: 'bold',
+      stroke: '#000000',
+      strokeThickness: 4,
+    }).setOrigin(0.5).setDepth(20).setAlpha(1);
+
+    this.tweens.add({
+      targets:  t,
+      y:        y - 54,
+      x:        x + Phaser.Math.Between(-18, 18),
+      alpha:    0,
+      scaleX:   scale * 1.3,
+      scaleY:   scale * 1.3,
+      duration: 850,
+      ease:     'Cubic.easeOut',
+      onComplete: () => t.destroy(),
+    });
+  }
 
   _showFeedback(msg, color) {
     const H = this.cameras.main.height;

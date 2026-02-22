@@ -768,8 +768,8 @@ export default class ExploreScene extends Phaser.Scene {
         this.dialog.show(joke.setup, () => {
           // Page 2: punchline + math hint together
           const hint = this.regionData.npcHint;
-          this.dialog.show(`${joke.punchline}\n\n💡 Hint: ${hint}`, done, '🧙 Wizard');
-        }, '🧙 Wizard');
+          this.dialog.show(`${joke.punchline}\n\n💡 Hint: ${hint}`, done, '🧙 Wizard', 'npc_wizard');
+        }, '🧙 Wizard', 'npc_wizard');
       },
     );
     this._npc.registerOverlap(this.mimi.sprite);

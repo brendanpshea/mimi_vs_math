@@ -361,15 +361,41 @@ export default class ExploreScene extends Phaser.Scene {
       if (key !== undefined) {
         GameState.defeatEnemy(this.regionId, key);
       }
-    } else {
-      // Mimi was defeated — clear all enemies in this region so they respawn
+    } else if (!battleResult.usedLife) {
+      // Hard defeat (no lives left) — clear enemies so they respawn at entrance
       GameState.clearRegionEnemies(this.regionId);
     }
+    // usedLife defeat: enemy positions and progress are preserved
   }
 
   _showBattleMessages() {
     const { battleResult } = this;
-    if (!battleResult || !battleResult.victory) return;
+    if (!battleResult) return;
+
+    // Life-used respawn — brief floating quip so the world reinforces the event
+    if (battleResult.usedLife) {
+      const RESPAWN_QUIPS = [
+        'Back on her paws.',
+        'Cats are difficult to keep down.',
+        'She\'s fine. Mostly fine.',
+        'Mimi shakes it off with great style.',
+        'Ready for round two.',
+      ];
+      const quip = RESPAWN_QUIPS[Math.floor(Math.random() * RESPAWN_QUIPS.length)];
+      const W = this.cameras.main.width;
+      const toast = this.add.text(W / 2, 80, `🐾 ${quip}`, {
+        fontSize: '15px', color: '#FFCC88', fontFamily: "'Nunito', Arial, sans-serif",
+        fontStyle: 'italic', stroke: '#000', strokeThickness: 3, align: 'center',
+      }).setOrigin(0.5).setScrollFactor(0).setDepth(60);
+      this.tweens.add({
+        targets: toast, y: 50, alpha: 0,
+        delay: 1800, duration: 800, ease: 'Sine.easeIn',
+        onComplete: () => toast.destroy(),
+      });
+      return;
+    }
+
+    if (!battleResult.victory) return;
 
     // _preBattleAllClear was computed in create() BEFORE _processBattleResult(),
     // so it is true only when THIS battle defeated the final enemy.
@@ -406,16 +432,19 @@ export default class ExploreScene extends Phaser.Scene {
     const px = tx(this.regionData.bossTile.col);
     const py = ty(this.regionData.bossTile.row);
 
-    // Dimensions
-    const DW       = 56;
-    const DH       = 68;
-    const PILLAR_W = 12;
+    // Dimensions — the gate is intentionally large and imposing
+    const DW       = 88;
+    const DH       = 100;
+    const PILLAR_W = 14;
     const OPEN_W   = DW - PILLAR_W * 2;
     const OPEN_H   = DH - 6;
     const ARCH_R   = OPEN_W / 2 + 2;
     const archCY   = py - DH / 2 + ARCH_R;
     const openX    = px - OPEN_W / 2;
     const openTopY = py - DH / 2 + 6;
+    // Region-specific accent colour for arch highlights, turrets, and keystone gem
+    const GATE_ACCENTS = [0xFFDD33, 0x44EE88, 0xFF9933, 0x44CCFF, 0xCC66FF];
+    const accentColor  = GATE_ACCENTS[this.regionId] ?? GATE_ACCENTS[0];
 
     // ── Static stone frame (never changes) ────────────────────────────────
     const frame = this.add.graphics().setDepth(4);
@@ -462,6 +491,47 @@ export default class ExploreScene extends Phaser.Scene {
     frame.fillCircle(px, archCY, ARCH_R);
     frame.fillStyle(0x3C3C4C);
     frame.fillRect(lpx - 1, archCY, DW + 2, ARCH_R + 4);
+
+    // ── Battlements: twin turrets flanking the gate ─────────────────────────────
+    const TURR_W = PILLAR_W + 4;   // turret slightly wider than its pillar
+    const TURR_H = 28;
+    const MRL_W = 5; const MRL_H = 8; const MRL_GAP = 3;
+    const numMrl = Math.floor((TURR_W - 2) / (MRL_W + MRL_GAP));
+    for (const bx of [lpx - 2, rpx - 2]) {
+      // Turret body
+      frame.fillStyle(0x1E1E26);
+      frame.fillRect(bx, py - DH / 2 - TURR_H, TURR_W, TURR_H + 2);
+      frame.fillStyle(0x3C3C4C);
+      frame.fillRect(bx + 1, py - DH / 2 - TURR_H + 1, TURR_W - 2, TURR_H);
+      frame.fillStyle(0x545468, 0.65);
+      frame.fillRect(bx + 1, py - DH / 2 - TURR_H + 1, 3, TURR_H);
+      // Accent stripe
+      frame.fillStyle(accentColor, 0.25);
+      frame.fillRect(bx + 1, py - DH / 2 - TURR_H + TURR_H * 0.6, TURR_W - 2, 4);
+      // Merlons (crenellations) atop the turret
+      for (let m = 0; m < numMrl; m++) {
+        const mx = bx + 1 + m * (MRL_W + MRL_GAP);
+        frame.fillStyle(0x1E1E26);
+        frame.fillRect(mx, py - DH / 2 - TURR_H - MRL_H, MRL_W, MRL_H + 1);
+        frame.fillStyle(0x3C3C4C);
+        frame.fillRect(mx + 1, py - DH / 2 - TURR_H - MRL_H + 1, MRL_W - 2, MRL_H);
+      }
+    }
+
+    // Central finial — pointed peak above the arch crown
+    const finY = archCY - ARCH_R - 1;
+    frame.fillStyle(0x1E1E26);
+    frame.fillTriangle(px - 8, finY, px + 8, finY, px, finY - 14);
+    frame.fillStyle(0x3C3C4C);
+    frame.fillTriangle(px - 6, finY - 1, px + 6, finY - 1, px, finY - 11);
+
+    // Accent: glowing arch outline + keystone gem
+    frame.lineStyle(1.5, accentColor, 0.8);
+    frame.strokeCircle(px, archCY, ARCH_R);
+    frame.fillStyle(accentColor, 0.92);
+    frame.fillCircle(px, archCY - ARCH_R + 5, 5);   // gem
+    frame.fillStyle(0xFFFFFF, 0.5);
+    frame.fillCircle(px - 1, archCY - ARCH_R + 3, 2); // gem shine
 
     // Boss name label
     this._bossLabel = this.add.text(

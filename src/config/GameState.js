@@ -18,8 +18,8 @@ const SAVE_VERSION = 2;
 const GameState = {
   // ── Player stats ──────────────────────────────────────────────────────
   hp: 12,
-  maxHP: 12,
-
+  maxHP: 12,  lives: 9,
+  maxLives: 9,
   // ── Lifetime stats ────────────────────────────────────────────────────
   stats: {
     answered:       0,   // total questions seen
@@ -65,6 +65,8 @@ const GameState = {
       saveVersion:     SAVE_VERSION,
       hp:              this.hp,
       maxHP:           this.maxHP,
+      lives:           this.lives,
+      maxLives:        this.maxLives,
       stats:           this.stats,
       currentRegion:   this.currentRegion,
       defeatedBosses:  this.defeatedBosses,
@@ -83,6 +85,9 @@ const GameState = {
       Object.assign(this, data);
       // Ensure fields added after old saves exist
       if (!this.bossIntroSeen) this.bossIntroSeen = [];
+      // Ensure lives field exists for saves that predate this feature
+      if (this.lives    === undefined) this.lives    = 9;
+      if (this.maxLives === undefined) this.maxLives = 9;
       if (!this.stats) this.stats = {
         answered: 0, correct: 0, incorrect: 0, totalTimeMs: 0,
         bestStreak: 0, battlesWon: 0, battlesLost: 0, perfectBattles: 0,
@@ -107,6 +112,8 @@ const GameState = {
   reset() {
     this.hp              = 12;
     this.maxHP           = 12;
+    this.lives           = 9;
+    this.maxLives        = 9;
     this.stats           = {
       answered: 0, correct: 0, incorrect: 0, totalTimeMs: 0,
       bestStreak: 0, battlesWon: 0, battlesLost: 0, perfectBattles: 0,
@@ -140,6 +147,18 @@ const GameState = {
   /** True if a specific enemy (by composite key) has been defeated. */
   isEnemyDefeated(regionId, enemyId) {
     return !!this.defeatedEnemies[`r${regionId}_${enemyId}`];
+  },
+
+  /**
+   * Spend one life.  Returns true if a life was available and consumed,
+   * false if no lives remain (real defeat).
+   */
+  useLife() {
+    if (this.lives <= 0) return false;
+    this.lives = Math.max(0, this.lives - 1);
+    this.hp    = this.maxHP;   // full restore on life use
+    this.save();
+    return true;
   },
 
   defeatEnemy(regionId, enemyId) {

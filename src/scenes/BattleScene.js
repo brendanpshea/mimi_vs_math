@@ -118,8 +118,40 @@ export default class BattleScene extends Phaser.Scene {
 
   _buildLayout(W, H) {
     // ── Enemy side ──────────────────────────────────────────────────────
-    this.enemySprite = this.add.image(W * 0.72, 88, this.enemyData.spriteKey)
-      .setDisplaySize(100, 100);
+
+    // Boss sprites are larger and sit slightly higher so the bottom edge
+    // clears the name text at y=144.  All sizes are display-only — no
+    // physics body is involved, so no collision box to worry about.
+    const enemyY  = this.isBoss ? 72  : 88;
+    const enemySz = this.isBoss ? 140 : 100;
+
+    // Region-specific aura colour and sprite tint used for bosses.
+    // Tints are very subtle (near-white) so the original sprite art shows through.
+    const AURA_COLORS = [0xFFDD33, 0x44FF88, 0xFF8833, 0x44CCFF, 0xAA44FF];
+    const BOSS_TINTS  = [0xFFFFF0, 0xF0FFF4, 0xFFF5EE, 0xEEF8FF, 0xF8F0FF];
+    this._bossTint    = null;   // stored so hit-flash can restore it
+
+    if (this.isBoss) {
+      const auraColor = AURA_COLORS[this.regionId] ?? AURA_COLORS[0];
+      this._bossTint  = BOSS_TINTS [this.regionId] ?? 0xFFFFFF;
+
+      // Large soft filled glow behind the boss
+      const aura = this.add.ellipse(W * 0.72, enemyY, 172, 172, auraColor, 0.22).setDepth(2);
+      this.tweens.add({
+        targets: aura, scaleX: 1.15, scaleY: 1.15, alpha: 0.08,
+        duration: 880, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      });
+      // Crisp outer ring that pulses independently
+      const ring = this.add.ellipse(W * 0.72, enemyY, 182, 182).setStrokeStyle(2, auraColor, 0.55).setDepth(2);
+      this.tweens.add({
+        targets: ring, scaleX: 1.07, scaleY: 1.07, alpha: 0.28,
+        duration: 1250, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      });
+    }
+
+    this.enemySprite = this.add.image(W * 0.72, enemyY, this.enemyData.spriteKey)
+      .setDisplaySize(enemySz, enemySz).setDepth(3);
+    if (this._bossTint) this.enemySprite.setTint(this._bossTint);
 
     this.add.text(W * 0.72, 144, this.enemyData.name, TEXT_STYLE(16, '#FFCCEE', true))
       .setOrigin(0.5);
@@ -138,7 +170,10 @@ export default class BattleScene extends Phaser.Scene {
     this.add.text(W * 0.28, 144, 'Mimi', TEXT_STYLE(16, '#AAFFCC', true)).setOrigin(0.5);
     this.playerHPBar = this._makeHPBar(W * 0.28, 162, GameState.maxHP, 0x33CC66);
 
-    // ── Math topic badge ────────────────────────────────────────────────
+    // ── Lives counter (below Mimi HP bar) ──────────────────────────────────
+    const livesStr = '🐾 '.repeat(Math.max(0, GameState.lives));
+    this.add.text(W * 0.28, 176, `${livesStr}`, TEXT_STYLE(11, '#FFCC88'))
+      .setOrigin(0.5, 0);
     const topicLabels = {
       addSub: 'Addition & Subtraction', multiplication: 'Multiplication',
       division: 'Division', fractions: 'Fractions', mixed: 'Mixed',
@@ -461,9 +496,12 @@ export default class BattleScene extends Phaser.Scene {
       if (this._timerEvent) this._timerEvent.remove();
     }
 
-    // Enemy hit flash + bounce
+    // Enemy hit flash + bounce (restore boss tint afterwards instead of clearing)
     this.enemySprite.setTint(0xFFFFFF);
-    this.time.delayedCall(100, () => this.enemySprite.clearTint());
+    this.time.delayedCall(100, () => {
+      if (this._bossTint) this.enemySprite.setTint(this._bossTint);
+      else this.enemySprite.clearTint();
+    });
     this.tweens.add({
       targets: this.enemySprite,
       y: { from: this.enemySprite.y + 14, to: this.enemySprite.y },
@@ -858,37 +896,84 @@ export default class BattleScene extends Phaser.Scene {
       }, undefined, undefined, btnYOffset);
 
     } else {
-      // Defeat effects — camera shake and dark red overlay
+      // ── Defeat ─────────────────────────────────────────────────────────────
       this.cameras.main.shake(500, 0.012);
       this.cameras.main.flash(300, 180, 0, 0, false, null, null, 0.2);
-
-      // Defeat — respawn with half HP
       GameState.recordBattle(false, false, this.streak);
-      GameState.hp = Math.max(1, Math.ceil(GameState.maxHP / 2));
-      GameState.save();
 
-      // Dark vignette overlay
-      this.add.rectangle(W / 2, H / 2, W, H, 0x110000, 0.4);
+      const lifeUsed = GameState.useLife();   // consumes 1 life AND sets hp = maxHP if available
 
-      this.add.rectangle(W / 2, H / 2, W * 0.78, 200, 0x220000, 0.93)
-        .setStrokeStyle(2, 0x882222);
+      if (lifeUsed) {
+        // ── Soft defeat: life consumed, respawn near the enemy ────────────────
+        const DEFEAT_QUIPS = [
+          'Mimi has exactly nine lives for a reason.\nShe checked. It\'s in the paperwork.',
+          `One down, ${GameState.lives} to go.\nMimi eyes the enemy with renewed focus.`,
+          'Knocked out.\nMimi dusts herself off with enormous dignity.\n(She has fallen over in less impressive ways.)',
+          'That round went to the enemy.\nMimi is taking notes. Detailed, vengeful notes.',
+          'Technically that didn\'t happen.\nMimi is prepared to argue this with documentation.',
+          'Mimi has invoked emergency cat physics.\nShe bounces. It\'s a thing.',
+          'A cat does not acknowledge defeat.\nA cat merely... re-strategies. Near the enemy.',
+          'Life spent. Zero regrets.\nAbsolute lies, but convincingly delivered.',
+          `${GameState.lives} liv${GameState.lives === 1 ? 'e' : 'es'} remaining.\nMimi has done the maths. She\'s fine.`,
+        ];
+        const quip = DEFEAT_QUIPS[Phaser.Math.Between(0, DEFEAT_QUIPS.length - 1)];
 
-      this.add.text(W / 2, H / 2 - 60, '💫  Defeated…', {
-        ...TEXT_STYLE(38, '#FF6666', true), fontFamily: FONT_TITLE, stroke: '#000', strokeThickness: 3,
-      }).setOrigin(0.5);
+        // Dark vignette overlay
+        this.add.rectangle(W / 2, H / 2, W, H, 0x110000, 0.4);
+        const boxH = 220;
+        this.add.rectangle(W / 2, H / 2, W * 0.78, boxH, 0x220000, 0.93)
+          .setStrokeStyle(2, 0x882222);
 
-      this.add.text(W / 2, H / 2 - 14, 'Mimi returns to the region entrance.', TEXT_STYLE(16, '#FFAAAA')).setOrigin(0.5);
-      this.add.text(W / 2, H / 2 + 14, `HP restored to ${GameState.hp}/${GameState.maxHP}`, TEXT_STYLE(14, '#FFAAAA')).setOrigin(0.5);
+        this.add.text(W / 2, H / 2 - boxH / 2 + 18, '🐾  A Life Used…', {
+          ...TEXT_STYLE(32, '#FF8844', true), fontFamily: FONT_TITLE, stroke: '#000', strokeThickness: 3,
+        }).setOrigin(0.5);
 
-      this._makeContinueButton(W, H, 'Try Again →', () => {
-        this.cameras.main.fadeOut(300, 0, 0, 0);
-        this.cameras.main.once('camerafadeoutcomplete', () => {
-          this.scene.start(this.returnScene, {
-            ...this.returnData,
-            battleResult: { victory: false },
+        this.add.text(W / 2, H / 2 - 12, quip, {
+          ...TEXT_STYLE(15, '#FFCCAA'), wordWrap: { width: W * 0.68 }, align: 'center',
+        }).setOrigin(0.5);
+
+        const livesLeft = '🐾 '.repeat(GameState.lives).trim() || '(none left!)';
+        this.add.text(W / 2, H / 2 + boxH / 2 - 46,
+          `Lives remaining: ${livesLeft}`, TEXT_STYLE(13, '#FFB088')).setOrigin(0.5);
+
+        this._makeContinueButton(W, H, 'Back into it! →', () => {
+          this.cameras.main.fadeOut(300, 0, 0, 0);
+          this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start(this.returnScene, {
+              ...this.returnData,
+              battleResult: { victory: false, usedLife: true },
+            });
           });
-        });
-      }, 0x660000, 0xAA4444);
+        }, 0x550000, 0xCC6633, 62);
+
+      } else {
+        // ── Hard defeat: no lives left, reset to region spawn ────────────────
+        GameState.hp = Math.max(1, Math.ceil(GameState.maxHP / 2));
+        GameState.save();
+
+        this.add.rectangle(W / 2, H / 2, W, H, 0x110000, 0.4);
+        this.add.rectangle(W / 2, H / 2, W * 0.78, 220, 0x220000, 0.93)
+          .setStrokeStyle(2, 0x882222);
+
+        this.add.text(W / 2, H / 2 - 72, '💫  All Nine Lives Gone…', {
+          ...TEXT_STYLE(30, '#FF6666', true), fontFamily: FONT_TITLE, stroke: '#000', strokeThickness: 3,
+        }).setOrigin(0.5);
+        this.add.text(W / 2, H / 2 - 24,
+          'Mimi has exhausted the full allowance of\ncat-based second chances.\nShe retreats to the region entrance to regroup.',
+          { ...TEXT_STYLE(14, '#FFAAAA'), wordWrap: { width: W * 0.66 }, align: 'center' }).setOrigin(0.5);
+        this.add.text(W / 2, H / 2 + 28,
+          `HP restored to ${GameState.hp}/${GameState.maxHP}`, TEXT_STYLE(13, '#FFAAAA')).setOrigin(0.5);
+
+        this._makeContinueButton(W, H, 'Try Again →', () => {
+          this.cameras.main.fadeOut(300, 0, 0, 0);
+          this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start(this.returnScene, {
+              ...this.returnData,
+              battleResult: { victory: false, usedLife: false },
+            });
+          });
+        }, 0x660000, 0xAA4444);
+      }
     }
   }
 

@@ -29,12 +29,11 @@ export default class HUD {
     this._panel = scene.add.rectangle(W / 2, 30, W, 60, PANEL_COLOR, PANEL_ALPHA)
       .setScrollFactor(0).setDepth(50);
 
-    // Hearts (max 6 shown)
+    // Hearts (max 6 shown) — use pre-generated image textures from BootScene
     this._hearts = [];
     for (let i = 0; i < 6; i++) {
-      const h = scene.add.text(16 + i * 26, 14, '♥', {
-        fontSize: '22px', color: '#FF4466', fontFamily: "'Nunito', Arial, sans-serif",
-      }).setScrollFactor(0).setDepth(51);
+      const h = scene.add.image(20 + i * 26, 20, 'heart_full')
+        .setDisplaySize(20, 20).setScrollFactor(0).setDepth(51);
       this._hearts.push(h);
     }
 
@@ -64,9 +63,9 @@ export default class HUD {
     const fullHearts  = Math.floor(hp / 2);
     const halfHeart   = hp % 2 === 1;
     for (let i = 0; i < 6; i++) {
-      if (i < fullHearts)                         this._hearts[i].setColor('#FF4466');
-      else if (i === fullHearts && halfHeart)      this._hearts[i].setColor('#FF88AA');
-      else                                         this._hearts[i].setColor('#333344');
+      if (i < fullHearts)                         this._hearts[i].setTexture('heart_full');
+      else if (i === fullHearts && halfHeart)      this._hearts[i].setTexture('heart_half');
+      else                                         this._hearts[i].setTexture('heart_empty');
     }
 
     // Accuracy stat

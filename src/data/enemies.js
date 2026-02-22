@@ -66,7 +66,7 @@ const ENEMIES = {
     xp: 12,
     mathTopic: 'comparison',        // number comparison (new type)
     difficulty: 2,
-    timerSeconds: 22,              // Gr 1: reading-heavy question format
+    timerSeconds: 26,              // Gr 1: reading-heavy word problem; +8 s wordProblem bonus → ~34 s total
     special: 'Number comparison problems',
     color: 0x886644,
   },
@@ -214,7 +214,7 @@ const ENEMIES = {
     xp: 14,
     mathTopic: 'divisionWord',      // division word problems (new type)
     difficulty: 2,
-    timerSeconds: 30,              // Gr 3: 3-line word problem — reading + solving
+    timerSeconds: 22,              // Gr 3: +8 s word-problem bonus applied in BattleScene → ~30 s total
     special: 'Division word problems; answers shuffle at 5 s',
     color: 0xFF8844,
   },

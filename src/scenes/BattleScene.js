@@ -346,8 +346,9 @@ export default class BattleScene extends Phaser.Scene {
       this._refreshEffectsDisplay();
     }
 
-    // Timer
-    const duration = (this.enemyData.timerSeconds + (GameState.activeEffects.timerBonus ?? 0)) * 1000;
+    // Timer — word problems get a flat +8 s reading bonus on top of the base timer
+    const wordBonus = q.wordProblem ? 8 : 0;
+    const duration  = (this.enemyData.timerSeconds + (GameState.activeEffects.timerBonus ?? 0) + wordBonus) * 1000;
     this._startTimer(duration);
     this._qStartTime = this.time.now;
   }

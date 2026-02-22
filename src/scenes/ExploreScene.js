@@ -666,9 +666,10 @@ export default class ExploreScene extends Phaser.Scene {
     );
     this._npc.registerOverlap(this.mimi.sprite);
 
-    // Prevent the wizard from wandering through walls and decoration obstacles
+    // Prevent the wizard from wandering through walls, objects, and landmarks
     this.physics.add.collider(this._npc.sprite, this._walls);
     this.physics.add.collider(this._npc.sprite, this._decorObstacles);
+    this.physics.add.collider(this._npc.sprite, this._landmarkObstacles);
   }
 
   // ── Ambient particles ──────────────────────────────────────────────────

@@ -19,7 +19,12 @@ export default class TitleScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.fadeIn(400, 0, 0, 0);
-    BGM.play('title');
+
+    // BGM.play() needs Tone.start() which requires a user gesture.
+    // Fire on the very first pointer OR key event instead of create().
+    const _startMusic = () => BGM.play('title');
+    this.input.once('pointerdown', _startMusic);
+    this.input.keyboard.once('keydown', _startMusic);
 
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;

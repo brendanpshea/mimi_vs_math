@@ -113,20 +113,29 @@ export function getExplanation(question) {
 
     // ── Comparison ───────────────────────────────────────────────────────────
     case 'comparison': {
+      // D1 — pick the largest from a set of 4
       if (text.includes('LARGEST')) {
-        return `Look at all the choices and find the biggest.\n${ans} is larger than every other option.\n(Bigger number = further right on a number line.)`;
+        return `Look at all the numbers and find the biggest one.\n${ans} is larger than every other choice.\n💡 Tip: on a number line, bigger numbers are further to the right.`;
       }
-      // "How much bigger is A than B?"
+
+      // D3 — concrete word problems: "X has N items. Y has D more."
+      // All three templates contain the word "more" and exactly two numbers.
+      if (text.includes('more')) {
+        const nums = [...text.matchAll(/(\d+)/g)].map(m => Number(m[0]));
+        if (nums.length >= 2) {
+          // The two numbers are the starting amount and the "more" amount.
+          // Answer = their sum.
+          const [x, y] = nums.slice(0, 2);
+          const [lo, hi] = x < y ? [x, y] : [y, x];
+          return `The word "more" means we need to ADD! ➕\nStart with ${hi}, then count on ${lo} more:\n${hi} + ${lo} = ${ans} ✓`;
+        }
+      }
+
+      // D2 — "How much bigger is A than B?"
       const d2 = text.match(/(\d+)\s+than\s+(\d+)/);
       if (d2) {
         const [, a, b] = d2.map(Number);
-        return `"How much bigger?" means subtract:\n${a} − ${b} = ${ans} ✓`;
-      }
-      // "A is X more than B. B = N"
-      const d3 = text.match(/(\d+)\s+more.*?B\s*=\s*(\d+)/s);
-      if (d3) {
-        const [, diff, b] = d3.map(Number);
-        return `"${diff} more than ${b}" means add:\n${b} + ${diff} = ${ans} ✓`;
+        return `"How much bigger?" means find the difference.\nCount up from ${b} to ${a}:\n${a} − ${b} = ${ans} ✓`;
       }
       break;
     }

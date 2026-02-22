@@ -294,9 +294,23 @@ function comparisonD2() {
   const b = rand(5, 20); const diff = rand(2, 10); const a = b + diff;
   return { text: `How much bigger is ${a} than ${b}?`, answer: diff, answerDisplay: String(diff), topic: 'comparison' };
 }
+// Word-problem name/item pools — keep it kid-friendly and cat-game-appropriate
+const WP_NAMES = ['Mimi', 'Luna', 'Pip', 'Finn', 'Zoe', 'Rex', 'Bea', 'Kit'];
+const WP_ITEMS_COMP = ['stickers', 'marbles', 'fish treats', 'acorns', 'buttons', 'berries', 'yarn balls', 'shells'];
+
 function comparisonD3() {
-  const b = rand(10, 40); const diff = rand(3, 20); const a = b + diff;
-  return { text: `A is ${diff} more than B.\nB = ${b}. What is A?`, answer: a, answerDisplay: String(a), topic: 'comparison' };
+  // Easier numbers than D2 pure calc — the reading IS the challenge
+  const b    = rand(6, 20);  const diff = rand(2, 8);  const a = b + diff;
+  const n1   = WP_NAMES[rand(0, WP_NAMES.length - 1)];
+  const n2   = WP_NAMES.filter(n => n !== n1)[rand(0, WP_NAMES.length - 2)];
+  const item = WP_ITEMS_COMP[rand(0, WP_ITEMS_COMP.length - 1)];
+  const t    = rand(0, 2);
+  const text = t === 0
+    ? `${n1} has ${b} ${item}.\n${n2} has ${diff} more.\nHow many does ${n2} have?`
+    : t === 1
+    ? `${n2} collected ${diff} more\n${item} than ${n1}.\n${n1} has ${b}. How many did ${n2} collect?`
+    : `A jar has ${b} ${item}.\nSomeone adds ${diff} more.\nHow many are in the jar now?`;
+  return { text, answer: a, answerDisplay: String(a), topic: 'comparison', wordProblem: true };
 }
 
 // ── Times-table focus (Region 1 enemy 1) ─────────────────────────────────────
@@ -344,26 +358,46 @@ function skipCountingD3() {
 
 // ── Division word problems (Region 2 — NEW additional type) ──────────────────
 
-const WORD_ITEMS = ['apples', 'cookies', 'stickers', 'coins', 'pencils', 'candies'];
-const WORD_WHO   = ['children', 'friends', 'students', 'groups', 'boxes'];
+const WORD_ITEMS = ['apples', 'cookies', 'stickers', 'coins', 'pencils', 'candies', 'fish treats', 'berries'];
+const WORD_WHO   = ['friends', 'kittens', 'students', 'puppies', 'children'];
+const WORD_CONTAINERS = ['bags', 'boxes', 'bowls', 'baskets', 'jars'];
+
+/** Pick one of several sentence schemes for an equal-sharing word problem. */
+function _divWordText(total, d, item, who, container) {
+  const s = rand(0, 3);
+  if (s === 0) return `${total} ${item} shared equally\namong ${d} ${who}.\nHow many each?`;
+  if (s === 1) return `${d} ${who} share ${total} ${item}\nso each gets the same.\nHow many does each one get?`;
+  if (s === 2) return `${total} ${item} are sorted\ninto ${d} equal ${container}.\nHow many go in each ${container.replace(/s$/, '')}?`;
+  return `${d} ${who} each want\nthe same amount of ${item}.\nThere are ${total} — how many each?`;
+}
 
 function divisionWordD1() {
-  const d = rand(2, 4); const q = rand(2, 5);
+  // Easier numbers — small divisor and quotient so reading is the main load
+  const d = rand(2, 3); const q = rand(2, 4);
   const item = WORD_ITEMS[rand(0, WORD_ITEMS.length - 1)];
   const who  = WORD_WHO[rand(0, WORD_WHO.length - 1)];
-  return { text: `${d * q} ${item} shared\namong ${d} ${who}.\nHow many each?`, answer: q, answerDisplay: String(q), topic: 'divisionWord' };
+  const cont = WORD_CONTAINERS[rand(0, WORD_CONTAINERS.length - 1)];
+  return { text: _divWordText(d * q, d, item, who, cont), answer: q, answerDisplay: String(q), topic: 'divisionWord', wordProblem: true };
 }
 function divisionWordD2() {
-  const d = rand(3, 7); const q = rand(3, 8);
+  // Moderate numbers — divisor 2–5, quotient 3–7
+  const d = rand(2, 5); const q = rand(3, 7);
   const item = WORD_ITEMS[rand(0, WORD_ITEMS.length - 1)];
   const who  = WORD_WHO[rand(0, WORD_WHO.length - 1)];
-  return { text: `${d * q} ${item} shared\namong ${d} ${who}.\nHow many each?`, answer: q, answerDisplay: String(q), topic: 'divisionWord' };
+  const cont = WORD_CONTAINERS[rand(0, WORD_CONTAINERS.length - 1)];
+  return { text: _divWordText(d * q, d, item, who, cont), answer: q, answerDisplay: String(q), topic: 'divisionWord', wordProblem: true };
 }
 function divisionWordD3() {
-  const d = rand(3, 8); const q = rand(4, 9); const r = rand(1, d - 1);
+  // Remainder version — divisor 3–6, quotient 3–7 (less than old 4–9)
+  const d = rand(3, 6); const q = rand(3, 7); const r = rand(1, d - 1);
   const item = WORD_ITEMS[rand(0, WORD_ITEMS.length - 1)];
   const who  = WORD_WHO[rand(0, WORD_WHO.length - 1)];
-  return { text: `${d * q + r} ${item} shared\namong ${d} ${who}.\nHow many each? (Ignore leftover)`, answer: q, answerDisplay: String(q), topic: 'divisionWord' };
+  const cont = WORD_CONTAINERS[rand(0, WORD_CONTAINERS.length - 1)];
+  const s    = rand(0, 1);
+  const text = s === 0
+    ? `${d * q + r} ${item} shared among\n${d} ${who} (ignore leftovers).\nHow many each?`
+    : `${d * q + r} ${item} sorted into\n${d} equal ${cont}. Any leftover\nare set aside. How many per ${cont.replace(/s$/, '')}?`;
+  return { text, answer: q, answerDisplay: String(q), topic: 'divisionWord', wordProblem: true };
 }
 
 // ── Fraction comparison only (Region 3 enemy 1) ───────────────────────────────

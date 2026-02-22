@@ -48,10 +48,23 @@ const REGIONS = [
     floorTile: 'floor_grass',
     wallTile: 'wall_hedge',
     // ── Map key positions ──────────────────────────────────────────────────
-    mimiStart: { col: 4, row: 26 },
+    mimiStart:     { col: 4, row: 26 },
+    mimiStartPool: [                         // ProceduralMap picks one randomly each session
+      { col: 4,  row: 26 },                  // mid-left   (default)
+      { col: 4,  row: 40 },                  // south-left
+      { col: 76, row: 26 },                  // mid-right
+      { col: 40, row: 52 },                  // south-centre
+    ],
     npcTile:   { col: 6, row: 29 },
     chestTile: { col: 75, row: 50 },
     bossTile:  { col: 76, row: 5 },
+    bossTilePool: [                          // ProceduralMap picks one randomly each session
+      { col: 76, row: 5  },                  // NE (default)
+      { col: 4,  row: 5  },                  // NW
+      { col: 40, row: 5  },                  // north-centre
+      { col: 76, row: 50 },                  // SE
+      { col: 4,  row: 50 },                  // SW
+    ],
 
     // ── Enemies: 10 (intro region — native types at rising difficulties) ──
     enemySpawns: [
@@ -102,10 +115,18 @@ const REGIONS = [
     bgColor: 0x5FA827,
     floorTile: 'floor_grass',
     wallTile: 'wall_hedge',
-    mimiStart: { col: 4, row: 26 },
+    mimiStart:     { col: 4, row: 26 },
+    mimiStartPool: [
+      { col: 4,  row: 26 }, { col: 4,  row: 40 },
+      { col: 76, row: 26 }, { col: 40, row: 52 },
+    ],
     npcTile:   { col: 6, row: 29 },
     chestTile: { col: 75, row: 50 },
     bossTile:  { col: 76, row: 5 },
+    bossTilePool: [
+      { col: 76, row: 5  }, { col: 4,  row: 5  }, { col: 40, row: 5  },
+      { col: 76, row: 50 }, { col: 4,  row: 50 },
+    ],
 
     // ── Enemies: 10 — 4 native + 4 hard reviews from R0 + 2 native D2 ──
     enemySpawns: [
@@ -156,10 +177,18 @@ const REGIONS = [
     bgColor: 0xC8943C,
     floorTile: 'floor_sand',
     wallTile: 'wall_sandstone',
-    mimiStart: { col: 4, row: 26 },
+    mimiStart:     { col: 4, row: 26 },
+    mimiStartPool: [
+      { col: 4,  row: 26 }, { col: 4,  row: 40 },
+      { col: 76, row: 26 }, { col: 40, row: 52 },
+    ],
     npcTile:   { col: 6, row: 29 },
     chestTile: { col: 75, row: 50 },
     bossTile:  { col: 76, row: 5 },
+    bossTilePool: [
+      { col: 76, row: 5  }, { col: 4,  row: 5  }, { col: 40, row: 5  },
+      { col: 76, row: 50 }, { col: 4,  row: 50 },
+    ],
 
     // ── Enemies: 10 — 4 native + 4 hard reviews from R1 + 2 native D2 ──
     enemySpawns: [
@@ -210,10 +239,18 @@ const REGIONS = [
     bgColor: 0x7AB4CC,
     floorTile: 'floor_snow',
     wallTile: 'wall_ice',
-    mimiStart: { col: 4, row: 26 },
+    mimiStart:     { col: 4, row: 26 },
+    mimiStartPool: [
+      { col: 4,  row: 26 }, { col: 4,  row: 40 },
+      { col: 76, row: 26 }, { col: 40, row: 52 },
+    ],
     npcTile:   { col: 6, row: 29 },
     chestTile: { col: 75, row: 50 },
     bossTile:  { col: 76, row: 5 },
+    bossTilePool: [
+      { col: 76, row: 5  }, { col: 4,  row: 5  }, { col: 40, row: 5  },
+      { col: 76, row: 50 }, { col: 4,  row: 50 },
+    ],
 
     // ── Enemies: 10 — 4 native + 4 hard reviews from R2 + 2 native D3 ──
     enemySpawns: [
@@ -264,10 +301,18 @@ const REGIONS = [
     bgColor: 0x2D1B4E,
     floorTile: 'floor_stone',
     wallTile: 'wall_obsidian',
-    mimiStart: { col: 4, row: 26 },
+    mimiStart:     { col: 4, row: 26 },
+    mimiStartPool: [
+      { col: 4,  row: 26 }, { col: 4,  row: 40 },
+      { col: 76, row: 26 }, { col: 40, row: 52 },
+    ],
     npcTile:   { col: 6, row: 29 },
     chestTile: { col: 75, row: 50 },
     bossTile:  { col: 76, row: 5 },
+    bossTilePool: [
+      { col: 76, row: 5  }, { col: 4,  row: 5  }, { col: 40, row: 5  },
+      { col: 76, row: 50 }, { col: 4,  row: 50 },
+    ],
 
     // ── Enemies: 10 — 4 native + 4 hard reviews from R3 + 2 native D3 ──
     enemySpawns: [

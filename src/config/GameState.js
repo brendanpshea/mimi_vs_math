@@ -62,6 +62,14 @@ const GameState = {
   // ── Hard-mode boss clears (region ids) ───────────────────────────────
   regionHardModeCleared: [],
 
+  // ── Per-topic rolling accuracy (session only — never persisted) ─────────
+  // key: topic string, value: boolean[] ring-buffer of last 8 answers
+  topicAccuracy: {},
+
+  // ── Interactive item pickup tracking (persisted) ──────────────────────
+  // key: `${regionId}_${col}_${row}`, value: true when collected
+  collectedItems: {},
+
   // ─────────────────────────────────────────────────────────────────────
   // Persistence
   // ─────────────────────────────────────────────────────────────────────
@@ -81,6 +89,7 @@ const GameState = {
       bossIntroSeen:          this.bossIntroSeen,
       regionStars:            this.regionStars,
       regionHardModeCleared:  this.regionHardModeCleared,
+      collectedItems:         this.collectedItems,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   },
@@ -95,6 +104,7 @@ const GameState = {
       if (!this.bossIntroSeen)          this.bossIntroSeen = [];
       if (!this.regionStars)            this.regionStars = {};
       if (!this.regionHardModeCleared)  this.regionHardModeCleared = [];
+      if (!this.collectedItems)         this.collectedItems = {};
       // Ensure lives field exists for saves that predate this feature
       if (this.lives    === undefined) this.lives    = 9;
       if (this.maxLives === undefined) this.maxLives = 9;
@@ -136,8 +146,10 @@ const GameState = {
     this.regionStars            = {};
     this.regionHardModeCleared  = [];
     this.activeEffects          = { timerBonus: 0, doubleHit: false, shield: false, hintCharges: 0 };
+    this.topicAccuracy          = {};
     this.save();
   },
+
 
   // ─────────────────────────────────────────────────────────────────────
   // Helpers
@@ -185,6 +197,40 @@ const GameState = {
       if (key.startsWith(prefix)) delete this.defeatedEnemies[key];
     }
     this.save();
+  },
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Adaptive difficulty helpers (C — session accuracy per topic)
+  // ─────────────────────────────────────────────────────────────────────
+
+  /**
+   * Push a correct/incorrect result into the per-topic ring buffer (last 8).
+   * @param {string}  topic
+   * @param {boolean} correct
+   */
+  recordTopicAnswer(topic, correct) {
+    if (!this.topicAccuracy[topic]) this.topicAccuracy[topic] = [];
+    this.topicAccuracy[topic].push(correct);
+    if (this.topicAccuracy[topic].length > 8) this.topicAccuracy[topic].shift();
+  },
+
+  /**
+   * Derive a difficulty tier (1–3) for the given topic from recent session
+   * accuracy.  Returns `fallback` if fewer than 4 answers have been recorded
+   * (not enough data yet).
+   *
+   * Hit-rate thresholds:
+   *   ≥ 75% → D3 (mastered — challenge them)
+   *   40–74% → D2 (solid — keep it there)
+   *   < 40%  → D1 (struggling — ease off)
+   */
+  getTopicDifficulty(topic, fallback = 1) {
+    const history = this.topicAccuracy[topic];
+    if (!history || history.length < 4) return fallback;
+    const hitRate = history.filter(Boolean).length / history.length;
+    if (hitRate >= 0.75) return 3;
+    if (hitRate >= 0.40) return 2;
+    return 1;
   },
 
   /** Record a single question result. timeMs is the time taken to answer. */

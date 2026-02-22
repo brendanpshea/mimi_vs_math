@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- drop shadow -->
+  <ellipse cx="16" cy="30" rx="5" ry="1.5" fill="rgba(0,0,0,.22)"/>
+  <!-- main stem -->
+  <line x1="16" y1="29" x2="16" y2="7" stroke="#2E6814" stroke-width="1.6" stroke-linecap="round"/>
+  <!-- leaf pair — bottom -->
+  <path d="M16,24 Q9,24 8,20 Q10,22 16,22 Z" fill="#3A9422"/>
+  <path d="M16,24 Q23,24 24,20 Q22,22 16,22 Z" fill="#3A9422"/>
+  <!-- leaf veins — bottom -->
+  <line x1="16" y1="24" x2="9" y2="20.5" stroke="#1E6808" stroke-width="0.6" opacity="0.6"/>
+  <line x1="16" y1="24" x2="23" y2="20.5" stroke="#1E6808" stroke-width="0.6" opacity="0.6"/>
+  <!-- leaf pair — mid -->
+  <path d="M16,18.5 Q9,18 8,14 Q10.5,16.5 16,16.5 Z" fill="#48B828"/>
+  <path d="M16,18.5 Q23,18 24,14 Q21.5,16.5 16,16.5 Z" fill="#48B828"/>
+  <!-- leaf veins — mid -->
+  <line x1="16" y1="18.5" x2="8.5" y2="14.5" stroke="#2A7A10" stroke-width="0.55" opacity="0.6"/>
+  <line x1="16" y1="18.5" x2="23.5" y2="14.5" stroke="#2A7A10" stroke-width="0.55" opacity="0.6"/>
+  <!-- leaf pair — top -->
+  <path d="M16,13 Q10,12.5 9.5,9 Q12,11 16,11 Z" fill="#5ACC33"/>
+  <path d="M16,13 Q22,12.5 22.5,9 Q20,11 16,11 Z" fill="#5ACC33"/>
+  <!-- tip bud -->
+  <circle cx="16" cy="7" r="2.8" fill="#AAEEBB" stroke="#48BB28" stroke-width="0.8"/>
+  <circle cx="16" cy="7" r="1.6" fill="#EEFFEE"/>
+  <!-- bud centre dot -->
+  <circle cx="16" cy="7" r="0.7" fill="#88CC44"/>
+  <!-- leaf sheen -->
+  <path d="M10,21.5 Q11.5,20 13,22" stroke="white" stroke-width="0.5" fill="none" opacity="0.35"/>
+</svg>

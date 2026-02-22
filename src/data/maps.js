@@ -356,7 +356,13 @@ export default MAPS;
 export const LANDMARKS = _gen.map(g => g.landmarks);
 
 /** Randomized NPC + enemy positions generated alongside the map */
-export const POSITIONS = _gen.map(g => ({ npcTile: g.npcTile, enemySpawns: g.enemySpawns }));
+export const POSITIONS = _gen.map(g => ({
+  npcTile:          g.npcTile,
+  enemySpawns:      g.enemySpawns,
+  mimiStart:        g.mimiStart,
+  bossTile:         g.bossTile,
+  interactiveItems: g.interactiveItems ?? [],
+}));
 
 /**
  * Pre-computed walkability grids — exact blocked-tile Sets for BFS.

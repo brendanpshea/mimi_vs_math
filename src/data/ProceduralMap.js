@@ -205,18 +205,34 @@ function pickRandomInZone(zone, placed, minDist) {
   return candidates[0];   // last resort
 }
 
+/** Minimum Manhattan distance (tiles) separating mimiStart from bossTile. */
+const MIN_BOSS_DIST = 30;
+
 /**
- * Generate randomized positions for NPC and every enemy.
- * mimiStart and bossTile remain fixed (from regionData).
+ * Generate randomized positions for mimiStart, bossTile, NPC, and every enemy.
+ * Start and boss are drawn from per-region pools defined in regions.js.
  *
  * @param  {object} regionData — one entry from regions.js
- * @returns {{ npcTile: {col,row}, enemySpawns: Array<{col,row,id,difficultyOverride?}> }}
+ * @returns {{ mimiStart, bossTile, npcTile, enemySpawns }}
  */
 function randomizePositions(regionData) {
   const MIN_DIST = 10;
+
+  // ── Pick mimiStart from pool ──────────────────────────────────────────
+  const startPool  = regionData.mimiStartPool ?? [regionData.mimiStart];
+  const mimiStart  = startPool[Math.floor(Math.random() * startPool.length)];
+
+  // ── Pick bossTile from pool, enforcing min separation from mimiStart ──
+  const bossPool       = regionData.bossTilePool ?? [regionData.bossTile];
+  const bossCandidates = bossPool.filter(
+    b => Math.abs(b.col - mimiStart.col) + Math.abs(b.row - mimiStart.row) >= MIN_BOSS_DIST,
+  );
+  const validBossPool = bossCandidates.length > 0 ? bossCandidates : bossPool;
+  const bossTile      = validBossPool[Math.floor(Math.random() * validBossPool.length)];
+
   const placed = [
-    { col: regionData.mimiStart.col, row: regionData.mimiStart.row },
-    { col: regionData.bossTile.col,  row: regionData.bossTile.row },
+    { col: mimiStart.col, row: mimiStart.row },
+    { col: bossTile.col,  row: bossTile.row  },
   ];
 
   // NPC — always near Mimi (mid-left zone)
@@ -238,7 +254,83 @@ function randomizePositions(regionData) {
     });
   }
 
-  return { npcTile, enemySpawns };
+  return { mimiStart, bossTile, npcTile, enemySpawns };
+}
+
+// ── Interactive item pools (2 items per region) ───────────────────────────
+/** Items awarded per region, cycling through all 5 types. */
+const ITEM_POOLS = [
+  ['sardine',      'yarn_ball'],    // R0
+  ['catnip',       'lucky_collar'], // R1
+  ['fish_fossil',  'sardine'],      // R2
+  ['yarn_ball',    'catnip'],       // R3
+  ['lucky_collar', 'fish_fossil'],  // R4
+];
+
+/**
+ * Scan carved-open tiles for 2 interactive item pickup spots.
+ * Tiles must be at least ITEM_MIN_DIST from every key position.
+ *
+ * @param {Set}    blocked    blocked-tile set after corridor carving
+ * @param {Array}  keyNodes   [{col,row}] key positions to clear around
+ * @param {number} regionId
+ * @returns {Array<{col,row,itemId}>} 0–2 entries
+ */
+function pickInteractiveItems(blocked, keyNodes, regionId) {
+  const ITEM_MIN_DIST    = 8;
+  const MIN_ITEM_SPACING = 12;
+  const pool = ITEM_POOLS[regionId] ?? ITEM_POOLS[0];
+
+  // ── BFS from mimiStart to collect only truly reachable tiles ──────────────
+  const mimiStart = keyNodes[0];
+  const reachable = new Set();
+  const bfsQueue  = [{ col: mimiStart.col, row: mimiStart.row }];
+  reachable.add(`${mimiStart.col},${mimiStart.row}`);
+  while (bfsQueue.length > 0) {
+    const { col, row } = bfsQueue.shift();
+    for (const [dc, dr] of [[0,1],[0,-1],[1,0],[-1,0]]) {
+      const nc = col + dc, nr = row + dr;
+      if (nc < BORDER || nc >= COLS - BORDER) continue;
+      if (nr < BORDER || nr >= ROWS - BORDER) continue;
+      const k = `${nc},${nr}`;
+      if (blocked.has(k) || reachable.has(k)) continue;
+      reachable.add(k);
+      bfsQueue.push({ col: nc, row: nr });
+    }
+  }
+
+  const isValidTile = (c, r) => {
+    if (!reachable.has(`${c},${r}`))             return false;  // not reachable from start
+    if (c < BORDER + 2 || c >= COLS - BORDER - 2) return false;  // near border
+    if (r < BORDER + 2 || r >= ROWS - BORDER - 2) return false;
+    return keyNodes.every(
+      n => Math.abs(c - n.col) + Math.abs(r - n.row) >= ITEM_MIN_DIST,
+    );
+  };
+
+  // Collect candidates (step by 3 tiles to keep scan fast)
+  const candidates = [];
+  for (let c = BORDER + 2; c < COLS - BORDER - 2; c += 3)
+    for (let r = BORDER + 2; r < ROWS - BORDER - 2; r += 3)
+      if (isValidTile(c, r)) candidates.push({ col: c, row: r });
+
+  // Fisher-Yates shuffle
+  for (let i = candidates.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+  }
+
+  // Pick up to 2 well-separated tiles
+  const chosen = [];
+  for (const pos of candidates) {
+    if (chosen.length >= 2) break;
+    const farEnough = chosen.every(
+      p => Math.abs(pos.col - p.col) + Math.abs(pos.row - p.row) >= MIN_ITEM_SPACING,
+    );
+    if (farEnough) chosen.push(pos);
+  }
+
+  return chosen.map((pos, i) => ({ col: pos.col, row: pos.row, itemId: pool[i] }));
 }
 
 // ── Public API ─────────────────────────────────────────────────────────────
@@ -257,14 +349,14 @@ function randomizePositions(regionData) {
 export function generateRegionMap(regionData) {
   const tileFn = TILE_FN[regionData.id] ?? TILE_FN[0];
 
-  // Randomize NPC + enemy positions (Mimi start & boss stay fixed)
-  const { npcTile, enemySpawns } = randomizePositions(regionData);
+  // Randomize all key positions (mimiStart + bossTile drawn from per-region pools)
+  const { mimiStart, bossTile, npcTile, enemySpawns } = randomizePositions(regionData);
 
   // Key positions — mimiStart must be index 0 (MST root).
   const nodes = [
-    regionData.mimiStart,
+    mimiStart,
     npcTile,
-    regionData.bossTile,
+    bossTile,
     ...enemySpawns.map(s => ({ col: s.col, row: s.row })),
   ];
 
@@ -362,7 +454,10 @@ export function generateRegionMap(regionData) {
     }
   }
 
-  return { decorations, blocked, landmarks, npcTile, enemySpawns };
+  // ── Find open spots for interactive item pickups ─────────────────────
+  const interactiveItems = pickInteractiveItems(blocked, nodes, regionData.id);
+
+  return { decorations, blocked, landmarks, mimiStart, bossTile, npcTile, enemySpawns, interactiveItems };
 }
 
 // ── Internal helpers ───────────────────────────────────────────────────────

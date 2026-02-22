@@ -18,6 +18,7 @@ const GameState = {
   defeatedBosses:        [],
   regionStars:           {},
   regionHardModeCleared: [],
+  collectedItems:        {},
   lives:                 9,
   maxLives:              9,
   hp:                    12,
@@ -61,6 +62,7 @@ const GameState = {
     this.defeatedBosses        = [];
     this.regionStars           = {};
     this.regionHardModeCleared = [];
+    this.collectedItems        = {};
     this.lives                 = 9;
     this.hp                    = 12;
   },
@@ -387,6 +389,38 @@ test('reset() clears hard-mode state and stars', () => {
   assert(!GameState.hasDefeatedBossHardMode(0), 'hard-mode cleared after reset');
   assertEqual(GameState.getRegionStars(0), 0, 'stars cleared after reset');
   assertEqual(GameState.lives, 9, 'lives restored to 9 after reset');
+});
+
+// ── collectedItems key format (mirrors ExploreScene._collectItem) ─────────
+console.log('\ncollectedItems — pickup key format');
+
+test('collectedItems starts empty', () => {
+  assert(Object.keys(GameState.collectedItems).length === 0, 'should be empty after reset');
+});
+
+test('pickup key format: regionId_col_row', () => {
+  const key = `0_4_26`;
+  GameState.collectedItems[key] = true;
+  assert(GameState.collectedItems[key] === true, 'key stored correctly');
+  assert(!GameState.collectedItems['1_4_26'], 'different region key is independent');
+  assert(!GameState.collectedItems['0_5_26'], 'different col key is independent');
+});
+
+test('two items in same region have independent keys', () => {
+  const k1 = `2_15_20`;
+  const k2 = `2_40_35`;
+  GameState.collectedItems[k1] = true;
+  assert( GameState.collectedItems[k1], 'first item key set');
+  assert(!GameState.collectedItems[k2], 'second item key not yet set');
+  GameState.collectedItems[k2] = true;
+  assert( GameState.collectedItems[k1], 'first key still set after second added');
+  assert( GameState.collectedItems[k2], 'second key now set');
+});
+
+test('reset() clears collectedItems', () => {
+  GameState.collectedItems['0_10_10'] = true;
+  GameState.reset();
+  assert(Object.keys(GameState.collectedItems).length === 0, 'collectedItems cleared by reset');
 });
 
 // ── Summary ────────────────────────────────────────────────────────────────

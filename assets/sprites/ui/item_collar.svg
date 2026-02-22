@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- drop shadow -->
+  <ellipse cx="16" cy="30" rx="9" ry="2" fill="rgba(0,0,0,.24)"/>
+  <!-- collar band shadow -->
+  <path d="M4,22 Q4,5 16,5 Q28,5 28,22" stroke="#0A3A5A" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <!-- collar band main -->
+  <path d="M4,22 Q4,5 16,5 Q28,5 28,22" stroke="#1EAABF" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <!-- collar band highlight -->
+  <path d="M4,22 Q4,5 16,5 Q28,5 28,22" stroke="#55DDEE" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.55"/>
+  <!-- stud dots on collar -->
+  <circle cx="7.5" cy="18.5" r="1.5" fill="#88EEFF" stroke="#1EAABF" stroke-width="0.4"/>
+  <circle cx="11.5" cy="10.5" r="1.4" fill="#88EEFF" stroke="#1EAABF" stroke-width="0.4"/>
+  <circle cx="20.5" cy="10.5" r="1.4" fill="#88EEFF" stroke="#1EAABF" stroke-width="0.4"/>
+  <circle cx="24.5" cy="18.5" r="1.5" fill="#88EEFF" stroke="#1EAABF" stroke-width="0.4"/>
+  <!-- gem mount -->
+  <circle cx="16" cy="24" r="6" fill="#083050" stroke="#1EAABF" stroke-width="1.2"/>
+  <!-- diamond gem body -->
+  <polygon points="16,17.5 22,22.5 16,27.5 10,22.5" fill="#44EEFF"/>
+  <!-- gem upper facets -->
+  <polygon points="16,17.5 22,22.5 16,21.5" fill="#AAFFFE"/>
+  <polygon points="16,17.5 10,22.5 16,21.5" fill="#66DDEE"/>
+  <!-- gem lower facets -->
+  <polygon points="16,27.5 22,22.5 16,23.5" fill="#1188AA"/>
+  <polygon points="16,27.5 10,22.5 16,23.5" fill="#0A6A88"/>
+  <!-- gem horizontal split line -->
+  <line x1="10" y1="22.5" x2="22" y2="22.5" stroke="#0E7899" stroke-width="0.5"/>
+  <!-- gems sparkle -->
+  <circle cx="14" cy="20" r="1.1" fill="white" opacity="0.8"/>
+  <circle cx="17.5" cy="18.8" r="0.6" fill="white" opacity="0.6"/>
+</svg>

@@ -47,11 +47,26 @@ export default class HUD {
       fontSize: '11px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(51);
 
-    // Inventory label (top-right)
-    this._invLabel = scene.add.text(W - 10, 10, '', {
-      fontSize: '16px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif",
-      align: 'right',
-    }).setOrigin(1, 0).setScrollFactor(0).setDepth(51);
+    // Inventory icon slots (top-right, one badge per item type, right-anchored)
+    const ITEM_SLOTS = [
+      { key: 'item_fossil',  id: 'fish_fossil'   },
+      { key: 'item_collar',  id: 'lucky_collar'  },
+      { key: 'item_catnip',  id: 'catnip'        },
+      { key: 'item_yarn',    id: 'yarn_ball'      },
+      { key: 'item_sardine', id: 'sardine'        },
+    ];
+    this._invSlots = ITEM_SLOTS.map((item, i) => {
+      const cx = W - 18 - i * 36;   // badge centre x (right-anchored)
+      const bg = scene.add.rectangle(cx, 17, 34, 20, 0x00001C, 0.65)
+        .setScrollFactor(0).setDepth(50);
+      const img = scene.add.image(cx - 9, 17, item.key)
+        .setDisplaySize(16, 16).setOrigin(0.5).setScrollFactor(0).setDepth(51);
+      const lbl = scene.add.text(cx + 3, 17, '', {
+        fontSize: '11px', color: '#FFFFFF',
+        fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+      }).setOrigin(0, 0.5).setScrollFactor(0).setDepth(51);
+      return { img, lbl, bg, id: item.id };
+    });
 
     this.refresh();
   }
@@ -83,14 +98,14 @@ export default class HUD {
       `✓ ${stats.correct}/${stats.answered}  ·  ${pct}% accuracy  ·  streak best: ${stats.bestStreak}  ·  ${enemyStr}`,
     );
 
-    // Inventory
-    const parts = [];
-    if (inventory.sardine)      parts.push(`🐟×${inventory.sardine}`);
-    if (inventory.yarn_ball)    parts.push(`🧶×${inventory.yarn_ball}`);
-    if (inventory.catnip)       parts.push(`🌿×${inventory.catnip}`);
-    if (inventory.lucky_collar) parts.push(`💎×${inventory.lucky_collar}`);
-    if (inventory.fish_fossil)  parts.push(`🦴×${inventory.fish_fossil}`);
-    this._invLabel.setText(parts.join('  '));
+    // Inventory icon slots
+    this._invSlots.forEach(slot => {
+      const count = inventory[slot.id] || 0;
+      const show  = count > 0;
+      slot.bg.setVisible(show);
+      slot.img.setVisible(show);
+      slot.lbl.setText(show ? `×${count}` : '').setVisible(show);
+    });
   }
 
   update() {

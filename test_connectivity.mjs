@@ -79,7 +79,26 @@ for (const region of REGIONS) {
     continue;
   }
 
-  const reachable = bfsReachable(region.mimiStart, blocked);
+  // mimiStart and bossTile are now randomised — read from POSITIONS so BFS
+  // uses the same tile set that the map generator carved corridors around.
+  const positions = POSITIONS[region.id];
+  const mimiStart = positions.mimiStart;
+  const bossTile  = positions.bossTile;
+
+  // ── Bounds sanity ──────────────────────────────────────────────────────
+  assert(
+    mimiStart.col >= 2 && mimiStart.col <= 77 && mimiStart.row >= 2 && mimiStart.row <= 53,
+    `mimiStart (${mimiStart.col},${mimiStart.row}) within walkable bounds`);
+  assert(
+    bossTile.col >= 2 && bossTile.col <= 77 && bossTile.row >= 2 && bossTile.row <= 53,
+    `bossTile (${bossTile.col},${bossTile.row}) within walkable bounds`);
+
+  // ── Minimum separation between start and boss ──────────────────────────
+  const sepDist = Math.abs(bossTile.col - mimiStart.col) + Math.abs(bossTile.row - mimiStart.row);
+  assert(sepDist >= 30,
+    `mimiStart↔bossTile Manhattan distance ${sepDist} >= 30`);
+
+  const reachable = bfsReachable(mimiStart, blocked);
 
   // Helper: is a tile reachable (exact position OR any immediately adjacent tile)?
   // We allow 1-tile adjacency because Phaser physics lets Mimi touch/overlap
@@ -91,12 +110,11 @@ for (const region of REGIONS) {
     return false;
   };
 
-  // Boss tile (fixed position from regionData)
-  assert(canReach(region.bossTile),
-    `boss (col ${region.bossTile.col}, row ${region.bossTile.row}) reachable`);
+  // Boss tile (dynamic — drawn from bossTilePool each run)
+  assert(canReach(bossTile),
+    `boss (col ${bossTile.col}, row ${bossTile.row}) reachable`);
 
   // NPC tile (randomized — read from POSITIONS)
-  const positions = POSITIONS[region.id];
   assert(canReach(positions.npcTile),
     `NPC (col ${positions.npcTile.col}, row ${positions.npcTile.row}) reachable`);
 
@@ -104,6 +122,33 @@ for (const region of REGIONS) {
   for (const [i, spawn] of positions.enemySpawns.entries()) {
     assert(canReach(spawn),
       `enemy[${i}] ${spawn.id} (col ${spawn.col}, row ${spawn.row}) reachable`);
+  }
+
+  // ── Interactive items structure ────────────────────────────────────────
+  const items = positions.interactiveItems;
+  assert(Array.isArray(items), `interactiveItems is an Array`);
+  assert(items.length >= 0 && items.length <= 2, `interactiveItems length 0-2 (got ${items.length})`);
+  const VALID_ITEM_IDS = new Set(['sardine','yarn_ball','catnip','lucky_collar','fish_fossil']);
+  for (const [ii, it] of items.entries()) {
+    assert(
+      Number.isInteger(it.col) && it.col >= 2 && it.col <= 77,
+      `item[${ii}] col in bounds (${it.col})`);
+    assert(
+      Number.isInteger(it.row) && it.row >= 2 && it.row <= 53,
+      `item[${ii}] row in bounds (${it.row})`);
+    assert(VALID_ITEM_IDS.has(it.itemId),
+      `item[${ii}] itemId '${it.itemId}' is a known item`);
+    assert(canReach(it),
+      `item[${ii}] '${it.itemId}' (col ${it.col}, row ${it.row}) reachable`);
+    // Must be ≥8 tiles from mimiStart and bossTile
+    const dStart = Math.abs(it.col - mimiStart.col) + Math.abs(it.row - mimiStart.row);
+    const dBoss  = Math.abs(it.col - bossTile.col)  + Math.abs(it.row - bossTile.row);
+    assert(dStart >= 8, `item[${ii}] >= 8 tiles from mimiStart (${dStart})`);
+    assert(dBoss  >= 8, `item[${ii}] >= 8 tiles from bossTile  (${dBoss})`);
+  }
+  if (items.length === 2) {
+    const spacing = Math.abs(items[0].col - items[1].col) + Math.abs(items[0].row - items[1].row);
+    assert(spacing >= 12, `item[0] and item[1] are >= 12 tiles apart (${spacing})`);
   }
 }
 

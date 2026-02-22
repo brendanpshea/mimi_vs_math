@@ -53,6 +53,10 @@ export default class BattleScene extends Phaser.Scene {
     this.answering         = false;
     this.battleWrongAnswers = 0;   // for perfect-battle detection
     this._qStartTime        = 0;   // Phaser timestamp when current question appeared
+    // Adaptive difficulty (A + C)
+    this.battleDiffOffset  = 0;    // A: in-battle drift −1/0/+1
+    this.lossStreak        = 0;    // A: consecutive wrong/timeout counter
+    this.currentTopic      = null; // C: topic used for this question (for recording)
 
     // Consume inventory items → may raise GameState.hp before snapshotting
     GameState.resetEffects();
@@ -412,12 +416,22 @@ export default class BattleScene extends Phaser.Scene {
     this.questionIdx++;
 
     // Boss battles pick randomly from all region topics; regular enemies use their
-    // specific topic.  Difficulty stays at the enemy's level (bosses use D1 so
-    // questions are fair even with many HP).
-    const baseDiff   = this.isBoss ? 1 : (this.enemyData.difficulty ?? 1);
-    const difficulty = this.isHardMode ? Math.min(3, baseDiff + 1) : baseDiff;
-    const topics     = this.enemyData.mathTopics ?? [this.enemyData.mathTopic];
-    const topic      = topics[Math.floor(Math.random() * topics.length)];
+    // specific topic.
+    const topics   = this.enemyData.mathTopics ?? [this.enemyData.mathTopic];
+    const topic    = topics[Math.floor(Math.random() * topics.length)];
+    this.currentTopic = topic;
+
+    // ── Adaptive difficulty (A + C) ────────────────────────────────────────
+    // Enemy base: bosses start at 1 (lots of HP; questions stay manageable).
+    const enemyBase   = this.isBoss ? 1 : (this.enemyData.difficulty ?? 1);
+    // C: session accuracy across all battles may raise/lower this topic's tier.
+    const sessionDiff = GameState.getTopicDifficulty(topic, enemyBase);
+    // A: in-battle drift shifts the session tier by −1 or +1 based on live streak.
+    const rawDiff     = Math.max(1, Math.min(3, sessionDiff + this.battleDiffOffset));
+    // Hard Mode adds a further +1 on top, capped at 3.
+    const difficulty  = this.isHardMode ? Math.min(3, rawDiff + 1) : rawDiff;
+    // ────────────────────────────────────────────────────────
+
     const q = generateQuestion(topic, difficulty);
     this.currentQuestion = q;
     this.currentChoices = getChoices(q);
@@ -509,6 +523,7 @@ export default class BattleScene extends Phaser.Scene {
     this.answering = true;
 
     GameState.recordAnswer(false, this.time.now - this._qStartTime);
+    GameState.recordTopicAnswer(this.currentTopic, false);  // C
     this.battleWrongAnswers++;
 
     this.answerButtons.forEach((btn, i) => {
@@ -517,6 +532,13 @@ export default class BattleScene extends Phaser.Scene {
     });
 
     this.streak = 0;
+    // A: timeout counts the same as a wrong answer for difficulty drift
+    this.lossStreak++;
+    if (this.lossStreak >= 2 && this.battleDiffOffset > -1) {
+      this.battleDiffOffset--;
+      this.lossStreak = 0;
+      this._floatDiffChange(-1);
+    }
     this._showFeedback('⏱ Time\'s up!', 0xFF6633);
     this._damagePlayer();
 
@@ -551,6 +573,17 @@ export default class BattleScene extends Phaser.Scene {
     this.sound.play('sfx_correct', { volume: 0.55 });
 
     this.streak++;
+    this.lossStreak = 0;  // A: correct resets the consecutive-wrong counter
+
+    // A: every 3rd consecutive correct → bump in-battle difficulty offset
+    if (this.streak % 3 === 0 && this.battleDiffOffset < 1) {
+      this.battleDiffOffset++;
+      this._floatDiffChange(+1);
+    }
+
+    // C: record this answer for cross-battle session accuracy
+    GameState.recordTopicAnswer(this.currentTopic, true);
+
     let dmg = isFast ? 3 : 2;
     if (this.streak >= 3) dmg += 1;   // streak bonus
     if (GameState.activeEffects.doubleHit) {
@@ -612,11 +645,20 @@ export default class BattleScene extends Phaser.Scene {
 
   _onWrong() {
     GameState.recordAnswer(false, this.time.now - this._qStartTime);
+    GameState.recordTopicAnswer(this.currentTopic, false);  // C
     this.sound.play('sfx_wrong', { volume: 0.75 });
     this.battleWrongAnswers++;
 
     this.streak = 0;
     this._updateStreakDisplay();
+
+    // A: track consecutive wrong answers; after 2 in a row, ease off
+    this.lossStreak++;
+    if (this.lossStreak >= 2 && this.battleDiffOffset > -1) {
+      this.battleDiffOffset--;
+      this.lossStreak = 0;
+      this._floatDiffChange(-1);
+    }
     this._damagePlayer();
     this._showFeedback('✗ Wrong!', 0xFF4444);
 
@@ -704,23 +746,27 @@ export default class BattleScene extends Phaser.Scene {
 
     const fx   = GameState.activeEffects;
     const tags = [];
-    if (fx.shield)          tags.push({ icon: '💎', label: 'Shield',              color: '#88CCFF' });
-    if (fx.doubleHit)       tags.push({ icon: '🌿', label: '2× Hit',              color: '#AAFFAA' });
-    if (fx.hintCharges > 0) tags.push({ icon: '🦴', label: `Hint ×${fx.hintCharges}`, color: '#FFDDAA' });
-    if (fx.timerBonus > 0)  tags.push({ icon: '🧶', label: `+${fx.timerBonus}s`,  color: '#DDAAFF' });
+    if (fx.shield)          tags.push({ spriteKey: 'item_collar', label: 'Shield',                  color: '#88CCFF' });
+    if (fx.doubleHit)       tags.push({ spriteKey: 'item_catnip', label: '2× Hit',                  color: '#AAFFAA' });
+    if (fx.hintCharges > 0) tags.push({ spriteKey: 'item_fossil', label: `Hint ×${fx.hintCharges}`, color: '#FFDDAA' });
+    if (fx.timerBonus > 0)  tags.push({ spriteKey: 'item_yarn',   label: `+${fx.timerBonus}s`,      color: '#DDAAFF' });
 
     // Anchor badges under Mimi's HP bar (left side)
     const W = this.cameras.main.width;
     tags.forEach((tag, i) => {
-      const x = W * 0.04 + i * 76;
-      const y = 187;
+      const bx = W * 0.04 + i * 80;
+      const y  = 187;
       this.effectsRow.add(
-        this.add.rectangle(x + 34, y, 68, 18, 0x000033, 0.88).setStrokeStyle(1, 0x446688),
+        this.add.rectangle(bx + 38, y, 74, 18, 0x000033, 0.88).setStrokeStyle(1, 0x446688),
       );
+      const iconImg = this.textures.exists(tag.spriteKey)
+        ? this.add.image(bx + 10, y, tag.spriteKey).setDisplaySize(13, 13).setOrigin(0.5)
+        : this.add.text(bx + 10, y, '?', { fontSize: '10px', color: '#FFFFFF', fontFamily: FONT_UI }).setOrigin(0.5);
+      this.effectsRow.add(iconImg);
       this.effectsRow.add(
-        this.add.text(x + 34, y, `${tag.icon} ${tag.label}`, {
+        this.add.text(bx + 19, y, tag.label, {
           fontSize: '10px', color: tag.color, fontFamily: FONT_UI, fontStyle: 'bold',
-        }).setOrigin(0.5),
+        }).setOrigin(0, 0.5),
       );
     });
   }
@@ -791,6 +837,20 @@ export default class BattleScene extends Phaser.Scene {
   }
 
   // ── Feedback / streak display ─────────────────────────────────────────────
+
+  // ── Adaptive difficulty display ───────────────────────────────────────
+
+  /**
+   * Briefly show an upward or downward difficulty-shift label near the
+   * topic line at the top of the screen.
+   * @param {number} dir  +1 (ramping up) or -1 (easing off)
+   */
+  _floatDiffChange(dir) {
+    const W   = this.cameras.main.width;
+    const msg = dir > 0 ? '↑ Ramping up!' : '↓ Taking it easy';
+    const col = dir > 0 ? 0xFFDD44 : 0x88DDFF;
+    this._floatText(W / 2, 28, msg, col, 0.65);
+  }
 
   // ── Mimi attack animation ───────────────────────────────────────────────
 

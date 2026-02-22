@@ -115,11 +115,17 @@ export const SPRITE_DEFS = [
 ];
 
 /**
- * UI icon definitions (lives, stars, etc.)
+ * UI icon definitions (lives, stars, item power-ups)
  */
 export const UI_DEFS = [
-  { key: 'ui_heart', file: 'ui/heart', size: 32 },
-  { key: 'ui_star',  file: 'ui/star',  size: 28 },
+  { key: 'ui_heart',     file: 'ui/heart',        size: 32 },
+  { key: 'ui_star',      file: 'ui/star',         size: 28 },
+  // Item (power-up) icons — used in HUD inventory and BattleScene effects row
+  { key: 'item_sardine', file: 'ui/item_sardine', size: 32 },
+  { key: 'item_yarn',    file: 'ui/item_yarn',    size: 32 },
+  { key: 'item_catnip',  file: 'ui/item_catnip',  size: 32 },
+  { key: 'item_collar',  file: 'ui/item_collar',  size: 32 },
+  { key: 'item_fossil',  file: 'ui/item_fossil',  size: 32 },
 ];
 
 /**

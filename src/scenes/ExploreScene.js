@@ -84,9 +84,10 @@ export default class ExploreScene extends Phaser.Scene {
       this._processBattleResult();
     }
 
-    // Player — restore battle-exit position if available, otherwise use spawn
-    const startX = this._returnX ?? tx(this.regionData.mimiStart.col);
-    const startY = this._returnY ?? ty(this.regionData.mimiStart.row);
+    // Player — restore battle-exit position if available, otherwise use randomised spawn
+    const dynStart = POSITIONS[this.regionId].mimiStart ?? this.regionData.mimiStart;
+    const startX = this._returnX ?? tx(dynStart.col);
+    const startY = this._returnY ?? ty(dynStart.row);
     this.mimi = new Mimi(this, startX, startY);
     this.physics.world.setBounds(
       WALL * T, WALL * T,
@@ -106,6 +107,7 @@ export default class ExploreScene extends Phaser.Scene {
     this._setupEnemies();
     this._setupNPC();
     this._setupBossDoor();
+    this._setupInteractiveItems();
 
     // Ambient particles
     this._createAmbientParticles();
@@ -114,7 +116,8 @@ export default class ExploreScene extends Phaser.Scene {
     this.hud    = new HUD(this, this.regionData);
     this.dialog = new DialogBox(this);
 
-    this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+    this.pauseKey  = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+    this._spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     // ── "Return to Map" button in the HUD strip ─────────────────────────────
     const mapBtn = this.add.rectangle(52, 48, 88, 22, 0x0A1A0A, 0.9)
@@ -255,9 +258,9 @@ export default class ExploreScene extends Phaser.Scene {
     const CLEAR_R = 3;  // tile radius to keep clear around key positions
     const positions = POSITIONS[this.regionId];
     const keyPositions = [
-      this.regionData.mimiStart,
+      positions.mimiStart ?? this.regionData.mimiStart,
       positions.npcTile,
-      this.regionData.bossTile,
+      positions.bossTile ?? this.regionData.bossTile,
       ...positions.enemySpawns.map(s => ({ col: s.col, row: s.row })),
     ];
     const isClear = (col, row) => keyPositions.every(
@@ -468,8 +471,9 @@ export default class ExploreScene extends Phaser.Scene {
    *             This avoids fighting between overlap zones and blockers.
    */
   _setupBossDoor() {
-    const px = tx(this.regionData.bossTile.col);
-    const py = ty(this.regionData.bossTile.row);
+    const _pos = POSITIONS[this.regionId];
+    const px = tx((_pos.bossTile ?? this.regionData.bossTile).col);
+    const py = ty((_pos.bossTile ?? this.regionData.bossTile).row);
 
     // Dimensions — the gate is intentionally large and imposing
     const DW       = 88;
@@ -860,6 +864,24 @@ export default class ExploreScene extends Phaser.Scene {
       }
     }
 
+    // Interactive items — proximity + Space to collect
+    if (this._interactiveItems?.length) {
+      for (const item of this._interactiveItems) {
+        if (item.collected) {
+          if (this._nearItem === item) { this._nearItem = null; this._hideItemPrompt(); }
+          continue;
+        }
+        const dist = Phaser.Math.Distance.Between(this.mimi.x, this.mimi.y, tx(item.col), ty(item.row));
+        if (dist < 38) {
+          if (this._nearItem !== item) { this._nearItem = item; this._showItemPrompt(item); }
+          if (Phaser.Input.Keyboard.JustDown(this._spaceKey)) this._collectItem(item);
+        } else if (this._nearItem === item) {
+          this._nearItem = null;
+          this._hideItemPrompt();
+        }
+      }
+    }
+
     if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
       if (this._exitConfirm) {
         this._closeExitConfirm(); // ESC while confirm open = cancel
@@ -920,5 +942,155 @@ export default class ExploreScene extends Phaser.Scene {
     if (!this._exitConfirm) return;
     this._exitConfirm.forEach(o => o.destroy());
     this._exitConfirm = null;
+  }
+
+  // ── Interactive item pickups ─────────────────────────────────────────────
+
+  /** Map itemId → registered spriteKey (SVG asset key). */
+  static get ITEM_SPRITE_KEYS() {
+    return {
+      sardine:      'item_sardine',
+      yarn_ball:    'item_yarn',
+      catnip:       'item_catnip',
+      lucky_collar: 'item_collar',
+      fish_fossil:  'item_fossil',
+    };
+  }
+
+  /** Create pulsing orbs for every uncollected interactive item in this region. */
+  _setupInteractiveItems() {
+    this._interactiveItems = [];
+    this._nearItem         = null;
+    this._itemPromptText   = null;
+
+    const items = POSITIONS[this.regionId]?.interactiveItems ?? [];
+    const ORB_COLORS = {
+      sardine:      0x44AAFF,
+      yarn_ball:    0xFF8833,
+      catnip:       0x44CC44,
+      lucky_collar: 0x44CCFF,
+      fish_fossil:  0xFFDD44,
+    };
+
+    for (const item of items) {
+      const key = `${this.regionId}_${item.col}_${item.row}`;
+      if (GameState.collectedItems?.[key]) continue;  // already picked up
+
+      const px    = tx(item.col);
+      const py    = ty(item.row);
+      const color = ORB_COLORS[item.itemId] ?? 0xFFDD44;
+
+      // Glow orb (Graphics)
+      const gfx = this.add.graphics().setDepth(8);
+      gfx.fillStyle(color, 0.28);
+      gfx.fillCircle(0, 0, 18);
+      gfx.fillStyle(color, 1.0);
+      gfx.fillCircle(0, 0, 8);
+      gfx.fillStyle(0xFFFFFF, 0.80);
+      gfx.fillCircle(-2, -2, 3);
+      gfx.setPosition(px, py);
+
+      // Sprite icon on top of orb
+      const spriteKey = ExploreScene.ITEM_SPRITE_KEYS[item.itemId];
+      const icon = spriteKey && this.textures.exists(spriteKey)
+        ? this.add.image(px, py, spriteKey).setDisplaySize(20, 20).setDepth(9)
+        : null;
+
+      // Pulse tween
+      this.tweens.add({
+        targets: gfx, scaleX: 1.35, scaleY: 1.35, alpha: 0.65,
+        duration: 950, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      });
+      if (icon) {
+        this.tweens.add({
+          targets: icon, y: py - 4,
+          duration: 950, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+        });
+      }
+
+      this._interactiveItems.push({ col: item.col, row: item.row, itemId: item.itemId, gfx, icon, key, collected: false });
+    }
+  }
+
+  _showItemPrompt(item) {
+    this._hideItemPrompt();
+    const px = tx(item.col);
+    const py = ty(item.row) - 26;
+    this._itemPromptText = this.add.text(px, py, '◆ [Space] collect', {
+      fontSize: '10px', color: '#FFEEBB',
+      fontFamily: "'Nunito', Arial, sans-serif",
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(25);
+    this.tweens.add({
+      targets: this._itemPromptText, y: py - 3,
+      duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+    });
+  }
+
+  _hideItemPrompt() {
+    if (this._itemPromptText) { this._itemPromptText.destroy(); this._itemPromptText = null; }
+  }
+
+  _collectItem(item) {
+    if (item.collected) return;
+    item.collected = true;
+    if (this._nearItem === item) { this._nearItem = null; }
+    this._hideItemPrompt();
+
+    // Persist pickup across sessions
+    if (!GameState.collectedItems) GameState.collectedItems = {};
+    GameState.collectedItems[item.key] = true;
+    GameState.addItem(item.itemId);
+    GameState.save();
+
+    this.sound.play('sfx_chest_open', { volume: 0.75 });
+
+    // Burst sparkle then destroy orb
+    const bx = item.gfx.x, by = item.gfx.y;
+    item.gfx.destroy();
+    item.icon?.destroy();
+    for (let i = 0; i < 8; i++) {
+      const spark = this.add.circle(bx, by, 3, 0xFFFFAA, 1).setDepth(30);
+      const angle = (i / 8) * Math.PI * 2;
+      this.tweens.add({
+        targets: spark,
+        x: bx + Math.cos(angle) * 30,
+        y: by + Math.sin(angle) * 30,
+        alpha: 0, scaleX: 0.2, scaleY: 0.2,
+        duration: 500, ease: 'Cubic.easeOut',
+        onComplete: () => spark.destroy(),
+      });
+    }
+    this._showPickupToast(item.itemId);
+    this.hud.refresh();
+  }
+
+  _showPickupToast(itemId) {
+    const INFO = {
+      sardine:      { name: 'Sardine',       desc: 'Heals 2 HP at battle start.' },
+      yarn_ball:    { name: 'Yarn Ball',     desc: '+5 seconds on the battle timer.' },
+      catnip:       { name: 'Catnip',        desc: 'Next correct answer deals ×2 damage.' },
+      lucky_collar: { name: 'Lucky Collar',  desc: 'Block one hit in battle.' },
+      fish_fossil:  { name: 'Fish Fossil',   desc: 'Reveal a wrong choice (×3 uses).' },
+    };
+    const info = INFO[itemId] ?? { name: itemId, desc: '' };
+    const W    = this.cameras.main.width;
+    const FONT = "'Nunito', Arial, sans-serif";
+    const objs = [];
+
+    objs.push(this.add.rectangle(W / 2, 80, 296, 48, 0x000C22, 0.92)
+      .setScrollFactor(0).setDepth(65).setStrokeStyle(1.5, 0xFFCC44));
+    objs.push(this.add.text(W / 2, 64, `✨ Found: ${info.name}!`, {
+      fontSize: '14px', color: '#FFD700', fontFamily: FONT, fontStyle: 'bold',
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(66));
+    objs.push(this.add.text(W / 2, 84, info.desc, {
+      fontSize: '11px', color: '#AADDFF', fontFamily: FONT,
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(66));
+
+    this.tweens.add({
+      targets: objs, alpha: 0,
+      delay: 2200, duration: 500, ease: 'Sine.easeIn',
+      onComplete: () => objs.forEach(o => o.destroy()),
+    });
   }
 }

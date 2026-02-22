@@ -56,6 +56,12 @@ const GameState = {
   // Stores region ids whose boss intro has already been shown this save.
   bossIntroSeen: [],
 
+  // ── Per-region star ratings (1–3; 0 = not yet cleared) ───────────────
+  regionStars: {},
+
+  // ── Hard-mode boss clears (region ids) ───────────────────────────────
+  regionHardModeCleared: [],
+
   // ─────────────────────────────────────────────────────────────────────
   // Persistence
   // ─────────────────────────────────────────────────────────────────────
@@ -71,8 +77,10 @@ const GameState = {
       currentRegion:   this.currentRegion,
       defeatedBosses:  this.defeatedBosses,
       defeatedEnemies: this.defeatedEnemies,
-      inventory:       this.inventory,
-      bossIntroSeen:   this.bossIntroSeen,
+      inventory:              this.inventory,
+      bossIntroSeen:          this.bossIntroSeen,
+      regionStars:            this.regionStars,
+      regionHardModeCleared:  this.regionHardModeCleared,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   },
@@ -84,7 +92,9 @@ const GameState = {
       const data = JSON.parse(raw);
       Object.assign(this, data);
       // Ensure fields added after old saves exist
-      if (!this.bossIntroSeen) this.bossIntroSeen = [];
+      if (!this.bossIntroSeen)          this.bossIntroSeen = [];
+      if (!this.regionStars)            this.regionStars = {};
+      if (!this.regionHardModeCleared)  this.regionHardModeCleared = [];
       // Ensure lives field exists for saves that predate this feature
       if (this.lives    === undefined) this.lives    = 9;
       if (this.maxLives === undefined) this.maxLives = 9;
@@ -122,8 +132,10 @@ const GameState = {
     this.defeatedBosses  = [];
     this.defeatedEnemies = {};
     this.inventory       = {};
-    this.bossIntroSeen   = [];
-    this.activeEffects   = { timerBonus: 0, doubleHit: false, shield: false, hintCharges: 0 };
+    this.bossIntroSeen          = [];
+    this.regionStars            = {};
+    this.regionHardModeCleared  = [];
+    this.activeEffects          = { timerBonus: 0, doubleHit: false, shield: false, hintCharges: 0 };
     this.save();
   },
 
@@ -212,6 +224,31 @@ const GameState = {
     if (this.inventory[itemId] === 0) delete this.inventory[itemId];
     this.save();
     return true;
+  },
+
+  /** Return star count (0–3) for a region; 0 = not yet cleared. */
+  getRegionStars(regionId) {
+    return this.regionStars[regionId] ?? 0;
+  },
+
+  /** Update stored stars — only improves, never decreases. */
+  setRegionStars(regionId, stars) {
+    const prev = this.regionStars[regionId] ?? 0;
+    if (stars > prev) this.regionStars[regionId] = stars;
+    this.save();
+  },
+
+  /** True if the player has beaten hard mode for the given region. */
+  hasDefeatedBossHardMode(regionId) {
+    return this.regionHardModeCleared.includes(regionId);
+  },
+
+  /** Mark a region's hard-mode boss as defeated. */
+  defeatBossHardMode(regionId) {
+    if (!this.regionHardModeCleared.includes(regionId)) {
+      this.regionHardModeCleared.push(regionId);
+    }
+    this.save();
   },
 
   /** Reset battle-only effects at the start of each battle. */

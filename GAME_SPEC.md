@@ -60,6 +60,7 @@ There are no treasure chests; items are dropped by enemies after battle.
 | Stat | Description |
 |---|---|
 | HP | 6 hearts (12 HP); displayed as heart icons |
+| Lives | 9 lives per save; displayed as 🐾 paw icons in battle |
 | Speed | Movement speed across the exploration area |
 
 ### Items (Enemy Drops)
@@ -152,8 +153,9 @@ Each "turn" presents one math problem:
 
 ### Post-battle
 
-- **Victory overlay** shows: accuracy for the battle (`N/N correct, XX%`), streak badge (if ≥3), perfect-battle badge (zero wrong answers), boss-unlock message, and any item dropped.
-- **Defeat:** Mimi’s HP is restored to 50% of max; she returns to the region entrance.
+- **Victory overlay** shows: accuracy for the battle (`N/N correct, XX%`), streak badge (if ≥3), perfect-battle badge (zero wrong answers), boss-unlock message, **star rating (1–3 ★ based on wrong-answer %)**, and any item dropped.
+- **Defeat (life available):** Mimi spends one of her 9 lives. HP is fully restored; she respawns near the enemy with a humorous quip. World state (enemy positions, defeated-enemy record) is preserved for the rematch.
+- **Defeat (no lives left):** HP is restored to 50 % of max; Mimi returns to the region entrance and defeated-enemy progress is reset.
 - Math stats (`GameState.stats`) are updated on every answer and at battle end.
 
 ---
@@ -314,6 +316,32 @@ mimi_vs_math/
 
 ---
 
+## Replay Incentives
+
+### Star Ratings
+
+Every boss battle earns a star rating (1–3 ★) stored in `GameState.regionStars`:
+
+| Stars | Condition |
+|-------|-----------|
+| ★★★ | 0 wrong answers |
+| ★★☆ | ≤25 % wrong answers |
+| ★☆☆ | Any other win |
+
+Stars are shown on each overworld node and in the victory overlay. Ratings only improve—replaying never reduces the count.
+
+### Hard Mode Rematch
+
+After defeating a region's boss, a **⚔ Hard Mode** button appears in the node popup:
+
+- Enemy/boss question **difficulty +1 level** (D1→D2, D2→D3; capped at D3)
+- **Timer −5 seconds** per question (floor: 8 s)
+- A **🗡 HARD MODE** banner displays on Mimi's side of the battle HUD
+- Completion is stored in `GameState.regionHardModeCleared[ ]` and shown as a ⚔ badge on the overworld node
+- Hard mode and normal mode runs are tracked independently
+
+---
+
 ## Milestones
 
 | Milestone | Status | Deliverable |
@@ -322,7 +350,8 @@ mimi_vs_math/
 | M2 | ✅ Done | Battle scene works end-to-end with Region 0 math questions |
 | M3 | ✅ Done | All 5 regions with enemies, bosses, boss-intro cutscenes, item drops |
 | M4 | ✅ Done | Full progression, save/load, world-select, stats tracking |
-| M5 | 🔄 In progress | Audio, mobile touch controls, polish |
+| M5 | ✅ Done | 9 lives, star ratings, hard-mode rematch, BGM/SFX, heart HUD |
+| M6 | 🔄 In progress | Mobile touch controls, accessibility polish |
 
 ---
 

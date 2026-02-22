@@ -47,8 +47,33 @@ Or host via **GitHub Pages** — see setup notes below.
 
 - Select **New Game** from the title screen to choose a starting world (all prior worlds unlock automatically).
 - Each region has 3–5 enemies and a boss. Defeat all enemies to unseal the boss door.
-- Beating a boss unlocks the next region and opens the Stats overview.
+- Beating a boss unlocks the next region, awards a **star rating (1–3 ★)**, and opens the Stats overview.
 - Select **Continue** to return to the world map from a save.
+
+### Star Ratings
+
+Every boss battle earns a star rating shown on the world-map node and the victory overlay:
+
+| Stars | Condition |
+|-------|-----------|
+| ★★★ | Zero wrong answers (perfect battle) |
+| ★★☆ | ≤25 % wrong answers |
+| ★☆☆ | Any other win |
+
+Ratings only improve — replaying a boss can never lower your star count.
+
+### Hard Mode Rematch
+
+After clearing a region, click its overworld node and choose **⚔ Hard Mode (Boss Rematch)**:
+
+- Question difficulty is raised by one level (D1→D2, D2→D3, etc.)
+- Timer is reduced by 5 seconds per question
+- A **🗡 HARD MODE** banner appears in the battle HUD
+- Completion marks the node with a ⚔ badge
+
+### 9 Lives
+
+Mimi has **9 lives** per save. Each defeat in battle uses one life — the world is preserved and Mimi re-enters near the enemy with HP fully restored. Once all 9 lives are spent, she retreats to the region entrance with HP half-restored.
 
 ---
 

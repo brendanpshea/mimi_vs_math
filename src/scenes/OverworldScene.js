@@ -7,6 +7,7 @@
 import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
 import REGIONS   from '../data/regions.js';
+import ENEMIES   from '../data/enemies.js';
 import BGM       from '../audio/BGM.js';
 
 const NODE_RADIUS = 40;
@@ -256,9 +257,18 @@ export default class OverworldScene extends Phaser.Scene {
       fontSize: '13px', color: '#FFCC44', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    // Completed star
+    // Star rating (1–3 filled stars when boss defeated)
     if (completed) {
-      this.add.text(pos.x, pos.y + NODE_RADIUS - 7, '⭐', { fontSize: '13px' }).setOrigin(0.5, 1);
+      const stars = Math.max(1, GameState.getRegionStars(region.id));
+      this.add.text(pos.x, pos.y + NODE_RADIUS - 7,
+        '★'.repeat(stars) + '☆'.repeat(3 - stars),
+        { fontSize: '11px', color: '#FFD700', stroke: '#000', strokeThickness: 2 },
+      ).setOrigin(0.5, 1);
+    }
+    // Hard-mode cleared badge
+    if (GameState.hasDefeatedBossHardMode(region.id)) {
+      this.add.text(pos.x - NODE_RADIUS + 6, pos.y - NODE_RADIUS + 6, '⚔',
+        { fontSize: '12px' }).setOrigin(0.5);
     }
 
     // Name + subtitle labels
@@ -400,8 +410,10 @@ export default class OverworldScene extends Phaser.Scene {
       .setDepth(100).setInteractive());
     ov.on('pointerdown', () => this._closePopup());
 
-    // Panel
-    mk(this.add.rectangle(W / 2, H / 2 + 10, 495, 368, 0x0C0C24)
+    // Panel — taller when boss is cleared to fit star rating + hard mode button
+    const done   = GameState.hasDefeatedBoss(region.id);
+    const panelH = done ? 430 : 368;
+    mk(this.add.rectangle(W / 2, H / 2 + 10, 495, panelH, 0x0C0C24)
       .setDepth(101).setStrokeStyle(3, 0xFFCC44));
 
     // Region name
@@ -426,11 +438,49 @@ export default class OverworldScene extends Phaser.Scene {
     }).setOrigin(0.5, 0).setDepth(102));
 
     // Boss line
-    const done = GameState.hasDefeatedBoss(region.id);
     mk(this.add.text(W / 2, 358, `⚔️  Boss: ${region.bossName}${done ? '  ✅ Defeated' : ''}`, {
       fontSize: '14px', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
       color: done ? '#88FF88' : '#FFAA44', stroke: '#000', strokeThickness: 2,
     }).setOrigin(0.5).setDepth(102));
+
+    // Star rating + Hard Mode button (when boss is defeated)
+    if (done) {
+      const stars = Math.max(1, GameState.getRegionStars(region.id));
+      mk(this.add.text(W / 2, 381,
+        '★'.repeat(stars) + '☆'.repeat(3 - stars),
+        { fontSize: '22px', color: '#FFD700', fontFamily: "'Nunito', Arial, sans-serif",
+          fontStyle: 'bold', stroke: '#000', strokeThickness: 2 },
+      ).setOrigin(0.5).setDepth(102));
+
+      const hmDone  = GameState.hasDefeatedBossHardMode(region.id);
+      const hmCol   = hmDone ? '#AAAA66' : '#FF9944';
+      const hmBg = mk(this.add.rectangle(W / 2, 465, 300, 42, hmDone ? 0x1A1A00 : 0x2A1200)
+        .setDepth(102).setStrokeStyle(2, hmDone ? 0x888844 : 0xFF5500)
+        .setInteractive({ useHandCursor: true }));
+      const hmT = mk(this.add.text(W / 2, 465,
+        hmDone ? '⚔  Hard Mode  ✓ Cleared' : '⚔  Hard Mode  (Boss Rematch)',
+        { fontSize: '14px', color: hmCol, fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' },
+      ).setOrigin(0.5).setDepth(103));
+      hmBg.on('pointerover', () => { hmBg.setFillStyle(hmDone ? 0x2B2B00 : 0x3D1A00); hmT.setColor(hmDone ? '#CCCC88' : '#FFAA66'); });
+      hmBg.on('pointerout',  () => { hmBg.setFillStyle(hmDone ? 0x1A1A00 : 0x2A1200); hmT.setColor(hmCol); });
+      hmBg.on('pointerdown', () => {
+        this._closePopup();
+        GameState.currentRegion = region.id;
+        GameState.save();
+        this.cameras.main.fadeOut(300, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          this.scene.start('BattleScene', {
+            enemy:         ENEMIES[region.boss],
+            enemyInstance: 'boss_hard',
+            regionId:      region.id,
+            isBoss:        true,
+            isHardMode:    true,
+            returnScene:   'OverworldScene',
+            returnData:    {},
+          });
+        });
+      });
+    }
 
     // Enter Region button
     const eb = mk(this.add.rectangle(308, 418, 204, 46, 0x0A2A0A)

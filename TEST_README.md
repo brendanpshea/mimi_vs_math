@@ -5,34 +5,31 @@
 Four test suites run directly in Node with no browser or server needed:
 
 ```
-node test_data.mjs        # data integrity + source-text contracts  (new)
+node test_data.mjs         # data integrity + source-text contracts
 node test_connectivity.mjs # map BFS reachability for all 5 regions
-node test_unlock.mjs       # boss-door unlock / enemy-defeat logic
+node test_unlock.mjs       # boss-door unlock, 9 lives, stars, hard mode
 node test_questions.mjs    # QuestionBank + Distractors contracts
 ```
-
-### test_data.mjs  *(new — catches refactor bugs before playtesting)*
-
-Validates the static shape and cross-references of all data files, plus
-scans source text for a class of bugs that the other tests can't catch:
-
-| Section | What it catches |
-|---|---|
-| 1. Region schema | Missing / mistyped fields in `regions.js` |
-| 2. Enemy cross-refs | Spawn or boss IDs that don't exist in `enemies.js` |
-| 3. Map coverage | Missing `MAPS` / `WALK_GRIDS` entries |
-| 4. No duplicate positions | Two key positions sharing the same tile |
-| 5. Source-text contracts | **Constructor parameter renames that leave stale bare variable references** (direct cause of the "black screen" regression); HUD call-site argument type; `chestTile` removed from MST; `"Enemies: N"` comments matching real spawn counts |
-
-Section 5 is what would have caught the `regionName → regionData` bug that
-caused the black screen — it scans the HUD constructor body and fails if any
-bare `regionName` (not `this.regionName`) appears after the parameter was renamed.
 
 ### test_unlock.mjs
 
 Uses the **live `regions.js` data** (imported directly, no hardcoded stubs)
 so enemy-count assertions can never silently drift out of sync after spawns
 are added or removed.
+
+Covers five groups of logic:
+
+| Group | Tests |
+|-------|-------|
+| Key format | `instanceKey` produces correct composite keys for all regions |
+| Defeat round-trip | `defeatEnemy` / `isEnemyDefeated` read-back; cross-region isolation |
+| Remaining count | Counter decrements correctly; regions are isolated |
+| `justUnlocked` logic | Boss door fires only on the last enemy; idempotent after boss clear |
+| **9 Lives** | `useLife()` decrements, restores HP, returns false when empty, floors at 0 |
+| **Star ratings** | `setRegionStars` / `getRegionStars`; only-improves invariant; per-region isolation |
+| **Star cutoffs** | Mirrors BattleScene formula: 0 wrong=3★, ≤25%=2★, else=1★ |
+| **Hard mode** | `defeatBossHardMode` / `hasDefeatedBossHardMode`; idempotent; per-region isolation |
+| **reset()** | Clears lives, stars, and hard-mode state |
 
 ### test_connectivity.mjs
 

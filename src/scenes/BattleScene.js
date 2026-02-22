@@ -40,7 +40,8 @@ export default class BattleScene extends Phaser.Scene {
     this.enemyData     = data.enemy;
     this.enemyInstance = data.enemyInstance;
     this.regionId      = data.regionId;
-    this.isBoss        = data.isBoss ?? false;
+    this.isBoss        = data.isBoss     ?? false;
+    this.isHardMode    = data.isHardMode ?? false;
     this.returnScene   = data.returnScene ?? 'OverworldScene';
     this.returnData    = data.returnData  ?? {};
 
@@ -160,6 +161,10 @@ export default class BattleScene extends Phaser.Scene {
 
     if (this.isBoss) {
       this.add.text(W * 0.72, 10, '⚠ BOSS BATTLE', TEXT_STYLE(13, '#FF6633', true))
+        .setOrigin(0.5, 0);
+    }
+    if (this.isHardMode) {
+      this.add.text(W * 0.28, 10, '🗡 HARD MODE', TEXT_STYLE(12, '#FF3333', true))
         .setOrigin(0.5, 0);
     }
 
@@ -349,7 +354,8 @@ export default class BattleScene extends Phaser.Scene {
     // Boss battles pick randomly from all region topics; regular enemies use their
     // specific topic.  Difficulty stays at the enemy's level (bosses use D1 so
     // questions are fair even with many HP).
-    const difficulty = this.isBoss ? 1 : (this.enemyData.difficulty ?? 1);
+    const baseDiff   = this.isBoss ? 1 : (this.enemyData.difficulty ?? 1);
+    const difficulty = this.isHardMode ? Math.min(3, baseDiff + 1) : baseDiff;
     const topics     = this.enemyData.mathTopics ?? [this.enemyData.mathTopic];
     const topic      = topics[Math.floor(Math.random() * topics.length)];
     const q = generateQuestion(topic, difficulty);
@@ -382,8 +388,9 @@ export default class BattleScene extends Phaser.Scene {
     }
 
     // Timer — word problems get a flat +8 s reading bonus on top of the base timer
-    const wordBonus = q.wordProblem ? 8 : 0;
-    const duration  = (this.enemyData.timerSeconds + (GameState.activeEffects.timerBonus ?? 0) + wordBonus) * 1000;
+    const wordBonus   = q.wordProblem ? 8 : 0;
+    const hardPenalty = this.isHardMode ? -5 : 0;
+    const duration    = (Math.max(8, this.enemyData.timerSeconds + hardPenalty) + (GameState.activeEffects.timerBonus ?? 0) + wordBonus) * 1000;
     this._startTimer(duration);
     this._qStartTime = this.time.now;
   }
@@ -795,6 +802,12 @@ export default class BattleScene extends Phaser.Scene {
 
       GameState.recordBattle(true, this.battleWrongAnswers === 0, this.streak);
 
+      // ── Star rating for boss battles ──────────────────────────────────────
+      if (this.isBoss) {
+        const wrRatio = this.questionIdx > 0 ? this.battleWrongAnswers / this.questionIdx : 0;
+        this._bossStars = wrRatio === 0 ? 3 : wrRatio <= 0.25 ? 2 : 1;
+      }
+
       // ── Item drop: 100% for bosses, 30% for regular enemies ──
       const ITEM_IDS    = Object.keys(ITEMS);
       const dropChance  = this.isBoss ? 1.0 : 0.30;
@@ -817,6 +830,9 @@ export default class BattleScene extends Phaser.Scene {
 
       let yBoss = null;
       if (this.isBoss) { yBoss = nextY; nextY += 24; }
+
+      let yStars = null;
+      if (this.isBoss) { yStars = nextY; nextY += 26; }
 
       let yItemTitle = null, yItemDesc = null;
       if (droppedItem) {
@@ -857,6 +873,16 @@ export default class BattleScene extends Phaser.Scene {
         this.add.text(W / 2, yBoss, 'The path to the next region is open!', TEXT_STYLE(14, '#88FFAA')).setOrigin(0.5);
       }
 
+      if (yStars !== null) {
+        const stars  = this._bossStars ?? 1;
+        const sStr   = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+        const sColor = stars === 3 ? '#FFD700' : stars === 2 ? '#DDBB88' : '#AAAAAA';
+        const sLabel = stars === 3 ? '  Perfect!' : stars === 2 ? '  Well done!' : '';
+        this.add.text(W / 2, yStars, `${sStr}${sLabel}`, {
+          ...TEXT_STYLE(20, sColor, true), stroke: '#000', strokeThickness: 2,
+        }).setOrigin(0.5);
+      }
+
       // Item drop notification
       if (droppedItem && yItemTitle !== null) {
         const itm = ITEMS[droppedItem];
@@ -879,8 +905,10 @@ export default class BattleScene extends Phaser.Scene {
           // Boss victory → go directly to overworld
           if (this.isBoss) {
             GameState.defeatBoss(this.regionId);
+            GameState.setRegionStars(this.regionId, this._bossStars ?? 1);
+            if (this.isHardMode) GameState.defeatBossHardMode(this.regionId);
             GameState.save();
-            this.scene.start('OverworldScene', { bossDefeated: true, regionId: this.regionId });
+            this.scene.start('OverworldScene', { bossDefeated: !this.isHardMode, regionId: this.regionId });
           } else {
             // Regular enemy → return to exploration
             this.scene.start(this.returnScene, {

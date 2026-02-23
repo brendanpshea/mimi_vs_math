@@ -364,6 +364,9 @@ export const POSITIONS = _gen.map(g => ({
   interactiveItems: g.interactiveItems ?? [],
 }));
 
+/** Live animated objects (torches, etc.) — placed as sprites, never canvas-baked */
+export const ANIMATED_DECORATIONS = _gen.map(g => g.animatedDecorations ?? []);
+
 /**
  * Pre-computed walkability grids — exact blocked-tile Sets for BFS.
  * Each Set<"col,row"> includes border walls + remaining terrain after carving.

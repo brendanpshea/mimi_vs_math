@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40">
+  <!-- Back log -->
+  <rect x="6" y="30" width="20" height="5" rx="2.5" fill="#5C3010" stroke="#2A1000" stroke-width="1"/>
+  <!-- Left log -->
+  <rect x="3" y="32" width="16" height="5" rx="2.5" fill="#7A4A20" stroke="#3A1800" stroke-width="1.2" transform="rotate(-18 11 34.5)"/>
+  <!-- Right log -->
+  <rect x="13" y="32" width="16" height="5" rx="2.5" fill="#7A4A20" stroke="#3A1800" stroke-width="1.2" transform="rotate(18 21 34.5)"/>
+  <!-- Ember glow at base -->
+  <ellipse cx="16" cy="31" rx="7" ry="2.5" fill="#FF5500" opacity="0.65"/>
+  <!-- Outer flame -->
+  <path d="M16,28 C10,22 11,14 15,11 C13,17 19,15 17,8 C21,12 22,20 19,26 C21,20 25,18 22,12 C27,17 24,28 16,28Z" fill="#FF8800"/>
+  <!-- Mid flame -->
+  <path d="M16,25 C13,21 14,15 16,12 C15,17 19,16 17,12 C20,16 20,22 18,25Z" fill="#FFCC00"/>
+  <!-- Core tip -->
+  <ellipse cx="16.5" cy="18" rx="2.2" ry="4" fill="#FFFFCC"/>
+</svg>

@@ -117,10 +117,10 @@ const ACCENT_LAYERS = [
     { key: 'decoration_snowpile',    freq: 0.10, threshold: 0.78, seed: 700 },
     { key: 'decoration_frost_flower',freq: 0.13, threshold: 0.84, seed: 800 },
   ],
-  [ // R5 — Shadow Castle: skulls (moderate blobs — floor scatter looks fine)
-    // + torches (very sparse: high threshold + low freq = solitary wall punctuation)
+  [ // R5 — Shadow Castle: skulls only.
+    // Torches are placed as live animated objects at corridor elbows
+    // (returned via animatedDecorations) — never noise-scattered.
     { key: 'decoration_skull',  freq: 0.12, threshold: 0.84, seed: 900 },
-    { key: 'decoration_torch',  freq: 0.05, threshold: 0.92, seed: 1000 },
   ],
 ];
 
@@ -393,7 +393,14 @@ export function generateRegionMap(regionData) {
   for (const n of nodes) clearGlade(blocked, n.col, n.row, NODE_CLEAR);
 
   // ── Steps 3 & 4: MST + corridor carving ─────────────────────────────
-  for (const [a, b] of buildMST(nodes)) carveL(blocked, a, b, CORRIDOR_HW);
+  // Collect the elbow of every L-corridor (corner where horizontal leg meets
+  // vertical leg) so R5 can place animated torches at architecturally correct
+  // spots rather than noise-scattered patches.
+  const _elbows = [];
+  for (const [a, b] of buildMST(nodes)) {
+    carveL(blocked, a, b, CORRIDOR_HW);
+    _elbows.push({ col: b.col, row: a.row });
+  }
 
   // ── Step 5: Place set-piece landmark ────────────────────────────────
   const sp = SET_PIECES[regionData.id];
@@ -420,7 +427,32 @@ export function generateRegionMap(regionData) {
           blocked.delete(tKey);           // ensure margin is walkable
         }
       }
-      // Re-add the footprint itself for blocking landmarks
+
+      // ── Connect the landmark margin to the nearest key node ────────────
+      // Without this the open area around the landmark is an isolated pocket
+      // surrounded entirely by wall tiles — unreachable from Mimi's start.
+      // We carve an L-corridor from the nearest key node to a point clamped
+      // to the outer edge of the margin (1 tile outside the footprint) so the
+      // corridor terminates in open space without penetrating the interior.
+      // CarveL may temporarily unblock footprint tiles; the re-add below
+      // immediately seals them back.
+      {
+        const lmCx = pos.col + sp.tilesW / 2;
+        const lmCy = pos.row + sp.tilesH / 2;
+        let nearest = nodes[0];
+        let nearestDist = manhattan(nearest, { col: lmCx, row: lmCy });
+        for (const n of nodes) {
+          const d = manhattan(n, { col: lmCx, row: lmCy });
+          if (d < nearestDist) { nearestDist = d; nearest = n; }
+        }
+        // Clamp to the outer boundary of the margin zone (pos-1 … pos+tilesW/H)
+        const entryCol = Math.max(pos.col - 1, Math.min(nearest.col, pos.col + sp.tilesW));
+        const entryRow = Math.max(pos.row - 1, Math.min(nearest.row, pos.row + sp.tilesH));
+        carveL(blocked, nearest, { col: entryCol, row: entryRow }, CORRIDOR_HW);
+      }
+
+      // Re-add the footprint itself for blocking landmarks (after carveL so
+      // any footprint tiles the corridor accidentally cleared are sealed back).
       if (sp.blocking) {
         for (let dc = 0; dc < sp.tilesW; dc++)
           for (let dr = 0; dr < sp.tilesH; dr++)
@@ -468,7 +500,23 @@ export function generateRegionMap(regionData) {
   // ── Find open spots for interactive item pickups ─────────────────────
   const interactiveItems = pickInteractiveItems(blocked, nodes, regionData.id);
 
-  return { decorations, blocked, landmarks, mimiStart, bossTile, npcTile, enemySpawns, interactiveItems };
+  // ── Animated decorations (live objects, NOT baked into the canvas) ───
+  // R5 only: torches at corridor elbow positions, min-spaced 10 tiles apart.
+  // Each elbow is the corner tile { col: b.col, row: a.row } of an L-corridor,
+  // which always sits against a wall face — exactly where a sconce belongs.
+  const animatedDecorations = [];
+  if (regionData.id === 5) {
+    const MIN_TORCH_SPACING = 10;
+    for (const e of _elbows) {
+      if (blocked.has(`${e.col},${e.row}`)) continue;  // skip if still walled
+      const farEnough = animatedDecorations.every(
+        t => Math.abs(e.col - t.col) + Math.abs(e.row - t.row) >= MIN_TORCH_SPACING,
+      );
+      if (farEnough) animatedDecorations.push({ col: e.col, row: e.row, type: 'torch' });
+    }
+  }
+
+  return { decorations, blocked, landmarks, mimiStart, bossTile, npcTile, enemySpawns, interactiveItems, animatedDecorations };
 }
 
 // ── Internal helpers ───────────────────────────────────────────────────────

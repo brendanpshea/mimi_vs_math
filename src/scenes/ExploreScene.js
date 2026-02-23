@@ -12,7 +12,7 @@ import GameState   from '../config/GameState.js';
 import BGM         from '../audio/BGM.js';
 import REGIONS     from '../data/regions/index.js';
 import ENEMIES     from '../data/enemies.js';
-import MAPS, { LANDMARKS, POSITIONS } from '../data/maps.js';
+import MAPS, { LANDMARKS, POSITIONS, ANIMATED_DECORATIONS } from '../data/maps.js';
 import Mimi        from '../entities/Mimi.js';
 import Enemy       from '../entities/Enemy.js';
 import NPC         from '../entities/NPC.js';
@@ -81,6 +81,8 @@ export default class ExploreScene extends Phaser.Scene {
     this._drawRoom();
     this._placeLandmarks();
     this._addDecorations();
+    this._placeAnimatedDecorations();
+    this._addColorGrade();
 
     // Compute whether THIS battle just cleared the last enemy, BEFORE recording
     // the defeat in GameState.  If we wait until after _processBattleResult the
@@ -195,6 +197,28 @@ export default class ExploreScene extends Phaser.Scene {
   }
 
   //  Room drawing 
+
+  /**
+   * Full-world colour-grade overlay — a single very-transparent rectangle that
+   * tints the entire scene with a region-specific hue.  Placed at depth 25 so
+   * it sits above sprites but below the HUD (depth 52+).
+   * Alpha 0.08 is intentionally imperceptible in isolation; the effect is
+   * "something changed" rather than an obvious filter.
+   */
+  _addColorGrade() {
+    const worldW = MAP_W * T;
+    const worldH = MAP_H * T;
+    const TINTS = [
+      0xFFDD88,  // R0 Sunny Village    — very slight warm gold
+      0xFFEE88,  // R1 Windmill Village — pale golden
+      0x99EE66,  // R2 Meadow Maze      — cool leafy green
+      0xFFAA44,  // R3 Desert Dunes     — warm amber
+      0x88CCFF,  // R4 Frostbite Cavern — ice blue
+      0x440077,  // R5 Shadow Castle    — deep purple
+    ];
+    this.add.rectangle(worldW / 2, worldH / 2, worldW, worldH,
+      TINTS[this.regionId] ?? TINTS[0], 0.08).setDepth(25);
+  }
 
   _drawRoom() {
     const { floorColor, wallColor, floorTile, wallTile } = this.regionData;
@@ -413,6 +437,124 @@ export default class ExploreScene extends Phaser.Scene {
       const body = this.add.rectangle(px, py + T * 0.25, hitW, hitH, 0, 0);
       this.physics.add.existing(body, true);
       this._decorObstacles.add(body);
+    }
+  }
+
+  // ── Animated decorations (torches, crystals, etc.) ─────────────────────
+
+  /**
+   * Place live sprite objects for animated decorations — things that cannot
+   * be baked into the static canvas texture because they need tweens.
+   *
+   * Torch positions come from ANIMATED_DECORATIONS (ProceduralMap corridor elbows).
+   * Campfires (R0, R2) and water/ice ripples (R0, R4) are derived from LANDMARKS.
+   */
+  _placeAnimatedDecorations() {
+    // ── Corridor-elbow torches (R5 Shadow Castle) ─────────────
+    const items = ANIMATED_DECORATIONS[this.regionId];
+    if (items?.length) {
+      for (const item of items) {
+        if (item.type === 'torch') this._spawnTorch(tx(item.col), ty(item.row));
+      }
+    }
+
+    // ── Landmark-anchored effects ─────────────────────────────
+    const lms = LANDMARKS[this.regionId];
+    if (!lms?.length) return;
+    const lm    = lms[0];
+    const lw    = lm.tilesW * T;
+    const lh    = lm.tilesH * T;
+    const lmCx  = tx(lm.col) + lw / 2 - T / 2;
+    const lmCy  = ty(lm.row) + lh / 2 - T / 2;
+    const lmDepth = 3 + (lm.row / MAP_H) * 6;
+
+    // Campfire just below and left of the landmark bottom edge (R0 pond, R2 flower ring).
+    if (this.regionId === 0 || this.regionId === 2) {
+      this._spawnCampfire(
+        lmCx - lw * 0.20,
+        lmCy + lh * 0.5 + T * 0.7,
+        lmDepth + 1,
+      );
+    }
+
+    // Water / ice ripples centred on the water surface (R0 pond, R4 frozen lake).
+    if (this.regionId === 0 || this.regionId === 4) {
+      const rippleColor = this.regionId === 4 ? 0xAADDFF : 0x66BBFF;
+      this._spawnWaterRipples(lmCx, lmCy, lw * 0.38, lh * 0.22, rippleColor, lmDepth + 0.5);
+    }
+  }
+
+  /** Wall sconce: static torch sprite + slow outer corona + fast inner flicker. */
+  _spawnTorch(px, py) {
+    this.add.image(px, py - 4, 'decoration_torch').setDepth(5);
+    const corona = this.add.ellipse(px, py - 10, 24, 24, 0xFF8800, 0).setDepth(4);
+    this.tweens.add({
+      targets: corona,
+      alpha:  { from: 0.0,  to: 0.28  },
+      scaleX: { from: 0.8,  to: 1.18  },
+      scaleY: { from: 0.8,  to: 1.18  },
+      duration: Phaser.Math.Between(700, 960),
+      yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      delay: Phaser.Math.Between(0, 600),
+    });
+    const flame = this.add.ellipse(px, py - 13, 8, 8, 0xFFDD88, 0.75).setDepth(6);
+    this.tweens.add({
+      targets: flame,
+      alpha:  { from: 0.50, to: 0.95  },
+      scaleX: { from: 0.82, to: 1.12  },
+      scaleY: { from: 0.82, to: 1.12  },
+      duration: Phaser.Math.Between(180, 290),
+      yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      delay: Phaser.Math.Between(0, 220),
+    });
+  }
+
+  /** Ground campfire: logs sprite + warm corona + fast flame flicker. */
+  _spawnCampfire(cx, cy, depth) {
+    this.add.image(cx, cy, 'decoration_campfire').setDepth(depth);
+    const corona = this.add.ellipse(cx, cy - 8, 32, 32, 0xFF6600, 0).setDepth(depth - 0.5);
+    this.tweens.add({
+      targets: corona,
+      alpha:  { from: 0.0,  to: 0.38  },
+      scaleX: { from: 0.8,  to: 1.28  },
+      scaleY: { from: 0.8,  to: 1.28  },
+      duration: Phaser.Math.Between(580, 880),
+      yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      delay: Phaser.Math.Between(0, 400),
+    });
+    const flame = this.add.ellipse(cx, cy - 15, 12, 12, 0xFFDD44, 0.85).setDepth(depth + 0.5);
+    this.tweens.add({
+      targets: flame,
+      alpha:  { from: 0.55, to: 1.0   },
+      scaleX: { from: 0.70, to: 1.20  },
+      scaleY: { from: 0.70, to: 1.20  },
+      duration: Phaser.Math.Between(145, 245),
+      yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      delay: Phaser.Math.Between(0, 180),
+    });
+  }
+
+  /**
+   * Concentric expanding ripple rings on a water or ice surface.
+   * Three rings staggered evenly in time so they ripple outward sequentially.
+   */
+  _spawnWaterRipples(cx, cy, rw, rh, color, depth) {
+    const RING_COUNT = 3;
+    const duration  = 2600;
+    for (let i = 0; i < RING_COUNT; i++) {
+      const ring = this.add.ellipse(cx, cy, rw * 2, rh * 2, 0, 0)
+        .setStrokeStyle(1.5, color, 0.6)
+        .setDepth(depth)
+        .setScale(0.15);
+      this.tweens.add({
+        targets: ring,
+        scaleX: 1, scaleY: 1,
+        alpha:  { from: 0.6, to: 0 },
+        duration,
+        repeat: -1,
+        ease:   'Sine.easeIn',
+        delay:  (duration / RING_COUNT) * i,
+      });
     }
   }
 
@@ -906,54 +1048,140 @@ export default class ExploreScene extends Phaser.Scene {
     this.physics.add.collider(this._npc.sprite, this._landmarkObstacles);
   }
 
-  // ── Ambient particles ──────────────────────────────────────────────────
+  // ── Weather / precipitation layer ────────────────────────────────────────
 
+  /**
+   * Replaces the old tween-driven dot particles with a proper Phaser 3.60
+   * ParticleEmitter per region.  All emitters use setScrollFactor(0) so they
+   * are screen-space — weather always fills the viewport regardless of where
+   * the camera has scrolled.
+   *
+   * Two shared 1-frame textures are generated once per session:
+   *   _wx_line — 2×8 white rectangle  (rain streaks, sand, snow)
+   *   _wx_dot  — 6×6 white circle     (chaff, snow, smoke motes)
+   */
   _createAmbientParticles() {
-    const worldW = MAP_W * T;
-    const worldH = MAP_H * T;
-    const PARTICLE_COUNT = 40;
+    const camW = this.cameras.main.width;
+    const camH = this.cameras.main.height;
 
-    // Region-themed particle configs
-    const configs = [
-      // R0 Sunny Village — floating leaves and pollen
-      { colors: [0x88CC44, 0xAADD66, 0xFFDD44], sizeMin: 2, sizeMax: 4, speedY: [8, 25], speedX: [-12, 12], alpha: [0.3, 0.7] },
-      // R1 Windmill Village — golden wheat dust and chaff
-      { colors: [0xF5D064, 0xE8B84A, 0xFFF0A0], sizeMin: 1, sizeMax: 3, speedY: [5, 20], speedX: [-5, 15], alpha: [0.2, 0.6] },
-      // R2 Meadow Maze — fireflies and pollen
-      { colors: [0xFFFFAA, 0xAAFF88, 0xFFEE66], sizeMin: 1.5, sizeMax: 3.5, speedY: [-8, 8], speedX: [-6, 6], alpha: [0.2, 0.8] },
-      // R3 Desert Dunes — sand particles
-      { colors: [0xD4A044, 0xE8C868, 0xC89838], sizeMin: 1, sizeMax: 3, speedY: [5, 15], speedX: [10, 30], alpha: [0.2, 0.5] },
-      // R4 Frostbite Cavern — snowflakes
-      { colors: [0xFFFFFF, 0xCCEEFF, 0xAADDFF], sizeMin: 2, sizeMax: 5, speedY: [10, 30], speedX: [-8, 8], alpha: [0.3, 0.8] },
-      // R5 Shadow Castle — purple magic motes
-      { colors: [0x9944FF, 0xBB66FF, 0x6622CC], sizeMin: 1.5, sizeMax: 4, speedY: [-15, 15], speedX: [-10, 10], alpha: [0.2, 0.7] },
-    ];
-    const cfg = configs[this.regionId] ?? configs[0];
-
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const color = cfg.colors[Math.floor(Math.random() * cfg.colors.length)];
-      const size = Phaser.Math.FloatBetween(cfg.sizeMin, cfg.sizeMax);
-      const alpha = Phaser.Math.FloatBetween(cfg.alpha[0], cfg.alpha[1]);
-
-      const px = Phaser.Math.Between(0, worldW);
-      const py = Phaser.Math.Between(0, worldH);
-      const particle = this.add.circle(px, py, size, color, alpha).setDepth(20);
-
-      const vx = Phaser.Math.FloatBetween(cfg.speedX[0], cfg.speedX[1]);
-      const vy = Phaser.Math.FloatBetween(cfg.speedY[0], cfg.speedY[1]);
-
-      // Drift + fade cycle
-      this.tweens.add({
-        targets: particle,
-        x: particle.x + vx * 20,
-        y: particle.y + vy * 20,
-        alpha: { from: alpha, to: alpha * 0.2 },
-        duration: Phaser.Math.Between(4000, 9000),
-        yoyo: true,
-        repeat: -1,
-        delay: Phaser.Math.Between(0, 3000),
-      });
+    // ── Generate textures once per browser session ─────────────────────
+    if (!this.textures.exists('_wx_line')) {
+      const g = this.add.graphics();
+      g.fillStyle(0xFFFFFF, 1).fillRect(0, 0, 2, 8);
+      g.generateTexture('_wx_line', 2, 8);
+      g.destroy();
     }
+    if (!this.textures.exists('_wx_dot')) {
+      const g = this.add.graphics();
+      g.fillStyle(0xFFFFFF, 1).fillCircle(3, 3, 3);
+      g.generateTexture('_wx_dot', 6, 6);
+      g.destroy();
+    }
+
+    // ── Per-region emitter definitions ─────────────────────────────────
+    // Each entry: { texture, depth, config }  where config is the full
+    // Phaser 3.60 ParticleEmitter config object.
+    const WEATHER = [
+      // R0 Sunny Village — gentle angled rain
+      {
+        texture: '_wx_line', depth: 22,
+        config: {
+          x: { min: -20, max: camW + 20 }, y: -12,
+          speedX: { min: 55, max: 95 },
+          speedY: { min: 280, max: 420 },
+          lifespan: 1800,
+          quantity: 2, frequency: 45,
+          alpha: { start: 0.30, end: 0 },
+          scale: { start: 0.9, end: 0.9 },
+          tint: 0xBBDDFF,
+          rotate: 12,
+          gravityY: 0, maxParticles: 0,
+        },
+      },
+      // R1 Windmill Village — drifting wheat chaff
+      {
+        texture: '_wx_dot', depth: 22,
+        config: {
+          x: { min: 0, max: camW }, y: { min: 0, max: camH },
+          speedX: { min: 18, max: 55 },
+          speedY: { min: -25, max: 25 },
+          lifespan: { min: 4000, max: 7000 },
+          quantity: 1, frequency: 220,
+          alpha: { start: 0.55, end: 0 },
+          scale: { start: 0.35, end: 0.12 },
+          tint: 0xF0D060,
+          gravityY: 18, maxParticles: 0,
+        },
+      },
+      // R2 Meadow Maze — lighter angled rain
+      {
+        texture: '_wx_line', depth: 22,
+        config: {
+          x: { min: -20, max: camW + 20 }, y: -12,
+          speedX: { min: 35, max: 70 },
+          speedY: { min: 200, max: 320 },
+          lifespan: 2200,
+          quantity: 1, frequency: 70,
+          alpha: { start: 0.25, end: 0 },
+          scale: { start: 0.75, end: 0.75 },
+          tint: 0xCCEEBB,
+          rotate: 10,
+          gravityY: 0, maxParticles: 0,
+        },
+      },
+      // R3 Desert Dunes — horizontal sand-grain streaks
+      {
+        texture: '_wx_line', depth: 22,
+        config: {
+          x: -8, y: { min: 0, max: camH },
+          speedX: { min: 340, max: 520 },
+          speedY: { min: -18, max: 18 },
+          lifespan: { min: 650, max: 1050 },
+          quantity: 2, frequency: 30,
+          alpha: { start: 0.45, end: 0 },
+          scale: { start: 1.3, end: 0.5 },
+          tint: 0xD4A844,
+          rotate: 90,
+          gravityY: 0, maxParticles: 0,
+        },
+      },
+      // R4 Frostbite Cavern — slowly drifting snowflakes with alpha fade
+      {
+        texture: '_wx_dot', depth: 22,
+        config: {
+          x: { min: -20, max: camW + 20 }, y: -8,
+          speedX: { min: -28, max: 28 },
+          speedY: { min: 35, max: 90 },
+          lifespan: { min: 5000, max: 9000 },
+          quantity: 1, frequency: 100,
+          alpha: { start: 0.80, end: 0 },
+          scale: { start: 0.3, end: 0.65 },
+          tint: 0xDDEEFF,
+          gravityY: 0, maxParticles: 0,
+        },
+      },
+      // R5 Shadow Castle — rising dark smoke motes
+      {
+        texture: '_wx_dot', depth: 22,
+        config: {
+          x: { min: 0, max: camW }, y: camH + 8,
+          speedX: { min: -22, max: 22 },
+          speedY: { min: -75, max: -28 },
+          lifespan: { min: 3200, max: 5800 },
+          quantity: 1, frequency: 140,
+          alpha: { start: 0.55, end: 0 },
+          scale: { start: 0.55, end: 1.30 },
+          tint: 0x6622AA,
+          gravityY: 0, maxParticles: 0,
+        },
+      },
+    ];
+
+    const weatherCfg = WEATHER[this.regionId];
+    if (!weatherCfg) return;
+
+    const emitter = this.add.particles(0, 0, weatherCfg.texture, weatherCfg.config);
+    emitter.setScrollFactor(0).setDepth(weatherCfg.depth);
   }
 
   //  Scene lifecycle

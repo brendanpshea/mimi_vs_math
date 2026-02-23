@@ -595,8 +595,8 @@ export default class OverworldScene extends Phaser.Scene {
 
   _getBossKey(regionId) {
     const bossKeys = [
-      'subtraction_witch', 'count_multiplico', 'the_diviner',
-      'glacius', 'fenwick',
+      'subtraction_witch', 'grand_miller', 'count_multiplico',
+      'the_diviner', 'glacius', 'fenwick',
     ];
     return bossKeys[regionId] ?? 'mimi';
   }

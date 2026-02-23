@@ -657,7 +657,7 @@ export default class ExploreScene extends Phaser.Scene {
 
   /** How many region enemies are not yet defeated. */
   _remainingEnemyCount() {
-    return this.regionData.enemySpawns.filter((spawn, i) =>
+    return POSITIONS[this.regionId].enemySpawns.filter((spawn, i) =>
       !GameState.isEnemyDefeated(this.regionId, spawn.id + i),
     ).length;
   }
@@ -738,7 +738,7 @@ export default class ExploreScene extends Phaser.Scene {
       this._doorDeco.fillTriangle(lx - 2, ly + 7, lx + 2, ly + 7, lx, ly + 11);
 
       this._enemyCountText
-        .setText(`${n} of ${this.regionData.enemySpawns.length} enemies remain`)
+        .setText(`${n} of ${POSITIONS[this.regionId].enemySpawns.length} enemies remain`)
         .setVisible(true);
       this._bossLabel.setColor('#CC88FF');
     }
@@ -836,13 +836,15 @@ export default class ExploreScene extends Phaser.Scene {
     const configs = [
       // R0 Sunny Village — floating leaves and pollen
       { colors: [0x88CC44, 0xAADD66, 0xFFDD44], sizeMin: 2, sizeMax: 4, speedY: [8, 25], speedX: [-12, 12], alpha: [0.3, 0.7] },
-      // R1 Meadow Maze — fireflies and pollen
+      // R1 Windmill Village — golden wheat dust and chaff
+      { colors: [0xF5D064, 0xE8B84A, 0xFFF0A0], sizeMin: 1, sizeMax: 3, speedY: [5, 20], speedX: [-5, 15], alpha: [0.2, 0.6] },
+      // R2 Meadow Maze — fireflies and pollen
       { colors: [0xFFFFAA, 0xAAFF88, 0xFFEE66], sizeMin: 1.5, sizeMax: 3.5, speedY: [-8, 8], speedX: [-6, 6], alpha: [0.2, 0.8] },
-      // R2 Desert Dunes — sand particles
+      // R3 Desert Dunes — sand particles
       { colors: [0xD4A044, 0xE8C868, 0xC89838], sizeMin: 1, sizeMax: 3, speedY: [5, 15], speedX: [10, 30], alpha: [0.2, 0.5] },
-      // R3 Frostbite Cavern — snowflakes
+      // R4 Frostbite Cavern — snowflakes
       { colors: [0xFFFFFF, 0xCCEEFF, 0xAADDFF], sizeMin: 2, sizeMax: 5, speedY: [10, 30], speedX: [-8, 8], alpha: [0.3, 0.8] },
-      // R4 Shadow Castle — purple magic motes
+      // R5 Shadow Castle — purple magic motes
       { colors: [0x9944FF, 0xBB66FF, 0x6622CC], sizeMin: 1.5, sizeMax: 4, speedY: [-15, 15], speedX: [-10, 10], alpha: [0.2, 0.7] },
     ];
     const cfg = configs[this.regionId] ?? configs[0];
@@ -1226,7 +1228,7 @@ export default class ExploreScene extends Phaser.Scene {
 
     // Question text — bright contrasting yellow, stroke, top-anchored origin so
     // word-wrap expands downward predictably rather than shifting the anchor.
-    make(this.add.text(panelX, panelTop + 60, q.prompt, {
+    make(this.add.text(panelX, panelTop + 60, q.text, {
       fontSize: '17px', color: '#FFFF66', fontFamily: FONT, fontStyle: 'bold',
       wordWrap: { width: PW - 56 },
       stroke: '#001133', strokeThickness: 3,

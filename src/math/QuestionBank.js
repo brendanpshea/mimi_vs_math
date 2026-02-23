@@ -452,7 +452,7 @@ function fractionCompareD3() {
     const name       = WP_NAMES[rand(0, WP_NAMES.length - 1)];
     return {
       text:          `${name} has ${whole} ${item}.\nShe uses ${n}/${d} of them.\nHow many is that?`,
-      answer:        String(ansVal),
+      answer:        ansVal,
       answerDisplay: String(ansVal),
       topic:         'fractionCompare',
       wordProblem:   true,

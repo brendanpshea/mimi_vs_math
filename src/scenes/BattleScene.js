@@ -549,7 +549,7 @@ export default class BattleScene extends Phaser.Scene {
     this.answering = true;
     if (this._timerEvent) this._timerEvent.remove();
 
-    const isFast   = this._elapsedRatio() < (5 / (this.enemyData.timerSeconds ?? 15));
+    const isFast   = (this.time.now - this._timerStartAt) < 5000;
     const selected = this.currentChoices[index];
 
     this.answerButtons.forEach(btn => btn.bg.removeInteractive());

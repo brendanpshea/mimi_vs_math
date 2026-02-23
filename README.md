@@ -26,11 +26,11 @@ Each region has multiple enemy types, each with its own question sub-type(s) and
 
 | # | Region | Grades | Topics |
 |---|--------|--------|--------|
-| 0 | Sunny Village | 1–3 | Addition, Subtraction, Number Comparison, Number Ordering |
+| 0 | Sunny Village | 1–3 | Addition, Subtraction, Comparison (ordering + word problems) |
 | 1 | Meadow Maze | 3–5 | Times Tables, Skip Counting, Doubling & Halving, Multiplication |
 | 2 | Desert Dunes | 4–5 | Division, Division Word Problems, Missing Number |
 | 3 | Frostbite Cavern | 5–6 | Fraction Comparison, Fraction Addition, Decimals |
-| 4 | Shadow Castle | 6–7 | Order of Operations, Percentages, Ratios & Proportions, Mixed |
+| 4 | Shadow Castle | 6–7 | Order of Operations, Percentages, Ratios & Proportions |
 
 Word problems receive an automatic +8 second reading bonus on top of the base timer.
 
@@ -204,9 +204,9 @@ mimi_vs_math/
 │   ├── config/
 │   │   ├── AssetConfig.js   ← SVG/PNG switch lives here
 │   │   └── GameState.js     ← save/load + stats tracking
-│   ├── scenes/              ← Boot, Title, Overworld, Explore, Battle, Story, BossIntro
+│   ├── scenes/              ← Boot, Title, Overworld, Explore, Battle, Story, BossIntro, Bestiary
 │   ├── entities/            ← Mimi (4-frame walk cycles), Enemy (patrol/aggro AI), NPC
-│   ├── math/                ← QuestionBank (18+ topic generators, D1–D3), Distractors, Explanations
+│   ├── math/                ← QuestionBank (17 topic generators, D1–D3), Distractors, Explanations
 │   ├── data/                ← regions.js, enemies.js, items.js, maps.js
 │   └── ui/                  ← HUD, DialogBox
 └── assets/

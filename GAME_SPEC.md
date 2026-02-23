@@ -28,11 +28,11 @@ decimals, and mixed challenge content across five regions.
 
 ```
 Overworld Map
-├── Region 0: Sunny Village        (Addition & Subtraction)
+├── Region 0: Sunny Village        (Addition, Subtraction & Comparison)
 ├── Region 1: Meadow Maze          (Multiplication)
 ├── Region 2: Desert Dunes         (Division)
 ├── Region 3: Frostbite Cavern     (Fractions & Decimals)
-└── Region 4: Shadow Castle        (Mixed / Challenge)
+└── Region 4: Shadow Castle        (Order of Operations, Percentages & Ratios)
 ```
 
 Each region contains:
@@ -181,12 +181,11 @@ Each "turn" presents one math problem:
 - Converting fractions ↔ decimals
 - Multiplying a fraction by a whole number
 
-### Region 4 — Mixed Challenge (grades 6–7)
+### Region 4 — Shadow Castle (grades 6–7)
 
-- Order of operations (no exponents)
-- Percentages (e.g., "What is 30% of 80?")
-- Ratio & proportion
-- Negative number arithmetic
+- Order of operations with brackets: `(a + b) × c`, `(a − b) × c`, `a × b + c × d`, `a × b − c`
+- Percentages: 10 %, 20 %, 25 %, 50 %, 75 % of a whole number
+- Ratio & proportion: `a : b = ? : n`
 
 ### Answer Choice Generation
 
@@ -293,7 +292,8 @@ mimi_vs_math/
 │   │   ├── OverworldScene.js  # Region-select world map + stats overlay
 │   │   ├── ExploreScene.js    # Top-down exploration (reused per region)
 │   │   ├── BattleScene.js     # Math battle UI + stats recording
-│   │   └── BossIntroScene.js  # Animated boss-introduction cutscene
+│   │   ├── BossIntroScene.js  # Animated boss-introduction cutscene
+│   │   └── BestiaryScene.js   # Pokémon-style enemy encyclopedia (seen / defeated states)
 │   ├── entities/
 │   │   ├── Mimi.js            # Player sprite and movement
 │   │   ├── Enemy.js           # Enemy base class
@@ -351,7 +351,8 @@ After defeating a region's boss, a **⚔ Hard Mode** button appears in the node 
 | M3 | ✅ Done | All 5 regions with enemies, bosses, boss-intro cutscenes, item drops |
 | M4 | ✅ Done | Full progression, save/load, world-select, stats tracking |
 | M5 | ✅ Done | 9 lives, star ratings, hard-mode rematch, BGM/SFX, heart HUD |
-| M6 | 🔄 In progress | Mobile touch controls, accessibility polish |
+| M6 | ✅ Done | Bestiary, adaptive difficulty, interactive decorations, NPC Mewton, teacher-reviewed question bank |
+| M7 | 🔄 In progress | Mobile touch controls, accessibility polish |
 
 ---
 

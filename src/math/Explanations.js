@@ -40,7 +40,17 @@ export function getExplanation(question) {
       const add = text.match(/^(\d+)\s*\+\s*(\d+)/);
       if (add) {
         const [, a, b] = add.map(Number);
-        return `Start at ${a} and count up ${b} more.\n${a} + ${b} = ${ans}\nCheck: ${ans} − ${b} = ${a} ✓`;
+        if (a <= 10 && b <= 10) {
+          return `Start at ${a} and count up ${b} more.\n${a} + ${b} = ${ans}\nCheck: ${ans} − ${b} = ${a} ✓`;
+        }
+        // Bridging through the nearest ten for larger numbers
+        const nextTen = Math.ceil(a / 10) * 10;
+        const stepToTen = nextTen - a;
+        const remaining = b - stepToTen;
+        if (stepToTen > 0 && remaining > 0) {
+          return `Bridge to the next ten:\n${a} + ${stepToTen} = ${nextTen},  then + ${remaining} more\n${nextTen} + ${remaining} = ${ans} ✓`;
+        }
+        return `${a} + ${b} = ${ans}\nCheck: ${ans} − ${b} = ${a} ✓`;
       }
       const sub = text.match(/^(\d+)\s*[−\-]\s*(\d+)/);
       if (sub) {
@@ -112,22 +122,29 @@ export function getExplanation(question) {
     }
 
     // ── Comparison ───────────────────────────────────────────────────────────
-    case 'comparison': {
+    case 'comparison':
+    case 'numberOrder': {
       // D1 — pick the largest from a set of 4
       if (text.includes('LARGEST')) {
         return `Look at all the numbers and find the biggest one.\n${ans} is larger than every other choice.\n💡 Tip: on a number line, bigger numbers are further to the right.`;
       }
 
-      // D3 — concrete word problems: "X has N items. Y has D more."
-      // All three templates contain the word "more" and exactly two numbers.
-      if (text.includes('more')) {
+      // D3 subtraction variant — "How many MORE does…" / "How many FEWER…"
+      if (text.includes('MORE does') || text.includes('FEWER')) {
         const nums = [...text.matchAll(/(\d+)/g)].map(m => Number(m[0]));
         if (nums.length >= 2) {
-          // The two numbers are the starting amount and the "more" amount.
-          // Answer = their sum.
+          const hi = Math.max(...nums), lo = Math.min(...nums);
+          return `"How many more/fewer?" means find the difference.\nSubtract the smaller from the larger:\n${hi} − ${lo} = ${ans} ✓`;
+        }
+      }
+
+      // D3 — concrete word problems with a starting amount and a "more" amount
+      if (text.includes('more') || text.includes('adds')) {
+        const nums = [...text.matchAll(/(\d+)/g)].map(m => Number(m[0]));
+        if (nums.length >= 2) {
           const [x, y] = nums.slice(0, 2);
           const [lo, hi] = x < y ? [x, y] : [y, x];
-          return `The word "more" means we need to ADD! ➕\nStart with ${hi}, then count on ${lo} more:\n${hi} + ${lo} = ${ans} ✓`;
+          return `The question describes adding ${lo} to ${hi}.\n${hi} + ${lo} = ${ans} ✓\n(When someone gets “more,” the total goes up.)`;
         }
       }
 
@@ -188,6 +205,16 @@ export function getExplanation(question) {
       if (text.includes('SMALLEST')) {
         return `Divide top by bottom for each fraction to compare.\n${ans} gives the lowest value.\n(Smaller value = smaller fraction.)`;
       }
+      // D3 word problem: "She uses n/d of them. How many is that?"
+      if (text.includes('of them')) {
+        const fracM = text.match(/(\d+)\/(\d+)/);
+        const nums  = [...text.matchAll(/(\d+)/g)].map(m => Number(m[0]));
+        const whole = nums[0]; // first number in text is the total count
+        if (fracM && whole) {
+          const [, n, d] = fracM.map(Number);
+          return `Find ${n}/${d} of ${whole}:\nMultiply: ${whole} × ${n} = ${whole * n}\nDivide by ${d}: ${whole * n} ÷ ${d} = ${ans} ✓`;
+        }
+      }
       break;
     }
 
@@ -237,11 +264,23 @@ export function getExplanation(question) {
         const [, a, b, c, d] = m2.map(Number);
         return `Do both multiplications first:\n${a}×${b} = ${a * b}   and   ${c}×${d} = ${c * d}\nThen add: ${a * b} + ${c * d} = ${ans} ✓`;
       }
-      // (a + b) × c  or  a × (b + c)
+      // a × b − c  (new D2 variant)
+      const m5 = text.match(/^(\d+)\s*[×xX\*]\s*(\d+)\s*[−\-]\s*(\d+)/);
+      if (m5) {
+        const [, a, b, c] = m5.map(Number);
+        return `Multiply BEFORE subtracting (BEDMAS rule):\nStep 1: ${a} × ${b} = ${a * b}\nStep 2: ${a * b} − ${c} = ${ans} ✓`;
+      }
+      // (a + b) × c
       const m3 = text.match(/\((\d+)\s*\+\s*(\d+)\)\s*[×xX\*]\s*(\d+)/);
       if (m3) {
         const [, a, b, c] = m3.map(Number);
         return `Brackets first:\nStep 1: (${a} + ${b}) = ${a + b}\nStep 2: ${a + b} × ${c} = ${ans} ✓`;
+      }
+      // (a − b) × c  (new D3 variant)
+      const m4 = text.match(/\((\d+)\s*[−\-]\s*(\d+)\)\s*[×xX\*]\s*(\d+)/);
+      if (m4) {
+        const [, a, b, c] = m4.map(Number);
+        return `Brackets first:\nStep 1: (${a} − ${b}) = ${a - b}\nStep 2: ${a - b} × ${c} = ${ans} ✓`;
       }
       break;
     }

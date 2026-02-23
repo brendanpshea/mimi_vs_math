@@ -299,18 +299,28 @@ const WP_NAMES = ['Mimi', 'Luna', 'Pip', 'Finn', 'Zoe', 'Rex', 'Bea', 'Kit'];
 const WP_ITEMS_COMP = ['stickers', 'marbles', 'fish treats', 'acorns', 'buttons', 'berries', 'yarn balls', 'shells'];
 
 function comparisonD3() {
-  // Easier numbers than D2 pure calc — the reading IS the challenge
   const b    = rand(6, 20);  const diff = rand(2, 8);  const a = b + diff;
   const n1   = WP_NAMES[rand(0, WP_NAMES.length - 1)];
   const n2   = WP_NAMES.filter(n => n !== n1)[rand(0, WP_NAMES.length - 2)];
   const item = WP_ITEMS_COMP[rand(0, WP_ITEMS_COMP.length - 1)];
-  const t    = rand(0, 2);
-  const text = t === 0
-    ? `${n1} has ${b} ${item}.\n${n2} has ${diff} more.\nHow many does ${n2} have?`
-    : t === 1
-    ? `${n2} collected ${diff} more\n${item} than ${n1}.\n${n1} has ${b}. How many did ${n2} collect?`
-    : `A jar has ${b} ${item}.\nSomeone adds ${diff} more.\nHow many are in the jar now?`;
-  return { text, answer: a, answerDisplay: String(a), topic: 'comparison', wordProblem: true };
+
+  if (Math.random() < 0.5) {
+    // Addition: one character has more items than another
+    const t = rand(0, 2);
+    const text = t === 0
+      ? `${n1} has ${b} ${item}.\n${n2} has ${diff} more.\nHow many does ${n2} have?`
+      : t === 1
+      ? `${n2} collected ${diff} more\n${item} than ${n1}.\n${n1} has ${b}. How many did ${n2} collect?`
+      : `A jar has ${b} ${item}.\nSomeone adds ${diff} more.\nHow many are in the jar now?`;
+    return { text, answer: a, answerDisplay: String(a), topic: 'comparison', wordProblem: true };
+  } else {
+    // Subtraction: "how many more/fewer?"
+    const t = rand(0, 1);
+    const text = t === 0
+      ? `${n1} has ${a} ${item}.\n${n2} has ${b}.\nHow many MORE does ${n1} have?`
+      : `${n1} has ${a} ${item} and\n${n2} has ${b}.\nHow many FEWER does ${n2} have?`;
+    return { text, answer: diff, answerDisplay: String(diff), topic: 'comparison', wordProblem: true };
+  }
 }
 
 // ── Times-table focus (Region 1 enemy 1) ─────────────────────────────────────
@@ -430,7 +440,25 @@ function fractionCompareD2() {
   };
 }
 function fractionCompareD3() {
-  // Full SIMPLE_FRACS pool; player picks the SMALLEST of 4.
+  // 30 % chance: fraction-of-a-set word problem
+  if (Math.random() < 0.30) {
+    const FRAC_ITEMS = ['fish treats', 'gems', 'coins', 'berries', 'stars'];
+    const denoms     = [2, 3, 4, 5];
+    const d          = denoms[rand(0, denoms.length - 1)];
+    const n          = rand(1, d - 1);
+    const whole      = rand(2, 5) * d;   // guarantees a whole-number answer
+    const ansVal     = (n * whole) / d;
+    const item       = FRAC_ITEMS[rand(0, FRAC_ITEMS.length - 1)];
+    const name       = WP_NAMES[rand(0, WP_NAMES.length - 1)];
+    return {
+      text:          `${name} has ${whole} ${item}.\nShe uses ${n}/${d} of them.\nHow many is that?`,
+      answer:        String(ansVal),
+      answerDisplay: String(ansVal),
+      topic:         'fractionCompare',
+      wordProblem:   true,
+    };
+  }
+  // Otherwise: pick the SMALLEST of 4 fractions
   const fracs = shuffle([...SIMPLE_FRACS]).slice(0, 4);
   const best  = fracs.reduce((a, b) => a[0] / a[1] <= b[0] / b[1] ? a : b);
   const ans   = `${best[0]}/${best[1]}`;
@@ -458,23 +486,22 @@ function fractionAddD2() {
   return { text: `${n1}/${d1} + ${n2}/${d2} = ?`, answer: s, answerDisplay: s, topic: 'fractionAdd' };
 }
 function fractionAddD3() {
-  // Fraction subtract with like denominators
-  const d  = rand(4, 8); const n1 = rand(3, d-1); const n2 = rand(1, n1-1);
-  const s  = frac(n1-n2, d);
-  return { text: `${n1}/${d} − ${n2}/${d} = ?`, answer: s, answerDisplay: s, topic: 'fractionAdd' };
+  // Unlike denominators — harder pairs not covered by D2
+  const pairs = [[1,3,1,4],[2,3,1,4],[1,4,1,6],[3,4,1,6],[2,5,1,2],[3,5,1,4],[1,3,2,5],[1,6,2,3]];
+  const [n1, d1, n2, d2] = pairs[rand(0, pairs.length - 1)];
+  const lcd = (d1 * d2) / gcd(d1, d2);
+  const s   = frac(n1 * (lcd / d1) + n2 * (lcd / d2), lcd);
+  return { text: `${n1}/${d1} + ${n2}/${d2} = ?`, answer: s, answerDisplay: s, topic: 'fractionAdd' };
 }
 
 // ── Decimals standalone (Region 3 — NEW additional type) ─────────────────────
 
-const DECIMAL_SUMS_D1 = [
-  ['0.2','0.3','0.5'], ['0.4','0.3','0.7'], ['0.5','0.4','0.9'],
-  ['0.1','0.6','0.7'], ['0.3','0.3','0.6'], ['0.2','0.6','0.8'],
-  ['0.1','0.8','0.9'], ['0.4','0.4','0.8'], ['0.3','0.5','0.8'],
-];
-
 function decimalsD1() {
-  const row = DECIMAL_SUMS_D1[rand(0, DECIMAL_SUMS_D1.length-1)];
-  return { text: `${row[0]} + ${row[1]} = ?`, answer: row[2], answerDisplay: row[2], topic: 'decimals' };
+  // Generate freely: both operands are tenths (0.1–0.8) and sum stays ≤ 0.9
+  const a = rand(1, 4);
+  const b = rand(1, 9 - a);
+  const sumStr = String((a + b) / 10);
+  return { text: `0.${a} + 0.${b} = ?`, answer: sumStr, answerDisplay: sumStr, topic: 'decimals' };
 }
 function decimalsD2() {
   if (Math.random() < 0.5) {
@@ -502,12 +529,24 @@ function orderOfOpsD1() {
   return { text: `${a} + ${b} × ${c} = ?`, answer: a + b*c, answerDisplay: String(a + b*c), topic: 'orderOfOps' };
 }
 function orderOfOpsD2() {
-  const a = rand(2,5); const b = rand(2,5); const c = rand(2,5); const d2 = rand(2,5);
-  return { text: `${a} × ${b} + ${c} × ${d2} = ?`, answer: a*b + c*d2, answerDisplay: String(a*b + c*d2), topic: 'orderOfOps' };
+  if (Math.random() < 0.5) {
+    // a × b + c × d  (original)
+    const a = rand(2,5); const b = rand(2,5); const c = rand(2,5); const d2 = rand(2,5);
+    return { text: `${a} × ${b} + ${c} × ${d2} = ?`, answer: a*b + c*d2, answerDisplay: String(a*b + c*d2), topic: 'orderOfOps' };
+  }
+  // a × b − c  (new: subtraction after multiply)
+  const a = rand(3,6); const b = rand(3,6); const c = rand(1, a*b - 1);
+  return { text: `${a} × ${b} − ${c} = ?`, answer: a*b - c, answerDisplay: String(a*b - c), topic: 'orderOfOps' };
 }
 function orderOfOpsD3() {
-  const a = rand(2,7); const b = rand(2,7); const c = rand(2,5);
-  return { text: `(${a} + ${b}) × ${c} = ?`, answer: (a+b)*c, answerDisplay: String((a+b)*c), topic: 'orderOfOps' };
+  if (Math.random() < 0.5) {
+    // (a + b) × c  (original)
+    const a = rand(2,7); const b = rand(2,7); const c = rand(2,5);
+    return { text: `(${a} + ${b}) × ${c} = ?`, answer: (a+b)*c, answerDisplay: String((a+b)*c), topic: 'orderOfOps' };
+  }
+  // (a − b) × c  (new: subtraction inside brackets)
+  const b = rand(2,6); const a = b + rand(1,6); const c = rand(2,5);
+  return { text: `(${a} − ${b}) × ${c} = ?`, answer: (a-b)*c, answerDisplay: String((a-b)*c), topic: 'orderOfOps' };
 }
 
 // ── Percentages standalone (Region 4 enemy 2) ────────────────────────────────
@@ -612,7 +651,8 @@ function doublingD3() {
 // ── Missing number (Region 2 — additional type) ──────────────────────────────
 
 function missingNumberD1() {
-  const a = rand(2, 8); const b = rand(2, 10 - a);
+  // Two-digit addends — appropriate for Grade 3 (Region 2)
+  const a = rand(10, 30); const b = rand(5, 20);
   const sum = a + b;
   if (Math.random() < 0.5) {
     return { text: `? + ${b} = ${sum}`, answer: a, answerDisplay: String(a), topic: 'missingNumber' };
@@ -620,9 +660,13 @@ function missingNumberD1() {
   return { text: `${sum} − ? = ${a}`, answer: b, answerDisplay: String(b), topic: 'missingNumber' };
 }
 function missingNumberD2() {
-  const a = rand(2, 9); const b = rand(2, 9);
+  // Extend to include factors up to 12 so it overlaps with times-table knowledge
+  const a = rand(2, 12); const b = rand(2, 9);
   const prod = a * b;
-  return { text: `? × ${b} = ${prod}`, answer: a, answerDisplay: String(a), topic: 'missingNumber' };
+  if (Math.random() < 0.5) {
+    return { text: `? × ${b} = ${prod}`, answer: a, answerDisplay: String(a), topic: 'missingNumber' };
+  }
+  return { text: `${prod} ÷ ? = ${a}`, answer: b, answerDisplay: String(b), topic: 'missingNumber' };
 }
 function missingNumberD3() {
   if (Math.random() < 0.5) {
@@ -653,17 +697,15 @@ function ratiosPropD3() {
 // ── Public API ────────────────────────────────────────────────────────────────
 
 const generators = {
-  // Original compound topics (used by bosses / legacy)
+  // Original compound topics (used by some bosses / legacy)
   addSub:         [addSubD1,         addSubD2,         addSubD3],
   multiplication: [multD1,           multD2,           multD3],
   division:       [divD1,            divD2,            divD3],
   fractions:      [fracD1,           fracD2,           fracD3],
-  mixed:          [mixedD1,          mixedD2,          mixedD3],
   // Region 0 — Sunny Village
   addition:       [additionD1,       additionD2,       additionD3],
   subtraction:    [subtractionD1,    subtractionD2,    subtractionD3],
   comparison:     [comparisonD1,     comparisonD2,     comparisonD3],
-  numberOrder:    [numberOrderD1,    numberOrderD2,    numberOrderD3],
   // Region 1 — Meadow Maze
   multTables:     [multTablesD1,     multTablesD2,     multTablesD3],
   skipCounting:   [skipCountingD1,   skipCountingD2,   skipCountingD3],

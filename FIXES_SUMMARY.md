@@ -32,9 +32,42 @@
 ## Testing
 All 49 static analysis tests pass ✅
 
-## Next Steps
-Refresh the browser and test:
-1. Beat a boss → next region should unlock
-2. First boss should have easier questions (1-digit addition within 10)
-3. NPC should appear as a wizard sprite
-4. Enemies should not have name labels on the map
+---
+
+## ✅ Fix 5: Enemy bob-tween teleport (Enemy.js)
+- Bob tween is now stopped and recreated at `sprite.y` when going idle — prevents snap back to spawn Y after the enemy has moved.
+- `_stepBobOffset` cleared in `_enterMoveAnim()` to avoid residual offset accumulating.
+
+## ✅ Fix 6: Mewton roaming NPC wall-walking (NPC.js)
+- Removed `setImmovable(true)` which was blocking Arcade physics wall separation.
+- Added `body.blocked.*` detection — changes direction within 350 ms of hitting a wall.
+- `_thinkTimer` stored as a reference so it can be cancelled before a forced direction change.
+
+## ✅ Fix 7: Run-away re-trigger (ExploreScene.js)
+- `returnData` now includes `enemyHomeX/Y`.
+- On `ranAway: true` return, Mimi spawns 96 px away from the enemy's home tile instead of right next to it.
+
+## ✅ Fix 8: Pokémon-style Bestiary (BestiaryScene.js + GameState.js)
+- `GameState` tracks `seenEnemies` (entered battle) and `defeatedEnemyTypes` (won battle).
+- Grid of all 23 enemies with three card states: unknown / seen (silhouette) / defeated (full colour + star count).
+- Detail panel shows name, region, HP, special ability, and math topic.
+- Accessible from the OverworldScene player card via a 📖 Bestiary button.
+
+## ✅ Fix 9: Teacher-reviewed question bank (QuestionBank.js + Explanations.js)
+Ten improvements aligned with Grade 1–7 curriculum expectations:
+
+1. `fractionAddD3` — replaced mislabelled subtraction with **unlike-denominator addition**
+2. Comparison explanation — replaced generic "more means ADD" with template-specific step-by-step working
+3. `decimalsD1` — replaced 9-row lookup table with a **procedural generator**
+4. Addition explanation — **bridging-through-tens** scaffolding for addends > 10
+5. `missingNumberD1/D2` — two-digit addends; D2 extended to include `÷ ?` variant (inverse division)
+6. `comparisonD3` — added **"how many MORE/FEWER?"** subtraction word problems (50 % rate)
+7. `orderOfOpsD2/D3` — added subtraction templates (`a × b − c` and `(a − b) × c`)
+8. `fractionCompareD3` — 30 % chance of **fraction-of-a-set** word problem (e.g. "Mimi uses 1/4 of 12 fish — how many?")
+9. Removed `mixed` and `numberOrder` from public generator map; `fenwick` boss → `mathTopic: 'orderOfOps'`
+10. `number_bee` enemy → `mathTopic: 'comparison'`; `subtraction_witch` boss pool trimmed; `BattleScene` topic label map expanded to all 17 live topics
+
+**Test results after all changes:**
+- `test_questions.mjs`    — 58,875 / 58,875 ✅
+- `test_unlock.mjs`       — 33 / 33 ✅
+- `test_connectivity.mjs` — 150 / 150 ✅

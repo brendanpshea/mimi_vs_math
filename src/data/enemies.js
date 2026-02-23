@@ -78,7 +78,7 @@ const ENEMIES = {
     hp: 5,
     damage: 1,
     xp: 10,
-    mathTopic: 'numberOrder',              // number ordering (new type)
+    mathTopic: 'comparison',               // number ordering / comparison
     difficulty: 1,
     timerSeconds: 22,                      // Gr 1: pick biggest/smallest from a set
     special: 'Number ordering problems',
@@ -93,7 +93,7 @@ const ENEMIES = {
     damage: 2,
     xp: 40,
     mathTopic: 'addSub',
-    mathTopics: ['addition', 'subtraction', 'comparison', 'numberOrder'],  // all Region 0 types
+    mathTopics: ['addition', 'subtraction', 'comparison'],  // all Region 0 types
     difficulty: 3,
     timerSeconds: 22,              // Boss: matches heaviest R0 type (comparison)
     special: 'Boss: Addition, subtraction & comparisons',
@@ -360,7 +360,7 @@ const ENEMIES = {
     hp: 40,
     damage: 3,
     xp: 100,
-    mathTopic: 'mixed',
+    mathTopic: 'orderOfOps',
     mathTopics: ['orderOfOps', 'percentages', 'ratiosProp'],  // all Region 4 types
     difficulty: 3,
     timerSeconds: 25,              // Final boss: D3 includes reverse-percentage format; needs extra read time

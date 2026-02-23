@@ -48,9 +48,9 @@ const B  = s => `\x1b[1m${s}\x1b[0m`;    // bold
 // ── All topics exposed by QuestionBank ───────────────────────────────────
 const ALL_TOPICS = [
   // legacy compound topics
-  'addSub', 'multiplication', 'division', 'fractions', 'mixed',
+  'addSub', 'multiplication', 'division', 'fractions',
   // Region 0
-  'addition', 'subtraction', 'comparison', 'numberOrder',
+  'addition', 'subtraction', 'comparison',
   // Region 1
   'multTables', 'skipCounting', 'doubling',
   // Region 2
@@ -67,13 +67,11 @@ const TOPIC_BOUNDS = {
   addition:       [0,  99],
   subtraction:    [0,  99],
   comparison:     [0,  100],
-  numberOrder:    [0,  99],
   multiplication: [0,  300],
   multTables:     [0,  100],
   division:       [0,  144],
   divisionWord:   [0,  72],
   missingNumber:  [0,  108],
-  mixed:          [0,  500],
   orderOfOps:     [0,  500],
   percentages:    [0,  1000],
   ratiosProp:     [0,  200],

@@ -233,7 +233,12 @@ export default class BattleScene extends Phaser.Scene {
     }
     const topicLabels = {
       addSub: 'Addition & Subtraction', multiplication: 'Multiplication',
-      division: 'Division', fractions: 'Fractions', mixed: 'Mixed',
+      division: 'Division', fractions: 'Fractions',
+      addition: 'Addition', subtraction: 'Subtraction', comparison: 'Comparison',
+      multTables: 'Times Tables', skipCounting: 'Skip Counting', doubling: 'Doubling',
+      divisionWord: 'Division', missingNumber: 'Missing Number',
+      fractionCompare: 'Fractions', fractionAdd: 'Fractions', decimals: 'Decimals',
+      orderOfOps: 'Order of Operations', percentages: 'Percentages', ratiosProp: 'Ratios & Proportions',
     };
     this.add.text(W / 2, 10, topicLabels[this.enemyData.mathTopic] ?? '', TEXT_STYLE(13, '#AACCFF'))
       .setOrigin(0.5, 0);

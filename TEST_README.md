@@ -5,10 +5,10 @@
 Four test suites run directly in Node with no browser or server needed:
 
 ```
+node test_questions.mjs    # QuestionBank + Distractors contracts  (58,875 checks)
+node test_unlock.mjs       # boss-door unlock, 9 lives, stars, hard mode, bestiary  (33 checks)
+node test_connectivity.mjs # map BFS reachability for all 5 regions  (150 checks)
 node test_data.mjs         # data integrity + source-text contracts
-node test_connectivity.mjs # map BFS reachability for all 5 regions
-node test_unlock.mjs       # boss-door unlock, 9 lives, stars, hard mode
-node test_questions.mjs    # QuestionBank + Distractors contracts
 ```
 
 ### test_unlock.mjs
@@ -29,7 +29,8 @@ Covers five groups of logic:
 | **Star ratings** | `setRegionStars` / `getRegionStars`; only-improves invariant; per-region isolation |
 | **Star cutoffs** | Mirrors BattleScene formula: 0 wrong=3★, ≤25%=2★, else=1★ |
 | **Hard mode** | `defeatBossHardMode` / `hasDefeatedBossHardMode`; idempotent; per-region isolation |
-| **reset()** | Clears lives, stars, and hard-mode state |
+| **Bestiary** | `markEnemySeen` / `markEnemyDefeated` / `hasSeenEnemy` / `hasDefeatedEnemyType`; cross-enemy isolation |
+| **reset()** | Clears lives, stars, hard-mode state, and bestiary records |
 
 ### test_connectivity.mjs
 

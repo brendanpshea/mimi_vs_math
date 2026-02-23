@@ -45,73 +45,38 @@ export const SPRITE_DEFS = [
   { key: 'mimi_walk_right_d',     file: 'mimi_walk_right_d',     size: 64 },
 
   // Region 0 — Sunny Village
-  { key: 'counting_caterpillar',  file: 'counting_caterpillar',  size: 64 },
-  { key: 'number_gnome',          file: 'number_gnome',          size: 64 },
-  { key: 'minus_mole',            file: 'minus_mole',            size: 64 },
-  { key: 'number_bee',            file: 'number_bee',            size: 64 },
-  { key: 'subtraction_witch',     file: 'subtraction_witch',     size: 96 },
+  { key: 'counting_caterpillar',  file: 'counting_caterpillar',  size: 64, frames: ['b', 'c'] },
+  { key: 'number_gnome',          file: 'number_gnome',          size: 64, frames: ['b', 'c'] },
+  { key: 'minus_mole',            file: 'minus_mole',            size: 64, frames: ['b', 'c'] },
+  { key: 'number_bee',            file: 'number_bee',            size: 64, frames: ['b', 'c'] },
+  { key: 'subtraction_witch',     file: 'subtraction_witch',     size: 96, frames: ['b'] },
 
   // Region 1 — Meadow Maze
-  { key: 'slime_pup',             file: 'slime_pup',             size: 64 },
-  { key: 'cactus_sprite',         file: 'cactus_sprite',         size: 64 },
-  { key: 'cloud_bully',           file: 'cloud_bully',           size: 64 },
-  { key: 'double_bunny',          file: 'double_bunny',          size: 64 },
-  { key: 'count_multiplico',      file: 'count_multiplico',      size: 96 },
+  { key: 'slime_pup',             file: 'slime_pup',             size: 64, frames: ['b', 'c'] },
+  { key: 'cactus_sprite',         file: 'cactus_sprite',         size: 64, frames: ['b'] },
+  { key: 'cloud_bully',           file: 'cloud_bully',           size: 64, frames: ['b'] },
+  { key: 'double_bunny',          file: 'double_bunny',          size: 64, frames: ['b', 'c'] },
+  { key: 'count_multiplico',      file: 'count_multiplico',      size: 96, frames: ['b'] },
 
   // Region 2 — Desert Dunes
-  { key: 'sand_scarab',           file: 'sand_scarab',           size: 64 },
-  { key: 'mummy_cat',             file: 'mummy_cat',             size: 64 },
-  { key: 'mirage_fox',            file: 'mirage_fox',            size: 64 },
-  { key: 'riddle_scarab',         file: 'riddle_scarab',         size: 64 },
-  { key: 'the_diviner',           file: 'the_diviner',           size: 96 },
+  { key: 'sand_scarab',           file: 'sand_scarab',           size: 64, frames: ['b'] },
+  { key: 'mummy_cat',             file: 'mummy_cat',             size: 64, frames: ['b'] },
+  { key: 'mirage_fox',            file: 'mirage_fox',            size: 64, frames: ['b', 'c'] },
+  { key: 'riddle_scarab',         file: 'riddle_scarab',         size: 64, frames: ['b'] },
+  { key: 'the_diviner',           file: 'the_diviner',           size: 96, frames: ['b'] },
 
   // Region 3 — Frostbite Cavern
-  { key: 'ice_frog',              file: 'ice_frog',              size: 64 },
-  { key: 'snow_golem',            file: 'snow_golem',            size: 64 },
-  { key: 'crystal_bat',           file: 'crystal_bat',           size: 64 },
-  { key: 'glacius',               file: 'glacius',               size: 96 },
+  { key: 'ice_frog',              file: 'ice_frog',              size: 64, frames: ['b'] },
+  { key: 'snow_golem',            file: 'snow_golem',            size: 64, frames: ['b'] },
+  { key: 'crystal_bat',           file: 'crystal_bat',           size: 64, frames: ['b', 'c'] },
+  { key: 'glacius',               file: 'glacius',               size: 96, frames: ['b'] },
 
   // Region 4 — Shadow Castle
-  { key: 'shadow_knight',         file: 'shadow_knight',         size: 64 },
-  { key: 'ratio_raven',           file: 'ratio_raven',           size: 64 },
-  { key: 'percent_wraith',        file: 'percent_wraith',        size: 64 },
+  { key: 'shadow_knight',         file: 'shadow_knight',         size: 64, frames: ['b'] },
+  { key: 'ratio_raven',           file: 'ratio_raven',           size: 64, frames: ['b'] },
+  { key: 'percent_wraith',        file: 'percent_wraith',        size: 64, frames: ['b'] },
   { key: 'professor_negativus',   file: 'professor_negativus',   size: 96 }, // legacy (unused in gameplay)
-  { key: 'fenwick',               file: 'fenwick',               size: 96 },
-  { key: 'fenwick_b',             file: 'fenwick_b',             size: 96 },
-
-  // Frame-B walk/fly sprites (cycled by Enemy.js step timer)
-  { key: 'counting_caterpillar_b', file: 'counting_caterpillar_b', size: 64 },
-  { key: 'number_gnome_b',         file: 'number_gnome_b',         size: 64 },
-  { key: 'minus_mole_b',           file: 'minus_mole_b',           size: 64 },
-  { key: 'subtraction_witch_b',    file: 'subtraction_witch_b',    size: 96 },
-  { key: 'number_bee_b',           file: 'number_bee_b',           size: 64 },
-  { key: 'slime_pup_b',            file: 'slime_pup_b',            size: 64 },
-  { key: 'cactus_sprite_b',        file: 'cactus_sprite_b',        size: 64 },
-  { key: 'cloud_bully_b',          file: 'cloud_bully_b',          size: 64 },
-  { key: 'count_multiplico_b',     file: 'count_multiplico_b',     size: 96 },
-  { key: 'double_bunny_b',         file: 'double_bunny_b',         size: 64 },
-  { key: 'sand_scarab_b',          file: 'sand_scarab_b',          size: 64 },
-  { key: 'mummy_cat_b',            file: 'mummy_cat_b',            size: 64 },
-  { key: 'mirage_fox_b',           file: 'mirage_fox_b',           size: 64 },
-  { key: 'the_diviner_b',          file: 'the_diviner_b',          size: 96 },
-  { key: 'riddle_scarab_b',        file: 'riddle_scarab_b',        size: 64 },
-  { key: 'ice_frog_b',             file: 'ice_frog_b',             size: 64 },
-  { key: 'snow_golem_b',           file: 'snow_golem_b',           size: 64 },
-  { key: 'crystal_bat_b',          file: 'crystal_bat_b',          size: 64 },
-  { key: 'glacius_b',              file: 'glacius_b',              size: 96 },
-  { key: 'ratio_raven_b',          file: 'ratio_raven_b',          size: 64 },
-  { key: 'percent_wraith_b',       file: 'percent_wraith_b',       size: 64 },
-  { key: 'shadow_knight_b',        file: 'shadow_knight_b',        size: 64 },
-
-  // Frame-C mid-stride sprites (8 priority enemies only; absent enemies fall back to frame A)
-  { key: 'counting_caterpillar_c', file: 'counting_caterpillar_c', size: 64 },
-  { key: 'number_gnome_c',         file: 'number_gnome_c',         size: 64 },
-  { key: 'minus_mole_c',           file: 'minus_mole_c',           size: 64 },
-  { key: 'number_bee_c',           file: 'number_bee_c',           size: 64 },
-  { key: 'slime_pup_c',            file: 'slime_pup_c',            size: 64 },
-  { key: 'double_bunny_c',         file: 'double_bunny_c',         size: 64 },
-  { key: 'crystal_bat_c',          file: 'crystal_bat_c',          size: 64 },
-  { key: 'mirage_fox_c',           file: 'mirage_fox_c',           size: 64 },
+  { key: 'fenwick',               file: 'fenwick',               size: 96, frames: ['b'] },
 ];
 
 /**
@@ -255,6 +220,11 @@ export function loadAllAudio(scene) {
 export function loadAllAssets(scene) {
   for (const def of SPRITE_DEFS) {
     loadSprite(scene, def.key, def.file, def.size);
+    if (def.frames) {
+      for (const suffix of def.frames) {
+        loadSprite(scene, `${def.key}_${suffix}`, `${def.file}_${suffix}`, def.size);
+      }
+    }
   }
   for (const def of UI_DEFS) {
     loadSprite(scene, def.key, def.file, def.size);

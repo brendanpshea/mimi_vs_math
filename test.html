@@ -179,7 +179,7 @@
       try {
         const enemies = await import('./src/data/enemies.js');
         const items = await import('./src/data/items.js');
-        const regions = await import('./src/data/regions.js');
+        const regions = await import('./src/data/regions/index.js');
         
         if (enemies.default && items.default && regions.default) {
           addTest('Data Module Imports', 'pass', `Loaded ${enemies.default.length} enemies, ${items.default.length} items, ${regions.default.length} regions`);

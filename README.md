@@ -207,7 +207,7 @@ mimi_vs_math/
 │   ├── scenes/              ← Boot, Title, Overworld, Explore, Battle, Story, BossIntro, Bestiary
 │   ├── entities/            ← Mimi (4-frame walk cycles), Enemy (patrol/aggro AI), NPC
 │   ├── math/                ← QuestionBank (17 topic generators, D1–D3), Distractors, Explanations
-│   ├── data/                ← regions.js, enemies.js, items.js, maps.js
+   ├── data/                ← regions/ (region_0–4.js + index.js), enemies.js, items.js, maps.js
 │   └── ui/                  ← HUD, DialogBox
 └── assets/
     ├── sprites/             ← SVG files (walk cycles A/B/C frames, battle poses, bosses, UI)

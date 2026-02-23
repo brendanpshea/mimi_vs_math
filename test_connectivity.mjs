@@ -13,7 +13,7 @@
  */
 
 import MAPS, { WALK_GRIDS, POSITIONS } from './src/data/maps.js';
-import REGIONS               from './src/data/regions.js';
+import REGIONS               from './src/data/regions/index.js';
 
 // ── BFS ──────────────────────────────────────────────────────────────────────
 

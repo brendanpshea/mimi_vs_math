@@ -10,7 +10,7 @@
 import * as Phaser from 'phaser';
 import GameState   from '../config/GameState.js';
 import BGM         from '../audio/BGM.js';
-import REGIONS     from '../data/regions.js';
+import REGIONS     from '../data/regions/index.js';
 import ENEMIES     from '../data/enemies.js';
 import MAPS, { LANDMARKS, POSITIONS } from '../data/maps.js';
 import Mimi        from '../entities/Mimi.js';

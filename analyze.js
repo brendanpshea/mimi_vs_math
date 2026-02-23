@@ -140,7 +140,7 @@ function analyzeSourceFiles() {
   console.log('\n📊 Checking data files...\n');
   checkFileExists('src/data/enemies.js', 'Enemies data');
   checkFileExists('src/data/items.js', 'Items data');
-  checkFileExists('src/data/regions.js', 'Regions data');
+  checkFileExists('src/data/regions/index.js', 'Regions data');
   
   console.log('\n🧮 Checking math modules...\n');
   checkFileExists('src/math/QuestionBank.js', 'QuestionBank');

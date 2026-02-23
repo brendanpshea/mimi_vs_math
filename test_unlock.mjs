@@ -10,7 +10,7 @@
  * silently drift out of sync with these tests.
  */
 
-import REGIONS from './src/data/regions.js';
+import REGIONS from './src/data/regions/index.js';
 
 // ── Minimal GameState stub ─────────────────────────────────────────────────
 const GameState = {

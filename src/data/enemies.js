@@ -1,19 +1,19 @@
-/**
+﻿/**
  * Enemy definitions for all regions.
  *
  * spriteKey must match the key used in BootScene's asset loader.
  * mathTopic must match a topic in QuestionBank.
  * special: optional string describing unique battle behavior.
  *
- * ── Timer philosophy ──────────────────────────────────────────────────────
+ * â”€â”€ Timer philosophy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * timerSeconds is tuned per enemy using three principles:
- *   1. GRADE LEVEL  — younger students (Region 0) need more wall-clock time
+ *   1. GRADE LEVEL  â€” younger students (Region 0) need more wall-clock time
  *      even for "easy" questions; older students (Region 4) work faster.
- *   2. CONCEPT NOVELTY — the first region that introduces a concept gives a
+ *   2. CONCEPT NOVELTY â€” the first region that introduces a concept gives a
  *      generous buffer; review appearances get less time.
- *   3. QUESTION FORMAT — word problems (divisionWord) need ~10–15 s of extra
+ *   3. QUESTION FORMAT â€” word problems (divisionWord) need ~10â€“15 s of extra
  *      reading time on top of the raw calculation cost.
- *      Multi-step work (fractionAdd: LCD → convert → add → simplify) also
+ *      Multi-step work (fractionAdd: LCD â†’ convert â†’ add â†’ simplify) also
  *      gets extra time regardless of grade.
  *
  * Rough baselines used:
@@ -24,14 +24,13 @@
  *   Region 4 (Gr 5):  22 s order-of-ops, 20 s percentages, 22 s ratios
  *   Bosses: match the heaviest topic in their pool; extra time when
  *           D3 can produce multi-digit multiplication or reverse-percentage
- * ─────────────────────────────────────────────────────────────────────────
+ * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  */
 const ENEMIES = {
-  // ── Region 0: Sunny Village ──────────────────────────────────────────────
+  // â”€â”€ Region 0: Sunny Village â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   counting_caterpillar: {
     id: 'counting_caterpillar',
     name: 'Counting Caterpillar',
-    spriteKey: 'counting_caterpillar',
     region: 0,
     hp: 6,
     damage: 1,
@@ -39,13 +38,11 @@ const ENEMIES = {
     mathTopic: 'addition',         // pure addition
     difficulty: 1,
     timerSeconds: 25,              // Gr 1: youngest students, counting on fingers
-    special: 'Addition problems only',
     color: 0x44CC66,
   },
   number_gnome: {
     id: 'number_gnome',
     name: 'Number Gnome',
-    spriteKey: 'number_gnome',
     region: 0,
     hp: 6,
     damage: 1,
@@ -53,27 +50,23 @@ const ENEMIES = {
     mathTopic: 'subtraction',       // pure subtraction
     difficulty: 2,
     timerSeconds: 22,              // Gr 1: subtraction harder than addition
-    special: 'Subtraction problems only',
     color: 0xFF6633,
   },
   minus_mole: {
     id: 'minus_mole',
     name: 'Minus Mole',
-    spriteKey: 'minus_mole',
     region: 0,
     hp: 6,
     damage: 2,
     xp: 12,
     mathTopic: 'comparison',        // number comparison (new type)
     difficulty: 2,
-    timerSeconds: 26,              // Gr 1: reading-heavy word problem; +8 s wordProblem bonus → ~34 s total
-    special: 'Number comparison problems',
+    timerSeconds: 26,              // Gr 1: reading-heavy word problem; +8 s wordProblem bonus â†’ ~34 s total
     color: 0x886644,
   },
   number_bee: {
     id: 'number_bee',
     name: 'Number Bee',
-    spriteKey: 'number_bee',
     region: 0,
     hp: 6,
     damage: 1,
@@ -81,13 +74,11 @@ const ENEMIES = {
     mathTopic: 'comparison',               // number ordering / comparison
     difficulty: 1,
     timerSeconds: 22,                      // Gr 1: pick biggest/smallest from a set
-    special: 'Number ordering problems',
     color: 0xFFAA22,
   },
   subtraction_witch: {
     id: 'subtraction_witch',
     name: 'The Subtraction Witch',
-    spriteKey: 'subtraction_witch',
     region: 0,
     hp: 20,
     damage: 2,
@@ -96,58 +87,50 @@ const ENEMIES = {
     mathTopics: ['addition', 'subtraction', 'comparison'],  // all Region 0 types
     difficulty: 3,
     timerSeconds: 22,              // Boss: matches heaviest R0 type (comparison)
-    special: 'Boss: Addition, subtraction & comparisons',
     isBoss: true,
     color: 0x6633AA,
   },
 
-  // ── Region 1: Meadow Maze ────────────────────────────────────────────────
+  // â”€â”€ Region 1: Meadow Maze â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   slime_pup: {
     id: 'slime_pup',
     name: 'Slime Pup',
-    spriteKey: 'slime_pup',
     region: 1,
     hp: 6,
     damage: 1,
     xp: 10,
-    mathTopic: 'multTables',        // 2×, 5×, 10× tables
+    mathTopic: 'multTables',        // 2Ã—, 5Ã—, 10Ã— tables
     difficulty: 1,
-    timerSeconds: 22,              // Gr 2: brand-new concept — fingers-on-the-table moment
-    special: 'Times-table problems (2s, 5s, 10s)',
+    timerSeconds: 22,              // Gr 2: brand-new concept â€” fingers-on-the-table moment
     color: 0x44BB44,
   },
   cactus_sprite: {
     id: 'cactus_sprite',
     name: 'Cactus Sprite',
-    spriteKey: 'cactus_sprite',
     region: 1,
     hp: 6,
     damage: 1,
     xp: 12,
     mathTopic: 'multiplication',    // full multiplication
     difficulty: 2,
-    timerSeconds: 22,              // Gr 2: 8×9, 7×6 type combos need real recall time
-    special: 'Harder multiplication problems',
+    timerSeconds: 22,              // Gr 2: 8Ã—9, 7Ã—6 type combos need real recall time
     color: 0x228B22,
   },
   cloud_bully: {
     id: 'cloud_bully',
     name: 'Cloud Bully',
-    spriteKey: 'cloud_bully',
     region: 1,
     hp: 6,
     damage: 2,
     xp: 14,
     mathTopic: 'skipCounting',      // fill-in-the-sequence (new type)
     difficulty: 2,
-    timerSeconds: 28,              // Gr 2: read all 5 items, find step, compute blank — 3 steps
-    special: 'Skip counting sequences',
+    timerSeconds: 28,              // Gr 2: read all 5 items, find step, compute blank â€” 3 steps
     color: 0x8899AA,
   },
   double_bunny: {
     id: 'double_bunny',
     name: 'Double Bunny',
-    spriteKey: 'double_bunny',
     region: 1,
     hp: 6,
     damage: 1,
@@ -155,13 +138,11 @@ const ENEMIES = {
     mathTopic: 'doubling',                // doubling & halving (new type)
     difficulty: 1,
     timerSeconds: 20,                     // Gr 2: simple double/half
-    special: 'Doubling & halving problems',
     color: 0x88DD44,
   },
   count_multiplico: {
     id: 'count_multiplico',
     name: 'Count Multiplico',
-    spriteKey: 'count_multiplico',
     region: 1,
     hp: 30,
     damage: 2,
@@ -169,17 +150,15 @@ const ENEMIES = {
     mathTopic: 'multiplication',
     mathTopics: ['multTables', 'multiplication', 'skipCounting', 'doubling'],  // all Region 1 types
     difficulty: 3,
-    timerSeconds: 25,              // Boss: D3 can draw 2-digit×1-digit mult; Grade 2 audience
-    special: 'Boss: Tables, multiplication & sequences',
+    timerSeconds: 25,              // Boss: D3 can draw 2-digitÃ—1-digit mult; Grade 2 audience
     isBoss: true,
     color: 0xCC6600,
   },
 
-  // ── Region 2: Desert Dunes ───────────────────────────────────────────────
+  // â”€â”€ Region 2: Desert Dunes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   sand_scarab: {
     id: 'sand_scarab',
     name: 'Sand Scarab',
-    spriteKey: 'sand_scarab',
     region: 2,
     hp: 6,
     damage: 1,
@@ -187,41 +166,35 @@ const ENEMIES = {
     mathTopic: 'division',          // clean division, no remainders
     difficulty: 1,
     timerSeconds: 20,              // Gr 3: division harder than multiplication
-    special: 'Basic division problems',
     color: 0xAA8833,
   },
   mummy_cat: {
     id: 'mummy_cat',
     name: 'Mummy Cat',
-    spriteKey: 'mummy_cat',
     region: 2,
     hp: 7,
     damage: 2,
     xp: 15,
-    mathTopic: 'multiplication',    // ×  underpins ÷; wrong answer heals enemy
+    mathTopic: 'multiplication',    // Ã—  underpins Ã·; wrong answer heals enemy
     difficulty: 2,
-    timerSeconds: 20,              // Gr 3: review, but 7×8 isn't instant — don't punish recall
-    special: 'Multiplication review; wrong answer heals enemy by 1',
+    timerSeconds: 20,              // Gr 3: review, but 7Ã—8 isn't instant â€” don't punish recall
     color: 0xDDCCAA,
   },
   mirage_fox: {
     id: 'mirage_fox',
     name: 'Mirage Fox',
-    spriteKey: 'mirage_fox',
     region: 2,
     hp: 6,
     damage: 2,
     xp: 14,
     mathTopic: 'divisionWord',      // division word problems (new type)
     difficulty: 2,
-    timerSeconds: 22,              // Gr 3: +8 s word-problem bonus applied in BattleScene → ~30 s total
-    special: 'Division word problems; answers shuffle at 5 s',
+    timerSeconds: 22,              // Gr 3: +8 s word-problem bonus applied in BattleScene â†’ ~30 s total
     color: 0xFF8844,
   },
   riddle_scarab: {
     id: 'riddle_scarab',
     name: 'Riddle Scarab',
-    spriteKey: 'riddle_scarab',
     region: 2,
     hp: 6,
     damage: 2,
@@ -229,13 +202,11 @@ const ENEMIES = {
     mathTopic: 'missingNumber',            // missing number problems (new type)
     difficulty: 1,
     timerSeconds: 22,                      // Gr 3: solve for unknown
-    special: 'Missing number problems',
     color: 0xDD8833,
   },
   the_diviner: {
     id: 'the_diviner',
     name: 'The Diviner',
-    spriteKey: 'the_diviner',
     region: 2,
     hp: 30,
     damage: 2,
@@ -244,16 +215,14 @@ const ENEMIES = {
     mathTopics: ['division', 'multiplication', 'divisionWord', 'missingNumber'],  // all Region 2 types
     difficulty: 3,
     timerSeconds: 22,              // Boss: elevated for word problem rounds
-    special: 'Boss: Division, multiplication & word problems',
     isBoss: true,
     color: 0xCC9922,
   },
 
-  // ── Region 3: Frostbite Cavern ───────────────────────────────────────────
+  // â”€â”€ Region 3: Frostbite Cavern â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   ice_frog: {
     id: 'ice_frog',
     name: 'Ice Frog',
-    spriteKey: 'ice_frog',
     region: 3,
     hp: 6,
     damage: 1,
@@ -261,27 +230,23 @@ const ENEMIES = {
     mathTopic: 'fractionCompare',   // fraction comparison only
     difficulty: 1,
     timerSeconds: 25,              // Gr 4: brand-new concept, high cognitive load
-    special: 'Fraction comparison problems',
     color: 0x66AACC,
   },
   snow_golem: {
     id: 'snow_golem',
     name: 'Snow Golem',
-    spriteKey: 'snow_golem',
     region: 3,
     hp: 8,
     damage: 2,
     xp: 16,
     mathTopic: 'fractionAdd',       // fraction addition & subtraction
     difficulty: 2,
-    timerSeconds: 28,              // Gr 4: find LCD → convert → add → simplify
-    special: 'Fraction addition & subtraction',
+    timerSeconds: 28,              // Gr 4: find LCD â†’ convert â†’ add â†’ simplify
     color: 0xCCEEFF,
   },
   crystal_bat: {
     id: 'crystal_bat',
     name: 'Crystal Bat',
-    spriteKey: 'crystal_bat',
     region: 3,
     hp: 7,
     damage: 2,
@@ -289,13 +254,11 @@ const ENEMIES = {
     mathTopic: 'decimals',          // decimal operations (new type)
     difficulty: 2,
     timerSeconds: 20,              // Gr 4: easier than fractions, decimal tenths intro
-    special: 'Decimal problems',
     color: 0xAA88FF,
   },
   glacius: {
     id: 'glacius',
     name: 'Glacius the Fraction Dragon',
-    spriteKey: 'glacius',
     region: 3,
     hp: 30,
     damage: 2,
@@ -304,16 +267,14 @@ const ENEMIES = {
     mathTopics: ['fractionCompare', 'fractionAdd', 'decimals'],  // all Region 3 types
     difficulty: 3,
     timerSeconds: 25,              // Boss: elevated for fraction addition rounds
-    special: 'Boss: Fraction compare, addition & decimals',
     isBoss: true,
     color: 0x44BBEE,
   },
 
-  // ── Region 4: Shadow Castle ──────────────────────────────────────────────
+  // â”€â”€ Region 4: Shadow Castle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   shadow_knight: {
     id: 'shadow_knight',
     name: 'Shadow Knight',
-    spriteKey: 'shadow_knight',
     region: 4,
     hp: 8,
     damage: 2,
@@ -321,13 +282,11 @@ const ENEMIES = {
     mathTopic: 'orderOfOps',        // order of operations
     difficulty: 1,
     timerSeconds: 22,              // Gr 5: PEMDAS still new; must parse carefully
-    special: 'Order of operations problems',
     color: 0x334455,
   },
   ratio_raven: {
     id: 'ratio_raven',
     name: 'Ratio Raven',
-    spriteKey: 'ratio_raven',
     region: 4,
     hp: 9,
     damage: 2,
@@ -335,13 +294,11 @@ const ENEMIES = {
     mathTopic: 'percentages',       // percentage calculations
     difficulty: 2,
     timerSeconds: 20,              // Gr 5: practiced calculation, moderate time needed
-    special: 'Percentage problems',
     color: 0x221133,
   },
   percent_wraith: {
     id: 'percent_wraith',
     name: 'Percent Wraith',
-    spriteKey: 'percent_wraith',
     region: 4,
     hp: 10,
     damage: 2,
@@ -349,13 +306,11 @@ const ENEMIES = {
     mathTopic: 'ratiosProp',        // ratios & proportions (new type)
     difficulty: 2,
     timerSeconds: 22,              // Gr 5: setting up a proportion takes deliberate thought
-    special: 'Ratio & proportion problems',
     color: 0x6644AA,
   },
   fenwick: {
     id: 'fenwick',
     name: 'Fenwick the Sly Fox',
-    spriteKey: 'fenwick',
     region: 4,
     hp: 40,
     damage: 3,
@@ -364,7 +319,6 @@ const ENEMIES = {
     mathTopics: ['orderOfOps', 'percentages', 'ratiosProp'],  // all Region 4 types
     difficulty: 3,
     timerSeconds: 25,              // Final boss: D3 includes reverse-percentage format; needs extra read time
-    special: 'Boss: Order of ops, percentages & ratios',
     isBoss: true,
     color: 0x220044,
   },

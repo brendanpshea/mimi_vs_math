@@ -16,7 +16,7 @@
  */
 
 import { generateRegionMap } from './ProceduralMap.js';
-import REGIONS               from './regions.js';
+import REGIONS               from './regions/index.js';
 
 // ── Compact tile constructors ─────────────────────────────────────────────
 const T  = (c, r) => ({ col: c, row: r, key: 'decoration_tree',       blocking: true  });

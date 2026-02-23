@@ -7,7 +7,7 @@
  */
 import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
-import REGIONS   from '../data/regions.js';
+import REGIONS   from '../data/regions/index.js';
 import BGM       from '../audio/BGM.js';
 
 const TITLE_COLOR = '#FFD700';

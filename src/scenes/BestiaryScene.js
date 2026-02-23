@@ -129,8 +129,8 @@ export default class BestiaryScene extends Phaser.Scene {
       .setStrokeStyle(borderThick, borderColor);
 
     // Sprite
-    if (this.textures.exists(data.spriteKey)) {
-      const sprite = this.add.image(cx - 16, cy, data.spriteKey).setDisplaySize(56, 56);
+    if (this.textures.exists(data.id)) {
+      const sprite = this.add.image(cx - 16, cy, data.id).setDisplaySize(56, 56);
       if (!isSeen) {
         sprite.setTint(0x0A0A18);       // dark silhouette
       } else if (!isDefeated) {
@@ -206,8 +206,8 @@ export default class BestiaryScene extends Phaser.Scene {
       .setStrokeStyle(2, REGION_ACCENT[r]);
     grp.add(frame);
 
-    if (this.textures.exists(data.spriteKey)) {
-      const spr = this.add.image(frameX, frameY, data.spriteKey).setDisplaySize(100, 100);
+    if (this.textures.exists(data.id)) {
+      const spr = this.add.image(frameX, frameY, data.id).setDisplaySize(100, 100);
       if (!isDefeated) { spr.setTint(0x8899AA).setAlpha(0.6); }
       grp.add(spr);
     }

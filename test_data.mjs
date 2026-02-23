@@ -14,7 +14,7 @@
  */
 
 import { readFileSync } from 'fs';
-import REGIONS          from './src/data/regions.js';
+import REGIONS          from './src/data/regions/index.js';
 import ENEMIES          from './src/data/enemies.js';
 import MAPS, { WALK_GRIDS } from './src/data/maps.js';
 
@@ -367,7 +367,7 @@ const src = path => readFileSync(path, 'utf8');
 // which erodes trust in comments and can hide merge conflicts.
 // IMPORTANT: if you change enemy counts, also bump SAVE_VERSION in GameState.js.
 {
-  const regionsSrc = src('./src/data/regions.js');
+  const regionsSrc = [0,1,2,3,4].map(i => src(`./src/data/regions/region_${i}.js`)).join('\n');
   const commentPattern = /\/\/.*?Enemies:\s*(\d+)/g;
   let commentMatch;
   let commentIdx = 0;

@@ -30,7 +30,7 @@
  *    separation is ≥ 30 tiles (the MIN_BOSS_DIST guard in randomizePositions).
  */
 
-import REGIONS               from './src/data/regions.js';
+import REGIONS               from './src/data/regions/index.js';
 import { POSITIONS }         from './src/data/maps.js';
 
 // ── Colour helpers (ANSI) ─────────────────────────────────────────────────

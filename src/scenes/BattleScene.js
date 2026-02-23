@@ -18,6 +18,7 @@ import { generateQuestion }  from '../math/QuestionBank.js';
 import { getChoices }        from '../math/Distractors.js';
 import { getExplanation }    from '../math/Explanations.js';
 import ITEMS                 from '../data/items.js';
+import REGIONS               from '../data/regions/index.js';
 
 const BTN_COLORS = {
   idle:    0x1E3A6E,
@@ -85,17 +86,9 @@ export default class BattleScene extends Phaser.Scene {
   // ── Background ────────────────────────────────────────────────────────────
 
   _drawBackground(W, H) {
-    // Map regionId to backdrop
-    const backdropKeys = [
-      'backdrop_village',  // Region 0
-      'backdrop_meadow',   // Region 1
-      'backdrop_desert',   // Region 2
-      'backdrop_ice',      // Region 3
-      'backdrop_shadow',   // Region 4
-    ];
-    
-    const backdropKey = backdropKeys[this.regionId] ?? 'backdrop_village';
-    
+    const regionData  = REGIONS[this.regionId];
+    const backdropKey = regionData?.backdropKey ?? 'backdrop_village';
+
     // Display Full-screen backdrop
     if (this.textures.exists(backdropKey)) {
       this.add.image(W / 2, H / 2, backdropKey).setDisplaySize(W, H).setDepth(0);
@@ -135,14 +128,11 @@ export default class BattleScene extends Phaser.Scene {
 
     // Region-specific aura colour and sprite tint used for bosses.
     // Tints are very subtle (near-white) so the original sprite art shows through.
-    const AURA_COLORS = [0xFFDD33, 0x44FF88, 0xFF8833, 0x44CCFF, 0xAA44FF];
-    const BOSS_TINTS  = [0xFFFFF0, 0xF0FFF4, 0xFFF5EE, 0xEEF8FF, 0xF8F0FF];
-    this._bossTint    = null;   // stored so hit-flash can restore it
+    const regionData  = REGIONS[this.regionId];
+    const auraColor   = regionData?.auraColor ?? 0xFFDD33;
+    this._bossTint    = this.isBoss ? (regionData?.bossTint ?? 0xFFFFF0) : null;
 
     if (this.isBoss) {
-      const auraColor = AURA_COLORS[this.regionId] ?? AURA_COLORS[0];
-      this._bossTint  = BOSS_TINTS [this.regionId] ?? 0xFFFFFF;
-
       // Large soft filled glow behind the boss
       const aura = this.add.ellipse(W * 0.72, enemyY, 172, 172, auraColor, 0.22).setDepth(2);
       this.tweens.add({
@@ -157,7 +147,7 @@ export default class BattleScene extends Phaser.Scene {
       });
     }
 
-    this.enemySprite = this.add.image(W * 0.72, enemyY, this.enemyData.spriteKey)
+    this.enemySprite = this.add.image(W * 0.72, enemyY, this.enemyData.id)
       .setDisplaySize(enemySz, enemySz).setDepth(3);
     if (this._bossTint) this.enemySprite.setTint(this._bossTint);
 

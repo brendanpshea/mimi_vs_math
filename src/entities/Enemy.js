@@ -52,7 +52,7 @@ export default class Enemy {
     this._homeX   = x;
     this._homeY   = y;
 
-    this.sprite = scene.physics.add.image(x, y, data.spriteKey);
+    this.sprite = scene.physics.add.image(x, y, data.id);
     this.sprite.setImmovable(true);
     this.sprite.body.allowGravity = false;
     this.sprite.setDepth(8);
@@ -135,13 +135,13 @@ export default class Enemy {
     // Map frame index → texture key; _c falls back to base if not loaded
     const SUFFIXES = ['', '_c', '_b'];
     const suffix   = SUFFIXES[this._stepFrame];
-    const key      = suffix ? `${this.data.spriteKey}${suffix}` : this.data.spriteKey;
+    const key      = suffix ? `${this.data.id}${suffix}` : this.data.id;
 
     if (this.scene.textures.exists(key)) {
       this.sprite.setTexture(key);
     } else {
       // _c frame absent for this enemy — hold on base texture
-      this.sprite.setTexture(this.data.spriteKey);
+      this.sprite.setTexture(this.data.id);
     }
   }
 

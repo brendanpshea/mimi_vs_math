@@ -13,7 +13,7 @@ node test_data.mjs         # data integrity + source-text contracts
 
 ### test_unlock.mjs
 
-Uses the **live `regions.js` data** (imported directly, no hardcoded stubs)
+Uses the **live region data** (imported from `src/data/regions/index.js` directly, no hardcoded stubs)
 so enemy-count assertions can never silently drift out of sync after spawns
 are added or removed.
 

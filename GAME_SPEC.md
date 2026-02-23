@@ -305,7 +305,7 @@ mimi_vs_math/
 │   ├── data/
 │   │   ├── enemies.js         # Enemy definitions (HP, damage, math topic)
 │   │   ├── items.js           # Item definitions and effects
-│   │   ├── regions.js         # Region metadata, unlock order
+│   │   ├── regions/           # Per-region metadata (region_0.js – region_4.js + index.js barrel)
 │   │   ├── maps.js            # Procedural decoration data per region
 │   │   └── npcJokes.json      # NPC dialogue lines
 │   └── ui/

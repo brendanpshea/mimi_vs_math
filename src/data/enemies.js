@@ -33,7 +33,7 @@ const ENEMIES = {
     name: 'Counting Caterpillar',
     spriteKey: 'counting_caterpillar',
     region: 0,
-    hp: 4,
+    hp: 6,
     damage: 1,
     xp: 8,
     mathTopic: 'addition',         // pure addition
@@ -47,7 +47,7 @@ const ENEMIES = {
     name: 'Number Gnome',
     spriteKey: 'number_gnome',
     region: 0,
-    hp: 5,
+    hp: 6,
     damage: 1,
     xp: 10,
     mathTopic: 'subtraction',       // pure subtraction
@@ -75,7 +75,7 @@ const ENEMIES = {
     name: 'Number Bee',
     spriteKey: 'number_bee',
     region: 0,
-    hp: 5,
+    hp: 6,
     damage: 1,
     xp: 10,
     mathTopic: 'comparison',               // number ordering / comparison
@@ -107,7 +107,7 @@ const ENEMIES = {
     name: 'Slime Pup',
     spriteKey: 'slime_pup',
     region: 1,
-    hp: 4,
+    hp: 6,
     damage: 1,
     xp: 10,
     mathTopic: 'multTables',        // 2×, 5×, 10× tables
@@ -135,7 +135,7 @@ const ENEMIES = {
     name: 'Cloud Bully',
     spriteKey: 'cloud_bully',
     region: 1,
-    hp: 5,
+    hp: 6,
     damage: 2,
     xp: 14,
     mathTopic: 'skipCounting',      // fill-in-the-sequence (new type)
@@ -149,7 +149,7 @@ const ENEMIES = {
     name: 'Double Bunny',
     spriteKey: 'double_bunny',
     region: 1,
-    hp: 5,
+    hp: 6,
     damage: 1,
     xp: 12,
     mathTopic: 'doubling',                // doubling & halving (new type)
@@ -181,7 +181,7 @@ const ENEMIES = {
     name: 'Sand Scarab',
     spriteKey: 'sand_scarab',
     region: 2,
-    hp: 5,
+    hp: 6,
     damage: 1,
     xp: 12,
     mathTopic: 'division',          // clean division, no remainders

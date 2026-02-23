@@ -1,56 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!--
-    Double Bunny – frame C (mid-hop, between A and B).
+    Double Bunny  frame C (mid-hop, between A and B).
     Body slightly raised, left ear at partial flop, paws slightly lifted.
-    TINT ZONE: fur fill (#F4F0E0) responds to setTint().
   -->
 
-  <!-- Ground shadow (between A:rx=20 and B:rx=16) -->
-  <ellipse cx="32" cy="62" rx="18" ry="3.5" fill="#224400" opacity="0.25"/>
+  <!-- Ground shadow (between A and B) -->
+  <ellipse cx="32" cy="62" rx="16" ry="2.8" fill="#224400" opacity="0.24"/>
 
   <!-- Tail -->
-  <circle cx="53" cy="43" r="7" fill="#E8E8E8" stroke="#999990" stroke-width="2.5"/>
-  <circle cx="53" cy="43" r="4" fill="white"/>
+  <circle cx="52" cy="45" r="6" fill="#E8E8E8" stroke="#999990" stroke-width="2"/>
+  <circle cx="52" cy="45" r="3.5" fill="white"/>
 
-  <!-- Body (slightly raised: between A:cy=44 and B:cy=42) -->
-  <ellipse cx="30" cy="43" rx="20" ry="17" fill="#F4F0E0" stroke="#888878" stroke-width="3.5"/>
-  <!-- Soft belly -->
-  <ellipse cx="30" cy="48" rx="12" ry="10" fill="#FFF8F2"/>
+  <!-- Body (slightly raised) -->
+  <ellipse cx="30" cy="47" rx="18" ry="14" fill="#F4F0E0" stroke="#888878" stroke-width="3"/>
+  <ellipse cx="30" cy="51" rx="11" ry="9" fill="#FFF8F2"/>
 
-  <!-- Left ear (partial flop: rotate 15deg — between A:0 and B:30) -->
-  <ellipse cx="18" cy="12" rx="7" ry="16" fill="#F4F0E0" stroke="#888878" stroke-width="3.5" transform="rotate(15 17 22)"/>
-  <ellipse cx="18" cy="14" rx="4" ry="12" fill="#FFB0C0" transform="rotate(15 17 22)"/>
+  <!-- Left ear (partial flop ~14deg, fits: top at y2) -->
+  <ellipse cx="19" cy="13" rx="6" ry="11" fill="#F4F0E0" stroke="#888878" stroke-width="3" transform="rotate(14 19 22)"/>
+  <ellipse cx="19" cy="15" rx="3.5" ry="8" fill="#FFB0C0" transform="rotate(14 19 22)"/>
 
-  <!-- Right ear (between A:cx=34 and B:cx=36, both upright) -->
-  <ellipse cx="35" cy="9" rx="7" ry="16" fill="#F4F0E0" stroke="#888878" stroke-width="3.5"/>
-  <ellipse cx="35" cy="11" rx="4" ry="12" fill="#FFB0C0"/>
+  <!-- Right ear (straight up, fits: top at y=2) -->
+  <ellipse cx="34" cy="12" rx="6" ry="11" fill="#F4F0E0" stroke="#888878" stroke-width="3"/>
+  <ellipse cx="34" cy="14" rx="3.5" ry="8" fill="#FFB0C0"/>
 
-  <!-- Head (slightly raised: between A:cy=29 and B:cy=27) -->
-  <circle cx="28" cy="28" r="16" fill="#F4F0E0" stroke="#888878" stroke-width="3.5"/>
+  <!-- Head (slightly raised) -->
+  <circle cx="27" cy="30" r="14" fill="#F4F0E0" stroke="#888878" stroke-width="3"/>
 
-  <!-- Eyes (between A:cy=27 and B:cy=25) -->
-  <circle cx="21" cy="26" r="6" fill="#0A0202"/>
-  <circle cx="35" cy="26" r="6" fill="#0A0202"/>
-  <circle cx="21" cy="26" r="4" fill="#DD1133"/>
-  <circle cx="35" cy="26" r="4" fill="#DD1133"/>
-  <circle cx="22.5" cy="24" r="2.2" fill="white"/>
-  <circle cx="36.5" cy="24" r="2.2" fill="white"/>
+  <!-- Eyes (between A and B) -->
+  <circle cx="21" cy="28" r="5" fill="#0A0202"/>
+  <circle cx="33" cy="28" r="5" fill="#0A0202"/>
+  <circle cx="21" cy="28" r="3.5" fill="#DD1133"/>
+  <circle cx="33" cy="28" r="3.5" fill="#DD1133"/>
+  <circle cx="22" cy="26.5" r="1.6" fill="white"/>
+  <circle cx="34" cy="26.5" r="1.6" fill="white"/>
 
-  <!-- Nose (between A:cy=33 and B:cy=31) -->
-  <ellipse cx="28" cy="32" rx="3.5" ry="2.5" fill="#FF9999"/>
+  <!-- Nose -->
+  <ellipse cx="27" cy="34" rx="3" ry="2" fill="#FF9999"/>
 
-  <!-- Whiskers (between A and B vertical positions) -->
-  <line x1="10" y1="30" x2="23" y2="33" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="10" y1="35" x2="23" y2="34" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="46" y1="30" x2="33" y2="33" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="46" y1="35" x2="33" y2="34" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Whiskers -->
+  <line x1="10" y1="32" x2="22" y2="34" stroke="#AAAAAA" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="10" y1="36" x2="22" y2="35" stroke="#AAAAAA" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="44" y1="32" x2="32" y2="34" stroke="#AAAAAA" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="44" y1="36" x2="32" y2="35" stroke="#AAAAAA" stroke-width="1.2" stroke-linecap="round"/>
 
-  <!-- ×2 badge (slightly raised) -->
-  <circle cx="26" cy="47" r="7" fill="#88DD44" stroke="#336600" stroke-width="2.5"/>
-  <circle cx="34" cy="47" r="7" fill="#88DD44" stroke="#336600" stroke-width="2.5"/>
-  <path d="M30,40.5 Q37,41 37,47 Q37,53 30,53.5 Q23,53 23,47 Q23,41 30,40.5 Z" fill="#AAEE66" opacity="0.5"/>
+  <!-- x2 badge -->
+  <circle cx="25" cy="48" r="7" fill="#88DD44" stroke="#336600" stroke-width="2"/>
+  <circle cx="33" cy="48" r="7" fill="#88DD44" stroke="#336600" stroke-width="2"/>
+  <path d="M29,41 Q36,42 36,48 Q36,54 29,55 Q22,54 22,48 Q22,42 29,41 Z" fill="#AAEE66" opacity="0.5"/>
+  <text x="29" y="52" font-size="10" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">x2</text>
 
-  <!-- Front paws (slightly raised: rotate ±10, between A:flat and B:rotate±20) -->
-  <ellipse cx="12" cy="55" rx="7" ry="5" fill="#F4F0E0" stroke="#888878" stroke-width="2.5" transform="rotate(-10 12 55)"/>
-  <ellipse cx="46" cy="55" rx="7" ry="5" fill="#F4F0E0" stroke="#888878" stroke-width="2.5" transform="rotate(10 46 55)"/>
+  <!-- Front paws (slightly raised) -->
+  <ellipse cx="13" cy="57" rx="6" ry="4" fill="#F4F0E0" stroke="#888878" stroke-width="2" transform="rotate(-9 13 57)"/>
+  <ellipse cx="45" cy="57" rx="6" ry="4" fill="#F4F0E0" stroke="#888878" stroke-width="2" transform="rotate(9 45 57)"/>
 </svg>

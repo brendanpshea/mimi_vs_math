@@ -1079,21 +1079,16 @@ export default class ExploreScene extends Phaser.Scene {
     const orbY = py - 28;
     const orb = this.add.circle(px, orbY, 6, 0xFFDD44, 0.85)
       .setDepth(22).setScrollFactor(1);
-    const qText = this.add.text(px, orbY - 14, '?', {
-      fontSize: '14px', color: '#FFDD44',
-      fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
-      stroke: '#000000', strokeThickness: 2,
-    }).setOrigin(0.5, 0.5).setDepth(23).setScrollFactor(1);
 
     this.tweens.add({
-      targets: [orb, qText], y: '-=6',
+      targets: orb, y: orbY - 6,
       duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
     });
     this.tweens.add({
       targets: orb, alpha: { from: 0.55, to: 0.95 },
       duration: 900, yoyo: true, repeat: -1,
     });
-    return [orb, qText];
+    return [orb];
   }
 
   /**

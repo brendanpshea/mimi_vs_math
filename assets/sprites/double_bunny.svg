@@ -1,56 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!--
-    Double Bunny — Region 1, doubling & halving (frame A).
-    Fluffy white bunny with pink inner ears, red eyes, and a ×2 badge on the belly.
+    Double Bunny  Region 1, doubling & halving (frame A, idle).
+    Redrawn so ears stay within the 64x64 viewBox (top of ears at y2).
   -->
 
   <!-- Ground shadow -->
-  <ellipse cx="32" cy="62" rx="20" ry="4" fill="#224400" opacity="0.28"/>
+  <ellipse cx="32" cy="62" rx="18" ry="3" fill="#224400" opacity="0.28"/>
 
-  <!-- Tail (right side) -->
-  <circle cx="53" cy="44" r="7" fill="#E8E8E8" stroke="#999990" stroke-width="2.5"/>
-  <circle cx="53" cy="44" r="4" fill="white"/>
+  <!-- Tail -->
+  <circle cx="52" cy="46" r="6" fill="#E8E8E8" stroke="#999990" stroke-width="2"/>
+  <circle cx="52" cy="46" r="3.5" fill="white"/>
 
   <!-- Body -->
-  <ellipse cx="30" cy="44" rx="20" ry="17" fill="#F4F0E0" stroke="#888878" stroke-width="3.5"/>
-  <!-- Soft belly -->
-  <ellipse cx="30" cy="49" rx="12" ry="10" fill="#FFF8F2"/>
+  <ellipse cx="30" cy="49" rx="18" ry="14" fill="#F4F0E0" stroke="#888878" stroke-width="3"/>
+  <!-- Belly -->
+  <ellipse cx="30" cy="53" rx="11" ry="9" fill="#FFF8F2"/>
 
-  <!-- Left ear -->
-  <ellipse cx="18" cy="12" rx="7" ry="16" fill="#F4F0E0" stroke="#888878" stroke-width="3.5"/>
-  <ellipse cx="18" cy="14" rx="4" ry="12" fill="#FFB0C0"/>
+  <!-- Left ear (fits: top at y=2) -->
+  <ellipse cx="19" cy="13" rx="6" ry="11" fill="#F4F0E0" stroke="#888878" stroke-width="3"/>
+  <ellipse cx="19" cy="15" rx="3.5" ry="8" fill="#FFB0C0"/>
 
-  <!-- Right ear (leaning right) -->
-  <ellipse cx="34" cy="10" rx="7" ry="16" fill="#F4F0E0" stroke="#888878" stroke-width="3.5"/>
-  <ellipse cx="34" cy="12" rx="4" ry="12" fill="#FFB0C0"/>
+  <!-- Right ear (leaning right, fits: top at y=2) -->
+  <ellipse cx="33" cy="13" rx="6" ry="11" fill="#F4F0E0" stroke="#888878" stroke-width="3"/>
+  <ellipse cx="33" cy="15" rx="3.5" ry="8" fill="#FFB0C0"/>
 
   <!-- Head -->
-  <circle cx="28" cy="29" r="16" fill="#F4F0E0" stroke="#888878" stroke-width="3.5"/>
+  <circle cx="27" cy="31" r="14" fill="#F4F0E0" stroke="#888878" stroke-width="3"/>
 
-  <!-- Eyes (large, red — classic albino bunny) -->
-  <circle cx="21" cy="27" r="6" fill="#0A0202"/>
-  <circle cx="35" cy="27" r="6" fill="#0A0202"/>
-  <circle cx="21" cy="27" r="4" fill="#DD1133"/>
-  <circle cx="35" cy="27" r="4" fill="#DD1133"/>
-  <circle cx="22.5" cy="25.5" r="2" fill="white"/>
-  <circle cx="36.5" cy="25.5" r="2" fill="white"/>
+  <!-- Eyes (albino red) -->
+  <circle cx="21" cy="29" r="5" fill="#0A0202"/>
+  <circle cx="33" cy="29" r="5" fill="#0A0202"/>
+  <circle cx="21" cy="29" r="3.5" fill="#DD1133"/>
+  <circle cx="33" cy="29" r="3.5" fill="#DD1133"/>
+  <circle cx="22" cy="27.5" r="1.5" fill="white"/>
+  <circle cx="34" cy="27.5" r="1.5" fill="white"/>
 
   <!-- Nose -->
-  <ellipse cx="28" cy="33" rx="3.5" ry="2.5" fill="#FF9999"/>
+  <ellipse cx="27" cy="35" rx="3" ry="2" fill="#FF9999"/>
 
   <!-- Whiskers -->
-  <line x1="10" y1="31" x2="23" y2="34" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="10" y1="36" x2="23" y2="35" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="46" y1="31" x2="33" y2="34" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="46" y1="36" x2="33" y2="35" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="10" y1="33" x2="22" y2="35" stroke="#AAAAAA" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="10" y1="37" x2="22" y2="36" stroke="#AAAAAA" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="44" y1="33" x2="32" y2="35" stroke="#AAAAAA" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="44" y1="37" x2="32" y2="36" stroke="#AAAAAA" stroke-width="1.2" stroke-linecap="round"/>
 
-  <!-- ×2 badge on belly (two overlapping circles) -->
-  <circle cx="26" cy="48" r="7" fill="#88DD44" stroke="#336600" stroke-width="2.5"/>
-  <circle cx="34" cy="48" r="7" fill="#88DD44" stroke="#336600" stroke-width="2.5"/>
-  <!-- Overlap tint -->
-  <path d="M30,41.5 Q37,42 37,48 Q37,54 30,54.5 Q23,54 23,48 Q23,42 30,41.5 Z" fill="#AAEE66" opacity="0.5"/>
+  <!-- x2 badge (two overlapping circles) -->
+  <circle cx="25" cy="50" r="7" fill="#88DD44" stroke="#336600" stroke-width="2"/>
+  <circle cx="33" cy="50" r="7" fill="#88DD44" stroke="#336600" stroke-width="2"/>
+  <path d="M29,43 Q36,44 36,50 Q36,56 29,57 Q22,56 22,50 Q22,44 29,43 Z" fill="#AAEE66" opacity="0.5"/>
+  <text x="29" y="54" font-size="10" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">x2</text>
 
   <!-- Front paws -->
-  <ellipse cx="13" cy="57" rx="7" ry="5" fill="#F4F0E0" stroke="#888878" stroke-width="2.5"/>
-  <ellipse cx="45" cy="57" rx="7" ry="5" fill="#F4F0E0" stroke="#888878" stroke-width="2.5"/>
+  <ellipse cx="14" cy="59" rx="6" ry="4" fill="#F4F0E0" stroke="#888878" stroke-width="2"/>
+  <ellipse cx="44" cy="59" rx="6" ry="4" fill="#F4F0E0" stroke="#888878" stroke-width="2"/>
 </svg>

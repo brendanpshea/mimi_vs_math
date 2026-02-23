@@ -236,6 +236,23 @@ export default class BattleScene extends Phaser.Scene {
     this._pauseBtn.on('pointerover', () => { this._pauseBtn.setFillStyle(0x0F2030); this._pauseTxt.setColor('#AADDFF'); });
     this._pauseBtn.on('pointerout',  () => { this._pauseBtn.setFillStyle(0x0A0A1A); this._pauseTxt.setColor('#88BBDD'); });
     this._pauseBtn.on('pointerdown', () => this._togglePause());
+
+    // Fullscreen toggle — touch devices only, bottom-right corner.
+    if (this.sys.game.device.input.touch) {
+      const fsB = this.add.rectangle(W - 52, H - 76, 80, 36, 0x0A0A1A)
+        .setStrokeStyle(2, 0x448844).setInteractive({ useHandCursor: true }).setDepth(5);
+      const fsT = this.add.text(W - 52, H - 76, '⛶  Full', TEXT_STYLE(14, '#88DD88', true))
+        .setOrigin(0.5).setDepth(6);
+      fsB.on('pointerover', () => { fsB.setFillStyle(0x0F2030); fsT.setColor('#AAFFAA'); });
+      fsB.on('pointerout',  () => { fsB.setFillStyle(0x0A0A1A); fsT.setColor('#88DD88'); });
+      fsB.on('pointerdown', () => {
+        if (this.scale.isFullscreen) { this.scale.stopFullscreen(); }
+        else                         { this.scale.startFullscreen(); }
+      });
+      this.scale.on('enterfullscreen', () => { if (fsT?.active) fsT.setText('⛶  Exit'); });
+      this.scale.on('leavefullscreen', () => { if (fsT?.active) fsT.setText('⛶  Full'); });
+    }
+
     const topicLabels = {
       addSub: 'Addition & Subtraction', multiplication: 'Multiplication',
       division: 'Division', fractions: 'Fractions',

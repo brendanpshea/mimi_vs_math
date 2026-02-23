@@ -165,6 +165,27 @@ export default class ExploreScene extends Phaser.Scene {
     setBtn.on('pointerout',  () => { setBtn.setFillStyle(0x0A0A1C, 0.9); setTxt.setColor('#99BBDD'); });
     setBtn.on('pointerdown', () => openSettings(this, 60));
 
+    // Fullscreen toggle — only shown on touch devices (phones/tablets).
+    // On Android Chrome this triggers true browser fullscreen.
+    // On iOS, share the URL via the browser and tap “Add to Home Screen”
+    // to launch permanently fullscreen as a web app (see apple-mobile-web-app-capable meta).
+    if (this.sys.game.device.input.touch) {
+      const fsBtn = this.add.rectangle(250, 48, 82, 22, 0x0A1A0A, 0.9)
+        .setScrollFactor(0).setDepth(52).setStrokeStyle(1, 0x44AA44)
+        .setInteractive({ useHandCursor: true });
+      const fsTxt = this.add.text(250, 48, '⛶ Full', {
+        fontSize: '12px', color: '#88EE88', fontFamily: "'Nunito', Arial, sans-serif",
+      }).setOrigin(0.5).setScrollFactor(0).setDepth(53);
+      fsBtn.on('pointerover', () => { fsBtn.setFillStyle(0x153015, 0.9); fsTxt.setColor('#AAFFAA'); });
+      fsBtn.on('pointerout',  () => { fsBtn.setFillStyle(0x0A1A0A, 0.9); fsTxt.setColor('#88EE88'); });
+      fsBtn.on('pointerdown', () => {
+        if (this.scale.isFullscreen) { this.scale.stopFullscreen(); }
+        else                         { this.scale.startFullscreen(); }
+      });
+      this.scale.on('enterfullscreen', () => { if (fsTxt?.active) fsTxt.setText('⛶ Exit'); });
+      this.scale.on('leavefullscreen', () => { if (fsTxt?.active) fsTxt.setText('⛶ Full'); });
+    }
+
     if (this.battleResult) {
       this.hud.refresh();
     }

@@ -2,9 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- viewport-fit=cover lets the canvas extend into notch/status-bar areas;
+       the Phaser canvas is sized to window.innerHeight which already excludes
+       the keyboard / navigation bar, so content stays in the safe zone. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Mimi vs. Math</title>
   <meta name="description" content="Mimi the cat goes on Zelda-style adventures and battles enemies by answering math questions. Grades 1–5." />
+
+  <!-- PWA / home-screen web-app hints.
+       iOS Safari: adding to Home Screen removes the browser chrome entirely.
+       Android Chrome: combine with a manifest for a true install prompt. -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Mimi vs Math" />
+  <meta name="mobile-web-app-capable" content="yes" />
 
   <!-- Google Fonts: Fredoka (display/title) + Nunito (UI/body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +30,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      /* 100dvh = dynamic viewport height: excludes mobile browser chrome
+         (address bar, nav bar). Falls back to 100vh on older browsers. */
+      min-height: 100dvh;
       overflow: hidden;
       font-family: 'Nunito', Arial, sans-serif;
     }

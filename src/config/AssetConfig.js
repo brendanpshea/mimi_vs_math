@@ -51,27 +51,34 @@ export const SPRITE_DEFS = [
   { key: 'number_bee',            file: 'number_bee',            size: 64, frames: ['b', 'c'] },
   { key: 'subtraction_witch',     file: 'subtraction_witch',     size: 96, frames: ['b'] },
 
-  // Region 1 — Meadow Maze
+  // Region 1 — Windmill Village
+  { key: 'gear_gnome',        file: 'gear_gnome',        size: 64, frames: ['b'] },
+  { key: 'windmill_sprite',   file: 'windmill_sprite',   size: 64, frames: ['b'] },
+  { key: 'harvest_scarecrow', file: 'harvest_scarecrow', size: 64, frames: ['b'] },
+  { key: 'counting_crow',     file: 'counting_crow',     size: 64, frames: ['b'] },
+  { key: 'grand_miller',      file: 'grand_miller',      size: 96, frames: ['b'] },
+
+  // Region 2 — Meadow Maze
   { key: 'slime_pup',             file: 'slime_pup',             size: 64, frames: ['b', 'c'] },
   { key: 'cactus_sprite',         file: 'cactus_sprite',         size: 64, frames: ['b'] },
   { key: 'cloud_bully',           file: 'cloud_bully',           size: 64, frames: ['b'] },
   { key: 'double_bunny',          file: 'double_bunny',          size: 64, frames: ['b', 'c'] },
   { key: 'count_multiplico',      file: 'count_multiplico',      size: 96, frames: ['b'] },
 
-  // Region 2 — Desert Dunes
+  // Region 3 — Desert Dunes
   { key: 'sand_scarab',           file: 'sand_scarab',           size: 64, frames: ['b'] },
   { key: 'mummy_cat',             file: 'mummy_cat',             size: 64, frames: ['b'] },
   { key: 'mirage_fox',            file: 'mirage_fox',            size: 64, frames: ['b', 'c'] },
   { key: 'riddle_scarab',         file: 'riddle_scarab',         size: 64, frames: ['b'] },
   { key: 'the_diviner',           file: 'the_diviner',           size: 96, frames: ['b'] },
 
-  // Region 3 — Frostbite Cavern
+  // Region 4 — Frostbite Cavern
   { key: 'ice_frog',              file: 'ice_frog',              size: 64, frames: ['b'] },
   { key: 'snow_golem',            file: 'snow_golem',            size: 64, frames: ['b'] },
   { key: 'crystal_bat',           file: 'crystal_bat',           size: 64, frames: ['b', 'c'] },
   { key: 'glacius',               file: 'glacius',               size: 96, frames: ['b'] },
 
-  // Region 4 — Shadow Castle
+  // Region 5 — Shadow Castle
   { key: 'shadow_knight',         file: 'shadow_knight',         size: 64, frames: ['b'] },
   { key: 'ratio_raven',           file: 'ratio_raven',           size: 64, frames: ['b'] },
   { key: 'percent_wraith',        file: 'percent_wraith',        size: 64, frames: ['b'] },
@@ -101,6 +108,9 @@ export const TERRAIN_DEFS = [
   { key: 'floor_grass',   file: 'floor_grass',   size: 32 },
   { key: 'floor_grass_b', file: 'floor_grass_b', size: 32 },
   { key: 'floor_grass_c', file: 'floor_grass_c', size: 32 },
+  { key: 'floor_wheat',   file: 'floor_wheat',   size: 32 },
+  { key: 'floor_wheat_b', file: 'floor_wheat_b', size: 32 },
+  { key: 'floor_wheat_c', file: 'floor_wheat_c', size: 32 },
   { key: 'floor_sand',    file: 'floor_sand',    size: 32 },
   { key: 'floor_sand_b',  file: 'floor_sand_b',  size: 32 },
   { key: 'floor_sand_c',  file: 'floor_sand_c',  size: 32 },
@@ -113,6 +123,7 @@ export const TERRAIN_DEFS = [
   
   // Wall tiles
   { key: 'wall_brick',  file: 'wall_brick',  size: 32 },
+  { key: 'wall_cobble', file: 'wall_cobble', size: 32 },
   { key: 'wall_ice',    file: 'wall_ice',    size: 32 },
   
   // Decorations
@@ -133,6 +144,13 @@ export const TERRAIN_DEFS = [
   { key: 'decoration_pillar_b',    file: 'decoration_pillar_b',    size: { width: 24, height: 40 } },
   { key: 'decoration_gravestone',  file: 'decoration_gravestone',  size: { width: 24, height: 32 } },
   { key: 'decoration_torch',        file: 'decoration_torch',        size: { width: 24, height: 40 } },
+
+  // New decorations — Region 1 (Windmill Village)
+  { key: 'decoration_windmill',      file: 'decoration_windmill',      size: { width: 32, height: 64 } },
+  { key: 'decoration_wheat_stalk',   file: 'decoration_wheat_stalk',   size: { width: 32, height: 48 } },
+  { key: 'decoration_sunflower',     file: 'decoration_sunflower',     size: { width: 32, height: 48 } },
+  // Landmark — Region 1
+  { key: 'landmark_windmill_mill',   file: 'landmark_windmill_mill',   size: { width: 160, height: 128 } },
 
   // New decorations — Region 0 (Village)
   { key: 'decoration_hay_bale',    file: 'decoration_hay_bale',    size: { width: 32, height: 24 } },
@@ -167,6 +185,7 @@ export const TERRAIN_DEFS = [
  * Battle backdrop definitions (Final Fantasy-style backgrounds)
  */
 export const BACKDROP_DEFS = [
+  { key: 'backdrop_windmill', file: 'backdrop_windmill', size: { width: 800, height: 600 } },
   { key: 'backdrop_village', file: 'backdrop_village', size: { width: 800, height: 600 } },
   { key: 'backdrop_meadow',  file: 'backdrop_meadow',  size: { width: 800, height: 600 } },
   { key: 'backdrop_desert',  file: 'backdrop_desert',  size: { width: 800, height: 600 } },

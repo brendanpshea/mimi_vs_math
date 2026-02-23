@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Base golden wheat floor variant B (same base, horizontal grain accent) -->
+  <rect width="32" height="32" fill="#C8A840"/>
+  <!-- Horizontal grain lines -->
+  <line x1="0" y1="5" x2="32" y2="5" stroke="#C0A030" stroke-width="1" opacity="0.6"/>
+  <line x1="0" y1="10" x2="32" y2="10" stroke="#C0A030" stroke-width="0.5" opacity="0.4"/>
+  <line x1="0" y1="15" x2="32" y2="15" stroke="#C0A030" stroke-width="1" opacity="0.6"/>
+  <line x1="0" y1="20" x2="32" y2="20" stroke="#C0A030" stroke-width="0.5" opacity="0.4"/>
+  <line x1="0" y1="25" x2="32" y2="25" stroke="#C0A030" stroke-width="1" opacity="0.6"/>
+  <line x1="0" y1="30" x2="32" y2="30" stroke="#C0A030" stroke-width="0.5" opacity="0.4"/>
+  <!-- Light sheen patches -->
+  <rect x="2" y="2" width="8" height="6" rx="1" fill="#E8D070" opacity="0.3"/>
+  <rect x="16" y="18" width="10" height="6" rx="1" fill="#E8D070" opacity="0.3"/>
+  <!-- Subtle vertical counters -->
+  <line x1="8" y1="0" x2="8" y2="32" stroke="#C0A030" stroke-width="0.5" opacity="0.3"/>
+  <line x1="24" y1="0" x2="24" y2="32" stroke="#C0A030" stroke-width="0.5" opacity="0.3"/>
+  <!-- Small grain marks -->
+  <ellipse cx="14" cy="8" rx="1.5" ry="3" fill="#A07828" opacity="0.4" transform="rotate(-20 14 8)"/>
+  <ellipse cx="26" cy="24" rx="1.5" ry="3" fill="#A07828" opacity="0.4" transform="rotate(-20 26 24)"/>
+</svg>

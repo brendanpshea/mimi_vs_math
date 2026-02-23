@@ -24,13 +24,14 @@ Or host via **GitHub Pages** — see setup notes below.
 
 Each region has multiple enemy types, each with its own question sub-type(s) and difficulty. Three difficulty levels (D1–D3) apply within every topic.
 
-| # | Region | Grades | Topics |
-|---|--------|--------|--------|
-| 0 | Sunny Village | 1–3 | Addition, Subtraction, Comparison (ordering + word problems) |
-| 1 | Meadow Maze | 3–5 | Times Tables, Skip Counting, Doubling & Halving, Multiplication |
-| 2 | Desert Dunes | 4–5 | Division, Division Word Problems, Missing Number |
-| 3 | Frostbite Cavern | 5–6 | Fraction Comparison, Fraction Addition, Decimals |
-| 4 | Shadow Castle | 6–7 | Order of Operations, Percentages, Ratios & Proportions |
+| # | Region | Grade | Topics |
+|---|--------|-------|--------|
+| 0 | Sunny Village    | 1–3 | Addition, Subtraction, Comparison (ordering + word problems) |
+| 1 | Windmill Village | 2   | Place Value, Addition with carrying, Subtraction with borrowing |
+| 2 | Meadow Maze      | 3–5 | Times Tables, Skip Counting, Doubling & Halving, Multiplication |
+| 3 | Desert Dunes     | 4–5 | Division, Division Word Problems, Missing Number |
+| 4 | Frostbite Cavern | 5–6 | Fraction Comparison, Fraction Addition, Decimals |
+| 5 | Shadow Castle    | 6–7 | Order of Operations, Percentages, Ratios & Proportions |
 
 Word problems receive an automatic +8 second reading bonus on top of the base timer.
 
@@ -183,6 +184,119 @@ No other code changes needed — all scenes reference texture keys only.
 
 ---
 
+## Adding a New Region (Developer Guide)
+
+Regions are self-contained data modules. Follow these steps to add Region N.
+
+### 1. Region data file — `src/data/regions/region_N.js`
+
+Export a single object with:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | number | Region index (0-based) |
+| `name` | string | Display name |
+| `gradeLabel` | string | e.g. `'Grade 2'` |
+| `floorTile` | string | Base floor texture key |
+| `wallTile` | string | Wall texture key |
+| `enemies` | string[] | Enemy IDs from `enemies.js` (non-boss) |
+| `boss` | string | Boss enemy ID |
+| `npcLines` | string[][] | Dialogue for each NPC |
+| `bossIntro` | `{speaker,text}[]` | Cutscene lines (≤ 6 per speaker — see text-overflow note below) |
+| `mapSeed` | number | Integer seed for procedural layout |
+| `mimiStart` | `{col,row}` | Mimi's spawn tile |
+| `bossTile` | `{col,row}` | Boss door tile |
+| `npcTiles` | `{col,row}[]` | One entry per NPC |
+| `items` | `{itemId,col,row}[]` | 2 items; each ≥ 8 tiles from Mimi, boss, and each other |
+
+> **Text-overflow rule:** `BossIntroScene` has ~166 px of text space at 25 px/line → **max 6 lines** per `bossIntro` entry. Count each `\n` as a line break.
+
+Then re-export it from the barrel: `src/data/regions/index.js`.
+
+### 2. Enemy definitions — `src/data/enemies.js`
+
+Add an entry for every enemy (including the boss):
+
+```js
+my_enemy: {
+  id: 'my_enemy',
+  name: 'My Enemy',
+  region: N,
+  hp: 6,           // common: 4–6 · elite: 8–10 · boss: 20–30
+  damage: 1,
+  xp: 10,
+  mathTopic: 'myTopic',       // must match a QuestionBank key
+  difficulty: 1,              // 1–3
+  timerSeconds: 22,           // see timer-tuning notes in enemies.js header
+  color: 0xRRGGBB,
+},
+```
+
+### 3. Question generators — `src/math/QuestionBank.js`
+
+Add `myTopicD1()`, `myTopicD2()`, `myTopicD3()` functions following the existing pattern (each returns `{ text, answer, answerDisplay, topic }`). Register them in the `TOPIC_MAP` at the bottom of the file.
+
+Grade-appropriate number ranges:
+- **Gr 1–2:** keep single/double-digit; sums ≤ 59
+- **Gr 3–4:** two-digit × one-digit; quotients ≤ 20 with remainders
+- **Gr 5+:** fractions with unlike denominators; decimals to hundredths
+
+### 4. Distractor & explanation coverage
+
+- **`Distractors.js`** — add a `case 'myTopic':` block if the generic ±1/±2 distractors produce implausible choices.
+- **`Explanations.js`** — add a `case 'myTopic':` block so students see worked solutions on a wrong answer.
+
+### 5. SVG assets — `assets/sprites/`
+
+| Asset | Size | Filename pattern |
+|-------|------|------------------|
+| Walk frames A/B/C | 26×26 | `{id}.svg`, `{id}_b.svg`, `{id}_c.svg` |
+| Battle pose | 96×96 | `{id}_battle.svg` |
+| Floor tile A/B/C | 32×32 | `floor_{theme}.svg / _b / _c` |
+| Wall tile | 32×32 | `wall_{theme}.svg` |
+| Decorations | 32×32+ | `decoration_{name}.svg` |
+| Landmark (set-piece) | ~160×128 | `landmark_{name}.svg` |
+| Backdrop | 800×600 | `backdrop_{theme}.svg` |
+
+> **Critical:** all A/B/C variants of the same floor tile must share an identical base `<rect fill="...">`. Only the accent detail layer on top should differ — otherwise seams are visible at runtime.
+
+### 6. Asset key registry — `src/config/AssetConfig.js`
+
+Add every new key to the correct array (`SPRITE_KEYS`, `TILE_KEYS`, `DECORATION_KEYS`, etc.) so `BootScene` preloads it.
+
+### 7. Procedural map data — `src/data/ProceduralMap.js`
+
+Four arrays are indexed by region ID. **Insert** a new entry at index N (all later entries shift automatically — existing regions stay correct):
+
+| Array | What to add |
+|-------|-------------|
+| `TILE_FN` | `(h) => key` — picks a floor tile variant by noise height |
+| `ACCENT_LAYERS` | `[{ key, freq, threshold, seed }, …]` — scattered decorations |
+| `SET_PIECES` | `{ key, tilesW, tilesH, blocking, margin }` — the landmark |
+| `ITEM_POOLS` | `['itemId1', 'itemId2']` — fallback loot pool |
+
+### 8. Decoration scales — `src/scenes/ExploreScene.js`
+
+In `_addDecorations()` find the `SCALES` map and add an entry for each new decoration/landmark key. Omitting a key defaults to scale `1.0`, but most assets look best at `1.0–1.3`.
+
+### 9. Bestiary — `src/scenes/BestiaryScene.js`
+
+- Add enemy IDs to `CANON_ORDER` inside the correct region block comment.
+- Push one entry each to `REGION_NAMES`, `GRADE_LABELS`, `REGION_BG`, and `REGION_ACCENT`.
+- Recalculate `COLS`, `CARD_W`, `CARD_H`, `GAP_X`, `GAP_Y`, `GRID_START_Y` so the full grid fits within 600 px. Update the count badge text.
+
+### 10. Run the full test suite
+
+```bash
+node test_unlock.mjs        # 33 GameState / save-logic checks
+node test_questions.mjs     # ~68 k question-sample bounds & structure checks
+node test_connectivity.mjs  # BFS pathfinding for every region map
+```
+
+All three must exit with **0 failures** before shipping.
+
+---
+
 ## GitHub Pages Setup
 
 1. Push to GitHub
@@ -207,7 +321,7 @@ mimi_vs_math/
 │   ├── scenes/              ← Boot, Title, Overworld, Explore, Battle, Story, BossIntro, Bestiary
 │   ├── entities/            ← Mimi (4-frame walk cycles), Enemy (patrol/aggro AI), NPC
 │   ├── math/                ← QuestionBank (17 topic generators, D1–D3), Distractors, Explanations
-   ├── data/                ← regions/ (region_0–4.js + index.js), enemies.js, items.js, maps.js
+   ├── data/                ← regions/ (region_0–5.js + index.js barrel), enemies.js, items.js, maps.js, ProceduralMap.js
 │   └── ui/                  ← HUD, DialogBox
 └── assets/
     ├── sprites/             ← SVG files (walk cycles A/B/C frames, battle poses, bosses, UI)

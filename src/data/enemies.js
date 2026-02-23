@@ -1,19 +1,19 @@
-﻿/**
+/**
  * Enemy definitions for all regions.
  *
  * spriteKey must match the key used in BootScene's asset loader.
  * mathTopic must match a topic in QuestionBank.
  * special: optional string describing unique battle behavior.
  *
- * â”€â”€ Timer philosophy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ * ── Timer philosophy ──────────────────────────────────────────────────────
  * timerSeconds is tuned per enemy using three principles:
- *   1. GRADE LEVEL  â€” younger students (Region 0) need more wall-clock time
+ *   1. GRADE LEVEL  — younger students (Region 0) need more wall-clock time
  *      even for "easy" questions; older students (Region 4) work faster.
- *   2. CONCEPT NOVELTY â€” the first region that introduces a concept gives a
+ *   2. CONCEPT NOVELTY — the first region that introduces a concept gives a
  *      generous buffer; review appearances get less time.
- *   3. QUESTION FORMAT â€” word problems (divisionWord) need ~10â€“15 s of extra
+ *   3. QUESTION FORMAT — word problems (divisionWord) need ~10–15 s of extra
  *      reading time on top of the raw calculation cost.
- *      Multi-step work (fractionAdd: LCD â†’ convert â†’ add â†’ simplify) also
+ *      Multi-step work (fractionAdd: LCD → convert → add → simplify) also
  *      gets extra time regardless of grade.
  *
  * Rough baselines used:
@@ -24,10 +24,10 @@
  *   Region 4 (Gr 5):  22 s order-of-ops, 20 s percentages, 22 s ratios
  *   Bosses: match the heaviest topic in their pool; extra time when
  *           D3 can produce multi-digit multiplication or reverse-percentage
- * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ * ─────────────────────────────────────────────────────────────────────────
  */
 const ENEMIES = {
-  // â”€â”€ Region 0: Sunny Village â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Region 0: Sunny Village ──────────────────────────────────────────────
   counting_caterpillar: {
     id: 'counting_caterpillar',
     name: 'Counting Caterpillar',
@@ -61,7 +61,7 @@ const ENEMIES = {
     xp: 12,
     mathTopic: 'comparison',        // number comparison (new type)
     difficulty: 2,
-    timerSeconds: 26,              // Gr 1: reading-heavy word problem; +8 s wordProblem bonus â†’ ~34 s total
+    timerSeconds: 26,              // Gr 1: reading-heavy word problem; +8 s wordProblem bonus → ~34 s total
     color: 0x886644,
   },
   number_bee: {
@@ -91,47 +91,111 @@ const ENEMIES = {
     color: 0x6633AA,
   },
 
-  // â”€â”€ Region 1: Meadow Maze â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  slime_pup: {
-    id: 'slime_pup',
-    name: 'Slime Pup',
+  // ── Region 1: Windmill Village ──────────────────────────────────────────
+  gear_gnome: {
+    id: 'gear_gnome',
+    name: 'Gear Gnome',
+    region: 1,
+    hp: 6,
+    damage: 1,
+    xp: 8,
+    mathTopic: 'placeValue',        // tens & ones decomposition
+    difficulty: 1,
+    timerSeconds: 25,              // Gr 2: brand-new concept; reading tens/ones takes time
+    color: 0x887744,
+  },
+  windmill_sprite: {
+    id: 'windmill_sprite',
+    name: 'Windmill Sprite',
     region: 1,
     hp: 6,
     damage: 1,
     xp: 10,
-    mathTopic: 'multTables',        // 2Ã—, 5Ã—, 10Ã— tables
+    mathTopic: 'addCarry',          // 2-digit addition with carrying
     difficulty: 1,
-    timerSeconds: 22,              // Gr 2: brand-new concept â€” fingers-on-the-table moment
+    timerSeconds: 25,              // Gr 2: carrying is a new two-step operation
+    color: 0xCC8833,
+  },
+  harvest_scarecrow: {
+    id: 'harvest_scarecrow',
+    name: 'Harvest Scarecrow',
+    region: 1,
+    hp: 6,
+    damage: 2,
+    xp: 12,
+    mathTopic: 'subBorrow',         // 2-digit subtraction with borrowing
+    difficulty: 2,
+    timerSeconds: 25,              // Gr 2: borrowing adds cognitive steps
+    color: 0x997733,
+  },
+  counting_crow: {
+    id: 'counting_crow',
+    name: 'Counting Crow',
+    region: 1,
+    hp: 6,
+    damage: 1,
+    xp: 10,
+    mathTopic: 'addCarry',          // addition with carry, D2 range
+    difficulty: 2,
+    timerSeconds: 22,              // Gr 2: faster now that carrying concept is established
+    color: 0x443322,
+  },
+  grand_miller: {
+    id: 'grand_miller',
+    name: 'Grand Miller',
+    region: 1,
+    hp: 20,
+    damage: 2,
+    xp: 50,
+    mathTopic: 'addCarry',
+    mathTopics: ['placeValue', 'addCarry', 'subBorrow'],    // all Region 1 types
+    difficulty: 3,
+    timerSeconds: 25,              // Boss: D3 word problems; Grade 2 audience needs full time
+    isBoss: true,
+    color: 0x774411,
+  },
+
+  // ── Region 2: Meadow Maze ────────────────────────────────────────────────
+  slime_pup: {
+    id: 'slime_pup',
+    name: 'Slime Pup',
+    region: 2,
+    hp: 6,
+    damage: 1,
+    xp: 10,
+    mathTopic: 'multTables',        // 2×, 5×, 10× tables
+    difficulty: 1,
+    timerSeconds: 22,              // Gr 2: brand-new concept — fingers-on-the-table moment
     color: 0x44BB44,
   },
   cactus_sprite: {
     id: 'cactus_sprite',
     name: 'Cactus Sprite',
-    region: 1,
+    region: 2,
     hp: 6,
     damage: 1,
     xp: 12,
     mathTopic: 'multiplication',    // full multiplication
     difficulty: 2,
-    timerSeconds: 22,              // Gr 2: 8Ã—9, 7Ã—6 type combos need real recall time
+    timerSeconds: 22,              // Gr 2: 8×9, 7×6 type combos need real recall time
     color: 0x228B22,
   },
   cloud_bully: {
     id: 'cloud_bully',
     name: 'Cloud Bully',
-    region: 1,
+    region: 2,
     hp: 6,
     damage: 2,
     xp: 14,
     mathTopic: 'skipCounting',      // fill-in-the-sequence (new type)
     difficulty: 2,
-    timerSeconds: 28,              // Gr 2: read all 5 items, find step, compute blank â€” 3 steps
+    timerSeconds: 28,              // Gr 2: read all 5 items, find step, compute blank — 3 steps
     color: 0x8899AA,
   },
   double_bunny: {
     id: 'double_bunny',
     name: 'Double Bunny',
-    region: 1,
+    region: 2,
     hp: 6,
     damage: 1,
     xp: 12,
@@ -143,23 +207,23 @@ const ENEMIES = {
   count_multiplico: {
     id: 'count_multiplico',
     name: 'Count Multiplico',
-    region: 1,
+    region: 2,
     hp: 30,
     damage: 2,
     xp: 60,
     mathTopic: 'multiplication',
     mathTopics: ['multTables', 'multiplication', 'skipCounting', 'doubling'],  // all Region 1 types
     difficulty: 3,
-    timerSeconds: 25,              // Boss: D3 can draw 2-digitÃ—1-digit mult; Grade 2 audience
+    timerSeconds: 25,              // Boss: D3 can draw 2-digit×1-digit mult; Grade 2 audience
     isBoss: true,
     color: 0xCC6600,
   },
 
-  // â”€â”€ Region 2: Desert Dunes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Region 3: Desert Dunes ───────────────────────────────────────────────
   sand_scarab: {
     id: 'sand_scarab',
     name: 'Sand Scarab',
-    region: 2,
+    region: 3,
     hp: 6,
     damage: 1,
     xp: 12,
@@ -171,31 +235,31 @@ const ENEMIES = {
   mummy_cat: {
     id: 'mummy_cat',
     name: 'Mummy Cat',
-    region: 2,
+    region: 3,
     hp: 7,
     damage: 2,
     xp: 15,
-    mathTopic: 'multiplication',    // Ã—  underpins Ã·; wrong answer heals enemy
+    mathTopic: 'multiplication',    // ×  underpins ÷; wrong answer heals enemy
     difficulty: 2,
-    timerSeconds: 20,              // Gr 3: review, but 7Ã—8 isn't instant â€” don't punish recall
+    timerSeconds: 20,              // Gr 3: review, but 7×8 isn't instant — don't punish recall
     color: 0xDDCCAA,
   },
   mirage_fox: {
     id: 'mirage_fox',
     name: 'Mirage Fox',
-    region: 2,
+    region: 3,
     hp: 6,
     damage: 2,
     xp: 14,
     mathTopic: 'divisionWord',      // division word problems (new type)
     difficulty: 2,
-    timerSeconds: 22,              // Gr 3: +8 s word-problem bonus applied in BattleScene â†’ ~30 s total
+    timerSeconds: 22,              // Gr 3: +8 s word-problem bonus applied in BattleScene → ~30 s total
     color: 0xFF8844,
   },
   riddle_scarab: {
     id: 'riddle_scarab',
     name: 'Riddle Scarab',
-    region: 2,
+    region: 3,
     hp: 6,
     damage: 2,
     xp: 14,
@@ -207,7 +271,7 @@ const ENEMIES = {
   the_diviner: {
     id: 'the_diviner',
     name: 'The Diviner',
-    region: 2,
+    region: 3,
     hp: 30,
     damage: 2,
     xp: 65,
@@ -219,11 +283,11 @@ const ENEMIES = {
     color: 0xCC9922,
   },
 
-  // â”€â”€ Region 3: Frostbite Cavern â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Region 4: Frostbite Cavern ───────────────────────────────────────────
   ice_frog: {
     id: 'ice_frog',
     name: 'Ice Frog',
-    region: 3,
+    region: 4,
     hp: 6,
     damage: 1,
     xp: 14,
@@ -235,19 +299,19 @@ const ENEMIES = {
   snow_golem: {
     id: 'snow_golem',
     name: 'Snow Golem',
-    region: 3,
+    region: 4,
     hp: 8,
     damage: 2,
     xp: 16,
     mathTopic: 'fractionAdd',       // fraction addition & subtraction
     difficulty: 2,
-    timerSeconds: 28,              // Gr 4: find LCD â†’ convert â†’ add â†’ simplify
+    timerSeconds: 28,              // Gr 4: find LCD → convert → add → simplify
     color: 0xCCEEFF,
   },
   crystal_bat: {
     id: 'crystal_bat',
     name: 'Crystal Bat',
-    region: 3,
+    region: 4,
     hp: 7,
     damage: 2,
     xp: 15,
@@ -259,7 +323,7 @@ const ENEMIES = {
   glacius: {
     id: 'glacius',
     name: 'Glacius the Fraction Dragon',
-    region: 3,
+    region: 4,
     hp: 30,
     damage: 2,
     xp: 70,
@@ -271,11 +335,11 @@ const ENEMIES = {
     color: 0x44BBEE,
   },
 
-  // â”€â”€ Region 4: Shadow Castle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Region 5: Shadow Castle ──────────────────────────────────────────────
   shadow_knight: {
     id: 'shadow_knight',
     name: 'Shadow Knight',
-    region: 4,
+    region: 5,
     hp: 8,
     damage: 2,
     xp: 18,
@@ -287,7 +351,7 @@ const ENEMIES = {
   ratio_raven: {
     id: 'ratio_raven',
     name: 'Ratio Raven',
-    region: 4,
+    region: 5,
     hp: 9,
     damage: 2,
     xp: 20,
@@ -299,7 +363,7 @@ const ENEMIES = {
   percent_wraith: {
     id: 'percent_wraith',
     name: 'Percent Wraith',
-    region: 4,
+    region: 5,
     hp: 10,
     damage: 2,
     xp: 22,
@@ -311,7 +375,7 @@ const ENEMIES = {
   fenwick: {
     id: 'fenwick',
     name: 'Fenwick the Sly Fox',
-    region: 4,
+    region: 5,
     hp: 40,
     damage: 3,
     xp: 100,

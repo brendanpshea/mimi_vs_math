@@ -69,6 +69,71 @@ export function getExplanation(question) {
       break;
     }
 
+    // ── Place value (Region 1 — Windmill Village) ──────────────────────────
+    case 'placeValue': {
+      // "X = ? tens and Y ones" or "value of tens digit in X"
+      const mDecomp = text.match(/^(\d+)\s*=\s*\?\s*tens/);
+      if (mDecomp) {
+        const n = Number(mDecomp[1]);
+        const tens = Math.floor(n / 10);
+        const ones = n % 10;
+        return `${n} = ${tens} tens + ${ones} ones\n${tens} × 10 = ${tens * 10}, then +${ones}\nAnswer: ${tens} tens ✓`;
+      }
+      const mVal = text.match(/tens digit in (\d+)/);
+      if (mVal) {
+        const n = Number(mVal[1]);
+        const tens = Math.floor(n / 10);
+        return `${n} has ${tens} in the tens place.\n${tens} means ${tens} groups of ten = ${tens * 10}\nAnswer: ${tens * 10} ✓`;
+      }
+      // Bridge-to-ten: "X + ? = Y"
+      const mBridge = text.match(/^(\d+)\s*\+\s*\?/);
+      if (mBridge) {
+        const start = Number(mBridge[1]);
+        return `Count up from ${start} to reach ${ans}:\n${start} + ${ans} = ${start + Number(ans)}\nAnswer: ${ans} ✓`;
+      }
+      break;
+    }
+
+    // ── 2-digit addition with carrying (Region 1) ──────────────────────────
+    case 'addCarry': {
+      const mWP = text.match(/(\d+)\s*more/);
+      const mSimple = text.match(/^(\d+)\s*\+\s*(\d+)/);
+      const nums = mSimple ? [Number(mSimple[1]), Number(mSimple[2])]
+                           : (mWP ? (() => { const ns = text.match(/(\d+)/g); return ns.slice(-2).map(Number); })() : null);
+      if (nums) {
+        const [a, b] = nums;
+        const onesA = a % 10, onesB = b % 10;
+        const onesSum = onesA + onesB;
+        if (onesSum >= 10) {
+          const carry = Math.floor(onesSum / 10);
+          const onesResult = onesSum % 10;
+          const tensResult = Math.floor(a / 10) + Math.floor(b / 10) + carry;
+          return `  ${String(a).padStart(3)}\n+ ${String(b).padStart(3)}\n─────\nOnes: ${onesA}+${onesB}=${onesSum} → write ${onesResult}, carry ${carry}\nTens: ${Math.floor(a/10)}+${Math.floor(b/10)}+${carry}(carry)=${tensResult}\nAnswer: ${tensResult}${onesResult} ✓`;
+        }
+        return `${a} + ${b} = ${ans} ✓`;
+      }
+      break;
+    }
+
+    // ── 2-digit subtraction with borrowing (Region 1) ─────────────────────
+    case 'subBorrow': {
+      const mWP2 = text.match(/(\d+).*?(\d+)\s*of them/s);
+      const mSub = text.match(/^(\d+)\s*[−\-]\s*(\d+)/);
+      const nums = mSub ? [Number(mSub[1]), Number(mSub[2])]
+                        : (mWP2 ? [Number(mWP2[1]), Number(mWP2[2])] : null);
+      if (nums) {
+        const [a, b] = nums;
+        const onesA = a % 10, onesB = b % 10;
+        if (onesA < onesB) {
+          const borrowedOnesA = onesA + 10;
+          const newTensA = Math.floor(a / 10) - 1;
+          return `  ${String(a).padStart(3)}\n− ${String(b).padStart(3)}\n─────\nOnes: ${onesA}<${onesB} → borrow a ten!\n${onesA}+10=${borrowedOnesA}, ${borrowedOnesA}−${onesB}=${borrowedOnesA - onesB}\nTens: ${Math.floor(a/10)}−1=${newTensA}, ${newTensA}−${Math.floor(b/10)}=${newTensA - Math.floor(b/10)}\nAnswer: ${ans} ✓`;
+        }
+        return `${a} − ${b} = ${ans} ✓`;
+      }
+      break;
+    }
+
     // ── Multiplication ──────────────────────────────────────────────────────
     case 'multiplication':
     case 'multTables': {

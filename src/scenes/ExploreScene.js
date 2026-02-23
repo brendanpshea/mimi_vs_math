@@ -167,6 +167,7 @@ export default class ExploreScene extends Phaser.Scene {
     if (floorTile && this.textures.exists(floorTile)) {
       const FLOOR_VARIANTS = {
         floor_grass: ['floor_grass', 'floor_grass_b', 'floor_grass_c'],
+        floor_wheat: ['floor_wheat', 'floor_wheat_b', 'floor_wheat_c'],
         floor_sand:  ['floor_sand',  'floor_sand_b',  'floor_sand_c' ],
         floor_snow:  ['floor_snow',  'floor_snow_b',  'floor_snow_c' ],
         floor_stone: ['floor_stone', 'floor_stone_b', 'floor_stone_c'],
@@ -313,6 +314,11 @@ export default class ExploreScene extends Phaser.Scene {
       decoration_ice_crystal:   1.20,
       decoration_chains:        1.15,
       decoration_bookshelf:     1.15,
+      // Region 1 — Windmill Village
+      decoration_windmill:      1.20,
+      decoration_hay_bale:      1.10,
+      decoration_wheat_stalk:   1.10,
+      decoration_sunflower:     1.15,
     };
 
     for (const item of deduped) {

@@ -73,13 +73,15 @@ const _tileHash = (c, r) => ((Math.imul(c, 1073741827) ^ Math.imul(r, 2147483693
 const TILE_FN = [
   (c, r) => { const h = _tileHash(c, r);                                                           // R0 Sunny Village
     return { col: c, row: r, key: h === 0 ? 'decoration_tree'         : 'decoration_tree_b',         blocking: true }; },
-  (c, r) => { const h = _tileHash(c, r);                                                           // R1 Meadow Maze
+  (c, r) => { const h = _tileHash(c, r);                                                           // R1 Windmill Village
+    return { col: c, row: r, key: h === 0 ? 'decoration_windmill'     : 'decoration_hay_bale',       blocking: true }; },
+  (c, r) => { const h = _tileHash(c, r);                                                           // R2 Meadow Maze
     return { col: c, row: r, key: h === 0 ? 'decoration_tree_meadow'  : 'decoration_tree_meadow_b',  blocking: true }; },
-  (c, r) => { const h = _tileHash(c, r);                                                           // R2 Desert Dunes
+  (c, r) => { const h = _tileHash(c, r);                                                           // R3 Desert Dunes
     return { col: c, row: r, key: h === 0 ? 'decoration_rock'         : 'decoration_rock_b',         blocking: true }; },
-  (c, r) => { const h = _tileHash(c, r);                                                           // R3 Frostbite Cavern
+  (c, r) => { const h = _tileHash(c, r);                                                           // R4 Frostbite Cavern
     return { col: c, row: r, key: h === 0 ? 'decoration_icicle'       : 'decoration_icicle_b',       blocking: true }; },
-  (c, r) => { const h = _tileHash(c, r);                                                           // R4 Shadow Castle
+  (c, r) => { const h = _tileHash(c, r);                                                           // R5 Shadow Castle
     return { col: c, row: r, key: h === 0 ? 'decoration_pillar'       : 'decoration_pillar_b',       blocking: true }; },
 ];
 
@@ -98,19 +100,23 @@ const ACCENT_LAYERS = [
     { key: 'decoration_flower',   freq: 0.12, threshold: 0.82, seed: 100 },
     { key: 'decoration_hay_bale', freq: 0.08, threshold: 0.86, seed: 200 },
   ],
-  [ // R1 — Meadow Maze: mushroom groves + lily clusters
+  [ // R1 — Windmill Village: wheat stalk clusters + sunflowers
+    { key: 'decoration_wheat_stalk', freq: 0.12, threshold: 0.82, seed: 250 },
+    { key: 'decoration_sunflower',   freq: 0.07, threshold: 0.90, seed: 350 },
+  ],
+  [ // R2 — Meadow Maze: mushroom groves + lily clusters
     { key: 'decoration_mushroom', freq: 0.10, threshold: 0.80, seed: 300 },
     { key: 'decoration_clover',   freq: 0.14, threshold: 0.84, seed: 400 },
   ],
-  [ // R2 — Desert Dunes: bone fields + tumbleweeds
+  [ // R3 — Desert Dunes: bone fields + tumbleweeds
     { key: 'decoration_bones',       freq: 0.11, threshold: 0.82, seed: 500 },
     { key: 'decoration_tumbleweed',  freq: 0.09, threshold: 0.84, seed: 600 },
   ],
-  [ // R3 — Frostbite Cavern: snow drifts + frost flowers
+  [ // R4 — Frostbite Cavern: snow drifts + frost flowers
     { key: 'decoration_snowpile',    freq: 0.10, threshold: 0.78, seed: 700 },
     { key: 'decoration_frost_flower',freq: 0.13, threshold: 0.84, seed: 800 },
   ],
-  [ // R4 — Shadow Castle: skulls (moderate blobs — floor scatter looks fine)
+  [ // R5 — Shadow Castle: skulls (moderate blobs — floor scatter looks fine)
     // + torches (very sparse: high threshold + low freq = solitary wall punctuation)
     { key: 'decoration_skull',  freq: 0.12, threshold: 0.84, seed: 900 },
     { key: 'decoration_torch',  freq: 0.05, threshold: 0.92, seed: 1000 },
@@ -129,16 +135,19 @@ const SET_PIECES = [
   { // R0 — Village pond
     key: 'landmark_pond', tilesW: 5, tilesH: 4, blocking: true, margin: 2,
   },
-  { // R1 — Meadow flower ring
+  { // R1 — Windmill mill
+    key: 'landmark_windmill_mill', tilesW: 5, tilesH: 4, blocking: true, margin: 2,
+  },
+  { // R2 — Meadow flower ring
     key: 'landmark_flower_ring', tilesW: 5, tilesH: 4, blocking: false, margin: 2,
   },
-  { // R2 — Lava pool
+  { // R3 — Lava pool
     key: 'landmark_lava_pool', tilesW: 5, tilesH: 4, blocking: true, margin: 2,
   },
-  { // R3 — Frozen lake
+  { // R4 — Frozen lake
     key: 'landmark_frozen_lake', tilesW: 6, tilesH: 5, blocking: true, margin: 2,
   },
-  { // R4 — Dark altar
+  { // R5 — Dark altar
     key: 'landmark_dark_altar', tilesW: 4, tilesH: 4, blocking: true, margin: 2,
   },
 ];
@@ -261,10 +270,11 @@ function randomizePositions(regionData) {
 /** Items awarded per region, cycling through all 5 types. */
 const ITEM_POOLS = [
   ['sardine',      'yarn_ball'],    // R0
-  ['catnip',       'lucky_collar'], // R1
-  ['fish_fossil',  'sardine'],      // R2
-  ['yarn_ball',    'catnip'],       // R3
-  ['lucky_collar', 'fish_fossil'],  // R4
+  ['catnip',       'lucky_collar'], // R1 Windmill Village
+  ['fish_fossil',  'sardine'],      // R2 Meadow Maze
+  ['yarn_ball',    'catnip'],       // R3 Desert Dunes
+  ['lucky_collar', 'fish_fossil'],  // R4 Frostbite Cavern
+  ['sardine',      'yarn_ball'],    // R5 Shadow Castle
 ];
 
 /**

@@ -1,7 +1,7 @@
 /**
  * BestiaryScene — Pokémon-style enemy index.
  *
- * Shows a 5-column grid of all 23 enemies in canonical order.
+ * Shows a 7-column grid of all 28 enemies in canonical order.
  * Each card has three states:
  *   unknown  — dark silhouette, "???" label, not interactive
  *   seen     — desaturated sprite, 👁 badge, click for details
@@ -18,28 +18,30 @@ import ENEMIES   from '../data/enemies.js';
 const CANON_ORDER = [
   // Region 0 – Sunny Village
   'counting_caterpillar', 'number_gnome', 'minus_mole', 'number_bee', 'subtraction_witch',
-  // Region 1 – Meadow Maze
+  // Region 1 – Windmill Village
+  'gear_gnome', 'windmill_sprite', 'harvest_scarecrow', 'counting_crow', 'grand_miller',
+  // Region 2 – Meadow Maze
   'slime_pup', 'cactus_sprite', 'cloud_bully', 'double_bunny', 'count_multiplico',
-  // Region 2 – Desert Dunes
+  // Region 3 – Desert Dunes
   'sand_scarab', 'mummy_cat', 'mirage_fox', 'riddle_scarab', 'the_diviner',
-  // Region 3 – Frostbite Cavern
+  // Region 4 – Frostbite Cavern
   'ice_frog', 'snow_golem', 'crystal_bat', 'glacius',
-  // Region 4 – Shadow Castle
+  // Region 5 – Shadow Castle
   'shadow_knight', 'ratio_raven', 'percent_wraith', 'fenwick',
 ];
 
-const REGION_NAMES  = ['Sunny Village', 'Meadow Maze', 'Desert Dunes', 'Frostbite Cavern', 'Shadow Castle'];
-const GRADE_LABELS  = ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5'];
-const REGION_BG     = [0x1A2A0A, 0x0A2A0A, 0x2A1A08, 0x081A28, 0x0C0818];
-const REGION_ACCENT = [0x44AA22, 0x44DD22, 0xCC8822, 0x44AADD, 0x7744CC];
+const REGION_NAMES  = ['Sunny Village', 'Windmill Village', 'Meadow Maze', 'Desert Dunes', 'Frostbite Cavern', 'Shadow Castle'];
+const GRADE_LABELS  = ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'];
+const REGION_BG     = [0x1A2A0A, 0x200A00, 0x0A2A0A, 0x2A1A08, 0x081A28, 0x0C0818];
+const REGION_ACCENT = [0x44AA22, 0xFFAA33, 0x44DD22, 0xCC8822, 0x44AADD, 0x7744CC];
 
-// Grid constants
-const COLS       = 5;
-const CARD_W     = 136;
-const CARD_H     = 92;
-const GAP_X      = 8;
-const GAP_Y      = 9;
-const GRID_START_Y = 68;
+// Grid constants — 7 cols × 4 rows fits all 28 enemies within 600 px
+const COLS       = 7;
+const CARD_W     = 102;
+const CARD_H     = 84;
+const GAP_X      = 7;
+const GAP_Y      = 7;
+const GRID_START_Y = 60;
 
 const FONT = "'Nunito', Arial, sans-serif";
 const W = 800, H = 600;
@@ -63,7 +65,7 @@ export default class BestiaryScene extends Phaser.Scene {
       stroke: '#220044', strokeThickness: 4,
     }).setOrigin(0.5);
 
-    // Counting badge  (X / 23 encountered)
+    // Counting badge  (X / 28 encountered)
     const total    = CANON_ORDER.length;
     const seen     = CANON_ORDER.filter(id => GameState.hasSeenEnemy(id)).length;
     const defeated = CANON_ORDER.filter(id => GameState.hasDefeatedEnemyType(id)).length;

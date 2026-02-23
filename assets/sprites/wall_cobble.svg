@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Mortar base (pale grout) -->
+  <rect width="32" height="32" fill="#C8C0A0"/>
+  <!-- Cobblestone pattern: top row (2 stones offset) -->
+  <rect x="1" y="1" width="14" height="9" rx="3" fill="#D4C890" stroke="#8B8060" stroke-width="1.5"/>
+  <rect x="17" y="1" width="14" height="9" rx="3" fill="#C8BC88" stroke="#8B8060" stroke-width="1.5"/>
+  <!-- Middle row (3 stones, offset from top) -->
+  <rect x="1" y="12" width="9" height="9" rx="3" fill="#CCBF88" stroke="#8B8060" stroke-width="1.5"/>
+  <rect x="12" y="12" width="9" height="9" rx="3" fill="#D8CC90" stroke="#8B8060" stroke-width="1.5"/>
+  <rect x="23" y="12" width="8" height="9" rx="3" fill="#C4B882" stroke="#8B8060" stroke-width="1.5"/>
+  <!-- Bottom row (2 stones offset again) -->
+  <rect x="1" y="23" width="14" height="8" rx="3" fill="#C8BF86" stroke="#8B8060" stroke-width="1.5"/>
+  <rect x="17" y="23" width="14" height="8" rx="3" fill="#D0C48C" stroke="#8B8060" stroke-width="1.5"/>
+  <!-- Light sheen highlights on stones -->
+  <ellipse cx="7" cy="4" rx="4" ry="1.5" fill="#FFFFFF" opacity="0.2"/>
+  <ellipse cx="23" cy="4" rx="4" ry="1.5" fill="#FFFFFF" opacity="0.2"/>
+  <ellipse cx="5" cy="16" rx="3" ry="1" fill="#FFFFFF" opacity="0.2"/>
+  <ellipse cx="16" cy="16" rx="3" ry="1" fill="#FFFFFF" opacity="0.2"/>
+  <ellipse cx="26" cy="16" rx="2.5" ry="1" fill="#FFFFFF" opacity="0.2"/>
+</svg>

@@ -1,18 +1,18 @@
-﻿const REGION = {
+const REGION = {
     id: 1,
-    name: 'Meadow Maze',
-    subtitle: 'Grade 2 · Skip Counting & Times Tables',
-    mathTopic: 'multiplication',
+    name: 'Windmill Village',
+    subtitle: 'Grade 2 · Place Value & 2-Digit Arithmetic',
+    mathTopic: 'addCarry',
     unlocked: false,
-    floorColor: 0x5FA827,
-    wallColor: 0x4A7A1E,
-    accentColor: 0x90EE90,
-    bgColor: 0x5FA827,
-    backdropKey: 'backdrop_meadow',
-    auraColor:   0x44FF88,
-    bossTint:    0xF0FFF4,
-    floorTile: 'floor_grass',
-    wallTile: 'wall_hedge',
+    floorColor:  0xC8A840,   // wheat gold
+    wallColor:   0xD4C090,   // pale stone
+    accentColor: 0xCC6633,   // terracotta
+    bgColor:     0xC8943C,   // harvest amber
+    backdropKey: 'backdrop_windmill',
+    auraColor:   0xFFAA33,
+    bossTint:    0xFFF0CC,
+    floorTile: 'floor_wheat',
+    wallTile:  'wall_cobble',
     mimiStart:     { col: 4, row: 26 },
     mimiStartPool: [
       { col: 4,  row: 26 }, { col: 4,  row: 40 },
@@ -28,51 +28,50 @@
 
     // ── Enemies: 10 — 4 native + 4 hard reviews from R0 + 2 native D2 ──
     enemySpawns: [
-      { col: 20, row: 10, id: 'slime_pup' },                                  // D1 multTables
-      { col: 52, row:  9, id: 'cactus_sprite' },                              // D2 multiplication
-      { col: 30, row: 40, id: 'cloud_bully' },                                // D2 skipCounting
-      { col: 40, row:  7, id: 'double_bunny' },                               // D1 doubling (NEW)
-      { col: 44, row: 26, id: 'counting_caterpillar', difficultyOverride: 3 },// D3 addition review
-      { col: 14, row: 40, id: 'number_gnome',         difficultyOverride: 3 },// D3 subtraction review
-      { col: 57, row: 40, id: 'minus_mole',           difficultyOverride: 3 },// D3 comparison review
-      { col: 35, row: 26, id: 'number_bee',           difficultyOverride: 3 },// D3 numberOrder review
-      { col: 60, row: 12, id: 'slime_pup',            difficultyOverride: 2 },// D2 multTables
-      { col: 50, row: 42, id: 'double_bunny',         difficultyOverride: 2 },// D2 doubling
+      { col: 20, row: 10, id: 'gear_gnome' },                               // D1 placeValue
+      { col: 52, row:  9, id: 'windmill_sprite' },                           // D1 addCarry
+      { col: 30, row: 40, id: 'harvest_scarecrow' },                         // D2 subBorrow
+      { col: 40, row:  7, id: 'counting_crow' },                             // D2 addCarry
+      { col: 44, row: 26, id: 'counting_caterpillar', difficultyOverride: 3 }, // D3 addition review
+      { col: 14, row: 40, id: 'minus_mole',            difficultyOverride: 3 }, // D3 comparison review
+      { col: 57, row: 40, id: 'number_gnome',          difficultyOverride: 3 }, // D3 subtraction review
+      { col: 35, row: 26, id: 'number_bee',            difficultyOverride: 3 }, // D3 numberOrder review
+      { col: 60, row: 12, id: 'gear_gnome',            difficultyOverride: 2 }, // D2 placeValue
+      { col: 50, row: 42, id: 'windmill_sprite',       difficultyOverride: 2 }, // D2 addCarry
     ],
 
-    boss: 'count_multiplico',
-    bossName: 'Count Multiplico',
-    description: 'Navigate the winding meadow paths and build Grade 2 skills — skip counting by 2s, 5s, and 10s, and tackle the first multiplication tables to defeat the Count!',
-    npcHint: 'Skip counting by 2s, 5s, and 10s is the secret to fast multiplication!',
+    boss: 'grand_miller',
+    bossName: 'Grand Miller',
+    description: 'Spin through the wheat-scented windmill fields! Master place value, and 2-digit adding and subtracting with carrying and borrowing to knock the Grand Miller off his perch.',
+    npcHint: 'Break every number into TENS and ONES first — the whole mill runs on that secret.',
     npcBossStory: [
-      'I got lost in this maze for eleven days once. Count Multiplico kept doubling the hedgerows every time I found the exit.\nSix became twelve. Twelve became twenty-four. I eventually gave up and climbed over the whole thing.\n\nThe Count finds this hilarious. He would.',
-      'His weakness: skip-counting patterns. Show him you know your 2s, 5s, and 10s and he\'ll flinch.\nOdd numbers make him uncomfortable too — I\'ve never asked why, but I have documented evidence.\n\nDon\'t let his speeches distract you. He rehearses them. They\'re very long.',
+      'The Grand Miller has been here since anyone can remember. He\'s ground flour for every village in the valley — and every number that passes through gets sorted into its tens and ones.\n\nHe keeps meticulous records. Forty-seven means four tens and seven ones. He will not accept a thirty-seventeen.\n\nNo one argues with him. He has very large millstone arms.',
+      'His technique: he confuses people about carrying. You think 28 + 35 is 53? That\'s "thirty-thirteen." He snorts flour and waits.\n\nThe trick is to carry the ten properly. 8+5 is 13 — write the 3, carry the 1 into the tens column. Simple once you see it.\n\nHe doesn\'t find it simple. That\'s why he fights.',
     ],
     npcLesson: [
-      'The skip-counting shortcuts:\n×2 = just double!  7 × 2 = 7+7 = 14.\n×5 = always ends in 0 or 5. Count by fives: 5, 10, 15…\n×10 = slip a zero on the end. 8 × 10 = 80.\nThat last one is genuinely that easy.',
-      'For trickier tables — build from what you know:\n6 × 7?  Think (5 × 7) + (1 × 7) = 35 + 7 = 42. ✓\n6 × 8?  = (6 × 4) × 2 = 24 × 2 = 48. ✓\nDoubling and adding one extra group is your emergency kit.',
+      '2-digit place value:\n47 = 4 tens + 7 ones = 40 + 7.\nTo add 28 + 35:\n  8 + 5 = 13 → write 3, carry 1\n  2 + 3 + 1(carry) = 6\n  Answer: 63 ✓',
+      'To subtract with borrowing — 42 − 17:\n  2 − 7? Can\'t do it! Borrow a ten.\n  12 − 7 = 5  (ones column)\n  3 − 1 = 2   (tens column, after borrowing)\n  Answer: 25 ✓\nThe tens digit loses 1 when you borrow.',
     ],
     npcBoon: 'yarn_ball',
-    npcQuizTopic: 'skipCounting',
+    npcQuizTopic: 'addCarry',
     bossIntro: [
       {
-        speaker:   'Count Multiplico',
+        speaker:   'Grand Miller',
         side:      'right',
-        spriteKey: 'count_multiplico',
-        nameColor: '#FFAA44',
-        bg:        0x081408,
-        text:      'My glory shall MULTIPLY across every meadow and mountain!\nTwo kingdoms, then four, then EIGHT, then ALL OF THEM!\n\nI\'ve been practising this speech for weeks.\nCan you tell?  I feel like you can tell.',
+        spriteKey: 'grand_miller',
+        nameColor: '#FFCC66',
+        bg:        0x141004,
+        text:      'Every number entering my mill sorts into TENS and ONES.\nLeft column. Right column. No exceptions.\nNo carrying errors. No sloppy borrowing.\n\nThat is FOUR tens and THREE ones.\nI will accept nothing else.',
       },
       {
         speaker:   'Mimi',
         side:      'left',
         spriteKey: 'mimi_battle',
         nameColor: '#AAFFCC',
-        bg:        0x081408,
-        text:      'I can tell.\n\nYou\'ve got a lovely cape, though.\nShame about what\'s going to happen to it.',
+        bg:        0x141004,
+        text:      'You counted that?  All of them?\n\nDid you write them in a ledger?\n\n…Can I see the ledger?',
       },
     ],
   };
 
 export default REGION;
-

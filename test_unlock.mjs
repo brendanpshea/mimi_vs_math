@@ -121,31 +121,31 @@ test('instanceKey region 0 produces correct keys', () => {
 });
 
 test('instanceKey region 1 produces correct keys', () => {
-  assertEqual(instanceKey(1, 0), 'slime_pup0');
-  assertEqual(instanceKey(1, 1), 'cactus_sprite1');
-  assertEqual(instanceKey(1, 2), 'cloud_bully2');
-  assertEqual(instanceKey(1, 3), 'double_bunny3');          // D1 doubling
-  assertEqual(instanceKey(1, 4), 'counting_caterpillar4'); // D3 addition review
-  assertEqual(instanceKey(1, 5), 'number_gnome5');          // D3 subtraction review
-  assertEqual(instanceKey(1, 6), 'minus_mole6');            // D3 comparison review
-  assertEqual(instanceKey(1, 7), 'number_bee7');            // D3 numberOrder review
-  assertEqual(instanceKey(1, 8), 'slime_pup8');             // D2 multTables
-  assertEqual(instanceKey(1, 9), 'double_bunny9');          // D2 doubling
+  assertEqual(instanceKey(1, 0), 'gear_gnome0');
+  assertEqual(instanceKey(1, 1), 'windmill_sprite1');
+  assertEqual(instanceKey(1, 2), 'harvest_scarecrow2');
+  assertEqual(instanceKey(1, 3), 'counting_crow3');             // D2 addCarry
+  assertEqual(instanceKey(1, 4), 'counting_caterpillar4');     // D3 addition review
+  assertEqual(instanceKey(1, 5), 'minus_mole5');               // D3 comparison review
+  assertEqual(instanceKey(1, 6), 'number_gnome6');             // D3 subtraction review
+  assertEqual(instanceKey(1, 7), 'number_bee7');               // D3 numberOrder review
+  assertEqual(instanceKey(1, 8), 'gear_gnome8');               // D2 placeValue
+  assertEqual(instanceKey(1, 9), 'windmill_sprite9');          // D2 addCarry
   // Verify count matches the live data
   assertEqual(REGIONS[1].enemySpawns.length, 10, 'R1 should have 10 spawns');
 });
 
 test('instanceKey region 2 produces correct keys', () => {
-  assertEqual(instanceKey(2, 0), 'sand_scarab0');
-  assertEqual(instanceKey(2, 1), 'mummy_cat1');
-  assertEqual(instanceKey(2, 2), 'mirage_fox2');
-  assertEqual(instanceKey(2, 3), 'riddle_scarab3');  // D1 missingNumber
-  assertEqual(instanceKey(2, 4), 'slime_pup4');      // D3 multTables review
-  assertEqual(instanceKey(2, 5), 'cactus_sprite5');  // D3 multiplication review
-  assertEqual(instanceKey(2, 6), 'cloud_bully6');    // D3 skipCounting review
-  assertEqual(instanceKey(2, 7), 'double_bunny7');   // D3 doubling review
-  assertEqual(instanceKey(2, 8), 'sand_scarab8');    // D2 division
-  assertEqual(instanceKey(2, 9), 'riddle_scarab9');  // D2 missingNumber
+  assertEqual(instanceKey(2, 0), 'slime_pup0');
+  assertEqual(instanceKey(2, 1), 'cactus_sprite1');
+  assertEqual(instanceKey(2, 2), 'cloud_bully2');
+  assertEqual(instanceKey(2, 3), 'double_bunny3');          // D1 doubling
+  assertEqual(instanceKey(2, 4), 'counting_caterpillar4'); // D3 addition review
+  assertEqual(instanceKey(2, 5), 'number_gnome5');          // D3 subtraction review
+  assertEqual(instanceKey(2, 6), 'minus_mole6');            // D3 comparison review
+  assertEqual(instanceKey(2, 7), 'number_bee7');            // D3 numberOrder review
+  assertEqual(instanceKey(2, 8), 'slime_pup8');             // D2 multTables
+  assertEqual(instanceKey(2, 9), 'double_bunny9');          // D2 doubling
   // Verify count matches the live data
   assertEqual(REGIONS[2].enemySpawns.length, 10, 'R2 should have 10 spawns');
 });

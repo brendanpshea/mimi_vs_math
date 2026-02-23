@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 48" width="32" height="48">
+  <!-- Decorative wheat stalk cluster (32×48) -->
+  <!-- Soil mound at base -->
+  <ellipse cx="16" cy="46" rx="14" ry="4" fill="#8B6A2A" opacity="0.7"/>
+  <!-- Left stalk -->
+  <line x1="10" y1="45" x2="9" y2="20" stroke="#8B7020" stroke-width="2" stroke-linecap="round"/>
+  <!-- Left grain head -->
+  <ellipse cx="9" cy="17" rx="2.5" ry="6" fill="#CC9922" stroke="#7A6010" stroke-width="1.2"/>
+  <!-- Left awns -->
+  <line x1="9" y1="14" x2="6" y2="11" stroke="#8B7020" stroke-width="1" stroke-linecap="round"/>
+  <line x1="9" y1="17" x2="6" y2="14" stroke="#8B7020" stroke-width="1" stroke-linecap="round"/>
+  <line x1="9" y1="20" x2="6" y2="17" stroke="#8B7020" stroke-width="1" stroke-linecap="round"/>
+  <line x1="9" y1="14" x2="12" y2="11" stroke="#8B7020" stroke-width="1" stroke-linecap="round"/>
+  <line x1="9" y1="17" x2="12" y2="14" stroke="#8B7020" stroke-width="1" stroke-linecap="round"/>
+  <!-- Center stalk (tallest) -->
+  <line x1="16" y1="46" x2="16" y2="14" stroke="#9A7A22" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Leaf on center stalk -->
+  <path d="M16 34 Q22 30 20 26 Q14 28 16 34Z" fill="#8BAA30" stroke="#5A8010" stroke-width="1"/>
+  <!-- Center grain head -->
+  <ellipse cx="16" cy="10" rx="3" ry="7" fill="#DDA822" stroke="#8B7010" stroke-width="1.5"/>
+  <!-- Center awns -->
+  <line x1="16" y1="6" x2="13" y2="3" stroke="#9A7A22" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="16" y1="10" x2="13" y2="7" stroke="#9A7A22" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="16" y1="14" x2="13" y2="11" stroke="#9A7A22" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="16" y1="6" x2="19" y2="3" stroke="#9A7A22" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="16" y1="10" x2="19" y2="7" stroke="#9A7A22" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="16" y1="14" x2="19" y2="11" stroke="#9A7A22" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- Right stalk (shorter) -->
+  <line x1="22" y1="46" x2="24" y2="22" stroke="#8B7020" stroke-width="2" stroke-linecap="round"/>
+  <!-- Leaf on right stalk -->
+  <path d="M24 36 Q18 32 19 28 Q26 30 24 36Z" fill="#8BAA30" stroke="#5A8010" stroke-width="1"/>
+  <!-- Right grain head -->
+  <ellipse cx="24" cy="18" rx="2.5" ry="6" fill="#CC9922" stroke="#7A6010" stroke-width="1.2"/>
+  <!-- Right awns -->
+  <line x1="24" y1="15" x2="21" y2="12" stroke="#8B7020" stroke-width="1" stroke-linecap="round"/>
+  <line x1="24" y1="18" x2="21" y2="15" stroke="#8B7020" stroke-width="1" stroke-linecap="round"/>
+  <line x1="24" y1="15" x2="27" y2="12" stroke="#8B7020" stroke-width="1" stroke-linecap="round"/>
+  <line x1="24" y1="18" x2="27" y2="15" stroke="#8B7020" stroke-width="1" stroke-linecap="round"/>
+</svg>

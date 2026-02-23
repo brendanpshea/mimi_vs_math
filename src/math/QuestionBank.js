@@ -1,5 +1,5 @@
 /**
- * QuestionBank — generates math questions for all five regions.
+ * QuestionBank — generates math questions for all six regions.
  *
  * Each generator returns an object:
  * {
@@ -366,7 +366,7 @@ function skipCountingD3() {
   return { text: `Fill the blank (going down):\n${disp}`, answer: ans, answerDisplay: String(ans), topic: 'skipCounting' };
 }
 
-// ── Division word problems (Region 2 — NEW additional type) ──────────────────
+// ── Division word problems (Region 3 — NEW additional type) ────────────────────
 
 const WORD_ITEMS = ['apples', 'cookies', 'stickers', 'coins', 'pencils', 'candies', 'fish treats', 'berries'];
 const WORD_WHO   = ['friends', 'kittens', 'students', 'puppies', 'children'];
@@ -410,7 +410,7 @@ function divisionWordD3() {
   return { text, answer: q, answerDisplay: String(q), topic: 'divisionWord', wordProblem: true };
 }
 
-// ── Fraction comparison only (Region 3 enemy 1) ───────────────────────────────
+// ── Fraction comparison only (Region 4 enemy 1) ───────────────────────────────────
 
 function fractionCompareD1() {
   // Small friendly pool; player picks the largest of 4.
@@ -471,7 +471,7 @@ function fractionCompareD3() {
   };
 }
 
-// ── Fraction addition only (Region 3 enemy 2) ────────────────────────────────
+// ── Fraction addition only (Region 4 enemy 2) ────────────────────────────────────
 
 function fractionAddD1() {
   const d = rand(3, 6); const n1 = rand(1, d-2); const n2 = rand(1, d-n1-1);
@@ -494,7 +494,7 @@ function fractionAddD3() {
   return { text: `${n1}/${d1} + ${n2}/${d2} = ?`, answer: s, answerDisplay: s, topic: 'fractionAdd' };
 }
 
-// ── Decimals standalone (Region 3 — NEW additional type) ─────────────────────
+// ── Decimals standalone (Region 4 — NEW additional type) ───────────────────────
 
 function decimalsD1() {
   // Generate freely: both operands are tenths (0.1–0.8) and sum stays ≤ 0.9
@@ -522,7 +522,7 @@ function decimalsD3() {
   return { text: `0.${dec} × ${whole} = ?`, answer: String(ans), answerDisplay: String(ans), topic: 'decimals' };
 }
 
-// ── Order of operations (Region 4 enemy 1) ───────────────────────────────────
+// ── Order of operations (Region 5 enemy 1) ───────────────────────────────────────
 
 function orderOfOpsD1() {
   const a = rand(2,6); const b = rand(2,4); const c = rand(2,4);
@@ -549,7 +549,7 @@ function orderOfOpsD3() {
   return { text: `(${a} − ${b}) × ${c} = ?`, answer: (a-b)*c, answerDisplay: String((a-b)*c), topic: 'orderOfOps' };
 }
 
-// ── Percentages standalone (Region 4 enemy 2) ────────────────────────────────
+// ── Percentages standalone (Region 5 enemy 2) ──────────────────────────────────
 
 function percentagesD1() {
   const pct = [10, 25, 50][rand(0, 2)];
@@ -625,7 +625,146 @@ function numberOrderD3() {
   };
 }
 
-// ── Doubling & halving (Region 1 — additional type) ──────────────────────────
+// ── Place value — tens & ones (Region 1 — Windmill Village) ───────────────────
+
+function placeValueD1() {
+  // Decompose a 2-digit number: "27 = ? tens and 7 ones"
+  const tens = rand(1, 9);
+  const ones = rand(0, 9);
+  const n = tens * 10 + ones;
+  return {
+    text: `${n} = ? tens and ${ones} ones`,
+    answer: tens,
+    answerDisplay: String(tens),
+    topic: 'placeValue',
+  };
+}
+
+function placeValueD2() {
+  // Value of the tens digit in a 2-digit number
+  const tens = rand(1, 9);
+  const ones = rand(0, 9);
+  const n = tens * 10 + ones;
+  return {
+    text: `What is the value of the\ntens digit in ${n}?`,
+    answer: tens * 10,
+    answerDisplay: String(tens * 10),
+    topic: 'placeValue',
+  };
+}
+
+function placeValueD3() {
+  // Bridge to the nearest ten: "36 + ? = 40"
+  const target = rand(2, 9) * 10;   // multiples of 10: 20–90
+  const start  = target - rand(1, 9);
+  const gap    = target - start;
+  return {
+    text: `${start} + ? = ${target}`,
+    answer: gap,
+    answerDisplay: String(gap),
+    topic: 'placeValue',
+  };
+}
+
+// ── 2-digit addition with carrying (Region 1 — Windmill Village) ────────────────
+
+function addCarryD1() {
+  // One 2-digit + one 1-digit, guaranteed ones-column carry (D1: small, ≤30)
+  let a, b;
+  do {
+    a = rand(12, 22);
+    b = rand(3, 8);
+  } while ((a % 10) + b < 10);
+  return {
+    text: `${a} + ${b} = ?`,
+    answer: a + b,
+    answerDisplay: String(a + b),
+    topic: 'addCarry',
+  };
+}
+
+function addCarryD2() {
+  // Two 2-digit addends with ones-column carry, result ≤ 59 (Grade 2 friendly)
+  let a, b;
+  do {
+    a = rand(13, 35);
+    b = rand(11, 25);
+  } while ((a % 10) + (b % 10) < 10 || a + b > 59);
+  return {
+    text: `${a} + ${b} = ?`,
+    answer: a + b,
+    answerDisplay: String(a + b),
+    topic: 'addCarry',
+  };
+}
+
+function addCarryD3() {
+  // Word problem: 2-digit + 2-digit with carry, result ≤ 59
+  const items = ['apples', 'wheat bales', 'fish biscuits', 'sunflower seeds'];
+  const item  = items[rand(0, items.length - 1)];
+  let a, b;
+  do {
+    a = rand(13, 32);
+    b = rand(12, 28);
+  } while ((a % 10) + (b % 10) < 10 || a + b > 59);
+  return {
+    text: `Mimi had ${a} ${item}.\nShe found ${b} more.\nHow many in total?`,
+    answer: a + b,
+    answerDisplay: String(a + b),
+    topic: 'addCarry',
+  };
+}
+
+// ── 2-digit subtraction with borrowing (Region 1 — Windmill Village) ────────────
+
+function subBorrowD1() {
+  // 2-digit minus 1-digit, forcing a borrow (D1: answer ≥ 10)
+  let a, b;
+  do {
+    a = rand(21, 39);
+    b = rand(3, 9);
+  } while ((a % 10) >= b);
+  return {
+    text: `${a} − ${b} = ?`,
+    answer: a - b,
+    answerDisplay: String(a - b),
+    topic: 'subBorrow',
+  };
+}
+
+function subBorrowD2() {
+  // 2-digit minus 2-digit, forcing a borrow (Grade 2 friendly: a ≤ 49)
+  let a, b;
+  do {
+    a = rand(22, 49);
+    b = rand(11, Math.min(a - 10, 29));
+  } while ((a % 10) >= (b % 10) || a - b <= 0);
+  return {
+    text: `${a} − ${b} = ?`,
+    answer: a - b,
+    answerDisplay: String(a - b),
+    topic: 'subBorrow',
+  };
+}
+
+function subBorrowD3() {
+  // Word problem: 2-digit subtraction with borrow (Grade 2 friendly: a ≤ 49)
+  const items = ['apples', 'wheat bales', 'fish biscuits', 'sunflower seeds'];
+  const item  = items[rand(0, items.length - 1)];
+  let a, b;
+  do {
+    a = rand(22, 49);
+    b = rand(11, Math.min(a - 10, 29));
+  } while ((a % 10) >= (b % 10) || a - b <= 0);
+  return {
+    text: `Mimi had ${a} ${item}.\nShe used ${b} of them.\nHow many are left?`,
+    answer: a - b,
+    answerDisplay: String(a - b),
+    topic: 'subBorrow',
+  };
+}
+
+// ── Doubling & halving (Region 2 — Meadow Maze additional type) ───────────────
 
 function doublingD1() {
   const n = rand(1, 10);
@@ -648,10 +787,10 @@ function doublingD3() {
   return { text: `Half of ${n} = ?`, answer: n / 2, answerDisplay: String(n / 2), topic: 'doubling' };
 }
 
-// ── Missing number (Region 2 — additional type) ──────────────────────────────
+// ── Missing number (Region 3 — Desert Dunes additional type) ────────────────
 
 function missingNumberD1() {
-  // Two-digit addends — appropriate for Grade 3 (Region 2)
+  // Two-digit addends — appropriate for Grade 3 (Region 3)
   const a = rand(10, 30); const b = rand(5, 20);
   const sum = a + b;
   if (Math.random() < 0.5) {
@@ -679,7 +818,7 @@ function missingNumberD3() {
   return { text: `? + ${b} = ${sum}`, answer: a, answerDisplay: String(a), topic: 'missingNumber' };
 }
 
-// ── Ratios & proportions (Region 4 — NEW additional type) ────────────────────
+// ── Ratios & proportions (Region 5 — NEW additional type) ───────────────────────
 
 function ratiosPropD1() {
   const a = rand(2, 5); const k = rand(2, 5);
@@ -706,18 +845,22 @@ const generators = {
   addition:       [additionD1,       additionD2,       additionD3],
   subtraction:    [subtractionD1,    subtractionD2,    subtractionD3],
   comparison:     [comparisonD1,     comparisonD2,     comparisonD3],
-  // Region 1 — Meadow Maze
+  // Region 1 — Windmill Village
+  placeValue:     [placeValueD1,     placeValueD2,     placeValueD3],
+  addCarry:       [addCarryD1,       addCarryD2,       addCarryD3],
+  subBorrow:      [subBorrowD1,      subBorrowD2,      subBorrowD3],
+  // Region 2 — Meadow Maze
   multTables:     [multTablesD1,     multTablesD2,     multTablesD3],
   skipCounting:   [skipCountingD1,   skipCountingD2,   skipCountingD3],
   doubling:       [doublingD1,       doublingD2,       doublingD3],
-  // Region 2 — Desert Dunes
+  // Region 3 — Desert Dunes
   divisionWord:   [divisionWordD1,   divisionWordD2,   divisionWordD3],
   missingNumber:  [missingNumberD1,  missingNumberD2,  missingNumberD3],
-  // Region 3 — Frostbite Cavern
+  // Region 4 — Frostbite Cavern
   fractionCompare:[fractionCompareD1,fractionCompareD2,fractionCompareD3],
   fractionAdd:    [fractionAddD1,    fractionAddD2,    fractionAddD3],
   decimals:       [decimalsD1,       decimalsD2,       decimalsD3],
-  // Region 4 — Shadow Castle
+  // Region 5 — Shadow Castle
   orderOfOps:     [orderOfOpsD1,     orderOfOpsD2,     orderOfOpsD3],
   percentages:    [percentagesD1,    percentagesD2,    percentagesD3],
   ratiosProp:     [ratiosPropD1,     ratiosPropD2,     ratiosPropD3],

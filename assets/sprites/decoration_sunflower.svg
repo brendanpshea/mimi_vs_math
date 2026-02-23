@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 48" width="32" height="48">
+  <!-- Decorative sunflower (32×48) -->
+  <!-- Soil mound at base -->
+  <ellipse cx="16" cy="46" rx="10" ry="3.5" fill="#8B6A2A" opacity="0.7"/>
+  <!-- Stem (tall, slight lean) -->
+  <line x1="16" y1="46" x2="16" y2="14" stroke="#4A8A20" stroke-width="3" stroke-linecap="round"/>
+  <!-- Stem leaves -->
+  <!-- Left leaf -->
+  <path d="M16 34 Q7 30 8 24 Q16 28 16 34Z" fill="#5A9A28" stroke="#3A7010" stroke-width="1.2"/>
+  <!-- Right leaf -->
+  <path d="M16 26 Q25 22 24 16 Q17 20 16 26Z" fill="#5A9A28" stroke="#3A7010" stroke-width="1.2"/>
+  <!-- Sunflower petals (outer ring) -->
+  <!-- Petals around center at (16,12) -->
+  <ellipse cx="16" cy="5" rx="3" ry="5" fill="#FFCC00" stroke="#CC8800" stroke-width="1" transform="rotate(0 16 12)"/>
+  <ellipse cx="16" cy="5" rx="3" ry="5" fill="#FFCC00" stroke="#CC8800" stroke-width="1" transform="rotate(45 16 12)"/>
+  <ellipse cx="16" cy="5" rx="3" ry="5" fill="#FFCC00" stroke="#CC8800" stroke-width="1" transform="rotate(90 16 12)"/>
+  <ellipse cx="16" cy="5" rx="3" ry="5" fill="#FFCC00" stroke="#CC8800" stroke-width="1" transform="rotate(135 16 12)"/>
+  <ellipse cx="16" cy="5" rx="3" ry="5" fill="#FFCC00" stroke="#CC8800" stroke-width="1" transform="rotate(180 16 12)"/>
+  <ellipse cx="16" cy="5" rx="3" ry="5" fill="#FFCC00" stroke="#CC8800" stroke-width="1" transform="rotate(225 16 12)"/>
+  <ellipse cx="16" cy="5" rx="3" ry="5" fill="#FFCC00" stroke="#CC8800" stroke-width="1" transform="rotate(270 16 12)"/>
+  <ellipse cx="16" cy="5" rx="3" ry="5" fill="#FFCC00" stroke="#CC8800" stroke-width="1" transform="rotate(315 16 12)"/>
+  <!-- Flower center (dark brown seed head) -->
+  <circle cx="16" cy="12" r="6" fill="#6B3A10" stroke="#3A1A00" stroke-width="1.5"/>
+  <!-- Seed pattern dots on center -->
+  <circle cx="14" cy="10" r="1" fill="#8B5A20"/>
+  <circle cx="16" cy="9" r="1" fill="#8B5A20"/>
+  <circle cx="18" cy="10" r="1" fill="#8B5A20"/>
+  <circle cx="13" cy="12" r="1" fill="#8B5A20"/>
+  <circle cx="16" cy="12" r="1" fill="#8B5A20"/>
+  <circle cx="19" cy="12" r="1" fill="#8B5A20"/>
+  <circle cx="14" cy="14" r="1" fill="#8B5A20"/>
+  <circle cx="16" cy="15" r="1" fill="#8B5A20"/>
+  <circle cx="18" cy="14" r="1" fill="#8B5A20"/>
+  <!-- Highlight on flower center -->
+  <circle cx="14" cy="10" r="1.5" fill="#FFEE44" opacity="0.3"/>
+</svg>

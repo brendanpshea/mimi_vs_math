@@ -225,6 +225,7 @@ export default class BattleScene extends Phaser.Scene {
       addSub: 'Addition & Subtraction', multiplication: 'Multiplication',
       division: 'Division', fractions: 'Fractions',
       addition: 'Addition', subtraction: 'Subtraction', comparison: 'Comparison',
+      placeValue: 'Place Value', addCarry: 'Addition', subBorrow: 'Subtraction',
       multTables: 'Times Tables', skipCounting: 'Skip Counting', doubling: 'Doubling',
       divisionWord: 'Division', missingNumber: 'Missing Number',
       fractionCompare: 'Fractions', fractionAdd: 'Fractions', decimals: 'Decimals',

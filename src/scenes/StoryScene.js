@@ -48,9 +48,9 @@ const PAGES = [
   },
   {
     bg:         0x080808,
-    title:      'Five Kingdoms.  Five Champions.',
+    title:      'Six Kingdoms.  Six Champions.',
     body: [
-      'Fenwick\'s shadow fell across five kingdoms,\neach locked behind a Math Seal.',
+      'Fenwick\'s shadow fell across six kingdoms,\neach locked behind a Math Seal.',
       'Warriors tried.  Heroes tried.\nEven a very confused accountant tried.',
       'All of them failed.',
     ],
@@ -63,7 +63,7 @@ const PAGES = [
     body: [
       'Every seal bends to one rule:',
       'Answer correctly → the shield SHATTERS! ✨\nAnswer wrong → Mimi takes damage.',
-      'Five lands.  Five seals.  One yarn ball.',
+      'Six lands.  Six seals.  One yarn ball.',
     ],
     art:        'answer_shield',
     titleColor: '#88FFCC',
@@ -73,7 +73,7 @@ const PAGES = [
     title:      '🐱  One Cat.  One Quest.  One Yarn Ball.',
     body: [
       'The yarn ball isn\'t going to rescue itself.  🧶',
-      'Help Mimi battle through five kingdoms,\nclimb to the top of the Shadow Castle —\nand remind a certain fox exactly how this ends.',
+      'Help Mimi battle through six kingdoms,\nclimb to the top of the Shadow Castle —\nand remind a certain fox exactly how this ends.',
     ],
     art:        'mimi_and_fenwick_final',
     titleColor: '#FFDD44',
@@ -241,8 +241,8 @@ export default class StoryScene extends Phaser.Scene {
       });
 
     } else if (p.art === 'kingdoms_cast') {
-      // Five boss portraits spread across the art zone
-      const keys = ['subtraction_witch', 'count_multiplico', 'the_diviner', 'glacius', 'fenwick'];
+      // Six boss portraits spread across the art zone
+      const keys = ['subtraction_witch', 'grand_miller', 'count_multiplico', 'the_diviner', 'glacius', 'fenwick'];
       const spacing = W / (keys.length + 1);
       for (let i = 0; i < keys.length; i++) {
         const spX = spacing * (i + 1);

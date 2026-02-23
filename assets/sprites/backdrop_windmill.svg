@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- Sky gradient (amber golden hour) -->
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8A830"/>
+      <stop offset="40%" stop-color="#F0C040"/>
+      <stop offset="80%" stop-color="#D4A828"/>
+      <stop offset="100%" stop-color="#C89030"/>
+    </linearGradient>
+    <linearGradient id="fieldGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C8A840"/>
+      <stop offset="100%" stop-color="#A88828"/>
+    </linearGradient>
+    <linearGradient id="hillGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6AAA30"/>
+      <stop offset="100%" stop-color="#5A9020"/>
+    </linearGradient>
+  </defs>
+  <!-- Sky fill -->
+  <rect width="800" height="600" fill="url(#skyGrad)"/>
+  <!-- Sun (large, hazy golden) -->
+  <circle cx="650" cy="110" r="60" fill="#FFE060" opacity="0.5"/>
+  <circle cx="650" cy="110" r="44" fill="#FFD030" opacity="0.7"/>
+  <circle cx="650" cy="110" r="30" fill="#FFEE88" opacity="0.9"/>
+  <!-- Sun rays -->
+  <line x1="650" y1="50" x2="650" y2="30" stroke="#FFD030" stroke-width="4" opacity="0.5"/>
+  <line x1="700" y1="70" x2="718" y2="54" stroke="#FFD030" stroke-width="3" opacity="0.5"/>
+  <line x1="720" y1="110" x2="744" y2="110" stroke="#FFD030" stroke-width="3" opacity="0.5"/>
+  <line x1="700" y1="150" x2="718" y2="166" stroke="#FFD030" stroke-width="3" opacity="0.5"/>
+  <line x1="600" y1="70" x2="582" y2="54" stroke="#FFD030" stroke-width="3" opacity="0.5"/>
+  <line x1="580" y1="110" x2="556" y2="110" stroke="#FFD030" stroke-width="3" opacity="0.5"/>
+  <line x1="600" y1="150" x2="582" y2="166" stroke="#FFD030" stroke-width="3" opacity="0.5"/>
+  <!-- Hazy clouds -->
+  <ellipse cx="100" cy="80" rx="90" ry="30" fill="#FFF0C0" opacity="0.5"/>
+  <ellipse cx="140" cy="65" rx="70" ry="25" fill="#FFF8D0" opacity="0.6"/>
+  <ellipse cx="50" cy="90" rx="50" ry="20" fill="#FFF0C0" opacity="0.5"/>
+  <ellipse cx="320" cy="60" rx="80" ry="25" fill="#FFE8A0" opacity="0.4"/>
+  <ellipse cx="370" cy="48" rx="60" ry="20" fill="#FFF0C0" opacity="0.5"/>
+  <!-- Distant rolling green hills (far horizon) -->
+  <ellipse cx="0" cy="350" rx="200" ry="80" fill="url(#hillGrad)" opacity="0.8"/>
+  <ellipse cx="250" cy="360" rx="220" ry="70" fill="#78B834" opacity="0.7"/>
+  <ellipse cx="600" cy="340" rx="260" ry="90" fill="url(#hillGrad)" opacity="0.8"/>
+  <ellipse cx="800" cy="360" rx="180" ry="75" fill="#6AAA30" opacity="0.7"/>
+  <!-- Horizon ground line -->
+  <rect x="0" y="360" width="800" height="240" fill="url(#fieldGrad)"/>
+  <!-- Wheat field rows (perspective lines) -->
+  <line x1="0" y1="370" x2="800" y2="370" stroke="#A88828" stroke-width="2" opacity="0.4"/>
+  <line x1="0" y1="385" x2="800" y2="385" stroke="#A88828" stroke-width="2" opacity="0.4"/>
+  <line x1="0" y1="403" x2="800" y2="403" stroke="#A88828" stroke-width="2.5" opacity="0.4"/>
+  <line x1="0" y1="425" x2="800" y2="425" stroke="#A88828" stroke-width="2.5" opacity="0.4"/>
+  <line x1="0" y1="450" x2="800" y2="450" stroke="#A88828" stroke-width="3" opacity="0.4"/>
+  <line x1="0" y1="480" x2="800" y2="480" stroke="#A88828" stroke-width="3" opacity="0.4"/>
+  <line x1="0" y1="515" x2="800" y2="515" stroke="#A88828" stroke-width="3.5" opacity="0.4"/>
+  <line x1="0" y1="555" x2="800" y2="555" stroke="#A88828" stroke-width="3.5" opacity="0.4"/>
+  <!-- Perspective vanishing lines from center -->
+  <line x1="400" y1="360" x2="0" y2="600" stroke="#A88828" stroke-width="1.5" opacity="0.25"/>
+  <line x1="400" y1="360" x2="200" y2="600" stroke="#A88828" stroke-width="1" opacity="0.25"/>
+  <line x1="400" y1="360" x2="400" y2="600" stroke="#A88828" stroke-width="1.5" opacity="0.25"/>
+  <line x1="400" y1="360" x2="600" y2="600" stroke="#A88828" stroke-width="1" opacity="0.25"/>
+  <line x1="400" y1="360" x2="800" y2="600" stroke="#A88828" stroke-width="1.5" opacity="0.25"/>
+  <!-- Large landmark windmill (left of center) -->
+  <!-- Tower -->
+  <rect x="180" y="230" width="80" height="140" rx="6" fill="#CC9944" stroke="#5A3A10" stroke-width="3"/>
+  <!-- Tower stone lines -->
+  <line x1="180" y1="248" x2="260" y2="248" stroke="#8B6A2A" stroke-width="1.5" opacity="0.5"/>
+  <line x1="180" y1="266" x2="260" y2="266" stroke="#8B6A2A" stroke-width="1.5" opacity="0.5"/>
+  <line x1="180" y1="284" x2="260" y2="284" stroke="#8B6A2A" stroke-width="1.5" opacity="0.5"/>
+  <line x1="180" y1="302" x2="260" y2="302" stroke="#8B6A2A" stroke-width="1.5" opacity="0.5"/>
+  <line x1="180" y1="320" x2="260" y2="320" stroke="#8B6A2A" stroke-width="1.5" opacity="0.5"/>
+  <line x1="180" y1="338" x2="260" y2="338" stroke="#8B6A2A" stroke-width="1.5" opacity="0.5"/>
+  <!-- Tower window -->
+  <rect x="200" y="256" width="20" height="20" rx="3" fill="#9ACEEE" stroke="#5A3A10" stroke-width="2"/>
+  <rect x="222" y="256" width="20" height="20" rx="3" fill="#9ACEEE" stroke="#5A3A10" stroke-width="2"/>
+  <!-- Tower door -->
+  <rect x="196" y="338" width="28" height="32" rx="5" fill="#7A4A10" stroke="#3A2000" stroke-width="2"/>
+  <ellipse cx="210" cy="338" rx="14" ry="5" fill="#9A6A30" stroke="#3A2000" stroke-width="2"/>
+  <!-- Tower conical roof -->
+  <polygon points="220,190 160,232 280,232" fill="#993322" stroke="#5A1A10" stroke-width="3"/>
+  <circle cx="220" cy="190" r="8" fill="#DDAA33" stroke="#5A3A10" stroke-width="2"/>
+  <!-- Axle hub -->
+  <circle cx="220" cy="232" r="12" fill="#DDAA33" stroke="#5A3A10" stroke-width="3"/>
+  <!-- Sails (4 blades in X) -->
+  <!-- Top-left -->
+  <polygon points="220,232 148,140 162,126 220,232" fill="#F5E8C0" stroke="#5A3A10" stroke-width="2.5"/>
+  <line x1="184" y1="186" x2="155" y2="133" stroke="#CC9944" stroke-width="2"/>
+  <line x1="190" y1="196" x2="163" y2="145" stroke="#CC9944" stroke-width="2"/>
+  <!-- Top-right -->
+  <polygon points="220,232 292,140 278,126 220,232" fill="#EDE0B0" stroke="#5A3A10" stroke-width="2.5"/>
+  <line x1="256" y1="186" x2="285" y2="133" stroke="#CC9944" stroke-width="2"/>
+  <line x1="250" y1="196" x2="277" y2="145" stroke="#CC9944" stroke-width="2"/>
+  <!-- Bottom-left -->
+  <polygon points="220,232 148,316 162,326 220,232" fill="#F5E8C0" stroke="#5A3A10" stroke-width="2.5"/>
+  <line x1="184" y1="274" x2="155" y2="320" stroke="#CC9944" stroke-width="2"/>
+  <!-- Bottom-right -->
+  <polygon points="220,232 292,316 278,326 220,232" fill="#EDE0B0" stroke="#5A3A10" stroke-width="2.5"/>
+  <line x1="256" y1="274" x2="285" y2="320" stroke="#CC9944" stroke-width="2"/>
+  <!-- Right side small windmill (distant, smaller) -->
+  <rect x="570" y="290" width="40" height="75" rx="4" fill="#DDB055" stroke="#5A3A10" stroke-width="2" opacity="0.8"/>
+  <polygon points="590,262 558,292 622,292" fill="#AA4433" stroke="#5A1A10" stroke-width="2" opacity="0.8"/>
+  <circle cx="590" cy="292" r="6" fill="#DDAA33" stroke="#5A3A10" stroke-width="2" opacity="0.9"/>
+  <!-- Small windmill sails -->
+  <polygon points="590,292 558,254 564,248 590,292" fill="#F5E8C0" stroke="#5A3A10" stroke-width="1.5" opacity="0.8"/>
+  <polygon points="590,292 622,254 616,248 590,292" fill="#EDE0B0" stroke="#5A3A10" stroke-width="1.5" opacity="0.8"/>
+  <polygon points="590,292 558,322 564,328 590,292" fill="#F5E8C0" stroke="#5A3A10" stroke-width="1.5" opacity="0.8"/>
+  <polygon points="590,292 622,322 616,328 590,292" fill="#EDE0B0" stroke="#5A3A10" stroke-width="1.5" opacity="0.8"/>
+  <!-- Wheat stalks foreground (both sides) -->
+  <!-- Left cluster -->
+  <line x1="40" y1="580" x2="38" y2="490" stroke="#8B7020" stroke-width="3"/>
+  <ellipse cx="37" cy="484" rx="4" ry="10" fill="#CC9922" stroke="#7A6010" stroke-width="2"/>
+  <line x1="37" y1="478" x2="30" y2="470" stroke="#8B7020" stroke-width="2"/>
+  <line x1="37" y1="484" x2="30" y2="476" stroke="#8B7020" stroke-width="2"/>
+  <line x1="37" y1="490" x2="30" y2="482" stroke="#8B7020" stroke-width="2"/>
+  <line x1="37" y1="478" x2="44" y2="470" stroke="#8B7020" stroke-width="2"/>
+  <line x1="37" y1="484" x2="44" y2="476" stroke="#8B7020" stroke-width="2"/>
+  <line x1="37" y1="490" x2="44" y2="482" stroke="#8B7020" stroke-width="2"/>
+  <line x1="70" y1="580" x2="72" y2="475" stroke="#8B7020" stroke-width="3"/>
+  <ellipse cx="72" cy="469" rx="4" ry="9" fill="#DDA822" stroke="#7A6010" stroke-width="2"/>
+  <line x1="90" y1="580" x2="89" y2="495" stroke="#8B7020" stroke-width="2.5"/>
+  <ellipse cx="89" cy="490" rx="3" ry="8" fill="#CC9922" stroke="#7A6010" stroke-width="1.5"/>
+  <!-- Right cluster -->
+  <line x1="760" y1="580" x2="762" y2="490" stroke="#8B7020" stroke-width="3"/>
+  <ellipse cx="762" cy="484" rx="4" ry="10" fill="#CC9922" stroke="#7A6010" stroke-width="2"/>
+  <line x1="762" y1="478" x2="755" y2="470" stroke="#8B7020" stroke-width="2"/>
+  <line x1="762" y1="484" x2="755" y2="476" stroke="#8B7020" stroke-width="2"/>
+  <line x1="762" y1="478" x2="769" y2="470" stroke="#8B7020" stroke-width="2"/>
+  <line x1="762" y1="484" x2="769" y2="476" stroke="#8B7020" stroke-width="2"/>
+  <line x1="730" y1="580" x2="728" y2="478" stroke="#8B7020" stroke-width="3"/>
+  <ellipse cx="728" cy="472" rx="4" ry="9" fill="#DDA822" stroke="#7A6010" stroke-width="2"/>
+  <line x1="710" y1="580" x2="711" y2="498" stroke="#8B7020" stroke-width="2.5"/>
+  <ellipse cx="711" cy="492" rx="3" ry="8" fill="#CC9922" stroke="#7A6010" stroke-width="1.5"/>
+  <!-- Sunflower (left) -->
+  <line x1="130" y1="580" x2="130" y2="460" stroke="#4A8A20" stroke-width="4"/>
+  <path d="M130 510 Q115 500 116 486 Q130 495 130 510Z" fill="#5A9A28" stroke="#3A7010" stroke-width="1.5"/>
+  <ellipse cx="130" cy="447" rx="6" ry="14" fill="#FFCC00" stroke="#CC8800" stroke-width="1.5" transform="rotate(0 130 460)"/>
+  <ellipse cx="130" cy="447" rx="6" ry="14" fill="#FFCC00" stroke="#CC8800" stroke-width="1.5" transform="rotate(45 130 460)"/>
+  <ellipse cx="130" cy="447" rx="6" ry="14" fill="#FFCC00" stroke="#CC8800" stroke-width="1.5" transform="rotate(90 130 460)"/>
+  <ellipse cx="130" cy="447" rx="6" ry="14" fill="#FFCC00" stroke="#CC8800" stroke-width="1.5" transform="rotate(135 130 460)"/>
+  <circle cx="130" cy="460" r="14" fill="#6B3A10" stroke="#3A1A00" stroke-width="2"/>
+  <!-- Sunflower (right) -->
+  <line x1="670" y1="580" x2="670" y2="455" stroke="#4A8A20" stroke-width="4"/>
+  <path d="M670 515 Q685 505 684 491 Q670 500 670 515Z" fill="#5A9A28" stroke="#3A7010" stroke-width="1.5"/>
+  <ellipse cx="670" cy="442" rx="6" ry="14" fill="#FFCC00" stroke="#CC8800" stroke-width="1.5" transform="rotate(0 670 455)"/>
+  <ellipse cx="670" cy="442" rx="6" ry="14" fill="#FFCC00" stroke="#CC8800" stroke-width="1.5" transform="rotate(45 670 455)"/>
+  <ellipse cx="670" cy="442" rx="6" ry="14" fill="#FFCC00" stroke="#CC8800" stroke-width="1.5" transform="rotate(90 670 455)"/>
+  <ellipse cx="670" cy="442" rx="6" ry="14" fill="#FFCC00" stroke="#CC8800" stroke-width="1.5" transform="rotate(135 670 455)"/>
+  <circle cx="670" cy="455" r="14" fill="#6B3A10" stroke="#3A1A00" stroke-width="2"/>
+  <!-- Fence along bottom edge (foreground) -->
+  <line x1="0" y1="575" x2="800" y2="575" stroke="#8B6A2A" stroke-width="3"/>
+  <line x1="0" y1="560" x2="800" y2="560" stroke="#8B6A2A" stroke-width="2"/>
+  <line x1="20" y1="552" x2="20" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="60" y1="552" x2="60" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="100" y1="552" x2="100" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="160" y1="552" x2="160" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="220" y1="552" x2="220" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="300" y1="552" x2="300" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="380" y1="552" x2="380" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="460" y1="552" x2="460" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="540" y1="552" x2="540" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="620" y1="552" x2="620" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="680" y1="552" x2="680" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="740" y1="552" x2="740" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <line x1="780" y1="552" x2="780" y2="582" stroke="#8B6A2A" stroke-width="4"/>
+  <!-- Ground brightening (light from sun) -->
+  <ellipse cx="650" cy="600" rx="300" ry="120" fill="#FFE070" opacity="0.15"/>
+</svg>

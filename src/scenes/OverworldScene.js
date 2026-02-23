@@ -1,7 +1,7 @@
 /**
  * OverworldScene — region-selection map.
  *
- * Shows five region nodes arranged on a stylised map.
+ * Shows six region nodes arranged on a stylised map.
  * Defeated-boss regions are highlighted; locked regions are greyed out.
  */
 import * as Phaser from 'phaser';
@@ -15,20 +15,22 @@ const PATH_COLOR  = 0x8B6A3A;
 
 // Per-region terrain tint painted behind each node
 const TERRAIN_COLORS = [
-  0x6DB83A,   // R0 – grassland
-  0x4A9820,   // R1 – meadow
-  0xD4952A,   // R2 – desert
-  0x88C8E0,   // R3 – frost
-  0x2A1850,   // R4 – shadow
+  0x6DB83A,   // R0 – grassland (Sunny Village)
+  0xC8A840,   // R1 – wheat     (Windmill Village)
+  0x4A9820,   // R2 – meadow    (Meadow Maze)
+  0xD4952A,   // R3 – desert    (Desert Dunes)
+  0x88C8E0,   // R4 – frost     (Frostbite Cavern)
+  0x2A1850,   // R5 – shadow    (Shadow Castle)
 ];
 
 // Fixed positions for each region node on the 800×600 canvas
 const NODE_POSITIONS = [
-  { x: 180, y: 440 },  // 0 Sunny Village
-  { x: 340, y: 310 },  // 1 Meadow Maze
-  { x: 520, y: 230 },  // 2 Desert Dunes
-  { x: 640, y: 360 },  // 3 Frostbite Cavern
-  { x: 620, y: 500 },  // 4 Shadow Castle
+  { x: 130, y: 480 },  // 0 Sunny Village
+  { x: 260, y: 370 },  // 1 Windmill Village
+  { x: 400, y: 260 },  // 2 Meadow Maze
+  { x: 540, y: 200 },  // 3 Desert Dunes
+  { x: 660, y: 330 },  // 4 Frostbite Cavern
+  { x: 640, y: 475 },  // 5 Shadow Castle
 ];
 
 export default class OverworldScene extends Phaser.Scene {

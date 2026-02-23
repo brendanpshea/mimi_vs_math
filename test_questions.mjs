@@ -52,12 +52,14 @@ const ALL_TOPICS = [
   // Region 0
   'addition', 'subtraction', 'comparison',
   // Region 1
-  'multTables', 'skipCounting', 'doubling',
+  'placeValue', 'addCarry', 'subBorrow',
   // Region 2
-  'divisionWord', 'missingNumber',
+  'multTables', 'skipCounting', 'doubling',
   // Region 3
-  'fractionCompare', 'fractionAdd', 'decimals',
+  'divisionWord', 'missingNumber',
   // Region 4
+  'fractionCompare', 'fractionAdd', 'decimals',
+  // Region 5
   'orderOfOps', 'percentages', 'ratiosProp',
 ];
 
@@ -75,6 +77,9 @@ const TOPIC_BOUNDS = {
   orderOfOps:     [0,  500],
   percentages:    [0,  1000],
   ratiosProp:     [0,  200],
+  placeValue:     [0,  90],
+  addCarry:       [0,  99],
+  subBorrow:      [0,  99],
   skipCounting:   [0,  1000],
   doubling:       [0,  100],
   fractions:      null,        // string

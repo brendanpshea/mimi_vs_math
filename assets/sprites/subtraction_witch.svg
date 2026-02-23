@@ -22,11 +22,16 @@
   <line x1="74" y1="84" x2="76" y2="32" stroke="#662288" stroke-width="4.5" stroke-linecap="round"/>
   <!-- Wand orb -->
   <circle cx="76" cy="28" r="11" fill="#9955CC" stroke="#FFDD44" stroke-width="3"/>
+  <!-- Orb inner glow -->
+  <circle cx="73" cy="25" r="4.5" fill="#DD99FF" opacity="0.52"/>
   <!-- Bold minus on orb -->
   <rect x="68" y="25.5" width="16" height="5" rx="2.5" fill="#FF4444" stroke="#CC0000" stroke-width="1.5"/>
 
   <!-- === FACE (large, green-tinted) === -->
   <ellipse cx="48" cy="34" rx="17" ry="18" fill="#BBDD88" stroke="#334422" stroke-width="3.5"/>
+  <!-- Face volume: forehead highlight + cheek shadow -->
+  <ellipse cx="43" cy="24" rx="8" ry="5" fill="#CCEE99" opacity="0.52"/>
+  <ellipse cx="57" cy="42" rx="6" ry="3.5" fill="#8AAA55" opacity="0.42"/>
 
   <!-- Eyes — large, expressive -->
   <ellipse cx="40" cy="30" rx="6" ry="6.5" fill="white" stroke="#334422" stroke-width="2.5"/>
@@ -52,6 +57,8 @@
   <ellipse cx="48" cy="18" rx="26" ry="7" fill="#1A0033" stroke="#110022" stroke-width="3"/>
   <!-- Hat cone -->
   <polygon points="48,0 28,18 68,18" fill="#220044" stroke="#110022" stroke-width="3"/>
+  <!-- Hat cone highlight strip (left edge lit) -->
+  <polygon points="48,1 30,17 36,17" fill="#3A0077" opacity="0.80"/>
   <!-- Hat band -->
   <rect x="28" y="14" width="40" height="6" rx="3" fill="#440066" stroke="#110022" stroke-width="2"/>
   <!-- Star on hat -->

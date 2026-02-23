@@ -19,10 +19,15 @@
   <!-- === WAND (slightly different angle) === -->
   <line x1="74" y1="86" x2="78" y2="36" stroke="#662288" stroke-width="4.5" stroke-linecap="round"/>
   <circle cx="78" cy="32" r="11" fill="#9955CC" stroke="#FFDD44" stroke-width="3"/>
+  <!-- Orb inner glow -->
+  <circle cx="75" cy="29" r="4.5" fill="#DD99FF" opacity="0.52"/>
   <rect x="70" y="29.5" width="16" height="5" rx="2.5" fill="#FF4444" stroke="#CC0000" stroke-width="1.5"/>
 
   <!-- === FACE (identical, shifted down 1px for hover bob) === -->
   <ellipse cx="48" cy="35" rx="17" ry="18" fill="#BBDD88" stroke="#334422" stroke-width="3.5"/>
+  <!-- Face volume: forehead highlight + cheek shadow -->
+  <ellipse cx="43" cy="25" rx="8" ry="5" fill="#CCEE99" opacity="0.52"/>
+  <ellipse cx="57" cy="43" rx="6" ry="3.5" fill="#8AAA55" opacity="0.42"/>
 
   <!-- Eyes -->
   <ellipse cx="40" cy="31" rx="6" ry="6.5" fill="white" stroke="#334422" stroke-width="2.5"/>

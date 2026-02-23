@@ -53,12 +53,16 @@ export default class Enemy {
     this._homeY   = y;
 
     this.sprite = scene.physics.add.image(x, y, data.id);
-    this.sprite.setImmovable(true);
+    // Do NOT setImmovable — immovable dynamic bodies are never separated from
+    // static groups by Arcade Physics, so they ghost through walls/trees.
+    // Mimi touches enemies via physics.add.overlap (not collider) so she
+    // passes through them regardless of this flag.
     this.sprite.body.allowGravity = false;
-    this.sprite.setDepth(8);
+    this.sprite.setCollideWorldBounds(true);
+    this.sprite.setDepth(27);  // above colour-grade overlay (depth 25)
 
-    // Ground shadow
-    this._shadow = scene.add.ellipse(x, y + 16, 28, 9, 0x000000, 0.25).setDepth(7);
+    // Ground shadow — must sit just below the sprite but above the overlay
+    this._shadow = scene.add.ellipse(x, y + 16, 28, 9, 0x000000, 0.25).setDepth(26);
 
     // Tint sprite body by difficulty so players can gauge threat at a glance.
     // Bosses are visually distinct already — skip tinting them.

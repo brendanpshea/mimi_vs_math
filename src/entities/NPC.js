@@ -57,11 +57,11 @@ export default class NPC {
     // Mimi interacts via physics.add.overlap (not collider) so she always passes
     // through the NPC regardless.
     this.sprite.body.allowGravity = false;
+    this.sprite.setDepth(27);  // above colour-grade overlay (depth 25)
     this.sprite.setCollideWorldBounds(true);
-    this.sprite.setDepth(8);
 
-    // Ground shadow
-    this._shadow = scene.add.ellipse(x, y + 14, 26, 8, 0x000000, 0.25).setDepth(7);
+    // Ground shadow — just below the sprite but above the colour-grade overlay
+    this._shadow = scene.add.ellipse(x, y + 14, 26, 8, 0x000000, 0.25).setDepth(26);
 
     // Walking sway tween — starts paused, resumed while moving
     this._swayTween = scene.tweens.add({

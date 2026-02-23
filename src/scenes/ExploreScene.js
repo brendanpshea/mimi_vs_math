@@ -582,6 +582,9 @@ export default class ExploreScene extends Phaser.Scene {
       );
       enemy.registerOverlap(this.mimi.sprite);
       enemy.setMimi(this.mimi.sprite);
+      this.physics.add.collider(enemy.sprite, this._walls);
+      this.physics.add.collider(enemy.sprite, this._decorObstacles);
+      this.physics.add.collider(enemy.sprite, this._landmarkObstacles);
       this._enemies.push(enemy);
       this._liveCount++;
     });

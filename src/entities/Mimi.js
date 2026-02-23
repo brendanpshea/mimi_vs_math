@@ -22,7 +22,7 @@ export default class Mimi {
     this._dpad   = null;  // set by ExploreScene via setDPad()
 
     this.sprite = scene.physics.add.image(x, y, 'mimi');
-    this.sprite.setDepth(10);
+    this.sprite.setDepth(29);  // above colour-grade overlay (depth 25) and enemies (27)
     this.sprite.setCollideWorldBounds(true);
     // Shrink physics body to roughly Mimi's torso — the 64px sprite has a lot
     // of transparent padding around the character, so the default full-image
@@ -30,7 +30,7 @@ export default class Mimi {
     this.sprite.setSize(28, 28);
 
     // Ground shadow — short semi-transparent ellipse beneath the feet
-    this._shadow = scene.add.ellipse(x, y + 16, 28, 9, 0x000000, 0.28).setDepth(9);
+    this._shadow = scene.add.ellipse(x, y + 16, 28, 9, 0x000000, 0.28).setDepth(28);
 
     // Bobbing tween - will be paused when moving
     this._bobbingTween = scene.tweens.add({

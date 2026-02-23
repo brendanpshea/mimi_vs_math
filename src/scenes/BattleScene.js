@@ -103,7 +103,11 @@ export default class BattleScene extends Phaser.Scene {
     
     // Subtle overlay — keeps backdrop visible without crushing other UI
     this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.20).setDepth(1);
-    
+
+    // Drifting atmospheric orbs — depth 1.5 so they sit above the dark overlay
+    // but below the separator lines and all UI elements.
+    this._animateBackground(W, H);
+
     // Separator lines (gradient fade from center)
     const gfx = this.add.graphics().setDepth(2);
     // Top separator
@@ -116,6 +120,40 @@ export default class BattleScene extends Phaser.Scene {
     gfx.lineBetween(40, H - 110, W - 40, H - 110);
     gfx.lineStyle(1, 0xFFFFFF, 0.08);
     gfx.lineBetween(20, H - 109, W - 20, H - 109);
+  }
+
+  /**
+   * Add slowly drifting translucent glow orbs behind the battle UI.
+   * All movement is tween-driven — no update() changes needed.
+   * Each orb yoyos between its start and a randomly offset end position
+   * with a long period (6–11 s) and staggered delay so they never sync up.
+   */
+  _animateBackground(W, H) {
+    const regionData = REGIONS[this.regionId];
+    const auraColor  = regionData?.auraColor ?? 0xFFDD33;
+
+    const ORB_DEFS = [
+      { x: W * 0.15, y: H * 0.14, rx: 180, ry: 150, color: auraColor, alpha: 0.09 },
+      { x: W * 0.82, y: H * 0.22, rx: 150, ry: 130, color: auraColor, alpha: 0.07 },
+      { x: W * 0.50, y: H * 0.06, rx: 240, ry: 80,  color: 0xFFFFFF,  alpha: 0.04 },
+      { x: W * 0.30, y: H * 0.35, rx: 110, ry: 110, color: auraColor, alpha: 0.05 },
+    ];
+
+    for (const orb of ORB_DEFS) {
+      const el = this.add.ellipse(orb.x, orb.y, orb.rx * 2, orb.ry * 2, orb.color, orb.alpha)
+        .setDepth(1.5);
+      this.tweens.add({
+        targets: el,
+        x:      orb.x + Phaser.Math.Between(-70, 70),
+        y:      orb.y + Phaser.Math.Between(-25, 25),
+        alpha:  { from: orb.alpha, to: orb.alpha * 0.35 },
+        scaleX: { from: 1.0, to: 1.18 },
+        scaleY: { from: 1.0, to: 0.82 },
+        duration: Phaser.Math.Between(6000, 11000),
+        yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+        delay: Phaser.Math.Between(0, 4500),
+      });
+    }
   }
 
   // ── Layout ────────────────────────────────────────────────────────────────

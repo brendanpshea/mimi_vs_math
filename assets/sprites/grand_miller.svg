@@ -15,13 +15,31 @@
   <rect x="19" y="68" width="58" height="8" rx="3" fill="#CC7711" stroke="#1A0A00" stroke-width="2"/>
   <!-- Belt buckle -->
   <rect x="43" y="68" width="10" height="8" rx="2" fill="#DDAA33" stroke="#1A0A00" stroke-width="1.5"/>
-  <!-- Tens/ones notation on apron -->
-  <text x="38" y="57" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#4A2A0A">Tens</text>
-  <text x="58" y="57" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#4A2A0A">Ones</text>
+  <!-- Tens/ones notation on apron (all-vector) -->
+  <!-- Dividers -->
   <line x1="48" y1="44" x2="48" y2="68" stroke="#8B6A3A" stroke-width="2"/>
   <line x1="28" y1="60" x2="68" y2="60" stroke="#8B6A3A" stroke-width="1.5"/>
-  <text x="38" y="66" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#774411">4</text>
-  <text x="58" y="66" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#774411">7</text>
+  <!-- Tens column header: 3 horizontal bars = groups -->
+  <rect x="32" y="46" width="12" height="2.5" rx="1.2" fill="#4A2A0A" opacity="0.7"/>
+  <rect x="32" y="50" width="12" height="2.5" rx="1.2" fill="#4A2A0A" opacity="0.7"/>
+  <rect x="32" y="54" width="12" height="2.5" rx="1.2" fill="#4A2A0A" opacity="0.7"/>
+  <!-- Ones column header: 3 individual dots -->
+  <circle cx="58" cy="47" r="2.2" fill="#4A2A0A" opacity="0.7"/>
+  <circle cx="58" cy="52" r="2.2" fill="#4A2A0A" opacity="0.7"/>
+  <circle cx="58" cy="57" r="2.2" fill="#4A2A0A" opacity="0.7"/>
+  <!-- Digit 4: four ten-bars -->
+  <rect x="30" y="61" width="16" height="1.8" rx="0.8" fill="#774411"/>
+  <rect x="30" y="63" width="16" height="1.8" rx="0.8" fill="#774411"/>
+  <rect x="30" y="65" width="16" height="1.8" rx="0.8" fill="#774411"/>
+  <rect x="30" y="67" width="16" height="1.8" rx="0.8" fill="#774411"/>
+  <!-- Digit 7: seven one-dots (3+2+2) -->
+  <circle cx="51" cy="61.5" r="1.5" fill="#774411"/>
+  <circle cx="57" cy="61.5" r="1.5" fill="#774411"/>
+  <circle cx="63" cy="61.5" r="1.5" fill="#774411"/>
+  <circle cx="54" cy="64.5" r="1.5" fill="#774411"/>
+  <circle cx="60" cy="64.5" r="1.5" fill="#774411"/>
+  <circle cx="54" cy="67.5" r="1.5" fill="#774411"/>
+  <circle cx="60" cy="67.5" r="1.5" fill="#774411"/>
   <!-- Mill sail arms (the whole arms are windmill sails) -->
   <!-- Left sail arm -->
   <polygon points="5,22 22,38 18,52 4,42" fill="#CC8833" stroke="#1A0A00" stroke-width="2.5"/>
@@ -62,5 +80,12 @@
   <!-- Flour bag in right hand (held at waist) -->
   <rect x="60" y="55" width="16" height="20" rx="4" fill="#F5E8C0" stroke="#1A0A00" stroke-width="2"/>
   <ellipse cx="68" cy="55" rx="8" ry="4" fill="#F5E8C0" stroke="#1A0A00" stroke-width="1.5"/>
-  <text x="68" y="68" text-anchor="middle" font-family="Arial" font-size="6" font-weight="bold" fill="#8B6A3A">FLOUR</text>
+  <!-- Flour bag stitching marks (vector) -->
+  <rect x="63" y="62" width="10" height="1.2" rx="0.5" fill="#8B6A3A" opacity="0.75"/>
+  <rect x="63" y="65.5" width="10" height="1.2" rx="0.5" fill="#8B6A3A" opacity="0.75"/>
+  <rect x="63" y="69" width="10" height="1.2" rx="0.5" fill="#8B6A3A" opacity="0.75"/>
+  <circle cx="63" cy="59" r="1.2" fill="#8B6A3A" opacity="0.6"/>
+  <circle cx="73" cy="59" r="1.2" fill="#8B6A3A" opacity="0.6"/>
+  <circle cx="63" cy="72" r="1.2" fill="#8B6A3A" opacity="0.6"/>
+  <circle cx="73" cy="72" r="1.2" fill="#8B6A3A" opacity="0.6"/>
 </svg>

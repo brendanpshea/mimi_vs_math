@@ -44,7 +44,7 @@ export default class HUD {
 
     // Accuracy stat + enemies remaining
     this._statsText = scene.add.text(W / 2, 30, '', {
-      fontSize: '11px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif",
+      fontSize: '13px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(51);
 
     // Inventory icon slots (top-right, one badge per item type, right-anchored)
@@ -62,7 +62,7 @@ export default class HUD {
       const img = scene.add.image(cx - 9, 17, item.key)
         .setDisplaySize(16, 16).setOrigin(0.5).setScrollFactor(0).setDepth(51);
       const lbl = scene.add.text(cx + 3, 17, '', {
-        fontSize: '11px', color: '#FFFFFF',
+        fontSize: '13px', color: '#FFFFFF',
         fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
       }).setOrigin(0, 0.5).setScrollFactor(0).setDepth(51);
       return { img, lbl, bg, id: item.id };

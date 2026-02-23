@@ -260,7 +260,7 @@ export default class OverworldScene extends Phaser.Scene {
       const stars = Math.max(1, GameState.getRegionStars(region.id));
       this.add.text(pos.x, pos.y + NODE_RADIUS - 7,
         '★'.repeat(stars) + '☆'.repeat(3 - stars),
-        { fontSize: '11px', color: '#FFD700', stroke: '#000', strokeThickness: 2 },
+        { fontSize: '13px', color: '#FFD700', stroke: '#000', strokeThickness: 2 },
       ).setOrigin(0.5, 1);
     }
     // Hard-mode cleared badge
@@ -271,12 +271,12 @@ export default class OverworldScene extends Phaser.Scene {
 
     // Name + subtitle labels
     this.add.text(pos.x, pos.y + NODE_RADIUS + 8, region.name, {
-      fontSize: '12px', color: unlocked ? '#FFE8A0' : '#777799',
+      fontSize: '13px', color: unlocked ? '#FFE8A0' : '#777799',
       fontFamily: "'Nunito', Arial, sans-serif", fontStyle: unlocked ? 'bold' : 'normal',
       stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0.5, 0);
     this.add.text(pos.x, pos.y + NODE_RADIUS + 24, region.subtitle.split('·')[0].trim(), {
-      fontSize: '10px', color: unlocked ? '#AACCEE' : '#555577',
+      fontSize: '12px', color: unlocked ? '#AACCEE' : '#555577',
       fontFamily: "'Nunito', Arial, sans-serif", stroke: '#000000', strokeThickness: 1,
     }).setOrigin(0.5, 0);
 
@@ -305,11 +305,11 @@ export default class OverworldScene extends Phaser.Scene {
     this.add.text(px, 59,  `HP: ${hp}/${maxHP}`,
       { fontSize: '13px', color: '#FF8899', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     this.add.text(px, 75,  `✓ ${stats.correct}/${stats.answered}`,
-      { fontSize: '11px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+      { fontSize: '13px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     this.add.text(px, 89,  `${pct}% accuracy`,
-      { fontSize: '11px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+      { fontSize: '13px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     this.add.text(px, 103, `Best streak: ${stats.bestStreak}`,
-      { fontSize: '10px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+      { fontSize: '12px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
 
     // Stats button
     const sb = this.add.rectangle(px, 120, 130, 22, 0x0C1A0C)

@@ -54,6 +54,8 @@ export default class BattleScene extends Phaser.Scene {
     this.answering         = false;
     this.battleWrongAnswers = 0;   // for perfect-battle detection
     this._qStartTime        = 0;   // Phaser timestamp when current question appeared
+    this._battlePaused      = false;
+    this._pauseRemainingMs  = 0;
     // Adaptive difficulty (A + C)
     this.battleDiffOffset  = 0;    // A: in-battle drift −1/0/+1
     this.lossStreak        = 0;    // A: consecutive wrong/timeout counter
@@ -151,6 +153,10 @@ export default class BattleScene extends Phaser.Scene {
       .setDisplaySize(enemySz, enemySz).setDepth(3);
     if (this._bossTint) this.enemySprite.setTint(this._bossTint);
 
+    // Capture scale AFTER setDisplaySize so breathe tween stays proportional
+    const esx = this.enemySprite.scaleX;
+    const esy = this.enemySprite.scaleY;
+
     // Idle float + gentle breathe for the enemy
     this.tweens.add({
       targets:  this.enemySprite,
@@ -162,8 +168,8 @@ export default class BattleScene extends Phaser.Scene {
     });
     this.tweens.add({
       targets:  this.enemySprite,
-      scaleX:   { from: 1.0, to: 0.97 },
-      scaleY:   { from: 1.0, to: 1.03 },
+      scaleX:   { from: esx, to: esx * 0.97 },
+      scaleY:   { from: esy, to: esy * 1.03 },
       duration: 1800,
       yoyo:     true,
       repeat:   -1,
@@ -171,17 +177,19 @@ export default class BattleScene extends Phaser.Scene {
       delay:    400,
     });
 
-    this.add.text(W * 0.72, 144, this.enemyData.name, TEXT_STYLE(16, '#FFCCEE', true))
-      .setOrigin(0.5);
+    this.add.text(W * 0.72, 144, this.enemyData.name, {
+      ...TEXT_STYLE(16, '#FFCCEE', true),
+      stroke: '#000000', strokeThickness: 4,
+    }).setOrigin(0.5).setDepth(4);
 
     this.enemyHPBar = this._makeHPBar(W * 0.72, 162, this.enemyData.hp, 0xCC3333);
 
     if (this.isBoss) {
-      this.add.text(W * 0.72, 10, '⚠ BOSS BATTLE', TEXT_STYLE(13, '#FF6633', true))
+      this.add.text(W * 0.72, 10, '⚠ BOSS BATTLE', TEXT_STYLE(15, '#FF6633', true))
         .setOrigin(0.5, 0);
     }
     if (this.isHardMode) {
-      this.add.text(W * 0.28, 10, '🗡 HARD MODE', TEXT_STYLE(12, '#FF3333', true))
+      this.add.text(W * 0.28, 10, '🗡 HARD MODE', TEXT_STYLE(15, '#FF3333', true))
         .setOrigin(0.5, 0);
     }
 
@@ -203,7 +211,10 @@ export default class BattleScene extends Phaser.Scene {
       delay:    200,
     });
 
-    this.add.text(W * 0.28, 144, 'Mimi', TEXT_STYLE(16, '#AAFFCC', true)).setOrigin(0.5);
+    this.add.text(W * 0.28, 144, 'Mimi', {
+      ...TEXT_STYLE(16, '#AAFFCC', true),
+      stroke: '#000000', strokeThickness: 4,
+    }).setOrigin(0.5).setDepth(4);
     this.playerHPBar = this._makeHPBar(W * 0.28, 162, GameState.maxHP, 0x33CC66);
 
     // ── Lives counter (below Mimi HP bar) ──────────────────────────────────
@@ -231,8 +242,17 @@ export default class BattleScene extends Phaser.Scene {
       fractionCompare: 'Fractions', fractionAdd: 'Fractions', decimals: 'Decimals',
       orderOfOps: 'Order of Operations', percentages: 'Percentages', ratiosProp: 'Ratios & Proportions',
     };
-    this.add.text(W / 2, 10, topicLabels[this.enemyData.mathTopic] ?? '', TEXT_STYLE(13, '#AACCFF'))
-      .setOrigin(0.5, 0);
+    // Dark pill behind topic label so it's readable over any backdrop
+    const topicStr = topicLabels[this.enemyData.mathTopic] ?? '';
+    if (topicStr) {
+      const tpill = this.add.graphics().setDepth(3);
+      tpill.fillStyle(0x000000, 0.55);
+      tpill.fillRoundedRect(W / 2 - 130, 8, 260, 24, 6);
+    }
+    this.add.text(W / 2, 10, topicStr, {
+      ...TEXT_STYLE(15, '#AACCFF'),
+      stroke: '#000000', strokeThickness: 3,
+    }).setOrigin(0.5, 0).setDepth(4);
 
     // ── Question display ────────────────────────────────────────────────
     // Dark pill behind the question text — guarantees contrast.
@@ -358,6 +378,12 @@ export default class BattleScene extends Phaser.Scene {
       const lbl = this.add.text(pos.x, pos.y + 6, '', TEXT_STYLE(22, '#FFFFFF', true))
         .setOrigin(0.5).setDepth(4);
 
+      // Correct / wrong icon (top-right corner, hidden until answer revealed)
+      const icon = this.add.text(pos.x + BW / 2 - 14, pos.y - BH / 2 + 14, '', {
+        ...TEXT_STYLE(18, '#44FF88', true),
+        stroke: '#000000', strokeThickness: 3,
+      }).setOrigin(0.5).setDepth(5).setAlpha(0);
+
       bg.on('pointerover', () => {
         if (this.answering) return;
         bg.setFillStyle(BTN_COLORS.hover).setStrokeStyle(2, 0x66AAFF);
@@ -370,7 +396,7 @@ export default class BattleScene extends Phaser.Scene {
       });
       bg.on('pointerdown', () => this._selectAnswer(i));
 
-      return { bg, lbl, numLbl, shadow, highlight };
+      return { bg, lbl, numLbl, shadow, highlight, icon };
     });
   }
 
@@ -405,6 +431,7 @@ export default class BattleScene extends Phaser.Scene {
       kb.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR),
     ];
     this.escKey = kb.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+    this.pKey   = kb.addKey(Phaser.Input.Keyboard.KeyCodes.P);
   }
 
   // ── Question flow ─────────────────────────────────────────────────────────
@@ -442,7 +469,8 @@ export default class BattleScene extends Phaser.Scene {
       btn.lbl.setText(choice.text);
       btn.lbl.setColor('#FFFFFF');
       btn.numLbl.setAlpha(1);
-      btn.bg.setFillStyle(BTN_COLORS.idle).setInteractive();
+      btn.icon.setText('').setAlpha(0);
+      btn.bg.setFillStyle(BTN_COLORS.idle).setStrokeStyle(2, 0x4466AA).setInteractive();
     });
 
     // Hint: auto-eliminate one wrong choice when fossil charges remain
@@ -456,6 +484,7 @@ export default class BattleScene extends Phaser.Scene {
         this.answerButtons[hi].bg.setFillStyle(0x111111).removeInteractive();
         this.answerButtons[hi].lbl.setColor('#333333');
         this.answerButtons[hi].numLbl.setAlpha(0.2);
+        this.answerButtons[hi].icon.setAlpha(0);
       }
       this._refreshEffectsDisplay();
     }
@@ -480,6 +509,7 @@ export default class BattleScene extends Phaser.Scene {
         const elapsed   = this.time.now - startTime;
         const remaining = Math.max(0, totalMs - elapsed);
         const ratio     = remaining / totalMs;
+        this._currentRemainingMs = remaining;
 
         this.timerFill.setDisplaySize(this._timerW * ratio, 18);
         this.timerText.setText(`${Math.ceil(remaining / 1000)}s`);
@@ -527,7 +557,10 @@ export default class BattleScene extends Phaser.Scene {
 
     this.answerButtons.forEach((btn, i) => {
       btn.bg.removeInteractive();
-      if (this.currentChoices[i].correct) btn.bg.setFillStyle(BTN_COLORS.reveal);
+      if (this.currentChoices[i].correct) {
+        btn.bg.setFillStyle(BTN_COLORS.reveal).setStrokeStyle(4, 0x4488FF);
+        btn.icon.setText('✓').setColor('#88CCFF').setAlpha(1);
+      }
     });
 
     this.streak = 0;
@@ -555,13 +588,18 @@ export default class BattleScene extends Phaser.Scene {
     this.answerButtons.forEach(btn => btn.bg.removeInteractive());
 
     if (selected.correct) {
-      this.answerButtons[index].bg.setFillStyle(BTN_COLORS.correct);
+      this.answerButtons[index].bg.setFillStyle(BTN_COLORS.correct).setStrokeStyle(4, 0x44FF88);
+      this.answerButtons[index].icon.setText('✓').setColor('#44FF88').setAlpha(1);
       this._onCorrect(isFast, index);
     } else {
-      this.answerButtons[index].bg.setFillStyle(BTN_COLORS.wrong);
+      this.answerButtons[index].bg.setFillStyle(BTN_COLORS.wrong).setStrokeStyle(4, 0xFF4444);
+      this.answerButtons[index].icon.setText('✗').setColor('#FF6666').setAlpha(1);
       // Highlight correct answer
       this.answerButtons.forEach((btn, i) => {
-        if (this.currentChoices[i].correct) btn.bg.setFillStyle(BTN_COLORS.reveal);
+        if (this.currentChoices[i].correct) {
+          btn.bg.setFillStyle(BTN_COLORS.reveal).setStrokeStyle(4, 0x4488FF);
+          btn.icon.setText('✓').setColor('#88CCFF').setAlpha(1);
+        }
       });
       this._onWrong();
     }
@@ -1287,10 +1325,50 @@ export default class BattleScene extends Phaser.Scene {
     this.input.keyboard.once('keydown-SPACE', cb);
   }
 
+  // ── Pause / Resume ───────────────────────────────────────────────────────
+
+  _pauseBattle() {
+    if (this._battlePaused) return;
+    this._battlePaused = true;
+    // Stop the running timer event and save remaining time
+    if (this._timerEvent) { this._timerEvent.remove(); this._timerEvent = null; }
+    this._pauseRemainingMs = this._currentRemainingMs ?? 0;
+    this.tweens.pauseAll();
+    // Pause overlay
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+    this._pauseOverlay = [
+      this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.55).setDepth(50),
+      this.add.text(W / 2, H / 2 - 22, '⏸  PAUSED', {
+        fontFamily: 'Arial Black, sans-serif',
+        fontSize: '36px', fontStyle: 'bold', color: '#FFFFFF',
+        stroke: '#000000', strokeThickness: 4,
+      }).setOrigin(0.5).setDepth(51),
+      this.add.text(W / 2, H / 2 + 22, 'Press  [P]  to resume', {
+        fontFamily: 'Arial, sans-serif', fontSize: '16px', color: '#AACCFF',
+      }).setOrigin(0.5).setDepth(51),
+    ];
+  }
+
+  _resumeBattle() {
+    if (!this._battlePaused) return;
+    this._battlePaused = false;
+    if (this._pauseOverlay) { this._pauseOverlay.forEach(o => o.destroy()); this._pauseOverlay = null; }
+    this.tweens.resumeAll();
+    // Restart timer with saved remaining time (only if player hasn't answered yet)
+    if (!this.answering && !this.battleOver && this._pauseRemainingMs > 0) {
+      this._startTimer(this._pauseRemainingMs);
+    }
+  }
+
+  _togglePause() { this._battlePaused ? this._resumeBattle() : this._pauseBattle(); }
+
   // ── Update loop ───────────────────────────────────────────────────────────
 
   update() {
-    if (this.battleOver || this.answering) return;
+    // P toggles pause regardless of other state
+    if (Phaser.Input.Keyboard.JustDown(this.pKey)) this._togglePause();
+    if (this._battlePaused || this.battleOver || this.answering) return;
     this.keys.forEach((key, i) => {
       if (Phaser.Input.Keyboard.JustDown(key)) this._selectAnswer(i);
     });

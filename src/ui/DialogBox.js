@@ -38,7 +38,7 @@ export default class DialogBox {
 
     // Speaker name
     this._speaker = scene.add.text(30, H - 148, '', {
-      fontSize: '13px', color: '#FFDD88', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+      fontSize: '15px', color: '#FFDD88', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setScrollFactor(0).setDepth(81).setVisible(false);
 
     // Body text
@@ -52,7 +52,7 @@ export default class DialogBox {
 
     // Continue prompt
     this._prompt = scene.add.text(W - 30, H - 42, '▶ Press SPACE', {
-      fontSize: '11px', color: '#88AAFF', fontFamily: "'Nunito', Arial, sans-serif",
+      fontSize: '14px', color: '#88AAFF', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(1, 1).setScrollFactor(0).setDepth(81).setVisible(false);
 
     // Blink the prompt
@@ -87,7 +87,7 @@ export default class DialogBox {
         cb(i);          // i captured at button-create time
       });
       const txt = scene.add.text(W / 2, H - 52, '', {
-        fontSize: '13px', color: '#FFFFFF',
+        fontSize: '14px', color: '#FFFFFF',
         fontFamily: "'Nunito', Arial, sans-serif",
       }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(84).setVisible(false);
       this._choiceBgs.push(bg);

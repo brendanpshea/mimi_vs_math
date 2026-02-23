@@ -222,6 +222,15 @@ export default class BattleScene extends Phaser.Scene {
     this.add.text(W * 0.28, 176, `${livesStr}`, TEXT_STYLE(11, '#FFCC88'))
       .setOrigin(0.5, 0);
 
+    // ── Pause button (top-right corner) ────────────────────────────────────
+    this._pauseBtn = this.add.rectangle(W - 36, 20, 62, 24, 0x0A0A1A)
+      .setStrokeStyle(1.5, 0x446688).setInteractive({ useHandCursor: true }).setDepth(5);
+    this._pauseTxt = this.add.text(W - 36, 20, '⏸  [P]', TEXT_STYLE(12, '#88AACC'))
+      .setOrigin(0.5).setDepth(6);
+    this._pauseBtn.on('pointerover', () => { this._pauseBtn.setFillStyle(0x0F1F2F); this._pauseTxt.setColor('#AACCEE'); });
+    this._pauseBtn.on('pointerout',  () => { this._pauseBtn.setFillStyle(0x0A0A1A); this._pauseTxt.setColor('#88AACC'); });
+    this._pauseBtn.on('pointerdown', () => this._togglePause());
+
     // ── Run Away button (bottom-left; hidden for boss battles) ───────────────
     if (!this.isBoss) {
       this._runBtn = this.add.rectangle(46, H - 80, 90, 30, 0x0A0A1A)
@@ -1334,6 +1343,8 @@ export default class BattleScene extends Phaser.Scene {
     if (this._timerEvent) { this._timerEvent.remove(); this._timerEvent = null; }
     this._pauseRemainingMs = this._currentRemainingMs ?? 0;
     this.tweens.pauseAll();
+    // Flip button to resume icon
+    if (this._pauseTxt) this._pauseTxt.setText('▶  [P]');
     // Pause overlay
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
@@ -1344,7 +1355,7 @@ export default class BattleScene extends Phaser.Scene {
         fontSize: '36px', fontStyle: 'bold', color: '#FFFFFF',
         stroke: '#000000', strokeThickness: 4,
       }).setOrigin(0.5).setDepth(51),
-      this.add.text(W / 2, H / 2 + 22, 'Press  [P]  to resume', {
+      this.add.text(W / 2, H / 2 + 22, 'Click ▶ or press [P] to resume', {
         fontFamily: 'Arial, sans-serif', fontSize: '16px', color: '#AACCFF',
       }).setOrigin(0.5).setDepth(51),
     ];
@@ -1355,6 +1366,8 @@ export default class BattleScene extends Phaser.Scene {
     this._battlePaused = false;
     if (this._pauseOverlay) { this._pauseOverlay.forEach(o => o.destroy()); this._pauseOverlay = null; }
     this.tweens.resumeAll();
+    // Restore button to pause icon
+    if (this._pauseTxt) this._pauseTxt.setText('⏸  [P]');
     // Restart timer with saved remaining time (only if player hasn't answered yet)
     if (!this.answering && !this.battleOver && this._pauseRemainingMs > 0) {
       this._startTimer(this._pauseRemainingMs);

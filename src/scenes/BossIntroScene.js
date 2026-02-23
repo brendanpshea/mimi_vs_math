@@ -24,11 +24,13 @@ export default class BossIntroScene extends Phaser.Scene {
   constructor() { super({ key: 'BossIntroScene' }); }
 
   init(data) {
-    this._panels    = data.panels    ?? [];
-    this._regionId  = data.regionId  ?? 0;
-    this._nextScene = data.nextScene ?? 'BattleScene';
-    this._nextData  = data.nextData  ?? {};
-    this._idx       = 0;
+    this._panels      = data.panels    ?? [];
+    this._regionId    = data.regionId  ?? 0;
+    this._nextScene   = data.nextScene ?? 'BattleScene';
+    this._nextData    = data.nextData  ?? {};
+    this._idx         = 0;
+    // Skip typewriter + auto-advance for players who have already seen this intro
+    this._alreadySeen = GameState.bossIntroSeen.includes(this._regionId);
   }
 
   create() {
@@ -42,6 +44,7 @@ export default class BossIntroScene extends Phaser.Scene {
   // ── Render current panel ────────────────────────────────────────────────
 
   _draw() {
+    this._clearTypewriter();
     this.tweens.killAll();
     this.children.removeAll(true);
 
@@ -169,12 +172,21 @@ export default class BossIntroScene extends Phaser.Scene {
 
     // Dialogue text — left-aligned, starts below speaker tab
     const textTopY = boxT + 44;
-    this.add.text(boxL + 20, textTopY, p.text, {
-      fontSize: '15px', color: '#DDEEFF', fontFamily: "'Nunito', Arial, sans-serif",
-      align: 'left', lineSpacing: 7,
+    const dialogueText = this.add.text(boxL + 20, textTopY, '', {
+      fontSize: '17px', color: '#DDEEFF', fontFamily: "'Nunito', Arial, sans-serif",
+      align: 'left', lineSpacing: 8,
       stroke: '#000000', strokeThickness: 2,
       wordWrap: { width: BOX_W - 48 },
     }).setOrigin(0, 0);
+
+    if (this._alreadySeen) {
+      dialogueText.setText(p.text);
+      this._typewriterDone = true;
+      // Auto-advance quickly so returning players aren't stuck
+      this._autoAdvanceTimer = this.time.delayedCall(900, () => this._advance());
+    } else {
+      this._startTypewriter(dialogueText, p.text, 28);
+    }
 
     // ── Advance button ──────────────────────────────────────────────────
     const btnY   = H * 0.925;
@@ -218,6 +230,13 @@ export default class BossIntroScene extends Phaser.Scene {
   }
 
   _advance() {
+    // Cancel auto-advance if player clicks manually
+    if (this._autoAdvanceTimer) { this._autoAdvanceTimer.remove(false); this._autoAdvanceTimer = null; }
+    // First press: complete the typewriter. Second press: turn page.
+    if (!this._typewriterDone) {
+      this._completeTypewriter();
+      return;
+    }
     this.sound.play('sfx_page_turn', { volume: 0.55 });
     if (this._idx < this._panels.length - 1) {
       this._idx++;
@@ -235,8 +254,40 @@ export default class BossIntroScene extends Phaser.Scene {
     }
   }
 
-  _stars(W, H) {
-    for (let i = 0; i < 50; i++) {
+  // ── Typewriter helpers ───────────────────────────────────────────────────
+  _startTypewriter(textObj, fullText, msPerChar = 28) {
+    this._typewriterDone = false;
+    this._typewriterFull = fullText;
+    this._typewriterObj  = textObj;
+    let i = 0;
+    this._typewriterTimer = this.time.addEvent({
+      delay:    msPerChar,
+      repeat:   fullText.length - 1,
+      callback: () => {
+        i++;
+        textObj.setText(fullText.slice(0, i));
+        if (i >= fullText.length) this._typewriterDone = true;
+      },
+    });
+  }
+
+  _completeTypewriter() {
+    if (this._typewriterTimer) { this._typewriterTimer.remove(false); this._typewriterTimer = null; }
+    if (this._typewriterObj && this._typewriterFull != null) {
+      this._typewriterObj.setText(this._typewriterFull);
+    }
+    this._typewriterDone = true;
+  }
+
+  _clearTypewriter() {
+    if (this._typewriterTimer)    { this._typewriterTimer.remove(false);    this._typewriterTimer    = null; }
+    if (this._autoAdvanceTimer)   { this._autoAdvanceTimer.remove(false);   this._autoAdvanceTimer   = null; }
+    this._typewriterDone = true;
+    this._typewriterObj  = null;
+    this._typewriterFull = null;
+  }
+
+  _stars(W, H) {    for (let i = 0; i < 50; i++) {
       const s = this.add.circle(
         Phaser.Math.Between(0, W),
         Phaser.Math.Between(0, H),

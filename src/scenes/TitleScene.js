@@ -304,19 +304,8 @@ export default class TitleScene extends Phaser.Scene {
   _startAtWorld(regionId) {
     this._closeWorldSelect();
 
-    // Reset to a clean slate
+    // Reset to a clean slate, then set up the chosen starting world
     GameState.reset();
-
-    if (regionId === 0) {
-      // World 1 plays the story intro normally
-      this.cameras.main.fadeOut(300, 0, 0, 0);
-      this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start('StoryScene');
-      });
-      return;
-    }
-
-    // Unlock all bosses before the chosen world
     for (let i = 0; i < regionId; i++) {
       if (!GameState.defeatedBosses.includes(i)) {
         GameState.defeatedBosses.push(i);
@@ -325,9 +314,10 @@ export default class TitleScene extends Phaser.Scene {
     GameState.currentRegion = regionId;
     GameState.save();
 
+    // Always show the story intro — _finish() routes to the right world after
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.cameras.main.once('camerafadeoutcomplete', () => {
-      this.scene.start('ExploreScene', { regionId });
+      this.scene.start('StoryScene');
     });
   }
 

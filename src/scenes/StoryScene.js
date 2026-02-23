@@ -28,35 +28,53 @@ const PAGES = [
   {
     bg:         0x0A1520,
     title:      'Somewhere peaceful.  For now.',
-    body:       'In the village of Sunny Paws — pop. 214, or 213 if you didn\'t count\nMr. Threadwick\'s goldfish, and most people didn\'t — there lived a\nsmall grey cat named Mimi.\n\nShe was clever, brave, and deeply attached to her yarn ball.\nThis is the story of what happened when someone made the mistake\nof taking it.',
+    body: [
+      'In the village of Sunny Paws —\npop. 214, or 213 if you didn\'t count\nMr. Threadwick\'s goldfish.',
+      'There lived a small grey cat\nnamed Mimi.\n\nShe had one treasure: her yarn ball. 🧶',
+    ],
     art:        'mimi_and_yarn',
     titleColor: '#88DDFF',
   },
   {
     bg:         0x1A0808,
     title:      '🦊  Enter Fenwick  (Stage Left, Dramatically)',
-    body:       'Fenwick the Sly Fox had stolen many things over the years.\nThree crowns.  Seventeen encyclopaedias.\nThe village\'s second-best pie recipe.\n\nHe had never made an enemy worth worrying about.\nThen he stole Mimi\'s yarn ball.\nHe had absolutely no idea what he had started.',
+    body: [
+      'Fenwick the Sly Fox had stolen many things.\nThree crowns.  Two pie recipes.  One royal hat.',
+      'He had never made an enemy worth worrying about.\nThen he stole Mimi\'s yarn ball.',
+      'Big mistake.',
+    ],
     art:        'mimi_vs_fenwick',
     titleColor: '#FF8844',
   },
   {
     bg:         0x080808,
     title:      'Five Kingdoms.  Five Champions.',
-    body:       'Fenwick\'s shadow stretched across five kingdoms,\neach sealed behind a Math Ward.\n\nWarriors tried.  Adventurers tried.\nOne confused accountant tried — and sent an apology note.',
+    body: [
+      'Fenwick\'s shadow fell across five kingdoms,\neach locked behind a Math Seal.',
+      'Warriors tried.  Heroes tried.\nEven a very confused accountant tried.',
+      'All of them failed.',
+    ],
     art:        'kingdoms_cast',
     titleColor: '#CC88FF',
   },
   {
     bg:         0x08101A,
-    title:      '✨  The Only Language Fenwick Fears',
-    body:       'Every seal, every locked gate bends to one rule:\n\nAnswer correctly → the shield SHATTERS!\nAnswer wrong → Mimi takes damage.\n\nFive lands.  Five seals.  One yarn ball.',
+    title:      '✨  The Only Rule That Matters',
+    body: [
+      'Every seal bends to one rule:',
+      'Answer correctly → the shield SHATTERS! ✨\nAnswer wrong → Mimi takes damage.',
+      'Five lands.  Five seals.  One yarn ball.',
+    ],
     art:        'answer_shield',
     titleColor: '#88FFCC',
   },
   {
     bg:         0x0A190A,
     title:      '🐱  One Cat.  One Quest.  One Yarn Ball.',
-    body:       'The yarn ball isn\'t going to rescue itself.  🧶\n\nHelp Mimi brave five kingdoms, defeat five champions,\nclimb to the top of the Shadow Castle —\nand remind a certain fox exactly how this ends.',
+    body: [
+      'The yarn ball isn\'t going to rescue itself.  🧶',
+      'Help Mimi battle through five kingdoms,\nclimb to the top of the Shadow Castle —\nand remind a certain fox exactly how this ends.',
+    ],
     art:        'mimi_and_fenwick_final',
     titleColor: '#FFDD44',
     last:       true,
@@ -75,8 +93,10 @@ export default class StoryScene extends Phaser.Scene {
 
   // ── Build / re-build the current page ───────────────────────────────────
   _draw() {
+    this._clearTypewriter();
     this.tweens.killAll();
     this.children.removeAll(true);
+    this._beatIdx = 0;
 
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
@@ -104,59 +124,58 @@ export default class StoryScene extends Phaser.Scene {
     // Zone B — art
     this._drawArt(p, W, H);
 
-    // Zone C — body text on dark pill
-    // Art pages:    fixed 160 px strip just below the art zone (H*0.525–H*0.792)
-    // No-art pages: tall pill fills most of the screen (H*0.18 – H*0.79)
+    // Zone C — body text on dark pill (short per beat — no overflow possible)
     const hasArt    = p.art !== 'none';
     const pillW     = W - 56;
     const pillTopY  = hasArt ? H * TEXT_TOP_Y : H * 0.18;
-    const pillH     = hasArt ? 220 : (H * BTN_Y - 25 - 44 - H * 0.18);
+    const pillH     = hasArt ? 120 : (H * BTN_Y - 25 - 44 - H * 0.18);
     const pillY     = pillTopY + pillH / 2;
     const pillBorder = parseInt((p.titleColor ?? '#334466').replace('#', ''), 16);
 
     this.add.rectangle(W / 2, pillY, pillW, pillH, 0x000000, 0.55)
       .setStrokeStyle(1.5, pillBorder, 0.38);
-    this.add.text(W / 2, pillTopY + 18, p.body, {
-      fontSize: '18px', color: '#DDEEFF', fontFamily: "'Nunito', Arial, sans-serif",
-      align: 'center', stroke: '#000000', strokeThickness: 2,
-      lineSpacing: 7, wordWrap: { width: pillW - 40 },
-    }).setOrigin(0.5, 0);
+    const textX = W / 2 - pillW / 2 + 20;
+    this._bodyText = this.add.text(textX, pillTopY + 16, '', {
+      fontSize: '20px', color: '#DDEEFF', fontFamily: "'Nunito', Arial, sans-serif",
+      align: 'left', stroke: '#000000', strokeThickness: 2,
+      lineSpacing: 8, wordWrap: { width: pillW - 40 },
+    }).setOrigin(0, 0);
 
-    // Zone D — navigation button
-    const isLast  = !!p.last;
-    const label   = isLast ? '🎮  Begin Adventure!' : 'Next  ▶';
-    const bgColor = isLast ? 0x1A3A0A : 0x0A1A3A;
-    const stroke  = isLast ? 0x66FF44  : 0x4488FF;
-
-    // Button shadow
+    // Zone D — navigation button (label/style updated per beat in _showBeat)
+    const isLastPage = !!p.last;
     this.add.rectangle(W / 2 + 2, H * BTN_Y + 3, 302, 50, 0x000000, 0.35);
-    const btn = this.add.rectangle(W / 2, H * BTN_Y, 302, 50, bgColor)
-      .setStrokeStyle(2, stroke)
+    this._btn = this.add.rectangle(W / 2, H * BTN_Y, 302, 50, 0x0A1A3A)
+      .setStrokeStyle(2, 0x4488FF)
       .setInteractive({ useHandCursor: true });
-    // Top bevel
     this.add.rectangle(W / 2, H * BTN_Y - 13, 294, 10, 0xFFFFFF, 0.07);
-    const btnTxt = this.add.text(W / 2, H * BTN_Y, label, {
+    this._btnTxt = this.add.text(W / 2, H * BTN_Y, 'Continue  ▶', {
       fontSize: '21px', color: '#FFFFFF',
       fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif",
     }).setOrigin(0.5);
+    this._btnBase  = 0x0A1A3A;
+    this._btnHover = 0x162A5A;
 
-    btn.on('pointerover', () => { btn.setFillStyle(isLast ? 0x2A5A10 : 0x162A5A); btnTxt.setScale(1.04); });
-    btn.on('pointerout',  () => { btn.setFillStyle(bgColor); btnTxt.setScale(1); });
-    btn.on('pointerdown', () => this._advance());
+    this._btn.on('pointerover', () => { this._btn.setFillStyle(this._btnHover); this._btnTxt.setScale(1.04); });
+    this._btn.on('pointerout',  () => { this._btn.setFillStyle(this._btnBase);  this._btnTxt.setScale(1); });
+    this._btn.on('pointerdown', () => this._advance());
 
-    // Skip link
-    if (!isLast) {
-      const skip = this.add.text(W - 16, H - 8, 'Skip story →', {
-        fontSize: '12px', color: '#445566', fontFamily: "'Nunito', Arial, sans-serif",
-      }).setOrigin(1, 1).setInteractive({ useHandCursor: true });
-      skip.on('pointerover', () => skip.setColor('#778899'));
-      skip.on('pointerout',  () => skip.setColor('#445566'));
+    this._showBeat();
+
+    // Skip link (visible pill button, top-right)
+    if (!isLastPage) {
+      const skipGfx = this.add.graphics();
+      skipGfx.fillStyle(0x0A1A2A, 0.85);
+      skipGfx.fillRoundedRect(W - 96, 10, 82, 26, 8);
+      skipGfx.lineStyle(1, 0x445566, 0.9);
+      skipGfx.strokeRoundedRect(W - 96, 10, 82, 26, 8);
+      const skip = this.add.text(W - 55, 23, 'Skip story →', {
+        fontSize: '13px', color: '#7799BB', fontFamily: "'Nunito', Arial, sans-serif",
+      }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+      skip.on('pointerover', () => skip.setColor('#AACCEE'));
+      skip.on('pointerout',  () => skip.setColor('#7799BB'));
       skip.on('pointerdown', () => this._finish());
     }
 
-    // Keyboard shortcuts
-    this.input.keyboard.once('keydown-ENTER', () => this._advance());
-    this.input.keyboard.once('keydown-SPACE', () => this._advance());
   }
 
   // ── Art zone renderer ────────────────────────────────────────────────────
@@ -325,17 +344,84 @@ export default class StoryScene extends Phaser.Scene {
     });
   }
 
+  _showBeat() {
+    const p          = PAGES[this._idx];
+    const beats      = p.body;
+    const isLastBeat = this._beatIdx >= beats.length - 1;
+    const isFinal    = isLastBeat && !!p.last;
+
+    const label    = isFinal ? '🎮  Begin Adventure!' : isLastBeat ? 'Next  ▶' : 'Continue  ▶';
+    const bgColor  = isFinal ? 0x1A3A0A : 0x0A1A3A;
+    const stroke   = isFinal ? 0x66FF44  : 0x4488FF;
+    this._btnBase  = bgColor;
+    this._btnHover = isFinal ? 0x2A5A10 : 0x162A5A;
+    this._btn.setFillStyle(bgColor);
+    this._btn.setStrokeStyle(2, stroke);
+    this._btnTxt.setText(label);
+
+    this._bodyText.setText('');
+    this._startTypewriter(this._bodyText, beats[this._beatIdx], 32);
+    this.input.keyboard.once('keydown-ENTER', () => this._advance());
+    this.input.keyboard.once('keydown-SPACE', () => this._advance());
+  }
+
   _advance() {
+    if (!this._typewriterDone) {
+      this._completeTypewriter();
+      return;
+    }
+    const beats = PAGES[this._idx].body;
+    if (this._beatIdx < beats.length - 1) {
+      this._beatIdx++;
+      this._showBeat();
+      return;
+    }
     this.sound.play('sfx_page_turn', { volume: 0.6 });
     if (PAGES[this._idx].last) { this._finish(); }
     else { this._idx++; this._draw(); }
   }
 
+  // ── Typewriter helpers ───────────────────────────────────────────────────
+  _startTypewriter(textObj, fullText, msPerChar = 35) {
+    this._typewriterDone = false;
+    this._typewriterFull = fullText;
+    this._typewriterObj  = textObj;
+    let i = 0;
+    this._typewriterTimer = this.time.addEvent({
+      delay:    msPerChar,
+      repeat:   fullText.length - 1,
+      callback: () => {
+        i++;
+        textObj.setText(fullText.slice(0, i));
+        if (i >= fullText.length) this._typewriterDone = true;
+      },
+    });
+  }
+
+  _completeTypewriter() {
+    if (this._typewriterTimer) { this._typewriterTimer.remove(false); this._typewriterTimer = null; }
+    if (this._typewriterObj && this._typewriterFull != null) {
+      this._typewriterObj.setText(this._typewriterFull);
+    }
+    this._typewriterDone = true;
+  }
+
+  _clearTypewriter() {
+    if (this._typewriterTimer) { this._typewriterTimer.remove(false); this._typewriterTimer = null; }
+    this._typewriterDone = true;
+    this._typewriterObj  = null;
+    this._typewriterFull = null;
+  }
+
   _finish() {
-    GameState.reset();
+    const regionId = GameState.currentRegion ?? 0;
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.cameras.main.once('camerafadeoutcomplete', () => {
-      this.scene.start('OverworldScene');
+      if (regionId > 0) {
+        this.scene.start('ExploreScene', { regionId });
+      } else {
+        this.scene.start('OverworldScene');
+      }
     });
   }
 

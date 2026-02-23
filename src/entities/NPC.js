@@ -167,6 +167,7 @@ export default class NPC {
    */
   update() {
     if (this._shadow) this._shadow.setPosition(this.sprite.x, this.sprite.y + 14);
+    if (this._frozen) return;
 
     const body = this.sprite.body;
     if (!body) return;
@@ -188,6 +189,26 @@ export default class NPC {
     } else if (!isBlocked) {
       this._blocked = false;
     }
+  }
+
+  /**
+   * Freeze Mewton in place during conversation — stops wander AI and movement.
+   */
+  freeze() {
+    if (this._frozen) return;
+    this._frozen = true;
+    if (this._thinkTimer) { this._thinkTimer.remove(false); this._thinkTimer = null; }
+    this._stopMoving();
+  }
+
+  /**
+   * Resume wandering after a freeze. Restarts the think-timer.
+   */
+  unfreeze() {
+    if (!this._frozen) return;
+    this._frozen = false;
+    const delay = THINK_MIN_MS + Math.random() * (THINK_MAX_MS - THINK_MIN_MS);
+    this._thinkTimer = this._scene.time.delayedCall(delay, this._think, [], this);
   }
 
   /**

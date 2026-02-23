@@ -249,7 +249,7 @@ export default class Enemy {
    */
   update() {
     if (this._shadow) this._shadow.setPosition(this.sprite.x, this.sprite.y + 16);
-    if (this._touched) return;
+    if (this._touched || this._frozen) return;
 
     // ── Aggro / leash logic ────────────────────────────────────────────────
     if (this._mimiSprite) {
@@ -295,6 +295,30 @@ export default class Enemy {
     if (hdist > WANDER_RADIUS) {
       this._setVelocityAngle(Math.atan2(hdy, hdx));
     }
+  }
+
+  /**
+   * Freeze the enemy in place during NPC conversations.
+   * Cancels the patrol/chase timer and zeroes velocity.
+   */
+  freeze() {
+    if (this._frozen) return;
+    this._frozen = true;
+    if (this._thinkTimer) { this._thinkTimer.remove(false); this._thinkTimer = null; }
+    this.sprite.body.setVelocity(0, 0);
+    this._enterIdleAnim();
+  }
+
+  /**
+   * Resume AI after a freeze. Restarts the think-timer after a short
+   * staggered delay so enemies don't all lurch to life simultaneously.
+   */
+  unfreeze() {
+    if (!this._frozen) return;
+    this._frozen = false;
+    this._thinkTimer = this.scene.time.delayedCall(
+      500 + Math.random() * 1000, this._think, [], this,
+    );
   }
 
   /**

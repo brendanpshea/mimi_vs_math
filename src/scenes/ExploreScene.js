@@ -18,10 +18,8 @@ import Enemy       from '../entities/Enemy.js';
 import NPC         from '../entities/NPC.js';
 import HUD         from '../ui/HUD.js';
 import DialogBox   from '../ui/DialogBox.js';
-import NPC_JOKES            from '../data/npcJokes.json' with { type: 'json' };
-import { generateQuestion } from '../math/QuestionBank.js';
-import { getChoices }       from '../math/Distractors.js';
-import ITEMS                from '../data/items.js';
+import NPC_JOKES from '../data/npcJokes.json' with { type: 'json' };
+import ITEMS     from '../data/items.js';
 import { openSettings, closeSettings } from '../ui/SettingsOverlay.js';
 
 //  World constants 
@@ -71,6 +69,7 @@ export default class ExploreScene extends Phaser.Scene {
     this._bossBattleStarted = false;
     this._bossOpen          = false;
     this._exitConfirm       = null;
+    this._treatGiven        = false;
   }
 
   create() {
@@ -819,14 +818,22 @@ export default class ExploreScene extends Phaser.Scene {
           this._mewtonBeacon = null;
         }
 
-        const rd          = this.regionData;
-        const bossBeaten  = GameState.hasDefeatedBoss(regionId);
-        const boonGot     = !!GameState.npcBoonReceived?.[regionId];
-        const spawns      = POSITIONS[regionId].enemySpawns;
-        const allClear    = spawns.every((s, i) =>
+        // Freeze Mewton and all enemies so nothing wanders off during conversation
+        this._npc.freeze();
+        this._enemies.forEach(e => e.freeze());
+        const wrappedDone = () => {
+          this._npc.unfreeze();
+          this._enemies.forEach(e => e.unfreeze());
+          done();
+        };
+
+        const rd         = this.regionData;
+        const bossBeaten = GameState.hasDefeatedBoss(regionId);
+        const spawns     = POSITIONS[regionId].enemySpawns;
+        const allClear   = spawns.every((s, i) =>
           GameState.isEnemyDefeated(regionId, s.id + i));
 
-        this._mewtonMenu(done, rd, { bossBeaten, boonGot, allClear });
+        this._mewtonMenu(wrappedDone, rd, { bossBeaten, allClear });
       },
     );
     this._npc.registerOverlap(this.mimi.sprite);
@@ -1132,13 +1139,15 @@ export default class ExploreScene extends Phaser.Scene {
   /**
    * Shows a context-aware greeting then the player-driven topic menu.
    * @param {Function} done
-   * @param {object}   rd          - regionData
-   * @param {object}   flags       - { bossBeaten, boonGot, allClear }
+   * @param {object}   rd     - regionData
+   * @param {object}   flags  - { bossBeaten, allClear }
    */
-  _mewtonMenu(done, rd, { bossBeaten, boonGot, allClear }) {
+  _mewtonMenu(done, rd, { bossBeaten, allClear }) {
     const SPEAKER  = '🧙 Mewton';
     const PORTRAIT = 'npc_wizard';
     const rid      = this.regionId;
+
+    const firstVisit = !GameState.npcVisited?.[rid];
 
     // Mark visited
     if (!GameState.npcVisited) GameState.npcVisited = {};
@@ -1148,27 +1157,30 @@ export default class ExploreScene extends Phaser.Scene {
     // Context-aware greeting
     let greeting;
     if (bossBeaten) {
-      greeting = `You defeated ${rd.bossName ?? 'the boss'}! I knew you would manage it.\n\n...I also had a contingency plan. We do not need to discuss the contingency plan.`;
+      greeting = `You defeated ${rd.bossName ?? 'the boss'}! I knew you would manage it.\n\n...I had a contingency plan. We do not need to discuss the contingency plan.`;
     } else if (allClear) {
-      greeting = 'Every enemy cleared — well done! The boss door is open.\n\nI predicted this outcome. I said 50% probability, but that still counts.';
-    } else if (boonGot) {
-      greeting = `Back again? Good. The boss won't defeat itself.\n\nCan I help with anything?`;
+      greeting = `Every enemy cleared — boss door is open.\n\nI predicted this. 50% probability still counts.`;
+    } else if (firstVisit) {
+      greeting = `Ah — Mimi! I'm Mewton. Wizard and cat-genius.\n\nWhat can I do for you?`;
     } else {
-      greeting = `Ah — Mimi! I'm Mewton. Mathematician, wizard, and the only certified cat-genius in this region.\n\nWhat can I do for you?`;
+      greeting = `Back again? The boss won't defeat itself.\n\nCan I help?`;
     }
 
     this.dialog.show(greeting, () => {
       const labels = [
         '😂 Tell me a joke',
         '📖 About the boss',
-        '✏️ Lesson + challenge',
+        ...(!this._treatGiven ? ['🐟 Can I have a treat?'] : []),
         '👋 All good, thanks!',
       ];
       this.dialog.showChoice('What would you like to know?', labels, (idx) => {
-        if      (idx === 0) this._mewtonJoke(done);
-        else if (idx === 1) this._mewtonBossStory(done, rd);
-        else if (idx === 2) this._mewtonLesson(done, rd, boonGot);
-        else                done();
+        const treatIdx = this._treatGiven ? -1 : 2;
+        const byeIdx   = labels.length - 1;
+        if      (idx === 0)       this._mewtonJoke(done);
+        else if (idx === 1)       this._mewtonBossStory(done, rd);
+        else if (idx === treatIdx) this._mewtonTreat(done, rd);
+        else if (idx === byeIdx)  done();
+        else                      done();
       }, SPEAKER, PORTRAIT);
     }, SPEAKER, PORTRAIT);
   }
@@ -1191,151 +1203,34 @@ export default class ExploreScene extends Phaser.Scene {
   }
 
   /**
-   * Lesson pages → practice question (if boon not yet awarded) → boon → done.
-   * If boon already received, shows the lesson pages followed by the hint.
+   * Give Mimi the region boon item as a treat — once per ExploreScene visit.
+   * Tracked via this._treatGiven (scene-local, resets on re-entry).
+   * @param {Function} done
+   * @param {object}   rd - regionData
    */
-  _mewtonLesson(done, rd, boonAlreadyGot) {
+  _mewtonTreat(done, rd) {
     const SPEAKER  = '🧙 Mewton';
     const PORTRAIT = 'npc_wizard';
-    this._dialogChain(rd.npcLesson ?? [], SPEAKER, PORTRAIT, () => {
-      if (boonAlreadyGot) {
-        this.dialog.show(`💡 Refresher: ${rd.npcHint}`, done, SPEAKER, PORTRAIT);
-      } else {
-        this._mewtonPracticeQuestion(rd.npcQuizTopic, (correct) => {
-          this._mewtonAwardBoon(rd.npcBoon, correct, SPEAKER, PORTRAIT, done);
-        });
-      }
-    });
-  }
+    const boonId   = rd.npcBoon;
+    const item     = ITEMS[boonId];
 
-  /**
-   * Mini quiz overlay (4-button MCQ) separate from the DialogBox.
-   * Generates a question from the given topic, shows a centred panel,
-   * and calls onResult(isCorrect) after the answer animation completes.
-   * @param {string}   topic
-   * @param {Function} onResult
-   */
-  _mewtonPracticeQuestion(topic, onResult) {
-    const W      = this.cameras.main.width;
-    const FONT   = "'Nunito', Arial, sans-serif";
-    const DEPTH  = 90;
-    const panelX = W / 2;
-    const panelY = 262;
-    const PW     = 544;
-    const PH     = 284;
-    const panelTop = panelY - PH / 2;   // ≈ 120
+    if (!item) {
+      this.dialog.show(
+        "Hmm — I seem to have misplaced my treat supply. Come back another time!",
+        done, SPEAKER, PORTRAIT,
+      );
+      return;
+    }
 
-    const q       = generateQuestion(topic, 1);
-    const choices = getChoices(q);
-    const objs    = [];
-    const make    = (o) => { objs.push(o); return o; };
-
-    make(this.add.rectangle(panelX, panelY, PW, PH, 0x000C22, 0.97)
-      .setScrollFactor(0).setDepth(DEPTH).setStrokeStyle(2, 0xFFCC44));
-
-    make(this.add.text(panelX, panelTop + 22, '⚡ Mewton\'s Challenge!', {
-      fontSize: '16px', color: '#FFCC44', fontFamily: FONT, fontStyle: 'bold',
-    }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(DEPTH + 1));
-
-    make(this.add.rectangle(panelX, panelTop + 47, PW - 32, 1, 0x4488FF)
-      .setScrollFactor(0).setDepth(DEPTH + 1));
-
-    // Question text — bright contrasting yellow, stroke, top-anchored origin so
-    // word-wrap expands downward predictably rather than shifting the anchor.
-    make(this.add.text(panelX, panelTop + 60, q.text, {
-      fontSize: '17px', color: '#FFFF66', fontFamily: FONT, fontStyle: 'bold',
-      wordWrap: { width: PW - 56 },
-      stroke: '#001133', strokeThickness: 3,
-    }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(DEPTH + 3));
-
-    const feedbackText = make(this.add.text(panelX, panelTop + 256, '', {
-      fontSize: '14px', fontStyle: 'bold', color: '#FFFFFF', fontFamily: FONT,
-    }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(DEPTH + 2));
-
-    const btnPositions = [
-      [panelX - 132, panelTop + 170],
-      [panelX + 132, panelTop + 170],
-      [panelX - 132, panelTop + 224],
-      [panelX + 132, panelTop + 224],
-    ];
-
-    const btnBgs  = [];
-    const btnTxts = [];
-    let answered  = false;
-
-    choices.forEach((choice, i) => {
-      const [bx, by] = btnPositions[i];
-      const bg = make(this.add.rectangle(bx, by, 242, 36, 0x0A1A44)
-        .setScrollFactor(0).setDepth(DEPTH + 1).setStrokeStyle(1, 0x4488FF)
-        .setInteractive({ useHandCursor: true }));
-      const txt = make(this.add.text(bx, by, choice.text, {
-        fontSize: '14px', color: '#FFFFFF', fontFamily: FONT,
-      }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(DEPTH + 2));
-
-      btnBgs.push(bg);
-      btnTxts.push(txt);
-
-      bg.on('pointerover', () => { if (!answered) bg.setFillStyle(0x1A3A77); });
-      bg.on('pointerout',  () => { if (!answered) bg.setFillStyle(0x0A1A44); });
-      bg.on('pointerdown', () => {
-        if (answered) return;
-        answered = true;
-
-        if (choice.correct) {
-          bg.setFillStyle(0x114411).setStrokeStyle(2, 0x44FF44);
-          txt.setColor('#88FF88');
-          feedbackText.setText('✓ Correct! Well done, Mimi!').setColor('#88FF88');
-        } else {
-          bg.setFillStyle(0x441111).setStrokeStyle(2, 0xFF4444);
-          txt.setColor('#FF8888');
-          choices.forEach((c, j) => {
-            if (c.correct) {
-              btnBgs[j].setFillStyle(0x114411).setStrokeStyle(2, 0x44FF44);
-              btnTxts[j].setColor('#88FF88');
-            }
-          });
-          feedbackText.setText('✗ Not quite — the boon is yours either way!').setColor('#FF8888');
-        }
-
-        this.time.delayedCall(1500, () => {
-          this.tweens.add({
-            targets: objs, alpha: 0, duration: 350, ease: 'Sine.easeIn',
-            onComplete: () => { objs.forEach(o => o.destroy()); onResult(choice.correct); },
-          });
-        });
-      });
-    });
-  }
-
-  /**
-   * Award the region boon item, mark npcBoonReceived, refresh HUD, then show
-   * a dialog confirming the gift before calling done().
-   * @param {string}   boonId
-   * @param {boolean}  wasCorrect
-   * @param {string}   speaker
-   * @param {string}   portrait
-   * @param {Function} done
-   */
-  _mewtonAwardBoon(boonId, wasCorrect, speaker, portrait, done) {
-    const item = ITEMS[boonId];
-    if (!item) { done(); return; }
-
-    const rid = this.regionId;
+    this._treatGiven = true;
     GameState.addItem(boonId);
-    if (!GameState.npcBoonReceived) GameState.npcBoonReceived = {};
-    GameState.npcBoonReceived[rid] = true;
     GameState.save();
-
     this._showPickupToast(boonId);
     this.hud.refresh();
 
-    const intro = wasCorrect
-      ? 'Excellent! You answered correctly.\n\nAs promised — here is your reward:'
-      : 'Not to worry — learning was the real achievement.\n\nEither way, this belongs to you:';
-
     this.dialog.show(
-      `${intro}\n\n${item.emoji ?? '✨'} ${item.name} — ${item.description}`,
-      done, speaker, portrait,
+      `Here — take this. Don't tell anyone I'm a soft touch.\n\n${item.emoji ?? '✨'} ${item.name} — ${item.description}`,
+      done, SPEAKER, PORTRAIT,
     );
   }
 

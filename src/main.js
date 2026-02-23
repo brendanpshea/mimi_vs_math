@@ -18,8 +18,6 @@ import BestiaryScene    from './scenes/BestiaryScene.js';
 
 const config = {
   type: Phaser.AUTO,          // WebGL with Canvas fallback
-  width: 800,
-  height: 600,
   backgroundColor: '#0D0D2A',
 
   physics: {
@@ -28,8 +26,12 @@ const config = {
   },
 
   scale: {
-    mode: Phaser.Scale.FIT,           // scale to window, maintain aspect ratio
+    mode: Phaser.Scale.EXPAND,        // fill screen; logical size adjusts to viewport
     autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: 800,
+    height: 600,
+    min: { width: 640, height: 480 },
+    max: { width: 1366, height: 768 },
   },
 
   scene: [

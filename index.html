@@ -43,6 +43,48 @@
       text-align: center;
       padding: 2rem;
     }
+
+    /* ── Portrait-mode rotation prompt ──────────────────────────────────── */
+    #rotate-prompt {
+      display: none;          /* hidden in landscape */
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #0a0a1a;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      color: #fff;
+      font-family: 'Nunito', Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    #rotate-prompt .rotate-icon {
+      font-size: 72px;
+      animation: rotate-hint 2s ease-in-out infinite;
+      display: inline-block;
+      transform-origin: center;
+    }
+    @keyframes rotate-hint {
+      0%,  40% { transform: rotate(0deg);   }
+      60%, 100% { transform: rotate(90deg); }
+    }
+    #rotate-prompt h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #FFD966;
+      margin: 0;
+    }
+    #rotate-prompt p {
+      font-size: 1rem;
+      color: #AABBDD;
+      margin: 0;
+    }
+    /* Show only in portrait on touch devices */
+    @media (orientation: portrait) and (hover: none) {
+      #rotate-prompt { display: flex; }
+    }
   </style>
 
   <!--
@@ -64,6 +106,14 @@
 </head>
 <body>
   <div id="game-container"></div>
+
+  <!-- Portrait-mode prompt (shown via CSS media query on touch devices) -->
+  <div id="rotate-prompt" aria-live="polite" role="alert">
+    <span class="rotate-icon">📱</span>
+    <h2>Please rotate your device</h2>
+    <p>Mimi vs. Math plays best in landscape mode.</p>
+  </div>
+
   <div id="no-webgl">
     <h2>⚠ WebGL not supported</h2>
     <p>Please use a modern browser (Chrome, Firefox, Edge, Safari 16+) to play Mimi vs. Math.</p>

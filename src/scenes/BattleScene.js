@@ -121,12 +121,17 @@ export default class BattleScene extends Phaser.Scene {
   // ── Layout ────────────────────────────────────────────────────────────────
 
   _buildLayout(W, H) {
+    // Content column — keep layout compact on wide/16:9 screens.
+    const CW = Math.min(W, 820);
+    const LC = W / 2 - CW * 0.22;   // Mimi  (left)  column centre
+    const RC = W / 2 + CW * 0.22;   // Enemy (right) column centre
+    const OX = W / 2 - CW / 2;      // left edge of content area
     // ── Enemy side ──────────────────────────────────────────────────────
 
     // Boss sprites are larger and sit slightly higher so the bottom edge
     // clears the name text at y=144.  All sizes are display-only — no
     // physics body is involved, so no collision box to worry about.
-    const enemyY  = this.isBoss ? 72  : 88;
+    const enemyY  = this.isBoss ? H * 0.12 : H * 0.155;
     const enemySz = this.isBoss ? 140 : 100;
 
     // Region-specific aura colour and sprite tint used for bosses.
@@ -137,20 +142,20 @@ export default class BattleScene extends Phaser.Scene {
 
     if (this.isBoss) {
       // Large soft filled glow behind the boss
-      const aura = this.add.ellipse(W * 0.72, enemyY, 172, 172, auraColor, 0.22).setDepth(2);
+      const aura = this.add.ellipse(RC, enemyY, 172, 172, auraColor, 0.22).setDepth(2);
       this.tweens.add({
         targets: aura, scaleX: 1.15, scaleY: 1.15, alpha: 0.08,
         duration: 880, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
       });
       // Crisp outer ring that pulses independently
-      const ring = this.add.ellipse(W * 0.72, enemyY, 182, 182).setStrokeStyle(2, auraColor, 0.55).setDepth(2);
+      const ring = this.add.ellipse(RC, enemyY, 182, 182).setStrokeStyle(2, auraColor, 0.55).setDepth(2);
       this.tweens.add({
         targets: ring, scaleX: 1.07, scaleY: 1.07, alpha: 0.28,
         duration: 1250, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
       });
     }
 
-    this.enemySprite = this.add.image(W * 0.72, enemyY, this.enemyData.id)
+    this.enemySprite = this.add.image(RC, enemyY, this.enemyData.id)
       .setDisplaySize(enemySz, enemySz).setDepth(3);
     if (this._bossTint) this.enemySprite.setTint(this._bossTint);
 
@@ -178,24 +183,24 @@ export default class BattleScene extends Phaser.Scene {
       delay:    400,
     });
 
-    this.add.text(W * 0.72, 144, this.enemyData.name, {
+    this.add.text(RC, H * 0.255, this.enemyData.name, {
       ...TEXT_STYLE(16, '#FFCCEE', true),
       stroke: '#000000', strokeThickness: 4,
     }).setOrigin(0.5).setDepth(4);
 
-    this.enemyHPBar = this._makeHPBar(W * 0.72, 162, this.enemyData.hp, 0xCC3333);
+    this.enemyHPBar = this._makeHPBar(RC, H * 0.283, this.enemyData.hp, 0xCC3333);
 
     if (this.isBoss) {
-      this.add.text(W * 0.72, 10, '⚠ BOSS BATTLE', TEXT_STYLE(15, '#FF6633', true))
+      this.add.text(RC, H * 0.018, '⚠ BOSS BATTLE', TEXT_STYLE(15, '#FF6633', true))
         .setOrigin(0.5, 0);
     }
     if (this.isHardMode) {
-      this.add.text(W * 0.28, 10, '🗡 HARD MODE', TEXT_STYLE(15, '#FF3333', true))
+      this.add.text(LC, H * 0.018, '🗡 HARD MODE', TEXT_STYLE(15, '#FF3333', true))
         .setOrigin(0.5, 0);
     }
 
     // ── Player (Mimi) side ──────────────────────────────────────────────
-    this.mimiSprite = this.add.image(W * 0.28, 88, 'mimi_battle')
+    this.mimiSprite = this.add.image(LC, H * 0.155, 'mimi_battle')
       .setDisplaySize(100, 100).setFlipX(true);
     // Store home position so attack animation can return precisely
     this._mimiBaseX = this.mimiSprite.x;
@@ -212,15 +217,15 @@ export default class BattleScene extends Phaser.Scene {
       delay:    200,
     });
 
-    this.add.text(W * 0.28, 144, 'Mimi', {
+    this.add.text(LC, H * 0.255, 'Mimi', {
       ...TEXT_STYLE(16, '#AAFFCC', true),
       stroke: '#000000', strokeThickness: 4,
     }).setOrigin(0.5).setDepth(4);
-    this.playerHPBar = this._makeHPBar(W * 0.28, 162, GameState.maxHP, 0x33CC66);
+    this.playerHPBar = this._makeHPBar(LC, H * 0.283, GameState.maxHP, 0x33CC66);
 
     // ── Lives counter (below Mimi HP bar) ──────────────────────────────────
     const livesStr = '🐾 '.repeat(Math.max(0, GameState.lives));
-    this.add.text(W * 0.28, 176, `${livesStr}`, TEXT_STYLE(11, '#FFCC88'))
+    this.add.text(LC, H * 0.308, `${livesStr}`, TEXT_STYLE(11, '#FFCC88'))
       .setOrigin(0.5, 0);
 
         // u2500u2500 Pause button (bottom-left corner) u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500
@@ -246,9 +251,9 @@ export default class BattleScene extends Phaser.Scene {
     if (topicStr) {
       const tpill = this.add.graphics().setDepth(3);
       tpill.fillStyle(0x000000, 0.55);
-      tpill.fillRoundedRect(W / 2 - 130, 8, 260, 24, 6);
+      tpill.fillRoundedRect(W / 2 - 130, H * 0.013, 260, 24, 6);
     }
-    this.add.text(W / 2, 10, topicStr, {
+    this.add.text(W / 2, H * 0.018, topicStr, {
       ...TEXT_STYLE(15, '#AACCFF'),
       stroke: '#000000', strokeThickness: 3,
     }).setOrigin(0.5, 0).setDepth(4);
@@ -257,9 +262,9 @@ export default class BattleScene extends Phaser.Scene {
     // Dark pill behind the question text — guarantees contrast.
     const qbg = this.add.graphics().setDepth(2);
     qbg.fillStyle(0x000000, 0.7);
-    qbg.fillRoundedRect(20, H * 0.43 - 46, W - 40, 92, 12);
+    qbg.fillRoundedRect(OX + 20, H * 0.43 - 46, CW - 40, 92, 12);
     qbg.lineStyle(2, 0xFFCC44, 0.3);
-    qbg.strokeRoundedRect(20, H * 0.43 - 46, W - 40, 92, 12);
+    qbg.strokeRoundedRect(OX + 20, H * 0.43 - 46, CW - 40, 92, 12);
     this.questionBg = qbg;
 
     this.questionText = this.add.text(W / 2, H * 0.43, '', {
@@ -267,7 +272,7 @@ export default class BattleScene extends Phaser.Scene {
       fontFamily: FONT_TITLE,
       stroke: '#000000', strokeThickness: 4,
       align: 'center',
-      wordWrap: { width: W - 80 },
+      wordWrap: { width: CW - 80 },
     }).setOrigin(0.5).setDepth(3);
 
     // ── Answer buttons ──────────────────────────────────────────────────
@@ -283,7 +288,7 @@ export default class BattleScene extends Phaser.Scene {
       stroke: '#000000', strokeThickness: 4,
     }).setOrigin(0.5).setAlpha(0);
 
-    this.streakText = this.add.text(W / 2, 22, '', TEXT_STYLE(16, '#FF9900', true))
+    this.streakText = this.add.text(W / 2, H * 0.038, '', TEXT_STYLE(16, '#FF9900', true))
       .setOrigin(0.5).setAlpha(0);
 
     this._updateHPBar(this.playerHPBar, this.playerHP);
@@ -350,11 +355,12 @@ export default class BattleScene extends Phaser.Scene {
 
   _buildAnswerButtons(W, H) {
     const BW = 170, BH = 58;
+    const CW = Math.min(W, 820);
     const positions = [
-      { x: W * 0.22, y: H * 0.72 },
-      { x: W * 0.44, y: H * 0.72 },
-      { x: W * 0.66, y: H * 0.72 },
-      { x: W * 0.88, y: H * 0.72 },
+      { x: W / 2 - CW * 0.28, y: H * 0.72 },
+      { x: W / 2 - CW * 0.06, y: H * 0.72 },
+      { x: W / 2 + CW * 0.16, y: H * 0.72 },
+      { x: W / 2 + CW * 0.38, y: H * 0.72 },
     ];
 
     this.answerButtons = positions.map((pos, i) => {
@@ -400,7 +406,7 @@ export default class BattleScene extends Phaser.Scene {
   }
 
   _buildTimerBar(W, H) {
-    const TW = W - 60, y = H - 60;
+    const TW = Math.min(W, 820) - 60, y = H - 60;
     // Outer border
     const timerBorder = this.add.graphics();
     timerBorder.fillStyle(0x000000, 0.8);
@@ -817,8 +823,8 @@ export default class BattleScene extends Phaser.Scene {
     const W  = this.cameras.main.width;
     const H  = this.cameras.main.height;
     const D  = 20;
-    const PW = W * 0.88;
-    const PH = 400;
+    const PW = Math.min(W * 0.88, 720);
+    const PH = Math.min(400, H * 0.70);
     const PX = W / 2;
     const PY = H / 2;
 
@@ -855,7 +861,7 @@ export default class BattleScene extends Phaser.Scene {
     // Divider
     const dg1 = add(this.add.graphics().setDepth(D + 2));
     dg1.lineStyle(1, 0x556699, 0.8);
-    dg1.lineBetween(W * 0.12, PY - PH / 2 + 100, W * 0.88, PY - PH / 2 + 100);
+    dg1.lineBetween(PX - PW / 2 + 20, PY - PH / 2 + 100, PX + PW / 2 - 20, PY - PH / 2 + 100);
 
     // Big answer
     add(this.add.text(PX, PY - PH / 2 + 114, `✓  ${ans}`, {
@@ -866,7 +872,7 @@ export default class BattleScene extends Phaser.Scene {
     // Divider
     const dg2 = add(this.add.graphics().setDepth(D + 2));
     dg2.lineStyle(1, 0x556699, 0.8);
-    dg2.lineBetween(W * 0.12, PY - PH / 2 + 162, W * 0.88, PY - PH / 2 + 162);
+    dg2.lineBetween(PX - PW / 2 + 20, PY - PH / 2 + 162, PX + PW / 2 - 20, PY - PH / 2 + 162);
 
     // Explanation body
     add(this.add.text(PX, PY - PH / 2 + 176, explanation, {
@@ -1319,7 +1325,7 @@ export default class BattleScene extends Phaser.Scene {
         }).setOrigin(0.5);
         this.add.text(W / 2, H / 2 - 24,
           'Mimi has exhausted the full allowance of\ncat-based second chances.\nShe retreats to the region entrance to regroup.',
-          { ...TEXT_STYLE(14, '#FFAAAA'), wordWrap: { width: W * 0.66 }, align: 'center' }).setOrigin(0.5);
+          { ...TEXT_STYLE(14, '#FFAAAA'), wordWrap: { width: Math.min(W * 0.66, 500) }, align: 'center' }).setOrigin(0.5);
         this.add.text(W / 2, H / 2 + 28,
           `HP restored to ${GameState.hp}/${GameState.maxHP}`, TEXT_STYLE(13, '#FFAAAA')).setOrigin(0.5);
 

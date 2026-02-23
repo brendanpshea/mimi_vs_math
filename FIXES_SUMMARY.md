@@ -79,6 +79,76 @@ Ten improvements aligned with Grade 1–7 curriculum expectations:
 - `backdropKey`, `auraColor`, and `bossTint` added to every region object.
 - `BattleScene.js` — removed three hardcoded positional arrays; all three values now read from `REGIONS[this.regionId]`.
 
+---
+
+## ✅ Feature: Mewton NPC menu overhaul
+**File**: `src/scenes/ExploreScene.js`, `src/entities/NPC.js`, `src/entities/Enemy.js`
+- Replaced the old lesson/quiz workflow with a 3-option menu: **Tell me a joke**, **Boss story**, **Give treat**.
+- Treat is awarded once per visit (`_treatGiven` flag, resets each `ExploreScene` create).
+- Mewton and all enemies now `freeze()` for the duration of the conversation — Mewton no longer wanders mid-dialogue.
+- `NPC.js` and `Enemy.js` gained public `freeze()` / `unfreeze()` methods; both `update()` loops return early while frozen.
+- Removed `_mewtonLesson`, `_mewtonPracticeQuestion`, `_mewtonAwardBoon`, and the `generateQuestion`/`getChoices` imports.
+
+## ✅ Feature: Explanation overlay redesign
+**File**: `src/scenes/BattleScene.js`, `src/math/Explanations.js`
+- Overlay now slides in with animation and has a structured layout: "💡 Here's the trick!" header, echoed question text (white + stroke on a dark pill), large gold correct-answer display (38 px), and a green "Got it — next question! →" button.
+- `Explanations.js` fixes: placeValue bridge-to-ten bug; addCarry/subBorrow ASCII column art removed; skipCounting corrected; `doubling` and `missingNumber` cases added; warmer generic fallback.
+- Removed duplicate Mimi phrase line and unused `MIMI_PHRASES` array from `BattleScene.js`.
+
+## ✅ Feature: Virtual D-pad for touch devices
+**Files**: `src/ui/VirtualDPad.js` (new), `src/entities/Mimi.js`, `src/scenes/ExploreScene.js`
+- Semi-transparent circular D-pad with four directional buttons.
+- `pointerout` releases direction immediately — prevents stuck movement when a finger slides off.
+- `Mimi.js`: added `_dpad` field, `setDPad()` method, reads D-pad state alongside keyboard.
+- `Mimi.freeze()` calls `_dpad.clearState()` to release any held direction.
+- `ExploreScene.js` instantiates the D-pad and hides it on non-touch devices.
+
+## ✅ Feature: Portrait rotation prompt
+**File**: `index.html`
+- Added `#rotate-prompt` overlay div with CSS.
+- Visible **only** on touch devices in portrait orientation (`@media (orientation: portrait) and (hover: none)`).
+- Animated 📱 icon rotates from portrait to landscape; auto-hides when the user rotates.
+
+## ✅ Feature: Responsive layout — Scale.EXPAND
+**Files**: `src/main.js`, `src/scenes/BattleScene.js`
+- `Scale.FIT` → `Scale.EXPAND`; fixed `width: 800, height: 600` removed from the config root and replaced with `scale.width / scale.height` (base resolution) plus `min: { 640×480 }` and `max: { 1366×768 }` bounds.
+- Game now fills the full browser viewport on any screen size with no black bars.
+
+## ✅ Fix: Battle layout stretched on 16:9 / ultrawide screens
+**File**: `src/scenes/BattleScene.js`
+- Introduced a `CW = Math.min(W, 820)` content-width cap used throughout `_buildLayout`, `_buildAnswerButtons`, `_buildTimerBar`, and `_showExplanation`.
+- Character columns (`LC` / `RC`) derived from `W/2 ± CW * 0.22` — stay centred and compact regardless of canvas width.
+- Answer buttons, question pill, and timer bar all respect the same cap; explanation panel capped at `Math.min(W * 0.88, 720)`.
+- On 800 px screens behaviour is identical to before; extra width on 16:9 displays becomes neutral dark background rather than stretched layout.
+
+---
+
+## ✅ Feature: Settings & Accessibility overlay
+**Files**: `src/ui/SettingsOverlay.js` (new), `src/config/GameState.js`, `src/scenes/TitleScene.js`, `src/scenes/OverworldScene.js`, `src/scenes/ExploreScene.js`, `src/scenes/BattleScene.js`
+
+A reusable modal overlay (`openSettings` / `closeSettings`) is available from every screen in the game:
+
+| Where | How to open |
+|-------|-------------|
+| Title screen | ⚙ Settings button (bottom-right) |
+| Overworld (world map) | ⚙ Settings button in the player card |
+| Explore scene | ⚙ Settings button (HUD) |
+| Battle (during pause) | ⚙ Settings button inside the pause overlay |
+
+Controls in the panel:
+
+| Setting | Options | Notes |
+|---------|---------|-------|
+| ⏱ Answer Timer Speed | 1× · 1.5× · 2× · 3× | Multiplies every question's allotted time. Intentionally **not** reset by New Game — persists across saves. |
+| ♩ Music Volume | Off · 25% · 50% · 75% · 100% | Live BGM volume via `BGM.setVolume(volToDb(v))`. |
+| ♫ SFX Volume | Off · 25% · 50% · 75% · 100% | Adjusts Phaser global sound volume. |
+
+All three values are stored as `GameState.timeMult`, `GameState.musicVol`, `GameState.sfxVol`, written to `localStorage` on every change, and migrated forward from older saves.
+
+The panel closes via the ✕ Close button, clicking the dim backdrop, or pressing Esc. When opened inside the battle pause overlay the timer is already stopped; closing settings returns to the pause overlay (not automatically to the game — the player must click Resume).
+
+
+
 ## ✅ Refactor 2: Removed redundant `spriteKey` from enemy definitions
 **Files**: `src/data/enemies.js`, `src/entities/Enemy.js`, `src/scenes/BattleScene.js`, `src/scenes/BestiaryScene.js`
 - `spriteKey` was always identical to `id` — the field is now deleted from all 23 enemy objects.

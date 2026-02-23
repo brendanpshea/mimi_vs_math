@@ -15,10 +15,11 @@ decimals, and mixed challenge content across six regions.
 | Component | Choice |
 |---|---|
 | Engine | Phaser 3 (JavaScript) |
+| Display | `Scale.EXPAND` — fills viewport; content column capped at 820 px for 16:9 / ultrawide |
 | Platform | Browser (no install required) |
 | Entry point | `index.html` |
 | Asset format | SVG sprites |
-| Audio | Not yet implemented |
+| Audio | Tone.js (procedural BGM, 5 tracks) + Web Audio API (SFX) |
 
 ---
 
@@ -104,9 +105,24 @@ Stats are viewable from the title screen, the world-select overlay, and the worl
 
 ## Exploration (Zelda-style)
 
-- **Movement:** WASD or arrow keys; 4-directional
+- **Movement:** WASD or arrow keys; 4-directional. Touch devices show a semi-transparent on-screen D-pad (bottom-left). Portrait orientation triggers a rotate-to-landscape prompt.
 - **Interaction:** Spacebar or Enter to talk to NPCs / interact with the boss door
-- **Pause / back:** Esc returns to overworld or closes the current overlay
+- **Pause / back:** P or Esc pauses the battle and opens the pause overlay (resume, settings). Esc in explore returns to overworld or closes the current overlay.
+- **Settings:** The ⚙ Settings button appears in the title screen, overworld, explore scene, and inside the battle pause overlay.
+
+---
+
+## Settings & Accessibility
+
+A reusable `SettingsOverlay` component (`src/ui/SettingsOverlay.js`) renders as a modal over any Phaser scene. All values are stored in `GameState` and persisted to `localStorage`.
+
+| Setting | Options | Accessibility purpose |
+|---------|---------|----------------------|
+| ⏱ Answer Timer Speed | 1× / 1.5× / 2× / 3× | Extends question time for younger or slower readers. **Not reset by New Game** — carries across saves. |
+| ♩ Music Volume | Off · Low (25%) · Med (50%) · High (75%) · Max (100%) | Live BGM volume via Tone.js. |
+| ♫ SFX Volume | Off · Low (25%) · Med (50%) · High (75%) · Max (100%) | Controls all battle and UI sound effects. |
+
+The panel can be dismissed with the ✕ Close button, by clicking outside it, or by pressing Esc. Opening settings during a battle automatically suspends the timer and all tweens (handled by the pause overlay that hosts it).
 
 ---
 
@@ -334,9 +350,11 @@ mimi_vs_math/
 │   │   ├── ProceduralMap.js   # Tile-fn, accent layers, set-pieces & item pools per region
 │   │   ├── maps.js            # Procedural decoration data per region
 │   │   └── npcJokes.json      # NPC dialogue lines
-│   └── ui/
-│       ├── HUD.js             # Hearts, accuracy stats, inventory pills
-│       └── DialogBox.js       # NPC dialogue display
+│   ├── ui/
+│   │   ├── HUD.js             # Hearts, accuracy stats, inventory pills
+│   │   ├── DialogBox.js       # NPC dialogue display (text + multi-option menus)
+│   │   ├── VirtualDPad.js     # On-screen D-pad (rendered only on touch devices)
+│   │   └── SettingsOverlay.js # Pause-menu settings (timer speed, music/SFX volume)
 └── assets/sprites/            # SVG files (walk cycles, battle pose, bosses, UI)
 ```
 
@@ -378,14 +396,14 @@ After defeating a region's boss, a **⚔ Hard Mode** button appears in the node 
 | M4 | ✅ Done | Full progression, save/load, world-select, stats tracking |
 | M5 | ✅ Done | 9 lives, star ratings, hard-mode rematch, BGM/SFX, heart HUD |
 | M6 | ✅ Done | Bestiary, adaptive difficulty, interactive decorations, NPC Mewton, teacher-reviewed question bank |
-| M7 | 🔄 In progress | Mobile touch controls, accessibility polish |
+| M7 | ✅ Done | `Scale.EXPAND` responsive layout (content capped at 820 px), virtual D-pad for touch, portrait rotation prompt, settings & accessibility overlay |
+| M8 | 🔄 In progress | Accessibility polish |
 
 ---
 
 ## Out of Scope (v1)
 
 - Multiplayer or leaderboards
-- Mobile touch controls (desktop-first)
 - User accounts or server-side save data
 
 ---

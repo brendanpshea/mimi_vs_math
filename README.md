@@ -39,12 +39,29 @@ Word problems receive an automatic +8 second reading bonus on top of the base ti
 
 ## Controls
 
-| Key | Action |
-|-----|--------|
+| Key / Input | Action |
+|-------------|--------|
 | WASD / Arrow keys | Move Mimi |
+| On-screen D-pad (touch) | Move Mimi (touch devices only) |
 | Space / Enter | Interact (NPC, boss door) |
 | 1 / 2 / 3 / 4 | Select battle answer |
-| Esc | Run away from battle / return to overworld / close overlay |
+| P / Esc | Pause / resume battle (opens pause overlay) |
+| Esc (explore) | Return to overworld / close overlay |
+| ⚙ Settings button | Open settings (title, overworld, explore, or within the pause overlay) |
+
+---
+
+## Settings & Accessibility
+
+A **⚙ Settings** panel is reachable from every screen — the title, the world map, in-region exploration, and the battle pause overlay.
+
+| Setting | Options | Notes |
+|---------|---------|-------|
+| ⏱ Answer Timer Speed | 1× · 1.5× · 2× · 3× | Multiplies every question's allotted time. Useful for younger players or slower readers. Saved to `localStorage` and **not** reset by New Game. |
+| ♩ Music Volume | Off · Low (25%) · Med (50%) · High (75%) · Max (100%) | Adjusts BGM in real time via Tone.js. |
+| ♫ SFX Volume | Off · Low (25%) · Med (50%) · High (75%) · Max (100%) | Adjusts all sound effects. |
+
+All three preferences persist across sessions and are migrated forward when a save from an older version is loaded.
 
 ---
 
@@ -74,6 +91,10 @@ All question generators have three difficulty levels:
 ### Post-battle
 
 The victory overlay shows accuracy, streak badge (if ≥ 3 consecutive), perfect-battle badge, star rating, any item dropped, and a boss-unlock message where applicable.
+
+### Pause
+
+Press **P** or **Esc** during a battle to open the pause overlay. The timer stops, all tweens pause, and a **▶ Resume** button is shown alongside a **⚙ Settings** shortcut. The overlay also appears as the pause button (bottom-left of the battle HUD).
 
 ---
 
@@ -166,6 +187,7 @@ Enemies drop items at the end of battle (30% chance for regular enemies, 100% fo
 ## Tech Stack
 
 - **Engine:** [Phaser 3](https://phaser.io/) — loaded from CDN, no build step
+- **Display:** `Scale.EXPAND` — fills any screen size; content column capped at 820 px so layout stays compact on 16:9 / ultrawide displays
 - **Music:** [Tone.js](https://tonejs.github.io/) — procedural BGM using sampled instruments
 - **Assets:** SVG sprites (see `assets/sprites/`)
 - **Persistence:** `localStorage`
@@ -322,7 +344,7 @@ mimi_vs_math/
 │   ├── entities/            ← Mimi (4-frame walk cycles), Enemy (patrol/aggro AI), NPC
 │   ├── math/                ← QuestionBank (17 topic generators, D1–D3), Distractors, Explanations
    ├── data/                ← regions/ (region_0–5.js + index.js barrel), enemies.js, items.js, maps.js, ProceduralMap.js
-│   └── ui/                  ← HUD, DialogBox
+│   └── ui/                  ← HUD, DialogBox, VirtualDPad (touch), SettingsOverlay
 └── assets/
     ├── sprites/             ← SVG files (walk cycles A/B/C frames, battle poses, bosses, UI)
     └── audio/

@@ -2,7 +2,7 @@
 
 Mimi the cat goes on Zelda-style adventures and battles enemies by answering math questions.
 
-**Grades 1–7 · Browser-based · No install required**
+**Grades 1–5 · Browser-based · No install required**
 
 ---
 
@@ -30,8 +30,8 @@ Each region has multiple enemy types, each with its own question sub-type(s) and
 | 1 | Windmill Village | 2   | Place Value, Addition with carrying, Subtraction with borrowing |
 | 2 | Meadow Maze      | 3–5 | Times Tables, Skip Counting, Doubling & Halving, Multiplication |
 | 3 | Desert Dunes     | 4–5 | Division, Division Word Problems, Missing Number |
-| 4 | Frostbite Cavern | 5–6 | Fraction Comparison, Fraction Addition, Decimals |
-| 5 | Shadow Castle    | 6–7 | Order of Operations, Percentages, Ratios & Proportions |
+| 4 | Frostbite Cavern | 5   | Fraction Comparison, Fraction Addition, Decimals |
+| 5 | Shadow Castle    | 5   | Order of Operations, Percentages, Ratios & Proportions |
 
 Word problems receive an automatic +8 second reading bonus on top of the base timer.
 

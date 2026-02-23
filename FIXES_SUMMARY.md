@@ -54,7 +54,7 @@ All 49 static analysis tests pass ✅
 - Accessible from the OverworldScene player card via a 📖 Bestiary button.
 
 ## ✅ Fix 9: Teacher-reviewed question bank (QuestionBank.js + Explanations.js)
-Ten improvements aligned with Grade 1–7 curriculum expectations:
+Ten improvements aligned with Grade 1–5 curriculum expectations:
 
 1. `fractionAddD3` — replaced mislabelled subtraction with **unlike-denominator addition**
 2. Comparison explanation — replaced generic "more means ADD" with template-specific step-by-step working

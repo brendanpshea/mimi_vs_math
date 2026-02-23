@@ -4,8 +4,8 @@
 
 Mimi vs. Math is a browser-based, Zelda-style top-down adventure game built with
 **JavaScript + Phaser.js**. Mimi the cat explores a whimsical world, encounters enemies,
-and defeats them by answering math questions. The game targets **elementary and middle-grade
-players (ages 6–13)** and covers addition, subtraction, multiplication, division, fractions,
+and defeats them by answering math questions. The game targets **elementary players (ages 6–11)**
+and covers addition, subtraction, multiplication, division, fractions,
 decimals, and mixed challenge content across six regions.
 
 ---
@@ -204,14 +204,14 @@ Each "turn" presents one math problem:
 - Long division with remainders (quotient only required)
 - Division word problems
 
-### Region 4 — Fractions & Decimals (grades 5–6)
+### Region 4 — Fractions & Decimals (grade 5)
 
 - Comparing fractions (which is larger?)
 - Adding/subtracting fractions with like & unlike denominators
 - Converting fractions ↔ decimals
 - Multiplying a fraction by a whole number
 
-### Region 5 — Shadow Castle (grades 6–7)
+### Region 5 — Shadow Castle (grade 5)
 
 - Order of operations with brackets: `(a + b) × c`, `(a − b) × c`, `a × b + c × d`, `a × b − c`
 - Percentages: 10 %, 20 %, 25 %, 50 %, 75 % of a whole number
@@ -469,8 +469,8 @@ Grade-appropriate number ranges:
 |-------|----------------|
 | 1–2 | Single/double-digit; sums ≤ 59 |
 | 3–4 | Two-digit × one-digit; quotients ≤ 20 |
-| 5–6 | Unlike-denominator fractions; decimals to hundredths |
-| 6–7 | Order-of-ops with brackets; %-of-whole; ratios |
+| 5 | Unlike-denominator fractions; decimals to hundredths |
+| 5 | Order-of-ops with brackets; %-of-whole; ratios |
 
 ### 4. Distractor & explanation coverage
 

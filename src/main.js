@@ -14,6 +14,7 @@ import BossIntroScene   from './scenes/BossIntroScene.js';
 import OverworldScene   from './scenes/OverworldScene.js';
 import ExploreScene     from './scenes/ExploreScene.js';
 import BattleScene      from './scenes/BattleScene.js';
+import BestiaryScene    from './scenes/BestiaryScene.js';
 
 const config = {
   type: Phaser.AUTO,          // WebGL with Canvas fallback
@@ -39,6 +40,7 @@ const config = {
     OverworldScene,
     ExploreScene,
     BattleScene,
+    BestiaryScene,
   ],
 };
 

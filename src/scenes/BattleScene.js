@@ -62,6 +62,9 @@ export default class BattleScene extends Phaser.Scene {
     GameState.resetEffects();
     this._applyInventoryEffects();
     this.playerHP = GameState.hp;
+
+    // Bestiary: mark this enemy type as encountered
+    GameState.markEnemySeen(this.enemyData.id);
   }
 
   create() {
@@ -1048,6 +1051,9 @@ export default class BattleScene extends Phaser.Scene {
     const H = this.cameras.main.height;
 
     if (victory) {
+      // Bestiary: mark this enemy type as defeated
+      GameState.markEnemyDefeated(this.enemyData.id);
+
       this.sound.play('sfx_victory', { volume: 0.80 });
       // Victory effects
       this._spawnConfetti(W, H);

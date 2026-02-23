@@ -326,6 +326,19 @@ export default class OverworldScene extends Phaser.Scene {
     eb.on('pointerover', () => { eb.setFillStyle(0x3A1515); et.setColor('#FFAAAA'); });
     eb.on('pointerout',  () => { eb.setFillStyle(0x1A0C0C); et.setColor('#FF8888'); });
     eb.on('pointerdown', () => this._showExitConfirm());
+
+    // Bestiary button
+    const bb = this.add.rectangle(px, 172, 130, 22, 0x0A0A1C)
+      .setStrokeStyle(1.5, 0x8866CC).setInteractive({ useHandCursor: true });
+    const bt = this.add.text(px, 172, '📖 Bestiary',
+      { fontSize: '12px', color: '#BB99FF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+    bb.on('pointerover', () => { bb.setFillStyle(0x1A1A3A); bt.setColor('#DDBBFF'); });
+    bb.on('pointerout',  () => { bb.setFillStyle(0x0A0A1C); bt.setColor('#BB99FF'); });
+    bb.on('pointerdown', () => {
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () =>
+        this.scene.start('BestiaryScene', { from: 'OverworldScene' }));
+    });
   }
 
   // ── Stats overlay ────────────────────────────────────────────────────────

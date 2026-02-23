@@ -84,6 +84,16 @@ const REGIONS = [
     bossName: 'The Subtraction Witch',
     description: 'A cheerful starting village! Practice Grade 1 skills — adding and subtracting numbers up to 20 and comparing values to help Mimi begin her quest.',
     npcHint: 'Count on from the bigger number to add faster!',
+    npcBossStory: [
+      'I\'m Mewton — mathematician, wizard, and the only certified cat-genius this side of the meadow.\n\nI\'ve been studying the Subtraction Witch for three years. She takes things away for sport — hats, sandwiches, my favourite theorem.\nLast Tuesday she subtracted my cloak. It hasn\'t come back.',
+      'Her weakness? Number bonds to 10. She panics when someone knows them cold.\n7+3. 8+2. 6+4. Keep those sharp and she loses her rhythm completely.\n\nShe once subtracted herself out of an argument by accident.\nIt was, genuinely, the most beautiful thing I\'ve ever seen.',
+    ],
+    npcLesson: [
+      '✨ The Bridge to 10 trick!\nTo add 8 + 5: ask what 8 needs to reach 10. Just 2!\nNow split the 5 into 2 + 3.\n8 + 2 = 10, then 10 + 3 = 13. ✓\nAlways aim for 10 first — it makes everything easier.',
+      'Subtraction: bridge BACK through 10.\n13 − 7? Go 13 → 10 (that\'s –3), then 10 → 6 (that\'s –4 more).\nAnswer: 6. ✓\nOr count UP from 7: 7→10 is +3, 10→13 is +3 more. Total gap = 6.\nBoth routes, same destination.',
+    ],
+    npcBoon: 'sardine',
+    npcQuizTopic: 'addition',
     bossIntro: [
       {
         speaker:   'The Subtraction Witch',
@@ -146,6 +156,16 @@ const REGIONS = [
     bossName: 'Count Multiplico',
     description: 'Navigate the winding meadow paths and build Grade 2 skills — skip counting by 2s, 5s, and 10s, and tackle the first multiplication tables to defeat the Count!',
     npcHint: 'Skip counting by 2s, 5s, and 10s is the secret to fast multiplication!',
+    npcBossStory: [
+      'I got lost in this maze for eleven days once. Count Multiplico kept doubling the hedgerows every time I found the exit.\nSix became twelve. Twelve became twenty-four. I eventually gave up and climbed over the whole thing.\n\nThe Count finds this hilarious. He would.',
+      'His weakness: skip-counting patterns. Show him you know your 2s, 5s, and 10s and he\'ll flinch.\nOdd numbers make him uncomfortable too — I\'ve never asked why, but I have documented evidence.\n\nDon\'t let his speeches distract you. He rehearses them. They\'re very long.',
+    ],
+    npcLesson: [
+      'The skip-counting shortcuts:\n×2 = just double!  7 × 2 = 7+7 = 14.\n×5 = always ends in 0 or 5. Count by fives: 5, 10, 15…\n×10 = slip a zero on the end. 8 × 10 = 80.\nThat last one is genuinely that easy.',
+      'For trickier tables — build from what you know:\n6 × 7?  Think (5 × 7) + (1 × 7) = 35 + 7 = 42. ✓\n6 × 8?  = (6 × 4) × 2 = 24 × 2 = 48. ✓\nDoubling and adding one extra group is your emergency kit.',
+    ],
+    npcBoon: 'yarn_ball',
+    npcQuizTopic: 'skipCounting',
     bossIntro: [
       {
         speaker:   'Count Multiplico',
@@ -208,6 +228,16 @@ const REGIONS = [
     bossName: 'The Diviner',
     description: 'Trek through scorching sands and master Grade 3 skills — complete multiplication tables, learn division as the inverse of multiplication, and solve division word problems to reveal the ancient Diviner!',
     npcHint: 'Division is just multiplication in reverse — if 4 × 3 = 12, then 12 ÷ 4 = 3!',
+    npcBossStory: [
+      'The Diviner has been sitting in this desert for four hundred years, dividing everything into equal parts. Sand dunes. Scholarly debates. Visiting academics.\n\nI sent her a letter proposing a collaboration. She replied: \'Your methodology divides into errors and more errors.\' Rude. Accurate, that particular week. But rude.',
+      'Her trick: she reframes multiplication as a missing number.\n\'4 × ☐ = 28\' — it\'s designed to seem mysterious.\nIt isn\'t. Ask: what times 4 is 28? Seven.\nDivision is multiplication in a different hat. She knows that. Now so do you.',
+    ],
+    npcLesson: [
+      'Division = multiplication backwards.\n42 ÷ 6 = ?   Ask yourself: 6 × ? = 42.\nYou know 6 × 7 = 42. Answer: 7. ✓\nFact family: 6×7=42, 7×6=42, 42÷6=7, 42÷7=6.\nFour facts. One set of numbers. Learn one, get three free.',
+      'For word problems:\n① What is being shared? (the large number)\n② Into how many groups? (the divisor)\n③ How many in each? (your answer)\n\'24 biscuits, 8 cats: 24 ÷ 8 = 3 each.\'\nAlways verify: 3 × 8 = 24 ✓.',
+    ],
+    npcBoon: 'fish_fossil',
+    npcQuizTopic: 'divisionWord',
     bossIntro: [
       {
         speaker:   'The Diviner',
@@ -270,6 +300,16 @@ const REGIONS = [
     bossName: 'Glacius the Fraction Dragon',
     description: 'Brave the icy depths and conquer Grade 4 skills — compare and add fractions, and work with decimal tenths to prove to Glacius that fractions hold no fear!',
     npcHint: 'To compare fractions, find a common denominator first!',
+    npcBossStory: [
+      'Glacius. I have complicated feelings about Glacius.\nLast visit, she froze half my notes into solid ice. Said it was \'technically still information, just a different phase.\' She isn\'t wrong. That\'s the problem.\n\nShe thinks in fractions. Everything must divide into equal, exact parts. Decimals offend her — except tenths. She tolerates tenths.',
+      'Her weakness: a correct common denominator. She respects the process.\n½ + ⅓ = 5/6? She won\'t dispute that. She can\'t.\n\nPanic around fractions and she\'ll sense it. She froze my left ear once because I said \'roughly a half.\'\'Roughly\' has no place in mathematics, Mewton.\'\n\nShe\'s not wrong about that either.',
+    ],
+    npcLesson: [
+      'Comparing fractions: give them the same denominator.\n⅔ vs ½?  Multiply up → 4/6 vs 3/6.  So ⅔ > ½. ✓\nRule: find the smallest number both denominators divide into.\n2 and 3 → 6.  3 and 4 → 12.  This is called the LCD.',
+      'Adding fractions:\nSame denominator → just add the tops: ¼ + ¾ = 4/4 = 1. ✓\nDifferent denominators → find common denom first:\n½ + ⅓: use 6.  3/6 + 2/6 = 5/6. ✓\nDecimals: 0.1 = 1/10.  0.7 = 7/10.  Think in tenths.',
+    ],
+    npcBoon: 'lucky_collar',
+    npcQuizTopic: 'fractionCompare',
     bossIntro: [
       {
         speaker:   'Glacius the Fraction Dragon',
@@ -332,6 +372,16 @@ const REGIONS = [
     bossName: 'Fenwick, the Sly Fox',
     description: 'Fenwick the Sly Fox lurks at the top of his Shadow Castle. Prove your Grade 5 mastery — order of operations, percentages, and ratios — then topple the Sly Fox himself to reclaim Mimi\'s yarn ball!',
     npcHint: 'Order of operations: multiply and divide before you add or subtract!',
+    npcBossStory: [
+      'FENWICK. I have been tracking that fox for six years.\nHe stole Mimi\'s yarn ball, yes — but he also stole my proof of the commutative property and hung it in his trophy room between a stuffed fish and a certificate in \'Creative Accounting.\' It is not decoration. It is mathematics.\n\nI am not calm about this.',
+      'His trick: he writes 2 + 3 × 4 on a wall and bets you say 20.\nThe answer is 14. Multiplication before addition. He KNOWS this.\nHe just enjoys watching the panic.\n\nDo not give him the satisfaction. BEDMAS: Brackets, Exponents, Divide\/Multiply, then Add\/Subtract. Left to right. Every time.',
+    ],
+    npcLesson: [
+      'Order of operations — BEDMAS:\nB = Brackets (always first).\nE = Exponents.\nDM = Divide and Multiply (left to right).\nAS = Add and Subtract (left to right, last).\n2 + 3 × 4 = 2 + 12 = 14.\nNot 20. Never, ever 20.',
+      'Percentages:\n10% of 60 = 6. So 30% = 6 × 3 = 18. ✓\nRatios: 2:3 means 5 total parts.\nIf the total is 25: each part = 25 ÷ 5 = 5.\nSo 2 parts = 10, 3 parts = 15.\nCheck: 10 + 15 = 25 ✓.',
+    ],
+    npcBoon: 'catnip',
+    npcQuizTopic: 'orderOfOps',
     bossIntro: [
       {
         speaker:   'Fenwick the Sly Fox',

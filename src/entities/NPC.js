@@ -52,7 +52,10 @@ export default class NPC {
 
     // Physics-enabled sprite so overlap detection works
     this.sprite = scene.physics.add.image(x, y, this._spriteKeyA);
-    this.sprite.setImmovable(true);
+    // Do NOT setImmovable — that flag prevents arcade physics from separating the
+    // body from static wall groups, letting Mewton walk straight through them.
+    // Mimi interacts via physics.add.overlap (not collider) so she always passes
+    // through the NPC regardless.
     this.sprite.body.allowGravity = false;
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setDepth(8);
@@ -84,7 +87,8 @@ export default class NPC {
 
     // Stagger first think so not all NPCs move simultaneously with enemies
     const firstDelay = 400 + Math.random() * THINK_MAX_MS;
-    scene.time.delayedCall(firstDelay, this._think, [], this);
+    this._thinkTimer = scene.time.delayedCall(firstDelay, this._think, [], this);
+    this._blocked = false;
   }
 
   // ── Private helpers ────────────────────────────────────────────────────────
@@ -138,7 +142,7 @@ export default class NPC {
     }
 
     const delay = THINK_MIN_MS + Math.random() * (THINK_MAX_MS - THINK_MIN_MS);
-    this._scene.time.delayedCall(delay, this._think, [], this);
+    this._thinkTimer = this._scene.time.delayedCall(delay, this._think, [], this);
   }
 
   _setVelocityAngle(angle) {
@@ -158,11 +162,32 @@ export default class NPC {
 
   /**
    * Called every frame by ExploreScene.update().
-   * No home-clamp — wizard roams freely within world bounds.
+   * Detects wall collisions and immediately re-thinks so Mewton doesn't
+   * press against walls for up to THINK_MAX_MS.
    */
   update() {
     if (this._shadow) this._shadow.setPosition(this.sprite.x, this.sprite.y + 14);
-    // Nothing to clamp — setCollideWorldBounds handles the walls.
+
+    const body = this.sprite.body;
+    if (!body) return;
+
+    const isMoving = Math.abs(body.velocity.x) > 1 || Math.abs(body.velocity.y) > 1;
+    const isBlocked = body.blocked.left || body.blocked.right ||
+                      body.blocked.up   || body.blocked.down;
+
+    if (isMoving && isBlocked && !this._blocked) {
+      // Just hit a wall — cancel the pending think and pick a new direction now
+      this._blocked = true;
+      if (this._thinkTimer) { this._thinkTimer.remove(false); this._thinkTimer = null; }
+      this._stopMoving();
+      // Brief pause then re-think so movement looks deliberate, not jittery
+      this._thinkTimer = this._scene.time.delayedCall(350, () => {
+        this._blocked = false;
+        this._think();
+      }, [], this);
+    } else if (!isBlocked) {
+      this._blocked = false;
+    }
   }
 
   /**
@@ -185,6 +210,7 @@ export default class NPC {
 
   /** Clean up tweens, timers, and sprite. */
   destroy() {
+    if (this._thinkTimer) this._thinkTimer.remove(false);
     if (this._frameTimer) this._frameTimer.remove(false);
     if (this._swayTween)  this._swayTween.stop();
     if (this._bobTween)   this._bobTween.stop();

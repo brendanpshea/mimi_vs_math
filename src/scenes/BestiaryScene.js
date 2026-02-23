@@ -1,0 +1,330 @@
+/**
+ * BestiaryScene — Pokémon-style enemy index.
+ *
+ * Shows a 5-column grid of all 23 enemies in canonical order.
+ * Each card has three states:
+ *   unknown  — dark silhouette, "???" label, not interactive
+ *   seen     — desaturated sprite, 👁 badge, click for details
+ *   defeated — full-colour sprite, ✓/👑 badge, click for details
+ *
+ * Launched via:
+ *   this.scene.start('BestiaryScene', { from: 'OverworldScene' });
+ */
+import * as Phaser from 'phaser';
+import GameState from '../config/GameState.js';
+import ENEMIES   from '../data/enemies.js';
+
+// ── Canonical enemy display order ─────────────────────────────────────────
+const CANON_ORDER = [
+  // Region 0 – Sunny Village
+  'counting_caterpillar', 'number_gnome', 'minus_mole', 'number_bee', 'subtraction_witch',
+  // Region 1 – Meadow Maze
+  'slime_pup', 'cactus_sprite', 'cloud_bully', 'double_bunny', 'count_multiplico',
+  // Region 2 – Desert Dunes
+  'sand_scarab', 'mummy_cat', 'mirage_fox', 'riddle_scarab', 'the_diviner',
+  // Region 3 – Frostbite Cavern
+  'ice_frog', 'snow_golem', 'crystal_bat', 'glacius',
+  // Region 4 – Shadow Castle
+  'shadow_knight', 'ratio_raven', 'percent_wraith', 'fenwick',
+];
+
+const REGION_NAMES  = ['Sunny Village', 'Meadow Maze', 'Desert Dunes', 'Frostbite Cavern', 'Shadow Castle'];
+const GRADE_LABELS  = ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5'];
+const REGION_BG     = [0x1A2A0A, 0x0A2A0A, 0x2A1A08, 0x081A28, 0x0C0818];
+const REGION_ACCENT = [0x44AA22, 0x44DD22, 0xCC8822, 0x44AADD, 0x7744CC];
+
+// Grid constants
+const COLS       = 5;
+const CARD_W     = 136;
+const CARD_H     = 92;
+const GAP_X      = 8;
+const GAP_Y      = 9;
+const GRID_START_Y = 68;
+
+const FONT = "'Nunito', Arial, sans-serif";
+const W = 800, H = 600;
+
+export default class BestiaryScene extends Phaser.Scene {
+  constructor() { super('BestiaryScene'); }
+
+  init(data) {
+    this._from = data?.from ?? 'OverworldScene';
+    this._detailGroup = null;
+  }
+
+  create() {
+    // — Background ──────────────────────────────────────────────────────
+    this.add.rectangle(W / 2, H / 2, W, H, 0x050510);
+
+    // — Title bar ───────────────────────────────────────────────────────
+    this.add.rectangle(W / 2, 24, W, 48, 0x0A0A22);
+    this.add.text(W / 2, 24, '📖  BESTIARY', {
+      fontSize: '20px', fontFamily: FONT, color: '#EEDDFF',
+      stroke: '#220044', strokeThickness: 4,
+    }).setOrigin(0.5);
+
+    // Counting badge  (X / 23 encountered)
+    const total    = CANON_ORDER.length;
+    const seen     = CANON_ORDER.filter(id => GameState.hasSeenEnemy(id)).length;
+    const defeated = CANON_ORDER.filter(id => GameState.hasDefeatedEnemyType(id)).length;
+    this.add.text(W - 12, 24,
+      `👁 ${seen}  ✓ ${defeated} / ${total}`, {
+      fontSize: '11px', fontFamily: FONT, color: '#AABBCC',
+    }).setOrigin(1, 0.5);
+
+    // — Back button ─────────────────────────────────────────────────────
+    const backBg = this.add.rectangle(44, 24, 64, 26, 0x1A0A2A)
+      .setStrokeStyle(1.5, 0x8866CC).setInteractive({ useHandCursor: true });
+    const backTxt = this.add.text(44, 24, '← Back', {
+      fontSize: '12px', fontFamily: FONT, color: '#BB99FF',
+    }).setOrigin(0.5);
+    backBg.on('pointerover', () => { backBg.setFillStyle(0x2A1A3A); backTxt.setColor('#EEDDFF'); });
+    backBg.on('pointerout',  () => { backBg.setFillStyle(0x1A0A2A); backTxt.setColor('#BB99FF'); });
+    backBg.on('pointerdown', () => this._goBack());
+
+    // — ESC to go back ──────────────────────────────────────────────────
+    this.input.keyboard.on('keydown-ESC', () => {
+      if (this._detailGroup) { this._closeDetail(); }
+      else { this._goBack(); }
+    });
+
+    // — Enemy grid ──────────────────────────────────────────────────────
+    CANON_ORDER.forEach((id, num) => this._drawCard(id, num));
+  }
+
+  // ── Grid card ──────────────────────────────────────────────────────────
+  _drawCard(id, num) {
+    const data = ENEMIES[id];
+    if (!data) return;
+
+    const rowIdx    = Math.floor(num / COLS);
+    const colIdx    = num % COLS;
+    const rowCount  = Math.min(COLS, CANON_ORDER.length - rowIdx * COLS);
+    const rowStartX = (W - (rowCount * CARD_W + (rowCount - 1) * GAP_X)) / 2;
+    const cx        = rowStartX + colIdx * (CARD_W + GAP_X) + CARD_W / 2;
+    const cy        = GRID_START_Y + rowIdx * (CARD_H + GAP_Y) + CARD_H / 2;
+
+    const r        = data.region;
+    const isSeen     = GameState.hasSeenEnemy(id);
+    const isDefeated = GameState.hasDefeatedEnemyType(id);
+    const isBoss     = !!data.isBoss;
+
+    // Card background
+    let bgColor, borderColor, borderThick;
+    if (isDefeated) {
+      bgColor     = REGION_BG[r];
+      borderColor = isBoss ? 0xFFDD44 : REGION_ACCENT[r];
+      borderThick = isBoss ? 2.5 : 1.5;
+    } else if (isSeen) {
+      bgColor     = 0x0E0E22;
+      borderColor = 0x334466;
+      borderThick = 1;
+    } else {
+      bgColor     = 0x0C0C20;
+      borderColor = 0x222244;
+      borderThick = 1;
+    }
+
+    const bg = this.add.rectangle(cx, cy, CARD_W, CARD_H, bgColor)
+      .setStrokeStyle(borderThick, borderColor);
+
+    // Sprite
+    if (this.textures.exists(data.spriteKey)) {
+      const sprite = this.add.image(cx - 16, cy, data.spriteKey).setDisplaySize(56, 56);
+      if (!isSeen) {
+        sprite.setTint(0x0A0A18);       // dark silhouette
+      } else if (!isDefeated) {
+        sprite.setTint(0x8899AA).setAlpha(0.55);  // grey ghost
+      }
+    }
+
+    // Entry number (top-left)
+    this.add.text(cx - CARD_W / 2 + 4, cy - CARD_H / 2 + 3, `#${String(num + 1).padStart(2, '0')}`, {
+      fontSize: '9px', fontFamily: FONT,
+      color: isSeen ? '#8899BB' : '#444466',
+    });
+
+    // Name label (bottom-center)
+    const displayName = isSeen ? data.name : '???';
+    this.add.text(cx + 10, cy + CARD_H / 2 - 14, displayName, {
+      fontSize: '9px', fontFamily: FONT,
+      color: isDefeated ? '#EEEEFF' : (isSeen ? '#AABBCC' : '#444466'),
+      wordWrap: { width: 56 },
+    }).setOrigin(0.5, 0);
+
+    // Status badge (top-right corner)
+    if (isDefeated) {
+      const badge = isBoss ? '👑' : '✓';
+      this.add.text(cx + CARD_W / 2 - 4, cy - CARD_H / 2 + 2, badge, {
+        fontSize: '13px', fontFamily: FONT,
+      }).setOrigin(1, 0);
+    } else if (isSeen) {
+      this.add.text(cx + CARD_W / 2 - 4, cy - CARD_H / 2 + 2, '👁', {
+        fontSize: '11px', fontFamily: FONT,
+      }).setOrigin(1, 0);
+    }
+
+    // Interactivity (seen or defeated only)
+    if (isSeen) {
+      bg.setInteractive({ useHandCursor: true });
+      bg.on('pointerover', () => bg.setStrokeStyle(borderThick + 1, 0xFFFFFF));
+      bg.on('pointerout',  () => bg.setStrokeStyle(borderThick, borderColor));
+      bg.on('pointerdown', () => this._showDetail(id));
+    }
+  }
+
+  // ── Detail panel ───────────────────────────────────────────────────────
+  _showDetail(id) {
+    if (this._detailGroup) this._closeDetail();
+
+    const data = ENEMIES[id];
+    if (!data) return;
+
+    const r          = data.region;
+    const isDefeated = GameState.hasDefeatedEnemyType(id);
+    const isBoss     = !!data.isBoss;
+    const grp        = this.add.group();
+    this._detailGroup = grp;
+
+    // Dim overlay
+    const dim = this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.7)
+      .setInteractive({ useHandCursor: false });
+    dim.on('pointerdown', () => this._closeDetail());
+    grp.add(dim);
+
+    // Panel background
+    const PW = 560, PH = 310;
+    const px = W / 2, py = H / 2;
+    const panel = this.add.rectangle(px, py, PW, PH, 0x0A0A1E)
+      .setStrokeStyle(2, REGION_ACCENT[r]);
+    grp.add(panel);
+
+    // Region-colour sprite frame (left side)
+    const frameX = px - PW / 2 + 75;
+    const frameY = py;
+    const frame = this.add.rectangle(frameX, frameY, 120, 120, REGION_BG[r])
+      .setStrokeStyle(2, REGION_ACCENT[r]);
+    grp.add(frame);
+
+    if (this.textures.exists(data.spriteKey)) {
+      const spr = this.add.image(frameX, frameY, data.spriteKey).setDisplaySize(100, 100);
+      if (!isDefeated) { spr.setTint(0x8899AA).setAlpha(0.6); }
+      grp.add(spr);
+    }
+
+    // → Text column
+    let tx = px - PW / 2 + 155;
+    let ty = py - PH / 2 + 22;
+    const lineH = 24;
+
+    // Name
+    const nameColor = isBoss ? '#FFDD44' : '#EEEEFF';
+    const nameTxt = this.add.text(tx, ty, isBoss ? `👑 ${data.name}` : data.name, {
+      fontSize: '16px', fontFamily: FONT, color: nameColor,
+      stroke: '#000022', strokeThickness: 3,
+    });
+    grp.add(nameTxt);
+    ty += lineH + 4;
+
+    // Region / Grade row
+    const regionTxt = this.add.text(tx, ty,
+      `${REGION_NAMES[r]}  ·  ${GRADE_LABELS[r]}`, {
+      fontSize: '11px', fontFamily: FONT, color: '#88AACC',
+    });
+    grp.add(regionTxt);
+    ty += lineH;
+
+    // Divider
+    const div = this.add.rectangle(px + 20, ty, PW - 160, 1, 0x334466);
+    grp.add(div);
+    ty += 10;
+
+    // Topic
+    const topicTxt = this.add.text(tx, ty, `📚 Topic: ${data.mathTopic}`, {
+      fontSize: '11px', fontFamily: FONT, color: '#CCCCEE',
+    });
+    grp.add(topicTxt);
+    ty += lineH;
+
+    // Special ability
+    if (data.special) {
+      const specTxt = this.add.text(tx, ty, `⚡ ${data.special}`, {
+        fontSize: '11px', fontFamily: FONT, color: '#FFCC66',
+        wordWrap: { width: PW - 165 },
+      });
+      grp.add(specTxt);
+      ty += lineH + (data.special.length > 30 ? 12 : 0);
+    }
+
+    // HP / Damage — only shown once defeated
+    if (isDefeated) {
+      const statTxt = this.add.text(tx, ty,
+        `❤ HP: ${data.hp}   ⚔ DMG: ${data.damage}   ✦ XP: ${data.xp}`, {
+        fontSize: '11px', fontFamily: FONT, color: '#AAFFAA',
+      });
+      grp.add(statTxt);
+      ty += lineH;
+    } else {
+      const unknownTxt = this.add.text(tx, ty, '❤ HP: ???   ⚔ DMG: ???', {
+        fontSize: '11px', fontFamily: FONT, color: '#556677',
+      });
+      grp.add(unknownTxt);
+      ty += lineH;
+    }
+
+    // Status badge (top-right of panel)
+    const statusLabel = isDefeated ? '⚔ DEFEATED' : '👁 ENCOUNTERED';
+    const statusColor = isDefeated ? '#AAFFAA' : '#AABBCC';
+    const statusTxt = this.add.text(px + PW / 2 - 12, py - PH / 2 + 10,
+      statusLabel, {
+      fontSize: '10px', fontFamily: FONT, color: statusColor,
+    }).setOrigin(1, 0);
+    grp.add(statusTxt);
+
+    // ✕ close button
+    const closeBg = this.add.rectangle(px + PW / 2 - 16, py - PH / 2 + 16, 26, 26, 0x1A0A2A)
+      .setStrokeStyle(1, 0x8866CC).setInteractive({ useHandCursor: true });
+    const closeTxt = this.add.text(px + PW / 2 - 16, py - PH / 2 + 16, '✕', {
+      fontSize: '14px', fontFamily: FONT, color: '#BB99FF',
+    }).setOrigin(0.5);
+    closeBg.on('pointerover', () => { closeBg.setFillStyle(0x3A1A5A); closeTxt.setColor('#FFFFFF'); });
+    closeBg.on('pointerout',  () => { closeBg.setFillStyle(0x1A0A2A); closeTxt.setColor('#BB99FF'); });
+    closeBg.on('pointerdown', () => this._closeDetail());
+    grp.add(closeBg);
+    grp.add(closeTxt);
+
+    // Entrance tween
+    panel.setScale(0.8).setAlpha(0);
+    this.tweens.add({
+      targets: [panel, frame, ...grp.getChildren().filter(c => c !== dim && c !== panel)],
+      alpha:   { from: 0, to: 1 },
+      duration: 180,
+      ease: 'Sine.easeOut',
+    });
+    this.tweens.add({
+      targets: panel,
+      scale:   { from: 0.8, to: 1 },
+      duration: 180,
+      ease: 'Back.easeOut',
+    });
+  }
+
+  _closeDetail() {
+    if (!this._detailGroup) return;
+    const grp = this._detailGroup;
+    this._detailGroup = null;
+    this.tweens.add({
+      targets: grp.getChildren(),
+      alpha: 0,
+      duration: 120,
+      onComplete: () => grp.destroy(true),
+    });
+  }
+
+  // ── Navigation ─────────────────────────────────────────────────────────
+  _goBack() {
+    this.cameras.main.fadeOut(250, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () =>
+      this.scene.start(this._from));
+  }
+}

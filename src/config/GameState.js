@@ -69,7 +69,17 @@ const GameState = {
   // ── Interactive item pickup tracking (persisted) ──────────────────────
   // key: `${regionId}_${col}_${row}`, value: true when collected
   collectedItems: {},
+  // ── NPC (Mewton) interaction tracking (persisted) ──────────────────────────
+  // key: regionId, value: true when first visited
+  npcVisited: {},
+  // key: regionId, value: true when the wizard\'s boon has been received
+  npcBoonReceived: {},
 
+  // ── Bestiary tracking (persisted) ─────────────────────────────────────
+  // key: enemy type id (e.g. 'counting_caterpillar'); set when battle starts
+  seenEnemies: {},
+  // key: enemy type id; set when Mimi wins a battle against that type
+  defeatedEnemyTypes: {},
   // ─────────────────────────────────────────────────────────────────────
   // Persistence
   // ─────────────────────────────────────────────────────────────────────
@@ -90,6 +100,10 @@ const GameState = {
       regionStars:            this.regionStars,
       regionHardModeCleared:  this.regionHardModeCleared,
       collectedItems:         this.collectedItems,
+      npcVisited:             this.npcVisited,
+      npcBoonReceived:        this.npcBoonReceived,
+      seenEnemies:            this.seenEnemies,
+      defeatedEnemyTypes:     this.defeatedEnemyTypes,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   },
@@ -105,6 +119,10 @@ const GameState = {
       if (!this.regionStars)            this.regionStars = {};
       if (!this.regionHardModeCleared)  this.regionHardModeCleared = [];
       if (!this.collectedItems)         this.collectedItems = {};
+      if (!this.npcVisited)             this.npcVisited = {};
+      if (!this.npcBoonReceived)        this.npcBoonReceived = {};
+      if (!this.seenEnemies)            this.seenEnemies = {};
+      if (!this.defeatedEnemyTypes)     this.defeatedEnemyTypes = {};
       // Ensure lives field exists for saves that predate this feature
       if (this.lives    === undefined) this.lives    = 9;
       if (this.maxLives === undefined) this.maxLives = 9;
@@ -147,6 +165,11 @@ const GameState = {
     this.regionHardModeCleared  = [];
     this.activeEffects          = { timerBonus: 0, doubleHit: false, shield: false, hintCharges: 0 };
     this.topicAccuracy          = {};
+    this.collectedItems         = {};
+    this.npcVisited             = {};
+    this.npcBoonReceived        = {};
+    this.seenEnemies            = {};
+    this.defeatedEnemyTypes     = {};
     this.save();
   },
 
@@ -167,6 +190,23 @@ const GameState = {
     }
     this.save();
   },
+
+  // ── Bestiary helpers ─────────────────────────────────────────────────
+  markEnemySeen(id) {
+    if (this.seenEnemies?.[id]) return;
+    if (!this.seenEnemies) this.seenEnemies = {};
+    this.seenEnemies[id] = true;
+    this.save();
+  },
+  markEnemyDefeated(id) {
+    if (!this.defeatedEnemyTypes) this.defeatedEnemyTypes = {};
+    if (!this.seenEnemies)        this.seenEnemies = {};
+    this.defeatedEnemyTypes[id] = true;
+    this.seenEnemies[id]        = true;
+    this.save();
+  },
+  hasSeenEnemy(id)         { return !!this.seenEnemies?.[id]; },
+  hasDefeatedEnemyType(id) { return !!this.defeatedEnemyTypes?.[id]; },
 
   /** True if a specific enemy (by composite key) has been defeated. */
   isEnemyDefeated(regionId, enemyId) {

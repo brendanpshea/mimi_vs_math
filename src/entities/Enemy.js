@@ -67,16 +67,9 @@ export default class Enemy {
       this.sprite.setTint(TINTS[data.difficulty] ?? 0xFFFFFF);
     }
 
-    // Idle bob — subtle float when standing still; paused while walking
-    this._bobTween = scene.tweens.add({
-      targets:  this.sprite,
-      y:        { from: y - 3, to: y + 3 },
-      duration: Phaser.Math.Between(1200, 2000),
-      yoyo:     true,
-      repeat:   -1,
-      ease:     'Sine.easeInOut',
-      delay:    Phaser.Math.Between(0, 1000),
-    });
+    // Idle bob — subtle float when standing still; recreated at current y each time
+    this._bobTween = null;
+    this._startBob();
 
     // Patrol waypoints: A = spawn (home), B = a fixed offset in a random 8-way direction
     const patrolAngle  = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
@@ -103,7 +96,7 @@ export default class Enemy {
 
     // Stagger the first patrol leg so all enemies don't set off simultaneously
     const firstDelay = Math.random() * 1500;
-    scene.time.delayedCall(firstDelay, this._think, [], this);
+    this._thinkTimer = scene.time.delayedCall(firstDelay, this._think, [], this);
 
     this._onTouch = onTouch;
   }
@@ -170,12 +163,42 @@ export default class Enemy {
 
   /** Switch to moving-animation state. */
   _enterMoveAnim() {
-    if (this._bobTween.isPlaying()) this._bobTween.pause();
+    if (this._bobTween) {
+      this._bobTween.stop();
+      this._bobTween = null;
+    }
+    // Undo any step-bob offset so physics y stays clean while moving
+    if (this._stepBobOffset !== 0) {
+      this.sprite.y      -= this._stepBobOffset;
+      this._stepBobOffset = 0;
+    }
   }
 
   /** Switch to idle-animation state. */
   _enterIdleAnim() {
-    if (!this._bobTween.isPlaying()) this._bobTween.resume();
+    // Undo any residual step-bob before anchoring the new bob tween
+    if (this._stepBobOffset !== 0) {
+      this.sprite.y      -= this._stepBobOffset;
+      this._stepBobOffset = 0;
+    }
+    this._startBob();
+  }
+
+  /** Create a fresh idle bob tween at the sprite's current Y. */
+  _startBob() {
+    if (this._bobTween) {
+      this._bobTween.stop();
+      this._bobTween = null;
+    }
+    const baseY = this.sprite.y;
+    this._bobTween = this.scene.tweens.add({
+      targets:  this.sprite,
+      y:        baseY - 3,
+      duration: Phaser.Math.Between(1200, 2000),
+      yoyo:     true,
+      repeat:   -1,
+      ease:     'Sine.easeInOut',
+    });
   }
 
   /**
@@ -194,12 +217,12 @@ export default class Enemy {
       // Arrived at this waypoint — pause, then head to the other one
       this._stopMoving();
       this._wpIdx = 1 - this._wpIdx;
-      this.scene.time.delayedCall(PATROL_PAUSE, this._think, [], this);
+      this._thinkTimer = this.scene.time.delayedCall(PATROL_PAUSE, this._think, [], this);
     } else {
       // Walk toward waypoint; re-check position after a think interval
       this._setVelocityAngle(Math.atan2(dy, dx), PATROL_SPEED);
       const delay = THINK_MIN_MS + Math.random() * (THINK_MAX_MS - THINK_MIN_MS);
-      this.scene.time.delayedCall(delay, this._think, [], this);
+      this._thinkTimer = this.scene.time.delayedCall(delay, this._think, [], this);
     }
   }
 
@@ -255,7 +278,7 @@ export default class Enemy {
         this._stopMoving();
         this._setStepDelay(STEP_MS);
         // Short pause before resuming patrol so the break-off feels deliberate
-        this.scene.time.delayedCall(400, this._think, [], this);
+        this._thinkTimer = this.scene.time.delayedCall(400, this._think, [], this);
       }
 
       if (this._mode === 'aggro') {
@@ -296,7 +319,8 @@ export default class Enemy {
 
   /** Remove this enemy from the scene (after defeat). */
   destroy() {
-    if (this._bobTween)  this._bobTween.stop();
+    if (this._thinkTimer) this._thinkTimer.remove(false);
+    if (this._bobTween)   this._bobTween.stop();
     if (this._stepTimer) this._stepTimer.remove(false);
     if (this._shadow)    this._shadow.destroy();
     this.sprite.destroy();

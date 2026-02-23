@@ -64,6 +64,37 @@ export default class DialogBox {
       repeat:   -1,
     });
 
+    // ── Choice buttons (pre-created, shown only in showChoice mode) ────
+    // Up to 4 buttons: [0]=top-left, [1]=top-right, [2]=bot-left, [3]=bot-right
+    this._choiceBgs  = [];
+    this._choiceTxts = [];
+    for (let i = 0; i < 4; i++) {
+      const bg = scene.add.rectangle(W / 2, H - 52, 200, 24, 0x0A1A44)
+        .setScrollFactor(0).setDepth(83)
+        .setStrokeStyle(1, 0x4488FF).setVisible(false)
+        .setInteractive({ useHandCursor: true });
+      bg.on('pointerover',  () => bg.setFillStyle(0x1A3A77));
+      bg.on('pointerout',   () => bg.setFillStyle(0x0A1A44));
+      bg.on('pointerdown',  () => {
+        if (!this._choiceCallback) return;
+        const cb = this._choiceCallback;
+        this._choiceCallback = null;
+        for (let j = 0; j < 4; j++) {
+          this._choiceBgs[j].setVisible(false);
+          this._choiceTxts[j].setVisible(false);
+        }
+        this.hide();
+        cb(i);          // i captured at button-create time
+      });
+      const txt = scene.add.text(W / 2, H - 52, '', {
+        fontSize: '13px', color: '#FFFFFF',
+        fontFamily: "'Nunito', Arial, sans-serif",
+      }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(84).setVisible(false);
+      this._choiceBgs.push(bg);
+      this._choiceTxts.push(txt);
+    }
+    this._choiceCallback = null;
+
     // Space / Enter to close
     this._spaceKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this._enterKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -134,10 +165,74 @@ export default class DialogBox {
     this._prompt.setVisible(true);
   }
 
+  /**
+   * Show the dialog panel, then after text finishes typing present labelled
+   * buttons the player can click/tap to choose.
+   *
+   * @param {string}   text         - body text (supports \n)
+   * @param {string[]} labels       - 2 or 4 button labels
+   * @param {Function} onChoice     - called with button index (0-based)
+   * @param {string}   [speaker]
+   * @param {string}   [portraitKey]
+   */
+  showChoice(text, labels, onChoice, speaker = '', portraitKey = '') {
+    const W = this.scene.cameras.main.width;
+    const H = this.scene.cameras.main.height;
+    const count = Math.min(labels.length, 4);
+
+    // Position buttons
+    let positions;
+    if (count <= 2) {
+      positions = [
+        [W * 0.32, H - 52],
+        [W * 0.68, H - 52],
+        [W * 0.32, H - 52],   // unused
+        [W * 0.68, H - 52],
+      ];
+    } else {
+      positions = [
+        [W * 0.28, H - 68],
+        [W * 0.72, H - 68],
+        [W * 0.28, H - 46],
+        [W * 0.72, H - 46],
+      ];
+    }
+    for (let i = 0; i < 4; i++) {
+      this._choiceBgs[i].setPosition(positions[i][0], positions[i][1]);
+      this._choiceTxts[i].setPosition(positions[i][0], positions[i][1]);
+    }
+
+    this._choiceCallback = onChoice;
+
+    // Show the dialog (null onClose so hide() won't fire a callback)
+    this.show(text, null, speaker, portraitKey);
+
+    // Once typing finishes, swap prompt for choice buttons
+    const poll = this.scene.time.addEvent({
+      delay: 30, loop: true,
+      callback: () => {
+        if (!this._typing) {
+          poll.remove();
+          this._prompt.setVisible(false);
+          for (let i = 0; i < 4; i++) {
+            const vis = i < count;
+            this._choiceBgs[i].setVisible(vis).setFillStyle(0x0A1A44);
+            this._choiceTxts[i].setVisible(vis).setText(vis ? labels[i] : '');
+          }
+        }
+      },
+    });
+  }
+
   hide() {
     if (this._typeEvent) { this._typeEvent.remove(false); this._typeEvent = null; }
     this._typing = false;
     this._active = false;
+    this._choiceCallback = null;
+    for (let i = 0; i < 4; i++) {
+      this._choiceBgs[i].setVisible(false);
+      this._choiceTxts[i].setVisible(false);
+    }
     this._panel.setVisible(false);
     this._border.setVisible(false);
     this._portrait.setVisible(false);
@@ -150,6 +245,7 @@ export default class DialogBox {
 
   update() {
     if (!this._active) return;
+    if (this._choiceCallback) return;   // waiting for a choice tap — block keyboard
     if (
       Phaser.Input.Keyboard.JustDown(this._spaceKey) ||
       Phaser.Input.Keyboard.JustDown(this._enterKey)

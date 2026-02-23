@@ -18,7 +18,10 @@ import Enemy       from '../entities/Enemy.js';
 import NPC         from '../entities/NPC.js';
 import HUD         from '../ui/HUD.js';
 import DialogBox   from '../ui/DialogBox.js';
-import NPC_JOKES   from '../data/npcJokes.json' with { type: 'json' };
+import NPC_JOKES            from '../data/npcJokes.json' with { type: 'json' };
+import { generateQuestion } from '../math/QuestionBank.js';
+import { getChoices }       from '../math/Distractors.js';
+import ITEMS                from '../data/items.js';
 
 //  World constants 
 const T     = 32;    // tile size in pixels
@@ -44,8 +47,21 @@ export default class ExploreScene extends Phaser.Scene {
     const isHardDefeat = data?.battleResult?.victory === false
                       && !data?.battleResult?.usedLife
                       && !data?.battleResult?.ranAway;
-    this._returnX    = isHardDefeat ? null : (data?.mimiX ?? null);
-    this._returnY    = isHardDefeat ? null : (data?.mimiY ?? null);
+
+    // On a run-away, push Mimi 96 px away from the enemy so she doesn't
+    // immediately re-trigger the same battle the moment she returns.
+    let returnX = isHardDefeat ? null : (data?.mimiX ?? null);
+    let returnY = isHardDefeat ? null : (data?.mimiY ?? null);
+    if (data?.battleResult?.ranAway && data?.enemyHomeX != null && returnX != null) {
+      const FLEE_DIST = 96;
+      const dx = (data.mimiX - data.enemyHomeX) || 0;
+      const dy = (data.mimiY - data.enemyHomeY) || 1;
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      returnX = data.mimiX + (dx / len) * FLEE_DIST;
+      returnY = data.mimiY + (dy / len) * FLEE_DIST;
+    }
+    this._returnX    = returnX;
+    this._returnY    = returnY;
     this._returnNpcX = isHardDefeat ? null : (data?.npcX ?? null);
     this._returnNpcY = isHardDefeat ? null : (data?.npcY ?? null);
     // Phaser reuses the same scene instance across scene.start() calls, so
@@ -336,9 +352,11 @@ export default class ExploreScene extends Phaser.Scene {
         ? { ...base, difficulty: spawn.difficultyOverride }
         : base;
 
+      const enemyHomeX = tx(spawn.col);
+      const enemyHomeY = ty(spawn.row);
       const enemy = new Enemy(
-        this, tx(spawn.col), ty(spawn.row), data,
-        (d) => this._startBattle(d, instanceKey),
+        this, enemyHomeX, enemyHomeY, data,
+        (d) => this._startBattle(d, instanceKey, enemyHomeX, enemyHomeY),
       );
       enemy.registerOverlap(this.mimi.sprite);
       enemy.setMimi(this.mimi.sprite);
@@ -347,7 +365,7 @@ export default class ExploreScene extends Phaser.Scene {
     });
   }
 
-  _startBattle(enemyData, instanceKey) {
+  _startBattle(enemyData, instanceKey, enemyHomeX, enemyHomeY) {
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.cameras.main.once('camerafadeoutcomplete', () => {
       this.scene.start('BattleScene', {
@@ -357,11 +375,13 @@ export default class ExploreScene extends Phaser.Scene {
         isBoss:        false,
         returnScene:   'ExploreScene',
         returnData:    {
-          regionId: this.regionId,
-          mimiX:    this.mimi.x,
-          mimiY:    this.mimi.y,
-          npcX:     this._npc?.sprite.x ?? null,
-          npcY:     this._npc?.sprite.y ?? null,
+          regionId:   this.regionId,
+          mimiX:      this.mimi.x,
+          mimiY:      this.mimi.y,
+          enemyHomeX: enemyHomeX ?? this.mimi.x,
+          enemyHomeY: enemyHomeY ?? this.mimi.y,
+          npcX:       this._npc?.sprite.x ?? null,
+          npcY:       this._npc?.sprite.y ?? null,
         },
       });
     });
@@ -757,9 +777,15 @@ export default class ExploreScene extends Phaser.Scene {
   //  NPC 
 
   _setupNPC() {
-    const npc = POSITIONS[this.regionId].npcTile;
-    const px = this._returnNpcX ?? tx(npc.col);
-    const py = this._returnNpcY ?? ty(npc.row);
+    const npc       = POSITIONS[this.regionId].npcTile;
+    const px        = this._returnNpcX ?? tx(npc.col);
+    const py        = this._returnNpcY ?? ty(npc.row);
+    const regionId  = this.regionId;
+
+    // Pulsing beacon if Mewton hasn't been visited this region yet
+    if (!GameState.npcVisited?.[regionId]) {
+      this._mewtonBeacon = this._createMewtonBeacon(px, py);
+    }
 
     this._npc = new NPC(
       this,
@@ -767,14 +793,21 @@ export default class ExploreScene extends Phaser.Scene {
       { spriteKey: 'npc_wizard', spriteKeyB: 'npc_wizard_b' },
       (done) => {
         if (this.dialog.isOpen) return;
-        // Pick a new random joke every interaction
-        const joke = NPC_JOKES[Math.floor(Math.random() * NPC_JOKES.length)];
-        // Page 1: setup — pause for the player to read it
-        this.dialog.show(joke.setup, () => {
-          // Page 2: punchline + math hint together
-          const hint = this.regionData.npcHint;
-          this.dialog.show(`${joke.punchline}\n\n💡 Hint: ${hint}`, done, '🧙 Wizard', 'npc_wizard');
-        }, '🧙 Wizard', 'npc_wizard');
+
+        // Dismiss beacon on first contact
+        if (this._mewtonBeacon) {
+          this._mewtonBeacon.forEach(o => o.destroy());
+          this._mewtonBeacon = null;
+        }
+
+        const rd          = this.regionData;
+        const bossBeaten  = GameState.hasDefeatedBoss(regionId);
+        const boonGot     = !!GameState.npcBoonReceived?.[regionId];
+        const spawns      = POSITIONS[regionId].enemySpawns;
+        const allClear    = spawns.every((s, i) =>
+          GameState.isEnemyDefeated(regionId, s.id + i));
+
+        this._mewtonMenu(done, rd, { bossBeaten, boonGot, allClear });
       },
     );
     this._npc.registerOverlap(this.mimi.sprite);
@@ -864,21 +897,12 @@ export default class ExploreScene extends Phaser.Scene {
       }
     }
 
-    // Interactive items — proximity + Space to collect
+    // Interactive items — auto-collect on proximity
     if (this._interactiveItems?.length) {
       for (const item of this._interactiveItems) {
-        if (item.collected) {
-          if (this._nearItem === item) { this._nearItem = null; this._hideItemPrompt(); }
-          continue;
-        }
+        if (item.collected) continue;
         const dist = Phaser.Math.Distance.Between(this.mimi.x, this.mimi.y, tx(item.col), ty(item.row));
-        if (dist < 38) {
-          if (this._nearItem !== item) { this._nearItem = item; this._showItemPrompt(item); }
-          if (Phaser.Input.Keyboard.JustDown(this._spaceKey)) this._collectItem(item);
-        } else if (this._nearItem === item) {
-          this._nearItem = null;
-          this._hideItemPrompt();
-        }
+        if (dist < 38) this._collectItem(item);
       }
     }
 
@@ -960,8 +984,6 @@ export default class ExploreScene extends Phaser.Scene {
   /** Create pulsing orbs for every uncollected interactive item in this region. */
   _setupInteractiveItems() {
     this._interactiveItems = [];
-    this._nearItem         = null;
-    this._itemPromptText   = null;
 
     const items = POSITIONS[this.regionId]?.interactiveItems ?? [];
     const ORB_COLORS = {
@@ -1012,30 +1034,9 @@ export default class ExploreScene extends Phaser.Scene {
     }
   }
 
-  _showItemPrompt(item) {
-    this._hideItemPrompt();
-    const px = tx(item.col);
-    const py = ty(item.row) - 26;
-    this._itemPromptText = this.add.text(px, py, '◆ [Space] collect', {
-      fontSize: '10px', color: '#FFEEBB',
-      fontFamily: "'Nunito', Arial, sans-serif",
-      stroke: '#000000', strokeThickness: 2,
-    }).setOrigin(0.5).setDepth(25);
-    this.tweens.add({
-      targets: this._itemPromptText, y: py - 3,
-      duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
-    });
-  }
-
-  _hideItemPrompt() {
-    if (this._itemPromptText) { this._itemPromptText.destroy(); this._itemPromptText = null; }
-  }
-
   _collectItem(item) {
     if (item.collected) return;
     item.collected = true;
-    if (this._nearItem === item) { this._nearItem = null; }
-    this._hideItemPrompt();
 
     // Persist pickup across sessions
     if (!GameState.collectedItems) GameState.collectedItems = {};
@@ -1063,6 +1064,261 @@ export default class ExploreScene extends Phaser.Scene {
     }
     this._showPickupToast(item.itemId);
     this.hud.refresh();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  Mewton NPC helpers
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /**
+   * Creates a pulsing gold orb + "?" floating above the wizard's initial
+   * tile so the player can spot him before making first contact.
+   * @returns {Phaser.GameObjects.GameObject[]} objects to destroy on contact
+   */
+  _createMewtonBeacon(px, py) {
+    const orbY = py - 28;
+    const orb = this.add.circle(px, orbY, 6, 0xFFDD44, 0.85)
+      .setDepth(22).setScrollFactor(1);
+    const qText = this.add.text(px, orbY - 14, '?', {
+      fontSize: '14px', color: '#FFDD44',
+      fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5, 0.5).setDepth(23).setScrollFactor(1);
+
+    this.tweens.add({
+      targets: [orb, qText], y: '-=6',
+      duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+    });
+    this.tweens.add({
+      targets: orb, alpha: { from: 0.55, to: 0.95 },
+      duration: 900, yoyo: true, repeat: -1,
+    });
+    return [orb, qText];
+  }
+
+  /**
+   * Chains an array of dialog pages (shows them sequentially) then calls onDone.
+   * @param {string[]} pages
+   * @param {string}   speaker
+   * @param {string}   portrait
+   * @param {Function} onDone
+   */
+  _dialogChain(pages, speaker, portrait, onDone) {
+    if (!pages || pages.length === 0) { onDone?.(); return; }
+    const [first, ...rest] = pages;
+    this.dialog.show(first,
+      () => this._dialogChain(rest, speaker, portrait, onDone),
+      speaker, portrait);
+  }
+
+  /**
+   * Shows a context-aware greeting then the player-driven topic menu.
+   * @param {Function} done
+   * @param {object}   rd          - regionData
+   * @param {object}   flags       - { bossBeaten, boonGot, allClear }
+   */
+  _mewtonMenu(done, rd, { bossBeaten, boonGot, allClear }) {
+    const SPEAKER  = '🧙 Mewton';
+    const PORTRAIT = 'npc_wizard';
+    const rid      = this.regionId;
+
+    // Mark visited
+    if (!GameState.npcVisited) GameState.npcVisited = {};
+    GameState.npcVisited[rid] = true;
+    GameState.save();
+
+    // Context-aware greeting
+    let greeting;
+    if (bossBeaten) {
+      greeting = `You defeated ${rd.bossName ?? 'the boss'}! I knew you would manage it.\n\n...I also had a contingency plan. We do not need to discuss the contingency plan.`;
+    } else if (allClear) {
+      greeting = 'Every enemy cleared — well done! The boss door is open.\n\nI predicted this outcome. I said 50% probability, but that still counts.';
+    } else if (boonGot) {
+      greeting = `Back again? Good. The boss won't defeat itself.\n\nCan I help with anything?`;
+    } else {
+      greeting = `Ah — Mimi! I'm Mewton. Mathematician, wizard, and the only certified cat-genius in this region.\n\nWhat can I do for you?`;
+    }
+
+    this.dialog.show(greeting, () => {
+      const labels = [
+        '😂 Tell me a joke',
+        '📖 About the boss',
+        '✏️ Lesson + challenge',
+        '👋 All good, thanks!',
+      ];
+      this.dialog.showChoice('What would you like to know?', labels, (idx) => {
+        if      (idx === 0) this._mewtonJoke(done);
+        else if (idx === 1) this._mewtonBossStory(done, rd);
+        else if (idx === 2) this._mewtonLesson(done, rd, boonGot);
+        else                done();
+      }, SPEAKER, PORTRAIT);
+    }, SPEAKER, PORTRAIT);
+  }
+
+  /** Tells a random joke then calls done. */
+  _mewtonJoke(done) {
+    const SPEAKER  = '🧙 Mewton';
+    const PORTRAIT = 'npc_wizard';
+    const joke = NPC_JOKES[Math.floor(Math.random() * NPC_JOKES.length)];
+    this.dialog.show(joke.setup, () => {
+      this.dialog.show(joke.punchline, done, SPEAKER, PORTRAIT);
+    }, SPEAKER, PORTRAIT);
+  }
+
+  /** Shows the 2-page boss background story then calls done. */
+  _mewtonBossStory(done, rd) {
+    const SPEAKER  = '🧙 Mewton';
+    const PORTRAIT = 'npc_wizard';
+    this._dialogChain(rd.npcBossStory ?? [rd.npcHint], SPEAKER, PORTRAIT, done);
+  }
+
+  /**
+   * Lesson pages → practice question (if boon not yet awarded) → boon → done.
+   * If boon already received, shows the lesson pages followed by the hint.
+   */
+  _mewtonLesson(done, rd, boonAlreadyGot) {
+    const SPEAKER  = '🧙 Mewton';
+    const PORTRAIT = 'npc_wizard';
+    this._dialogChain(rd.npcLesson ?? [], SPEAKER, PORTRAIT, () => {
+      if (boonAlreadyGot) {
+        this.dialog.show(`💡 Refresher: ${rd.npcHint}`, done, SPEAKER, PORTRAIT);
+      } else {
+        this._mewtonPracticeQuestion(rd.npcQuizTopic, (correct) => {
+          this._mewtonAwardBoon(rd.npcBoon, correct, SPEAKER, PORTRAIT, done);
+        });
+      }
+    });
+  }
+
+  /**
+   * Mini quiz overlay (4-button MCQ) separate from the DialogBox.
+   * Generates a question from the given topic, shows a centred panel,
+   * and calls onResult(isCorrect) after the answer animation completes.
+   * @param {string}   topic
+   * @param {Function} onResult
+   */
+  _mewtonPracticeQuestion(topic, onResult) {
+    const W      = this.cameras.main.width;
+    const FONT   = "'Nunito', Arial, sans-serif";
+    const DEPTH  = 90;
+    const panelX = W / 2;
+    const panelY = 262;
+    const PW     = 544;
+    const PH     = 284;
+    const panelTop = panelY - PH / 2;   // ≈ 120
+
+    const q       = generateQuestion(topic, 1);
+    const choices = getChoices(q);
+    const objs    = [];
+    const make    = (o) => { objs.push(o); return o; };
+
+    make(this.add.rectangle(panelX, panelY, PW, PH, 0x000C22, 0.97)
+      .setScrollFactor(0).setDepth(DEPTH).setStrokeStyle(2, 0xFFCC44));
+
+    make(this.add.text(panelX, panelTop + 22, '⚡ Mewton\'s Challenge!', {
+      fontSize: '16px', color: '#FFCC44', fontFamily: FONT, fontStyle: 'bold',
+    }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(DEPTH + 1));
+
+    make(this.add.rectangle(panelX, panelTop + 47, PW - 32, 1, 0x4488FF)
+      .setScrollFactor(0).setDepth(DEPTH + 1));
+
+    // Question text — bright contrasting yellow, stroke, top-anchored origin so
+    // word-wrap expands downward predictably rather than shifting the anchor.
+    make(this.add.text(panelX, panelTop + 60, q.prompt, {
+      fontSize: '17px', color: '#FFFF66', fontFamily: FONT, fontStyle: 'bold',
+      wordWrap: { width: PW - 56 },
+      stroke: '#001133', strokeThickness: 3,
+    }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(DEPTH + 3));
+
+    const feedbackText = make(this.add.text(panelX, panelTop + 256, '', {
+      fontSize: '14px', fontStyle: 'bold', color: '#FFFFFF', fontFamily: FONT,
+    }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(DEPTH + 2));
+
+    const btnPositions = [
+      [panelX - 132, panelTop + 170],
+      [panelX + 132, panelTop + 170],
+      [panelX - 132, panelTop + 224],
+      [panelX + 132, panelTop + 224],
+    ];
+
+    const btnBgs  = [];
+    const btnTxts = [];
+    let answered  = false;
+
+    choices.forEach((choice, i) => {
+      const [bx, by] = btnPositions[i];
+      const bg = make(this.add.rectangle(bx, by, 242, 36, 0x0A1A44)
+        .setScrollFactor(0).setDepth(DEPTH + 1).setStrokeStyle(1, 0x4488FF)
+        .setInteractive({ useHandCursor: true }));
+      const txt = make(this.add.text(bx, by, choice.text, {
+        fontSize: '14px', color: '#FFFFFF', fontFamily: FONT,
+      }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(DEPTH + 2));
+
+      btnBgs.push(bg);
+      btnTxts.push(txt);
+
+      bg.on('pointerover', () => { if (!answered) bg.setFillStyle(0x1A3A77); });
+      bg.on('pointerout',  () => { if (!answered) bg.setFillStyle(0x0A1A44); });
+      bg.on('pointerdown', () => {
+        if (answered) return;
+        answered = true;
+
+        if (choice.correct) {
+          bg.setFillStyle(0x114411).setStrokeStyle(2, 0x44FF44);
+          txt.setColor('#88FF88');
+          feedbackText.setText('✓ Correct! Well done, Mimi!').setColor('#88FF88');
+        } else {
+          bg.setFillStyle(0x441111).setStrokeStyle(2, 0xFF4444);
+          txt.setColor('#FF8888');
+          choices.forEach((c, j) => {
+            if (c.correct) {
+              btnBgs[j].setFillStyle(0x114411).setStrokeStyle(2, 0x44FF44);
+              btnTxts[j].setColor('#88FF88');
+            }
+          });
+          feedbackText.setText('✗ Not quite — the boon is yours either way!').setColor('#FF8888');
+        }
+
+        this.time.delayedCall(1500, () => {
+          this.tweens.add({
+            targets: objs, alpha: 0, duration: 350, ease: 'Sine.easeIn',
+            onComplete: () => { objs.forEach(o => o.destroy()); onResult(choice.correct); },
+          });
+        });
+      });
+    });
+  }
+
+  /**
+   * Award the region boon item, mark npcBoonReceived, refresh HUD, then show
+   * a dialog confirming the gift before calling done().
+   * @param {string}   boonId
+   * @param {boolean}  wasCorrect
+   * @param {string}   speaker
+   * @param {string}   portrait
+   * @param {Function} done
+   */
+  _mewtonAwardBoon(boonId, wasCorrect, speaker, portrait, done) {
+    const item = ITEMS[boonId];
+    if (!item) { done(); return; }
+
+    const rid = this.regionId;
+    GameState.addItem(boonId);
+    if (!GameState.npcBoonReceived) GameState.npcBoonReceived = {};
+    GameState.npcBoonReceived[rid] = true;
+    GameState.save();
+
+    this._showPickupToast(boonId);
+    this.hud.refresh();
+
+    const intro = wasCorrect
+      ? 'Excellent! You answered correctly.\n\nAs promised — here is your reward:'
+      : 'Not to worry — learning was the real achievement.\n\nEither way, this belongs to you:';
+
+    this.dialog.show(
+      `${intro}\n\n${item.emoji ?? '✨'} ${item.name} — ${item.description}`,
+      done, speaker, portrait,
+    );
   }
 
   _showPickupToast(itemId) {

@@ -88,8 +88,9 @@ export function getExplanation(question) {
       // Bridge-to-ten: "X + ? = Y"
       const mBridge = text.match(/^(\d+)\s*\+\s*\?/);
       if (mBridge) {
-        const start = Number(mBridge[1]);
-        return `Count up from ${start} to reach ${ans}:\n${start} + ${ans} = ${start + Number(ans)}\nAnswer: ${ans} ✓`;
+        const start  = Number(mBridge[1]);
+        const target = start + Number(ans);
+        return `Count up from ${start} to reach ${target}.\n${start} + ${ans} = ${target}\nAnswer: ${ans} ✓`;
       }
       break;
     }
@@ -108,9 +109,9 @@ export function getExplanation(question) {
           const carry = Math.floor(onesSum / 10);
           const onesResult = onesSum % 10;
           const tensResult = Math.floor(a / 10) + Math.floor(b / 10) + carry;
-          return `  ${String(a).padStart(3)}\n+ ${String(b).padStart(3)}\n─────\nOnes: ${onesA}+${onesB}=${onesSum} → write ${onesResult}, carry ${carry}\nTens: ${Math.floor(a/10)}+${Math.floor(b/10)}+${carry}(carry)=${tensResult}\nAnswer: ${tensResult}${onesResult} ✓`;
+          return `Ones: ${onesA} + ${onesB} = ${onesSum} → write ${onesResult}, carry ${carry}\nTens: ${Math.floor(a/10)} + ${Math.floor(b/10)} + ${carry} (carry) = ${tensResult}\nAnswer: ${ans} ✓`;
         }
-        return `${a} + ${b} = ${ans} ✓`;
+        return `${a} + ${b} = ${ans} ✓\n(No carrying needed this time!)`;
       }
       break;
     }
@@ -127,9 +128,9 @@ export function getExplanation(question) {
         if (onesA < onesB) {
           const borrowedOnesA = onesA + 10;
           const newTensA = Math.floor(a / 10) - 1;
-          return `  ${String(a).padStart(3)}\n− ${String(b).padStart(3)}\n─────\nOnes: ${onesA}<${onesB} → borrow a ten!\n${onesA}+10=${borrowedOnesA}, ${borrowedOnesA}−${onesB}=${borrowedOnesA - onesB}\nTens: ${Math.floor(a/10)}−1=${newTensA}, ${newTensA}−${Math.floor(b/10)}=${newTensA - Math.floor(b/10)}\nAnswer: ${ans} ✓`;
+          return `Ones: ${onesA} < ${onesB} → borrow a ten!\n${borrowedOnesA} − ${onesB} = ${borrowedOnesA - onesB}\nTens: ${Math.floor(a/10)} − 1 = ${newTensA},  then ${newTensA} − ${Math.floor(b/10)} = ${newTensA - Math.floor(b/10)}\nAnswer: ${ans} ✓`;
         }
-        return `${a} − ${b} = ${ans} ✓`;
+        return `${a} − ${b} = ${ans} ✓\n(No borrowing needed!)`;
       }
       break;
     }
@@ -178,10 +179,9 @@ export function getExplanation(question) {
     // ── Skip Counting ────────────────────────────────────────────────────────
     case 'skipCounting': {
       const nums = allNums(text);
-      if (nums.length >= 3) {
+      if (nums.length >= 2) {
         const step = nums[1] - nums[0];
-        // find the blank position (answer not in the list)
-        return `The pattern goes up by ${step} each time.\nFind the missing step:\ncount by ${step}s until you reach ${ans} ✓`;
+        return `The pattern counts by ${step}s each time.\nThe missing number is ${step} more than the one before it:\n... + ${step} = ${ans} ✓`;
       }
       break;
     }
@@ -407,8 +407,40 @@ export function getExplanation(question) {
       }
       break;
     }
+
+    // ── Doubling ──────────────────────────────────────────────────────────────
+    case 'doubling': {
+      const dbl = text.match(/double\s+(\d+)/i)
+                ?? text.match(/^(\d+)\s*[×xX*]\s*2/)
+                ?? text.match(/^2\s*[×xX*]\s*(\d+)/);
+      if (dbl) {
+        const n = Number(dbl[1]);
+        return `Double means adding the number to itself.\n${n} + ${n} = ${ans} ✓`;
+      }
+      break;
+    }
+
+    // ── Missing Number ────────────────────────────────────────────────────────
+    case 'missingNumber': {
+      const mA1 = text.match(/\?\s*\+\s*(\d+)\s*=\s*(\d+)/);
+      if (mA1) {
+        const [, b, total] = mA1.map(Number);
+        return `Subtract to find the missing number:\n${total} − ${b} = ${ans} ✓`;
+      }
+      const mA2 = text.match(/(\d+)\s*\+\s*\?\s*=\s*(\d+)/);
+      if (mA2) {
+        const [, a, total] = mA2.map(Number);
+        return `Subtract to find the missing number:\n${total} − ${a} = ${ans} ✓`;
+      }
+      const mS = text.match(/(\d+)\s*[−\-]\s*\?\s*=\s*(\d+)/);
+      if (mS) {
+        const [, a, result] = mS.map(Number);
+        return `Subtract to find the missing number:\n${a} − ${result} = ${ans} ✓`;
+      }
+      break;
+    }
   }
 
   // ── Generic fallback ─────────────────────────────────────────────────────
-  return `The correct answer is ${ans}.\nTry working through it step by step.\nPractice makes perfect! 💪`;
+  return `The answer is ${ans}.\n💡 Try drawing it out or counting step by step.\nYou'll get it next time! 🐾`;
 }

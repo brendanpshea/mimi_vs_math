@@ -814,61 +814,98 @@ export default class BattleScene extends Phaser.Scene {
   _showExplanation(question) {
     if (!question || this.battleOver) { this._afterAnswer(); return; }
 
-    const W   = this.cameras.main.width;
-    const H   = this.cameras.main.height;
-    const D   = 20;   // base depth
+    const W  = this.cameras.main.width;
+    const H  = this.cameras.main.height;
+    const D  = 20;
+    const PW = W * 0.88;
+    const PH = 400;
+    const PX = W / 2;
+    const PY = H / 2;
+
     const explanation = getExplanation(question);
     const ans = question.answerDisplay !== undefined
       ? String(question.answerDisplay) : String(question.answer);
 
     const overlay = [];
-    const add = obj => { overlay.push(obj); return obj; };
+    const add     = obj => { overlay.push(obj); return obj; };
 
-    // Dim backdrop
-    add(this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.78).setDepth(D));
+    // Dim backdrop — fades in independently
+    const dimBg = add(this.add.rectangle(PX, PY, W, H, 0x000000, 0).setDepth(D));
 
     // Panel
-    add(this.add.rectangle(W / 2, H / 2 - 10, W * 0.82, 320, 0x080824)
-      .setStrokeStyle(2, 0xFFCC44).setDepth(D));
+    add(this.add.rectangle(PX, PY, PW, PH, 0x120828)
+      .setStrokeStyle(2, 0xFFCC44).setDepth(D + 1));
 
-    // Header: correct answer
-    add(this.add.text(W / 2, H * 0.20, `✓  Correct answer: ${ans}`, {
-      fontSize: '22px', color: '#FFD700', fontFamily: FONT_TITLE, fontStyle: 'bold',
-      stroke: '#000000', strokeThickness: 4,
-    }).setOrigin(0.5).setDepth(D + 1));
-
-    // Divider
-    const dg = add(this.add.graphics().setDepth(D + 1));
-    dg.lineStyle(1, 0x445588, 0.7);
-    dg.lineBetween(W * 0.14, H * 0.295, W * 0.86, H * 0.295);
-
-    // Explanation text
-    add(this.add.text(W / 2, H * 0.31, explanation, {
-      fontSize: '16px', color: '#DDEEFF', fontFamily: FONT_UI,
-      align: 'center', lineSpacing: 5,
-      stroke: '#000000', strokeThickness: 2,
-      wordWrap: { width: W * 0.74 },
-    }).setOrigin(0.5, 0).setDepth(D + 1));
-
-    // "Got it!" button
-    const btnBg = add(this.add.rectangle(W / 2, H * 0.79, 210, 48, 0x0A2840)
-      .setStrokeStyle(2, 0x44AAFF)
-      .setInteractive({ useHandCursor: true })
-      .setDepth(D + 1));
-    const btnTxt = add(this.add.text(W / 2, H * 0.79, 'Got it!  →', {
-      fontSize: '19px', color: '#88CCFF', fontFamily: FONT_UI, fontStyle: 'bold',
+    // "Here's the trick!" header
+    add(this.add.text(PX, PY - PH / 2 + 22, "💡 Here's the trick!", {
+      fontSize: '20px', color: '#FFD966', fontFamily: FONT_TITLE, fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 3,
     }).setOrigin(0.5).setDepth(D + 2));
 
+    // Question echo — dark pill behind ensures contrast
+    const qEchoY = PY - PH / 2 + 46;
+    add(this.add.rectangle(PX, qEchoY + 12, PW - 32, 42, 0x000000, 0.45)
+      .setDepth(D + 1));
+    add(this.add.text(PX, qEchoY, question.text, {
+      fontSize: '16px', color: '#FFFFFF', fontFamily: FONT_UI, fontStyle: 'italic',
+      align: 'center', wordWrap: { width: PW - 72 },
+      stroke: '#000000', strokeThickness: 3,
+    }).setOrigin(0.5, 0).setDepth(D + 2));
+
+    // Divider
+    const dg1 = add(this.add.graphics().setDepth(D + 2));
+    dg1.lineStyle(1, 0x556699, 0.8);
+    dg1.lineBetween(W * 0.12, PY - PH / 2 + 100, W * 0.88, PY - PH / 2 + 100);
+
+    // Big answer
+    add(this.add.text(PX, PY - PH / 2 + 114, `✓  ${ans}`, {
+      fontSize: '38px', color: '#FFD700', fontFamily: FONT_TITLE, fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 5,
+    }).setOrigin(0.5, 0).setDepth(D + 2));
+
+    // Divider
+    const dg2 = add(this.add.graphics().setDepth(D + 2));
+    dg2.lineStyle(1, 0x556699, 0.8);
+    dg2.lineBetween(W * 0.12, PY - PH / 2 + 162, W * 0.88, PY - PH / 2 + 162);
+
+    // Explanation body
+    add(this.add.text(PX, PY - PH / 2 + 176, explanation, {
+      fontSize: '20px', color: '#DDEEFF', fontFamily: FONT_UI,
+      align: 'center', lineSpacing: 8,
+      stroke: '#000000', strokeThickness: 2,
+      wordWrap: { width: PW - 80 },
+    }).setOrigin(0.5, 0).setDepth(D + 2));
+
+    // "Got it!" button
+    const btnY  = PY + PH / 2 - 36;
+    const btnBg = add(this.add.rectangle(PX, btnY, 290, 50, 0x0A2818)
+      .setStrokeStyle(2, 0x44CC66)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(D + 2));
+    const btnTxt = add(this.add.text(PX, btnY, 'Got it — next question!  →', {
+      fontSize: '18px', color: '#77EE99', fontFamily: FONT_UI, fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(D + 3));
+
+    // Animate: backdrop fades in; panel + content slides up
+    this.tweens.add({ targets: dimBg, alpha: 0.80, duration: 180, ease: 'Sine.easeOut' });
+    const slideObjs = overlay.filter(o => o !== dimBg);
+    slideObjs.forEach(o => { o.setAlpha(0); o.y += 28; });
+    this.tweens.add({
+      targets: slideObjs, alpha: 1, y: '-=28',
+      duration: 220, ease: 'Sine.easeOut', delay: 70,
+    });
+
     const dismiss = () => {
-      // Remove keyboard listeners to avoid stale handlers
       this.input.keyboard.off('keydown-ENTER', dismiss);
       this.input.keyboard.off('keydown-SPACE', dismiss);
-      overlay.forEach(o => o.destroy());
-      this._afterAnswer();
+      this.tweens.add({
+        targets: overlay, alpha: 0, duration: 180, ease: 'Sine.easeIn',
+        onComplete: () => { overlay.forEach(o => o.destroy()); this._afterAnswer(); },
+      });
     };
 
-    btnBg.on('pointerover', () => { btnBg.setFillStyle(0x163E6A); btnTxt.setColor('#AADDFF'); });
-    btnBg.on('pointerout',  () => { btnBg.setFillStyle(0x0A2840); btnTxt.setColor('#88CCFF'); });
+    btnBg.on('pointerover', () => { btnBg.setFillStyle(0x155030); btnTxt.setColor('#AAFFCC'); });
+    btnBg.on('pointerout',  () => { btnBg.setFillStyle(0x0A2818); btnTxt.setColor('#77EE99'); });
     btnBg.on('pointerdown', dismiss);
     this.input.keyboard.on('keydown-ENTER', dismiss);
     this.input.keyboard.on('keydown-SPACE', dismiss);

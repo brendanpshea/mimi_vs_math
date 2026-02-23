@@ -19,6 +19,7 @@ export default class Mimi {
     this.scene = scene;
     this.speed = 160;
     this._frozen = false;
+    this._dpad   = null;  // set by ExploreScene via setDPad()
 
     this.sprite = scene.physics.add.image(x, y, 'mimi');
     this.sprite.setDepth(10);
@@ -70,10 +71,11 @@ export default class Mimi {
     let vx = 0;
     let vy = 0;
 
-    if (cursors.left.isDown  || wasd.left.isDown)  vx = -speed;
-    if (cursors.right.isDown || wasd.right.isDown) vx =  speed;
-    if (cursors.up.isDown    || wasd.up.isDown)    vy = -speed;
-    if (cursors.down.isDown  || wasd.down.isDown)  vy =  speed;
+    const dp = this._dpad;
+    if (cursors.left.isDown  || wasd.left.isDown  || dp?.left)  vx = -speed;
+    if (cursors.right.isDown || wasd.right.isDown || dp?.right) vx =  speed;
+    if (cursors.up.isDown    || wasd.up.isDown    || dp?.up)    vy = -speed;
+    if (cursors.down.isDown  || wasd.down.isDown  || dp?.down)  vy =  speed;
 
     // Normalise diagonal
     if (vx !== 0 && vy !== 0) {
@@ -153,10 +155,14 @@ export default class Mimi {
     sprite.setVelocity(vx, vy);
   }
 
+  /** Connect a VirtualDPad so touch input drives movement. */
+  setDPad(dpad) { this._dpad = dpad; }
+
   /** Temporarily disable player input (e.g. during dialogue). */
   freeze() {
     this.sprite.setVelocity(0, 0);
     this._frozen = true;
+    if (this._dpad) this._dpad.clearState();
   }
 
   unfreeze() {

@@ -21,6 +21,7 @@ import DialogBox   from '../ui/DialogBox.js';
 import NPC_JOKES from '../data/npcJokes.json' with { type: 'json' };
 import ITEMS     from '../data/items.js';
 import { openSettings, closeSettings } from '../ui/SettingsOverlay.js';
+import VirtualDPad from '../ui/VirtualDPad.js';
 
 //  World constants 
 const T     = 32;    // tile size in pixels
@@ -131,6 +132,12 @@ export default class ExploreScene extends Phaser.Scene {
     // UI (scrollFactor(0) set inside these classes)
     this.hud    = new HUD(this, this.regionData);
     this.dialog = new DialogBox(this);
+
+    // Virtual D-pad — shown on touch-capable devices, hidden on keyboard-only
+    this._dpad = new VirtualDPad(this);
+    this.mimi.setDPad(this._dpad);
+    const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (!hasTouch) this._dpad.setVisible(false);
 
     this.pauseKey  = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     this._spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);

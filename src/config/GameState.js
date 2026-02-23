@@ -66,6 +66,14 @@ const GameState = {
   // key: topic string, value: boolean[] ring-buffer of last 8 answers
   topicAccuracy: {},
 
+  // ── Accessibility / audio preferences (persisted separately from game progress) ──
+  // Timer multiplier: 1 = normal, 1.5 / 2 / 3 = extended time
+  timeMult: 1.0,
+  // Volume: 0 = mute, 0.25 = low, 0.5 = med, 0.75 = high (default), 1.0 = max
+  musicVol: 0.75,
+  // SFX volume: 0–1 linear Phaser SoundManager scale (default 1.0 = full)
+  sfxVol: 1.0,
+
   // ── Interactive item pickup tracking (persisted) ──────────────────────
   // key: `${regionId}_${col}_${row}`, value: true when collected
   collectedItems: {},
@@ -104,6 +112,9 @@ const GameState = {
       npcBoonReceived:        this.npcBoonReceived,
       seenEnemies:            this.seenEnemies,
       defeatedEnemyTypes:     this.defeatedEnemyTypes,
+      timeMult:               this.timeMult ?? 1.0,
+      musicVol:               this.musicVol ?? 0.75,
+      sfxVol:                 this.sfxVol  ?? 1.0,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   },
@@ -123,6 +134,9 @@ const GameState = {
       if (!this.npcBoonReceived)        this.npcBoonReceived = {};
       if (!this.seenEnemies)            this.seenEnemies = {};
       if (!this.defeatedEnemyTypes)     this.defeatedEnemyTypes = {};
+      if (this.timeMult === undefined)  this.timeMult = 1.0;
+      if (this.musicVol === undefined)   this.musicVol = 0.75;
+      if (this.sfxVol   === undefined)   this.sfxVol   = 1.0;
       // Ensure lives field exists for saves that predate this feature
       if (this.lives    === undefined) this.lives    = 9;
       if (this.maxLives === undefined) this.maxLives = 9;
@@ -170,6 +184,7 @@ const GameState = {
     this.npcBoonReceived        = {};
     this.seenEnemies            = {};
     this.defeatedEnemyTypes     = {};
+    // timeMult is an accessibility preference — intentionally NOT reset by new-game
     this.save();
   },
 

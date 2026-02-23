@@ -22,6 +22,7 @@ import NPC_JOKES            from '../data/npcJokes.json' with { type: 'json' };
 import { generateQuestion } from '../math/QuestionBank.js';
 import { getChoices }       from '../math/Distractors.js';
 import ITEMS                from '../data/items.js';
+import { openSettings, closeSettings } from '../ui/SettingsOverlay.js';
 
 //  World constants 
 const T     = 32;    // tile size in pixels
@@ -146,6 +147,17 @@ export default class ExploreScene extends Phaser.Scene {
     mapBtn.on('pointerover', () => { mapBtn.setFillStyle(0x153015); mapTxt.setColor('#AAFFAA'); });
     mapBtn.on('pointerout',  () => { mapBtn.setFillStyle(0x0A1A0A, 0.9); mapTxt.setColor('#88EE88'); });
     mapBtn.on('pointerdown', () => this._showExitConfirm());
+
+    // Settings button — sits just right of the Map button
+    const setBtn = this.add.rectangle(156, 48, 86, 22, 0x0A0A1C, 0.9)
+      .setScrollFactor(0).setDepth(52).setStrokeStyle(1, 0x4466AA)
+      .setInteractive({ useHandCursor: true });
+    const setTxt = this.add.text(156, 48, '⚙ Settings', {
+      fontSize: '12px', color: '#99BBDD', fontFamily: "'Nunito', Arial, sans-serif",
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(53);
+    setBtn.on('pointerover', () => { setBtn.setFillStyle(0x1A2050, 0.9); setTxt.setColor('#CCDDFF'); });
+    setBtn.on('pointerout',  () => { setBtn.setFillStyle(0x0A0A1C, 0.9); setTxt.setColor('#99BBDD'); });
+    setBtn.on('pointerdown', () => openSettings(this, 60));
 
     if (this.battleResult) {
       this.hud.refresh();
@@ -916,7 +928,9 @@ export default class ExploreScene extends Phaser.Scene {
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
-      if (this._exitConfirm) {
+      if (this._settingsItems) {
+        closeSettings(this);           // ESC closes settings first
+      } else if (this._exitConfirm) {
         this._closeExitConfirm(); // ESC while confirm open = cancel
       } else {
         this._showExitConfirm();

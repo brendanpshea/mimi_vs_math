@@ -4,7 +4,8 @@
  */
 import * as Phaser from 'phaser';
 import { loadAllAssets, loadAllAudio } from '../config/AssetConfig.js';
-import BGM from '../audio/BGM.js';
+import BGM       from '../audio/BGM.js';
+import GameState from '../config/GameState.js';
 
 export default class BootScene extends Phaser.Scene {
   constructor() { super({ key: 'BootScene' }); }
@@ -42,6 +43,12 @@ export default class BootScene extends Phaser.Scene {
     // Kick off BGM sample decoding in parallel — by the time TitleScene
     // appears all 46 MP3s should already be decoded and ready to play.
     BGM.preload();
+
+    // Apply saved volume preferences so BGM ramps to the right level from
+    // the very first note, and SFX plays at the user's preferred level.
+    GameState.load();
+    BGM.applyVolPref(GameState.musicVol ?? 0.75);
+    this.sound.setVolume(GameState.sfxVol ?? 1.0);
 
     // Generate procedural tile textures used in ExploreScene
     this._generateTileTextures();

@@ -23,6 +23,7 @@ let _masterVol    = null;
 let _samplers     = null;
 let _activeParts  = [];
 let _started      = false;
+let _targetDb     = -6;   // persisted so rampTo uses latest preference
 
 // ── Audio context + sampler bootstrap (called once) ───────────────────────────
 
@@ -118,7 +119,7 @@ const BGM = {
     _masterVol.volume.value = -60;
     builder(_samplers);
     Tone.getTransport().start();
-    _masterVol.volume.rampTo(-6, 1.5);
+    _masterVol.volume.rampTo(_targetDb, 1.5);
   },
 
   stop(fadeSec = 0.8) {
@@ -129,7 +130,14 @@ const BGM = {
   },
 
   setVolume(db) {
+    _targetDb = db;
     if (_masterVol) _masterVol.volume.value = db;
+  },
+
+  /** Apply a linear 0–1 volume preference (from GameState.musicVol). */
+  applyVolPref(v) {
+    const db = (v === 0) ? -80 : -24 + 24 * v;
+    this.setVolume(db);
   },
 };
 

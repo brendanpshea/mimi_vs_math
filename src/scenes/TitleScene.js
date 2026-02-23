@@ -9,6 +9,7 @@ import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
 import REGIONS   from '../data/regions/index.js';
 import BGM       from '../audio/BGM.js';
+import { openSettings, closeSettings } from '../ui/SettingsOverlay.js';
 
 const TITLE_COLOR = '#FFD700';
 const BG_COLOR    = 0x0D0D2A;
@@ -76,8 +77,18 @@ export default class TitleScene extends Phaser.Scene {
       sb.on('pointerdown', () => this._showStatsOverlay());
     }
 
+    // Settings button — bottom-right corner, always visible
+    const setBtn = this.add.rectangle(W - 54, H - 20, 92, 28, 0x111130)
+      .setStrokeStyle(1.5, 0x4466AA).setInteractive({ useHandCursor: true });
+    const setTxt = this.add.text(W - 54, H - 20, '⚙  Settings', {
+      fontSize: '13px', color: '#99BBDD', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+    }).setOrigin(0.5);
+    setBtn.on('pointerover', () => { setBtn.setFillStyle(0x1A2050); setTxt.setColor('#CCDDFF'); });
+    setBtn.on('pointerout',  () => { setBtn.setFillStyle(0x111130); setTxt.setColor('#99BBDD'); });
+    setBtn.on('pointerdown', () => this._showSettingsOverlay());
+
     // Footer
-    this.add.text(W / 2, H - 4, 'WASD / Arrow keys to move  ·  Space to interact  ·  Esc to pause', {
+    this.add.text(W / 2 - 50, H - 4, 'WASD / Arrow keys to move  ·  Space to interact  ·  Esc to pause', {
       fontSize: '11px', color: '#556688', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5, 1);
 
@@ -300,6 +311,9 @@ export default class TitleScene extends Phaser.Scene {
     this._statsItems.forEach(o => o.destroy());
     this._statsItems = null;
   }
+
+  _showSettingsOverlay() { openSettings(this, 400); }
+  _closeSettingsOverlay() { closeSettings(this); }
 
   _startAtWorld(regionId) {
     this._closeWorldSelect();

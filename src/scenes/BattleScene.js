@@ -1,4 +1,4 @@
-/**
+﻿/**
  * BattleScene — turn-based math battle.
  *
  * Scene data expected:
@@ -19,6 +19,7 @@ import { getChoices }        from '../math/Distractors.js';
 import { getExplanation }    from '../math/Explanations.js';
 import ITEMS                 from '../data/items.js';
 import REGIONS               from '../data/regions/index.js';
+import { openSettings, closeSettings } from '../ui/SettingsOverlay.js';
 
 const BTN_COLORS = {
   idle:    0x1E3A6E,
@@ -222,25 +223,14 @@ export default class BattleScene extends Phaser.Scene {
     this.add.text(W * 0.28, 176, `${livesStr}`, TEXT_STYLE(11, '#FFCC88'))
       .setOrigin(0.5, 0);
 
-    // ── Pause button (top-right corner) ────────────────────────────────────
-    this._pauseBtn = this.add.rectangle(W - 36, 20, 62, 24, 0x0A0A1A)
-      .setStrokeStyle(1.5, 0x446688).setInteractive({ useHandCursor: true }).setDepth(5);
-    this._pauseTxt = this.add.text(W - 36, 20, '⏸  [P]', TEXT_STYLE(12, '#88AACC'))
+        // u2500u2500 Pause button (bottom-left corner) u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500
+    this._pauseBtn = this.add.rectangle(52, H - 76, 98, 36, 0x0A0A1A)
+      .setStrokeStyle(2, 0x4488CC).setInteractive({ useHandCursor: true }).setDepth(5);
+    this._pauseTxt = this.add.text(52, H - 76, '⏸  Pause  [P]', TEXT_STYLE(14, '#88BBDD', true))
       .setOrigin(0.5).setDepth(6);
-    this._pauseBtn.on('pointerover', () => { this._pauseBtn.setFillStyle(0x0F1F2F); this._pauseTxt.setColor('#AACCEE'); });
-    this._pauseBtn.on('pointerout',  () => { this._pauseBtn.setFillStyle(0x0A0A1A); this._pauseTxt.setColor('#88AACC'); });
+    this._pauseBtn.on('pointerover', () => { this._pauseBtn.setFillStyle(0x0F2030); this._pauseTxt.setColor('#AADDFF'); });
+    this._pauseBtn.on('pointerout',  () => { this._pauseBtn.setFillStyle(0x0A0A1A); this._pauseTxt.setColor('#88BBDD'); });
     this._pauseBtn.on('pointerdown', () => this._togglePause());
-
-    // ── Run Away button (bottom-left; hidden for boss battles) ───────────────
-    if (!this.isBoss) {
-      this._runBtn = this.add.rectangle(46, H - 80, 90, 30, 0x0A0A1A)
-        .setStrokeStyle(1.5, 0x446688).setInteractive({ useHandCursor: true }).setDepth(3);
-      this._runTxt = this.add.text(46, H - 80, '🏃 Run  [Esc]', TEXT_STYLE(11, '#88AACC'))
-        .setOrigin(0.5).setDepth(4);
-      this._runBtn.on('pointerover', () => { this._runBtn.setFillStyle(0x0F1F2F); this._runTxt.setColor('#AACCEE'); });
-      this._runBtn.on('pointerout',  () => { this._runBtn.setFillStyle(0x0A0A1A); this._runTxt.setColor('#88AACC'); });
-      this._runBtn.on('pointerdown', () => this._tryRunAway());
-    }
     const topicLabels = {
       addSub: 'Addition & Subtraction', multiplication: 'Multiplication',
       division: 'Division', fractions: 'Fractions',
@@ -439,8 +429,9 @@ export default class BattleScene extends Phaser.Scene {
       kb.addKey(Phaser.Input.Keyboard.KeyCodes.THREE),
       kb.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR),
     ];
-    this.escKey = kb.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+    // Both P and Esc toggle pause
     this.pKey   = kb.addKey(Phaser.Input.Keyboard.KeyCodes.P);
+    this.escKey = kb.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
   }
 
   // ── Question flow ─────────────────────────────────────────────────────────
@@ -501,7 +492,8 @@ export default class BattleScene extends Phaser.Scene {
     // Timer — word problems get a flat +8 s reading bonus on top of the base timer
     const wordBonus   = q.wordProblem ? 8 : 0;
     const hardPenalty = this.isHardMode ? -5 : 0;
-    const duration    = (Math.max(8, this.enemyData.timerSeconds + hardPenalty) + (GameState.activeEffects.timerBonus ?? 0) + wordBonus) * 1000;
+    const baseSecs    = Math.max(8, this.enemyData.timerSeconds + hardPenalty) + (GameState.activeEffects.timerBonus ?? 0) + wordBonus;
+    const duration    = baseSecs * 1000 * (GameState.timeMult ?? 1.0);
     this._startTimer(duration);
     this._qStartTime = this.time.now;
   }
@@ -1348,26 +1340,55 @@ export default class BattleScene extends Phaser.Scene {
     // Pause overlay
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
+
+    // Resume button  large and prominent so it's obvious where to click
+    const resumeBtn = this.add.rectangle(W / 2, H / 2 + 8, 220, 52, 0x0A2A0A)
+      .setDepth(51).setStrokeStyle(2.5, 0x44CC44).setInteractive({ useHandCursor: true });
+    const resumeTxt = this.add.text(W / 2, H / 2 + 8, '\u25b6  Resume', {
+      fontFamily: "'Nunito', Arial, sans-serif",
+      fontSize: '26px', fontStyle: 'bold', color: '#88FF88',
+    }).setOrigin(0.5).setDepth(52);
+    resumeBtn.on('pointerover', () => { resumeBtn.setFillStyle(0x153015); resumeTxt.setColor('#CCFFCC'); });
+    resumeBtn.on('pointerout',  () => { resumeBtn.setFillStyle(0x0A2A0A); resumeTxt.setColor('#88FF88'); });
+    resumeBtn.on('pointerdown', () => this._resumeBattle());
+
+    const hintTxt = this.add.text(W / 2, H / 2 + 48, 'or press  [P] / [Esc]', {
+      fontFamily: 'Arial, sans-serif', fontSize: '13px', color: '#778899',
+    }).setOrigin(0.5).setDepth(51);
+
+    // Settings button inside pause overlay
+    const pgb = this.add.rectangle(W / 2, H / 2 + 88, 160, 34, 0x111130)
+      .setDepth(51).setStrokeStyle(1.5, 0x4466AA).setInteractive({ useHandCursor: true });
+    const pgt = this.add.text(W / 2, H / 2 + 88, '\u2699  Settings', {
+      fontFamily: 'Arial, sans-serif', fontSize: '16px', color: '#99BBDD',
+    }).setOrigin(0.5).setDepth(52);
+    pgb.on('pointerover', () => { pgb.setFillStyle(0x1A2050); pgt.setColor('#CCDDFF'); });
+    pgb.on('pointerout',  () => { pgb.setFillStyle(0x111130); pgt.setColor('#99BBDD'); });
+    pgb.on('pointerdown', () => openSettings(this, 55, () => {
+      // Clear key JustDown state so the ESC that closed settings
+      // doesn't also un-pause on the very same frame.
+      if (this.escKey) this.escKey.reset();
+      if (this.pKey)   this.pKey.reset();
+    }));
+
     this._pauseOverlay = [
       this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.55).setDepth(50),
-      this.add.text(W / 2, H / 2 - 22, '⏸  PAUSED', {
+      this.add.text(W / 2, H / 2 - 52, '\u23f8  PAUSED', {
         fontFamily: 'Arial Black, sans-serif',
         fontSize: '36px', fontStyle: 'bold', color: '#FFFFFF',
         stroke: '#000000', strokeThickness: 4,
       }).setOrigin(0.5).setDepth(51),
-      this.add.text(W / 2, H / 2 + 22, 'Click ▶ or press [P] to resume', {
-        fontFamily: 'Arial, sans-serif', fontSize: '16px', color: '#AACCFF',
-      }).setOrigin(0.5).setDepth(51),
+      resumeBtn, resumeTxt, hintTxt, pgb, pgt,
     ];
-  }
 
+  }
   _resumeBattle() {
     if (!this._battlePaused) return;
     this._battlePaused = false;
     if (this._pauseOverlay) { this._pauseOverlay.forEach(o => o.destroy()); this._pauseOverlay = null; }
     this.tweens.resumeAll();
     // Restore button to pause icon
-    if (this._pauseTxt) this._pauseTxt.setText('⏸  [P]');
+    if (this._pauseTxt) this._pauseTxt.setText('⏸  Pause  [P]');
     // Restart timer with saved remaining time (only if player hasn't answered yet)
     if (!this.answering && !this.battleOver && this._pauseRemainingMs > 0) {
       this._startTimer(this._pauseRemainingMs);
@@ -1379,88 +1400,16 @@ export default class BattleScene extends Phaser.Scene {
   // ── Update loop ───────────────────────────────────────────────────────────
 
   update() {
-    // P toggles pause regardless of other state
-    if (Phaser.Input.Keyboard.JustDown(this.pKey)) this._togglePause();
+    // P or Esc: close Settings overlay if open, otherwise toggle pause
+    if (Phaser.Input.Keyboard.JustDown(this.pKey) ||
+        Phaser.Input.Keyboard.JustDown(this.escKey)) {
+      if (this._settingsItems) closeSettings(this);
+      else this._togglePause();
+    }
     if (this._battlePaused || this.battleOver || this.answering) return;
     this.keys.forEach((key, i) => {
       if (Phaser.Input.Keyboard.JustDown(key)) this._selectAnswer(i);
     });
-    if (Phaser.Input.Keyboard.JustDown(this.escKey)) this._tryRunAway();
   }
 
-  // ── Run Away ──────────────────────────────────────────────────────────────
-
-  /** Attempt to flee the current battle. Blocked for bosses; costs 1 HP otherwise. */
-  _tryRunAway() {
-    if (this.battleOver || this.answering) return;
-
-    if (this.isBoss) {
-      const W = this.cameras.main.width;
-      const H = this.cameras.main.height;
-      const flash = this.add.text(W / 2, H * 0.43, "Can't escape a boss!",
-        { ...TEXT_STYLE(20, '#FF6644', true), stroke: '#000', strokeThickness: 3 },
-      ).setOrigin(0.5).setDepth(20);
-      this.tweens.add({ targets: flash, alpha: 0, delay: 1000, duration: 500, onComplete: () => flash.destroy() });
-      return;
-    }
-
-    // Cost: 1 HP (floor at 1 — running can't kill Mimi)
-    const cost = this.playerHP > 1 ? 1 : 0;
-    this.playerHP       = Math.max(1, this.playerHP - 1);
-    GameState.hp        = Math.max(1, GameState.hp - 1);
-    GameState.save();
-    this._updateHPBar(this.playerHPBar, this.playerHP);
-
-    this._endRunAway(cost);
-  }
-
-  _endRunAway(hpCost) {
-    this.battleOver = true;
-    if (this._timerEvent) this._timerEvent.remove();
-    this._hideQuestionUI();
-
-    const W = this.cameras.main.width;
-    const H = this.cameras.main.height;
-
-    const RUN_QUIPS = [
-      'Living to fight another day.',
-      'Strategic retreat. Very strategic.',
-      'Mimi has decided this is not her problem.',
-      'Sometimes the best answer is running.',
-      "Technically, 'not losing' counts as not losing.",
-      'She\'ll be back. With a plan. Maybe.',
-    ];
-    const quip = RUN_QUIPS[Phaser.Math.Between(0, RUN_QUIPS.length - 1)];
-
-    const boxH  = hpCost > 0 ? 188 : 168;
-    const boxY  = H / 2 - 10;
-    this.add.rectangle(W / 2, boxY, W * 0.78, boxH, 0x001122, 0.93)
-      .setStrokeStyle(2, 0x446688);
-
-    this.add.text(W / 2, boxY - boxH / 2 + 28, '🏃  Mimi Fled!', {
-      ...TEXT_STYLE(34, '#88CCFF', true), fontFamily: FONT_TITLE, stroke: '#000', strokeThickness: 3,
-    }).setOrigin(0.5);
-
-    this.add.text(W / 2, boxY - boxH / 2 + 72, quip,
-      { ...TEXT_STYLE(15, '#AACCFF'), wordWrap: { width: W * 0.65 }, align: 'center' },
-    ).setOrigin(0.5);
-
-    if (hpCost > 0) {
-      this.add.text(W / 2, boxY - boxH / 2 + 100,
-        `−${hpCost} HP from the hasty retreat`,
-        TEXT_STYLE(13, '#FF9988'),
-      ).setOrigin(0.5);
-    }
-
-    const btnOffset = boxH / 2 - 34;
-    this._makeContinueButton(W, H, 'Back to it →', () => {
-      this.cameras.main.fadeOut(300, 0, 0, 0);
-      this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start(this.returnScene, {
-          ...this.returnData,
-          battleResult: { victory: false, ranAway: true },
-        });
-      });
-    }, 0x001133, 0x4466AA, boxY - H / 2 + btnOffset);
-  }
 }

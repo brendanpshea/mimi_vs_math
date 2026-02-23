@@ -9,6 +9,7 @@ import GameState from '../config/GameState.js';
 import REGIONS   from '../data/regions/index.js';
 import ENEMIES   from '../data/enemies.js';
 import BGM       from '../audio/BGM.js';
+import { openSettings, closeSettings } from '../ui/SettingsOverlay.js';
 
 const NODE_RADIUS = 40;
 const PATH_COLOR  = 0x8B6A3A;
@@ -58,7 +59,8 @@ export default class OverworldScene extends Phaser.Scene {
 
     // ESC: close overlay/popup first; then confirm before returning to title
     this.input.keyboard.on('keydown-ESC', () => {
-      if (this._statsItems)      { this._closeStatsOverlay(); }
+      if (this._settingsItems)   { closeSettings(this); }
+      else if (this._statsItems)      { this._closeStatsOverlay(); }
       else if (this._popup)      { this._closePopup(); }
       else if (this._exitConfirm){ this._closeExitConfirm(); }
       else                       { this._showExitConfirm(); }
@@ -341,6 +343,15 @@ export default class OverworldScene extends Phaser.Scene {
       this.cameras.main.once('camerafadeoutcomplete', () =>
         this.scene.start('BestiaryScene', { from: 'OverworldScene' }));
     });
+
+    // Settings button
+    const gb = this.add.rectangle(px, 198, 130, 22, 0x0A0A1C)
+      .setStrokeStyle(1.5, 0x4466AA).setInteractive({ useHandCursor: true });
+    const gt = this.add.text(px, 198, '⚙ Settings',
+      { fontSize: '12px', color: '#99BBDD', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+    gb.on('pointerover', () => { gb.setFillStyle(0x1A2050); gt.setColor('#CCDDFF'); });
+    gb.on('pointerout',  () => { gb.setFillStyle(0x0A0A1C); gt.setColor('#99BBDD'); });
+    gb.on('pointerdown', () => openSettings(this));
   }
 
   // ── Stats overlay ────────────────────────────────────────────────────────

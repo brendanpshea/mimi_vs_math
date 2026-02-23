@@ -74,7 +74,7 @@ const TILE_FN = [
   (c, r) => { const h = _tileHash(c, r);                                                           // R0 Sunny Village
     return { col: c, row: r, key: h === 0 ? 'decoration_tree'         : 'decoration_tree_b',         blocking: true }; },
   (c, r) => { const h = _tileHash(c, r);                                                           // R1 Windmill Village
-    return { col: c, row: r, key: h === 0 ? 'decoration_windmill'     : 'decoration_hay_bale',       blocking: true }; },
+    return { col: c, row: r, key: h === 0 ? 'decoration_hay_bale'     : 'decoration_hay_bale_b',     blocking: true }; },
   (c, r) => { const h = _tileHash(c, r);                                                           // R2 Meadow Maze
     return { col: c, row: r, key: h === 0 ? 'decoration_tree_meadow'  : 'decoration_tree_meadow_b',  blocking: true }; },
   (c, r) => { const h = _tileHash(c, r);                                                           // R3 Desert Dunes
@@ -100,9 +100,10 @@ const ACCENT_LAYERS = [
     { key: 'decoration_flower',   freq: 0.12, threshold: 0.82, seed: 100 },
     { key: 'decoration_hay_bale', freq: 0.08, threshold: 0.86, seed: 200 },
   ],
-  [ // R1 — Windmill Village: wheat stalk clusters + sunflowers
+  [ // R1 — Windmill Village: wheat stalk clusters + sunflowers + rare standalone windmills
     { key: 'decoration_wheat_stalk', freq: 0.12, threshold: 0.82, seed: 250 },
     { key: 'decoration_sunflower',   freq: 0.07, threshold: 0.90, seed: 350 },
+    { key: 'decoration_windmill',    freq: 0.04, threshold: 0.94, seed: 450 },
   ],
   [ // R2 — Meadow Maze: mushroom groves + lily clusters
     { key: 'decoration_mushroom', freq: 0.10, threshold: 0.80, seed: 300 },

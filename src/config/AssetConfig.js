@@ -146,7 +146,8 @@ export const TERRAIN_DEFS = [
   { key: 'decoration_torch',        file: 'decoration_torch',        size: { width: 24, height: 40 } },
 
   // New decorations — Region 1 (Windmill Village)
-  { key: 'decoration_windmill',      file: 'decoration_windmill',      size: { width: 32, height: 64 } },
+  { key: 'decoration_windmill',      file: 'decoration_windmill',      size: { width: 32, height: 56 } },
+  { key: 'decoration_hay_bale_b',    file: 'decoration_hay_bale_b',    size: { width: 32, height: 28 } },
   { key: 'decoration_wheat_stalk',   file: 'decoration_wheat_stalk',   size: { width: 32, height: 48 } },
   { key: 'decoration_sunflower',     file: 'decoration_sunflower',     size: { width: 32, height: 48 } },
   // Landmark — Region 1

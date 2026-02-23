@@ -1,32 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 64" width="32" height="64">
-  <!-- Decorative mini windmill (32×64) -->
-  <!-- Tower base -->
-  <rect x="10" y="38" width="12" height="24" rx="2" fill="#CC9944" stroke="#1A0A00" stroke-width="1.5"/>
-  <!-- Tower taper (slightly wider at base in drawing) -->
-  <trapezoid/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 56" width="32" height="56">
+  <!-- Decorative mini windmill — accent scatter, transparent background -->
+  <!-- Ground shadow -->
+  <ellipse cx="16" cy="54" rx="9" ry="2" fill="#3A2400" opacity="0.22"/>
+  <!-- Tower -->
+  <rect x="11" y="32" width="10" height="20" rx="2" fill="#CC9944" stroke="#5A3A10" stroke-width="1.5"/>
+  <!-- Mortar lines -->
+  <line x1="11" y1="38" x2="21" y2="38" stroke="#8B6A2A" stroke-width="0.8" opacity="0.55"/>
+  <line x1="11" y1="44" x2="21" y2="44" stroke="#8B6A2A" stroke-width="0.8" opacity="0.55"/>
+  <line x1="11" y1="50" x2="21" y2="50" stroke="#8B6A2A" stroke-width="0.8" opacity="0.55"/>
   <!-- Door -->
-  <rect x="13" y="52" width="6" height="10" rx="2" fill="#8B5A1A" stroke="#1A0A00" stroke-width="1"/>
-  <!-- Tower window -->
-  <rect x="13" y="44" width="6" height="5" rx="1" fill="#AADDFF" stroke="#1A0A00" stroke-width="1"/>
-  <!-- Roof cap (conical top) -->
-  <polygon points="16,28 8,40 24,40" fill="#994422" stroke="#1A0A00" stroke-width="1.5"/>
-  <!-- Roof highlight -->
-  <polygon points="16,28 14,36 18,36" fill="#CC6633" opacity="0.6"/>
-  <!-- Axle center -->
-  <circle cx="16" cy="38" r="3" fill="#DDAA33" stroke="#1A0A00" stroke-width="1.5"/>
-  <!-- Sail arms (X pattern centered on axle at y=38) -->
-  <!-- Top-left sail -->
-  <polygon points="16,38 6,18 10,14 16,38" fill="#F5E8C0" stroke="#1A0A00" stroke-width="1.5"/>
-  <line x1="13" y1="26" x2="8" y2="16" stroke="#CC9944" stroke-width="1"/>
-  <!-- Top-right sail -->
-  <polygon points="16,38 26,18 22,14 16,38" fill="#F0E0B0" stroke="#1A0A00" stroke-width="1.5"/>
-  <line x1="19" y1="26" x2="24" y2="16" stroke="#CC9944" stroke-width="1"/>
-  <!-- Bottom-left blade -->
-  <polygon points="16,38 6,52 10,54 16,38" fill="#F5E8C0" stroke="#1A0A00" stroke-width="1.5"/>
-  <!-- Bottom-right blade -->
-  <polygon points="16,38 26,50 22,54 16,38" fill="#F0E0B0" stroke="#1A0A00" stroke-width="1.5"/>
-  <!-- Ground grass tufts at base -->
-  <ellipse cx="16" cy="63" rx="10" ry="3" fill="#5A9A30" opacity="0.6"/>
-  <path d="M9 62 Q10 58 11 62" stroke="#4A8A20" stroke-width="1.5" fill="none"/>
-  <path d="M21 62 Q22 58 23 62" stroke="#4A8A20" stroke-width="1.5" fill="none"/>
+  <rect x="13" y="44" width="6" height="8" rx="2" fill="#7A4A10" stroke="#3A2000" stroke-width="1"/>
+  <!-- Window -->
+  <rect x="13" y="36" width="6" height="5" rx="1" fill="#C8E8FF" stroke="#5A3A10" stroke-width="0.8"/>
+  <!-- Conical roof -->
+  <polygon points="16,21 9,34 23,34" fill="#882211" stroke="#5A1A10" stroke-width="1.5"/>
+  <!-- Roof shading -->
+  <polygon points="16,21 14,30 17,30" fill="#AA3322" opacity="0.55"/>
+  <!-- Roof cap -->
+  <circle cx="16" cy="21" r="2.5" fill="#DDAA33" stroke="#5A3A10" stroke-width="1"/>
+  <!-- Axle hub -->
+  <circle cx="16" cy="32" r="3" fill="#DDAA33" stroke="#5A3A10" stroke-width="1.5"/>
+  <!-- Sail: top-left -->
+  <polygon points="16,32 5,15 8.5,11 16,32" fill="#F5E8C0" stroke="#5A3A10" stroke-width="1.5"/>
+  <line x1="11" y1="22" x2="7" y2="13" stroke="#CC9944" stroke-width="1"/>
+  <!-- Sail: top-right -->
+  <polygon points="16,32 27,15 23.5,11 16,32" fill="#EDE0B0" stroke="#5A3A10" stroke-width="1.5"/>
+  <line x1="21" y1="22" x2="25" y2="13" stroke="#CC9944" stroke-width="1"/>
+  <!-- Sail: bottom-left -->
+  <polygon points="16,32 5,46 8.5,49 16,32" fill="#F5E8C0" stroke="#5A3A10" stroke-width="1.5"/>
+  <!-- Sail: bottom-right -->
+  <polygon points="16,32 27,46 23.5,49 16,32" fill="#EDE0B0" stroke="#5A3A10" stroke-width="1.5"/>
 </svg>

@@ -315,8 +315,9 @@ export default class ExploreScene extends Phaser.Scene {
       decoration_chains:        1.15,
       decoration_bookshelf:     1.15,
       // Region 1 — Windmill Village
-      decoration_windmill:      1.20,
-      decoration_hay_bale:      1.10,
+      decoration_windmill:      1.10,
+      decoration_hay_bale:      1.00,
+      decoration_hay_bale_b:    1.00,
       decoration_wheat_stalk:   1.10,
       decoration_sunflower:     1.15,
     };

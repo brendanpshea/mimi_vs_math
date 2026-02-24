@@ -1,7 +1,10 @@
 /**
  * BestiaryScene — Pokémon-style enemy index.
  *
- * Shows a 7-column grid of all 28 enemies in canonical order.
+ * Shows a 7-column grid of all enemies in canonical order.
+ * CANON_ORDER is derived automatically from REGIONS + ENEMIES —
+ * new enemies appear here the moment they are added to those data files.
+ *
  * Each card has three states:
  *   unknown  — dark silhouette, "???" label, not interactive
  *   seen     — desaturated sprite, 👁 badge, click for details
@@ -11,31 +14,31 @@
  *   this.scene.start('BestiaryScene', { from: 'OverworldScene' });
  */
 import * as Phaser from 'phaser';
-import GameState from '../config/GameState.js';
-import ENEMIES   from '../data/enemies.js';
+import GameState         from '../config/GameState.js';
+import ENEMIES           from '../data/enemies.js';
+import REGIONS           from '../data/regions/index.js';
+import { buildCanonOrder } from '../data/bestiaryUtils.js';
 
-// ── Canonical enemy display order ─────────────────────────────────────────
-const CANON_ORDER = [
-  // Region 0 – Sunny Village
-  'counting_caterpillar', 'number_gnome', 'minus_mole', 'number_bee', 'subtraction_witch',
-  // Region 1 – Windmill Village
-  'gear_gnome', 'windmill_sprite', 'harvest_scarecrow', 'counting_crow', 'grand_miller',
-  // Region 2 – Meadow Maze
-  'slime_pup', 'cactus_sprite', 'cloud_bully', 'double_bunny', 'count_multiplico',
-  // Region 3 – Desert Dunes
-  'sand_scarab', 'mummy_cat', 'mirage_fox', 'riddle_scarab', 'the_diviner',
-  // Region 4 – Frostbite Cavern
-  'ice_frog', 'snow_golem', 'crystal_bat', 'glacius',
-  // Region 5 – Shadow Castle
-  'shadow_knight', 'ratio_raven', 'percent_wraith', 'fenwick',
-];
+// ── Canonical enemy display order — derived from live data ────────────────
+// Enemies appear at their first-encountered region; bosses last within that region.
+// Adding a region_N.js + its enemies makes them show up here automatically.
+const CANON_ORDER = buildCanonOrder(REGIONS, ENEMIES);
 
-const REGION_NAMES  = ['Sunny Village', 'Windmill Village', 'Meadow Maze', 'Desert Dunes', 'Frostbite Cavern', 'Shadow Castle'];
-const GRADE_LABELS  = ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'];
+// ── Region labels — derived from region data ──────────────────────────────
+const REGION_NAMES = REGIONS.map(r => r.name);
+// Extract "Grade N" prefix from subtitle (format: "Grade N · Topic description")
+const GRADE_LABELS = REGIONS.map(r => r.subtitle.split(' · ')[0]);
+
+// ── Bestiary-specific colour palette ─────────────────────────────────────
+// Dark card-background and border-accent colour per region.
+// Extend this array when adding a new region; unknown regions fall back to
+// neutral colours so the bestiary never hard-crashes on a missing entry.
 const REGION_BG     = [0x1A2A0A, 0x200A00, 0x0A2A0A, 0x2A1A08, 0x081A28, 0x0C0818];
 const REGION_ACCENT = [0x44AA22, 0xFFAA33, 0x44DD22, 0xCC8822, 0x44AADD, 0x7744CC];
+const DEFAULT_BG     = 0x0A0A1A;   // fallback for regions beyond the colour table
+const DEFAULT_ACCENT = 0x8866CC;
 
-// Grid constants — 7 cols × 4 rows fits all 28 enemies within 600 px
+// Grid constants — 7 cols; row count adjusts automatically to total enemy count
 const COLS       = 7;
 const CARD_W     = 102;
 const CARD_H     = 84;
@@ -114,8 +117,8 @@ export default class BestiaryScene extends Phaser.Scene {
     // Card background
     let bgColor, borderColor, borderThick;
     if (isDefeated) {
-      bgColor     = REGION_BG[r];
-      borderColor = isBoss ? 0xFFDD44 : REGION_ACCENT[r];
+      bgColor     = REGION_BG[r]     ?? DEFAULT_BG;
+      borderColor = isBoss ? 0xFFDD44 : (REGION_ACCENT[r] ?? DEFAULT_ACCENT);
       borderThick = isBoss ? 2.5 : 1.5;
     } else if (isSeen) {
       bgColor     = 0x0E0E22;
@@ -131,12 +134,25 @@ export default class BestiaryScene extends Phaser.Scene {
       .setStrokeStyle(borderThick, borderColor);
 
     // Sprite
+    // setTint() is WebGL-only; Canvas renderer (Firefox) ignores it and shows
+    // full-colour sprites.  Use renderer-aware fallbacks instead.
+    const isWebGL = (this.game.renderer.type === Phaser.WEBGL);
     if (this.textures.exists(data.id)) {
       const sprite = this.add.image(cx - 16, cy, data.id).setDisplaySize(56, 56);
       if (!isSeen) {
-        sprite.setTint(0x0A0A18);       // dark silhouette
+        if (isWebGL) {
+          sprite.setTint(0x0A0A18);               // dark silhouette (WebGL)
+        } else {
+          sprite.setAlpha(0.10);                  // near-invisible (Canvas)
+        }
       } else if (!isDefeated) {
-        sprite.setTint(0x8899AA).setAlpha(0.55);  // grey ghost
+        if (isWebGL) {
+          sprite.setTint(0x8899AA).setAlpha(0.55); // grey ghost (WebGL)
+        } else {
+          sprite.setAlpha(0.40);                  // dim ghost (Canvas)
+          // Lay a semi-transparent grey wash over the sprite
+          this.add.rectangle(cx - 16, cy, 56, 56, 0x8899AA, 0.45);
+        }
       }
     }
 
@@ -198,14 +214,14 @@ export default class BestiaryScene extends Phaser.Scene {
     const PW = 560, PH = 310;
     const px = W / 2, py = H / 2;
     const panel = this.add.rectangle(px, py, PW, PH, 0x0A0A1E)
-      .setStrokeStyle(2, REGION_ACCENT[r]);
+      .setStrokeStyle(2, REGION_ACCENT[r] ?? DEFAULT_ACCENT);
     grp.add(panel);
 
     // Region-colour sprite frame (left side)
     const frameX = px - PW / 2 + 75;
     const frameY = py;
-    const frame = this.add.rectangle(frameX, frameY, 120, 120, REGION_BG[r])
-      .setStrokeStyle(2, REGION_ACCENT[r]);
+    const frame = this.add.rectangle(frameX, frameY, 120, 120, REGION_BG[r] ?? DEFAULT_BG)
+      .setStrokeStyle(2, REGION_ACCENT[r] ?? DEFAULT_ACCENT);
     grp.add(frame);
 
     if (this.textures.exists(data.id)) {

@@ -370,6 +370,18 @@ check(
   GameState.hasSeenEnemy(TEST_ID_2) === true,
 );
 
+// Kill-counts: marking defeated should increment the stored kill count
+check(
+  `getKillCount("${TEST_ID_2}") is a number after first defeat`,
+  typeof GameState.getKillCount(TEST_ID_2) === 'number',
+);
+const beforeKC = GameState.getKillCount(TEST_ID_2);
+GameState.markEnemyDefeated(TEST_ID_2);
+check(
+  `getKillCount("${TEST_ID_2}") increments on subsequent markEnemyDefeated`,
+  GameState.getKillCount(TEST_ID_2) === beforeKC + 1,
+);
+
 // Idempotency: marking seen again should not throw or reset defeated state
 GameState.markEnemySeen(TEST_ID_2);
 check(
@@ -386,6 +398,10 @@ check(
 check(
   `hasDefeatedEnemyType("${TEST_ID_2}") is false after reset`,
   GameState.hasDefeatedEnemyType(TEST_ID_2) === false,
+);
+check(
+  `getKillCount("${TEST_ID_2}") is 0 after reset`,
+  GameState.getKillCount(TEST_ID_2) === 0,
 );
 
 // Verify all CANON_ORDER ids can be passed to the API without throwing

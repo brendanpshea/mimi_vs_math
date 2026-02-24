@@ -176,10 +176,23 @@ export default class BestiaryScene extends Phaser.Scene {
       this.add.text(cx + CARD_W / 2 - 4, cy - CARD_H / 2 + 2, badge, {
         fontSize: '13px', fontFamily: FONT,
       }).setOrigin(1, 0);
+      // Small defeat-count badge (if >0)
+      const kc = GameState.getKillCount ? GameState.getKillCount(id) : 0;
+      if (kc > 0) {
+        this.add.text(cx + CARD_W / 2 - 6, cy - CARD_H / 2 + 18, `x${kc}`, {
+          fontSize: '10px', fontFamily: FONT, color: '#DDFFCC',
+        }).setOrigin(1, 0);
+      }
     } else if (isSeen) {
       this.add.text(cx + CARD_W / 2 - 4, cy - CARD_H / 2 + 2, '👁', {
         fontSize: '11px', fontFamily: FONT,
       }).setOrigin(1, 0);
+      const kc = GameState.getKillCount ? GameState.getKillCount(id) : 0;
+      if (kc > 0) {
+        this.add.text(cx + CARD_W / 2 - 6, cy - CARD_H / 2 + 18, `x${kc}`, {
+          fontSize: '10px', fontFamily: FONT, color: '#CCCCCC',
+        }).setOrigin(1, 0);
+      }
     }
 
     // Interactivity (seen or defeated only)
@@ -282,12 +295,28 @@ export default class BestiaryScene extends Phaser.Scene {
       });
       grp.add(statTxt);
       ty += lineH;
+      // Show total defeated count for this enemy type
+      const kc = GameState.getKillCount ? GameState.getKillCount(id) : 0;
+      const kcTxt = this.add.text(tx, ty, `⚔ Defeated: ${kc}`, {
+        fontSize: '11px', fontFamily: FONT, color: '#CCFFCC',
+      });
+      grp.add(kcTxt);
+      ty += lineH;
     } else {
       const unknownTxt = this.add.text(tx, ty, '❤ HP: ???   ⚔ DMG: ???', {
         fontSize: '11px', fontFamily: FONT, color: '#556677',
       });
       grp.add(unknownTxt);
       ty += lineH;
+      // Even when unknown, show times defeated if any (helps players see progress)
+      const kc = GameState.getKillCount ? GameState.getKillCount(id) : 0;
+      if (kc > 0) {
+        const kcTxt = this.add.text(tx, ty, `⚔ Defeated: ${kc}`, {
+          fontSize: '11px', fontFamily: FONT, color: '#556677',
+        });
+        grp.add(kcTxt);
+        ty += lineH;
+      }
     }
 
     // Status badge (top-right of panel)

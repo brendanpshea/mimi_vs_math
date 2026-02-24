@@ -88,6 +88,8 @@ const GameState = {
   seenEnemies: {},
   // key: enemy type id; set when Mimi wins a battle against that type
   defeatedEnemyTypes: {},
+  // key: enemy type id; number of times the player has defeated that type
+  bestiaryKillCounts: {},
   // ─────────────────────────────────────────────────────────────────────
   // Persistence
   // ─────────────────────────────────────────────────────────────────────
@@ -112,6 +114,7 @@ const GameState = {
       npcBoonReceived:        this.npcBoonReceived,
       seenEnemies:            this.seenEnemies,
       defeatedEnemyTypes:     this.defeatedEnemyTypes,
+      bestiaryKillCounts:     this.bestiaryKillCounts,
       timeMult:               this.timeMult ?? 1.0,
       musicVol:               this.musicVol ?? 0.75,
       sfxVol:                 this.sfxVol  ?? 1.0,
@@ -134,6 +137,7 @@ const GameState = {
       if (!this.npcBoonReceived)        this.npcBoonReceived = {};
       if (!this.seenEnemies)            this.seenEnemies = {};
       if (!this.defeatedEnemyTypes)     this.defeatedEnemyTypes = {};
+      if (!this.bestiaryKillCounts)     this.bestiaryKillCounts = {};
       if (this.timeMult === undefined)  this.timeMult = 1.0;
       if (this.musicVol === undefined)   this.musicVol = 0.75;
       if (this.sfxVol   === undefined)   this.sfxVol   = 1.0;
@@ -184,6 +188,7 @@ const GameState = {
     this.npcBoonReceived        = {};
     this.seenEnemies            = {};
     this.defeatedEnemyTypes     = {};
+    this.bestiaryKillCounts     = {};
     // timeMult is an accessibility preference — intentionally NOT reset by new-game
     this.save();
   },
@@ -216,9 +221,22 @@ const GameState = {
   markEnemyDefeated(id) {
     if (!this.defeatedEnemyTypes) this.defeatedEnemyTypes = {};
     if (!this.seenEnemies)        this.seenEnemies = {};
+    if (!this.bestiaryKillCounts) this.bestiaryKillCounts = {};
+    // Record that this type was defeated (boolean) and increment the counter.
     this.defeatedEnemyTypes[id] = true;
     this.seenEnemies[id]        = true;
+    this.bestiaryKillCounts[id]  = (this.bestiaryKillCounts[id] || 0) + 1;
     this.save();
+  },
+  /** Increment the stored kill count for an enemy type. */
+  incrementKillCount(id, by = 1) {
+    if (!this.bestiaryKillCounts) this.bestiaryKillCounts = {};
+    this.bestiaryKillCounts[id] = (this.bestiaryKillCounts[id] || 0) + (by || 0);
+    this.save();
+  },
+  /** Return number of times this enemy type has been defeated (0 if none). */
+  getKillCount(id) {
+    return this.bestiaryKillCounts?.[id] || 0;
   },
   hasSeenEnemy(id)         { return !!this.seenEnemies?.[id]; },
   hasDefeatedEnemyType(id) { return !!this.defeatedEnemyTypes?.[id]; },

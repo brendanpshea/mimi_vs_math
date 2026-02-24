@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#14102A"/>
+  <rect x="2" y="2" width="28" height="12" fill="#221840"/>
+  <rect x="2" y="18" width="28" height="12" fill="#221840"/>
+  <rect x="2" y="2" width="28" height="3" fill="#3A2860"/>
+  <rect x="2" y="18" width="28" height="3" fill="#3A2860"/>
+  <!-- simple purple veins -->
+  <line x1="5" y1="3" x2="2" y2="13" stroke="#7744CC" stroke-width="1"/>
+  <line x1="14" y1="2" x2="10" y2="12" stroke="#7744CC" stroke-width="1"/>
+  <line x1="22" y1="4" x2="28" y2="13" stroke="#7744CC" stroke-width="1"/>
+  <line x1="3" y1="19" x2="8" y2="29" stroke="#7744CC" stroke-width="1"/>
+  <line x1="18" y1="19" x2="14" y2="30" stroke="#7744CC" stroke-width="1"/>
+</svg>

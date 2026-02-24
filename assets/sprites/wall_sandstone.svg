@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#C8A058"/>
+  <!-- simple bricks -->
+  <rect x="0" y="0" width="15" height="10" fill="#AA8840"/>
+  <rect x="16" y="0" width="16" height="10" fill="#AA8840"/>
+  <rect x="0" y="11" width="9" height="10" fill="#AA8840"/>
+  <rect x="10" y="11" width="22" height="10" fill="#AA8840"/>
+  <rect x="0" y="22" width="15" height="10" fill="#AA8840"/>
+  <rect x="16" y="22" width="16" height="10" fill="#AA8840"/>
+</svg>

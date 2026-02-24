@@ -98,6 +98,23 @@ Ten improvements aligned with Grade 1–5 curriculum expectations:
 ## ✅ Feature: Virtual D-pad for touch devices
 **Files**: `src/ui/VirtualDPad.js` (new), `src/entities/Mimi.js`, `src/scenes/ExploreScene.js`
 - Semi-transparent circular D-pad with four directional buttons.
+
+---
+
+## ✅ Refactor: Remove unused tile textures
+**File**: `src/scenes/BootScene.js`
+- Deleted procedural generation of `tile_floor`, `tile_wall`, `tile_water`, `tile_door`, `tile_chest`, and `tile_npc`.
+- Textures were never referenced outside `BootScene`; art is now loaded from SVG assets.
+- Reduced ~65 lines of dead code and simplified comments.
+
+## ✅ Feature: Static boundary walls
+**Files**: `assets/sprites/wall_hedge.svg`, `assets/sprites/wall_sandstone.svg`, `assets/sprites/wall_obsidian.svg`, `src/config/AssetConfig.js`, `src/scenes/BootScene.js`
+- Added three new 32×32 wall SVGs for region boundaries (hedge, sandstone, obsidian).
+- Registered keys in `TERRAIN_DEFS`; these assets replace procedural counterparts.
+- Removed the corresponding generation blocks from `_generateTileTextures()`.
+- Ensures hand-crafted art appears immediately and avoids runtime overhead.
+
+
 - `pointerout` releases direction immediately — prevents stuck movement when a finger slides off.
 - `Mimi.js`: added `_dpad` field, `setDPad()` method, reads D-pad state alongside keyboard.
 - `Mimi.freeze()` calls `_dpad.clearState()` to release any held direction.

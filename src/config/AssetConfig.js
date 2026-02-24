@@ -133,9 +133,15 @@ export const TERRAIN_DEFS = [
   { key: 'wall_mycelium', file: 'wall_mycelium', size: 32 },
 
   // Wall tiles
-  { key: 'wall_brick',  file: 'wall_brick',  size: 32 },
-  { key: 'wall_cobble', file: 'wall_cobble', size: 32 },
-  { key: 'wall_ice',    file: 'wall_ice',    size: 32 },
+  { key: 'wall_brick',     file: 'wall_brick',     size: 32 },
+  { key: 'wall_cobble',    file: 'wall_cobble',    size: 32 },
+
+  // Newly added static wall boundaries
+  { key: 'wall_hedge',      file: 'wall_hedge',      size: 32 },
+  { key: 'wall_sandstone',  file: 'wall_sandstone',  size: 32 },
+  { key: 'wall_obsidian',   file: 'wall_obsidian',   size: 32 },
+
+  { key: 'wall_ice',       file: 'wall_ice',       size: 32 },
   
   // Decorations
   { key: 'decoration_tree',          file: 'decoration_tree',          size: { width: 32, height: 48 } },

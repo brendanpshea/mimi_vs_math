@@ -59,9 +59,6 @@ const GameState = {
   // ── Per-region star ratings (1–3; 0 = not yet cleared) ───────────────
   regionStars: {},
 
-  // ── Hard-mode boss clears (region ids) ───────────────────────────────
-  regionHardModeCleared: [],
-
   // ── Per-topic difficulty tiers (persisted) ────────────────────────────
   // key: topic string, value: tier 1–3 earned by the player
   topicTier: {},
@@ -120,7 +117,6 @@ const GameState = {
       inventory:              this.inventory,
       bossIntroSeen:          this.bossIntroSeen,
       regionStars:            this.regionStars,
-      regionHardModeCleared:  this.regionHardModeCleared,
       collectedItems:         this.collectedItems,
       npcVisited:             this.npcVisited,
       npcBoonReceived:        this.npcBoonReceived,
@@ -145,7 +141,6 @@ const GameState = {
       // Ensure fields added after old saves exist
       if (!this.bossIntroSeen)          this.bossIntroSeen = [];
       if (!this.regionStars)            this.regionStars = {};
-      if (!this.regionHardModeCleared)  this.regionHardModeCleared = [];
       if (!this.collectedItems)         this.collectedItems = {};
       if (!this.npcVisited)             this.npcVisited = {};
       if (!this.npcBoonReceived)        this.npcBoonReceived = {};
@@ -200,7 +195,6 @@ const GameState = {
     this.inventory       = {};
     this.bossIntroSeen          = [];
     this.regionStars            = {};
-    this.regionHardModeCleared  = [];
     this.activeEffects          = { timerBonus: 0, doubleHit: false, shield: false, hintCharges: 0 };
     this.topicTier              = {};
     this.topicPerfectStreak     = {};
@@ -427,19 +421,6 @@ const GameState = {
   setRegionStars(regionId, stars) {
     const prev = this.regionStars[regionId] ?? 0;
     if (stars > prev) this.regionStars[regionId] = stars;
-    this.save();
-  },
-
-  /** True if the player has beaten hard mode for the given region. */
-  hasDefeatedBossHardMode(regionId) {
-    return this.regionHardModeCleared.includes(regionId);
-  },
-
-  /** Mark a region's hard-mode boss as defeated. */
-  defeatBossHardMode(regionId) {
-    if (!this.regionHardModeCleared.includes(regionId)) {
-      this.regionHardModeCleared.push(regionId);
-    }
     this.save();
   },
 

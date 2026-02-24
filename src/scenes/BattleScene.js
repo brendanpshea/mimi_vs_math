@@ -45,7 +45,6 @@ export default class BattleScene extends Phaser.Scene {
     this.spawnDifficulty = data.spawnDifficulty ?? null;  // adaptive tier used in ExploreScene
     this.regionId        = data.regionId;
     this.isBoss          = data.isBoss     ?? false;
-    this.isHardMode      = data.isHardMode ?? false;
     this.returnScene     = data.returnScene ?? 'OverworldScene';
     this.returnData      = data.returnData  ?? {};
 
@@ -233,11 +232,6 @@ export default class BattleScene extends Phaser.Scene {
       this.add.text(RC, H * 0.018, '⚠ BOSS BATTLE', TEXT_STYLE(15, '#FF6633', true))
         .setOrigin(0.5, 0);
     }
-    if (this.isHardMode) {
-      this.add.text(LC, H * 0.018, '🗡 HARD MODE', TEXT_STYLE(15, '#FF3333', true))
-        .setOrigin(0.5, 0);
-    }
-
     // ── Player (Mimi) side ──────────────────────────────────────────────
     this.mimiSprite = this.add.image(LC, H * 0.155, 'mimi_battle')
       .setDisplaySize(100, 100).setFlipX(true);
@@ -514,9 +508,7 @@ export default class BattleScene extends Phaser.Scene {
     // C: player's earned topic tier may raise the question difficulty above the base.
     const sessionDiff = GameState.getTopicTier(topic, enemyBase);
     // A: in-battle drift shifts the session tier by −1 or +1 based on live streak.
-    const rawDiff     = Math.max(1, Math.min(3, sessionDiff + this.battleDiffOffset));
-    // Hard Mode adds a further +1 on top, capped at 3.
-    const difficulty  = this.isHardMode ? Math.min(3, rawDiff + 1) : rawDiff;
+    const difficulty  = Math.max(1, Math.min(3, sessionDiff + this.battleDiffOffset));
     // ────────────────────────────────────────────────────────
 
     const q = generateQuestion(topic, difficulty);
@@ -552,8 +544,7 @@ export default class BattleScene extends Phaser.Scene {
 
     // Timer — word problems get a flat +8 s reading bonus on top of the base timer
     const wordBonus   = q.wordProblem ? 8 : 0;
-    const hardPenalty = this.isHardMode ? -5 : 0;
-    const baseSecs    = Math.max(8, this.enemyData.timerSeconds + hardPenalty) + (GameState.activeEffects.timerBonus ?? 0) + wordBonus;
+    const baseSecs    = Math.max(8, this.enemyData.timerSeconds) + (GameState.activeEffects.timerBonus ?? 0) + wordBonus;
     const duration    = baseSecs * 1000 * (GameState.timeMult ?? 1.0);
     this._startTimer(duration);
     this._qStartTime = this.time.now;
@@ -1298,9 +1289,8 @@ export default class BattleScene extends Phaser.Scene {
           if (this.isBoss) {
             GameState.defeatBoss(this.regionId);
             GameState.setRegionStars(this.regionId, this._bossStars ?? 1);
-            if (this.isHardMode) GameState.defeatBossHardMode(this.regionId);
             GameState.save();
-            this.scene.start('OverworldScene', { bossDefeated: !this.isHardMode, regionId: this.regionId });
+            this.scene.start('OverworldScene', { bossDefeated: true, regionId: this.regionId });
           } else {
             // Regular enemy → return to exploration
             this.scene.start(this.returnScene, {

@@ -841,8 +841,8 @@ export default class ExploreScene extends Phaser.Scene {
 
     // _justUnlockedBoss was computed in create() using the pre-increment kill count,
     // so it is true only when THIS battle crossed the bossUnlockKills threshold.
-    const justUnlocked =
-      this._justUnlockedBoss && !GameState.hasDefeatedBoss(this.regionId);
+    // Fires on every run — re-entering after a prior boss clear is treated as a new run.
+    const justUnlocked = this._justUnlockedBoss;
 
     // Redraw door now that state is final
     this._checkBossDoor();
@@ -1030,8 +1030,8 @@ export default class ExploreScene extends Phaser.Scene {
     // Stash geometry for _checkBossDoor redraws
     this._doorGeom = { px, py, openX, openTopY, OPEN_W, OPEN_H };
 
-    // Evaluate initial state
-    this._bossOpen = GameState.hasDefeatedBoss(this.regionId);
+    // Evaluate initial state — always start locked; kill count must be earned each run.
+    this._bossOpen = false;
     this._checkBossDoor();
   }
 
@@ -1050,8 +1050,8 @@ export default class ExploreScene extends Phaser.Scene {
     const unlockKills = this.regionData.bossUnlockKills;
     const n = unlockKills == null ? this._remainingEnemyCount() : 0;
     this._bossOpen = unlockKills != null
-      ? (this._killCount >= unlockKills) || GameState.hasDefeatedBoss(this.regionId)
-      : (n === 0) || GameState.hasDefeatedBoss(this.regionId);
+      ? (this._killCount >= unlockKills)
+      : (n === 0);
 
     const { px, py, openX, openTopY, OPEN_W, OPEN_H } = this._doorGeom;
     this._doorFill.clear();

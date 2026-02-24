@@ -267,12 +267,6 @@ export default class OverworldScene extends Phaser.Scene {
         { fontSize: '13px', color: '#FFD700', stroke: '#000', strokeThickness: 2 },
       ).setOrigin(0.5, 1);
     }
-    // Hard-mode cleared badge
-    if (GameState.hasDefeatedBossHardMode(region.id)) {
-      this.add.text(pos.x - NODE_RADIUS + 6, pos.y - NODE_RADIUS + 6, '⚔',
-        { fontSize: '12px' }).setOrigin(0.5);
-    }
-
     // Name + subtitle labels
     this.add.text(pos.x, pos.y + NODE_RADIUS + 8, region.name, {
       fontSize: '13px', color: unlocked ? '#FFE8A0' : '#777799',
@@ -485,34 +479,6 @@ export default class OverworldScene extends Phaser.Scene {
           fontStyle: 'bold', stroke: '#000', strokeThickness: 2 },
       ).setOrigin(0.5).setDepth(102));
 
-      const hmDone  = GameState.hasDefeatedBossHardMode(region.id);
-      const hmCol   = hmDone ? '#AAAA66' : '#FF9944';
-      const hmBg = mk(this.add.rectangle(W / 2, 465, 300, 42, hmDone ? 0x1A1A00 : 0x2A1200)
-        .setDepth(102).setStrokeStyle(2, hmDone ? 0x888844 : 0xFF5500)
-        .setInteractive({ useHandCursor: true }));
-      const hmT = mk(this.add.text(W / 2, 465,
-        hmDone ? '⚔  Hard Mode  ✓ Cleared' : '⚔  Hard Mode  (Boss Rematch)',
-        { fontSize: '14px', color: hmCol, fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' },
-      ).setOrigin(0.5).setDepth(103));
-      hmBg.on('pointerover', () => { hmBg.setFillStyle(hmDone ? 0x2B2B00 : 0x3D1A00); hmT.setColor(hmDone ? '#CCCC88' : '#FFAA66'); });
-      hmBg.on('pointerout',  () => { hmBg.setFillStyle(hmDone ? 0x1A1A00 : 0x2A1200); hmT.setColor(hmCol); });
-      hmBg.on('pointerdown', () => {
-        this._closePopup();
-        GameState.currentRegion = region.id;
-        GameState.save();
-        this.cameras.main.fadeOut(300, 0, 0, 0);
-        this.cameras.main.once('camerafadeoutcomplete', () => {
-          this.scene.start('BattleScene', {
-            enemy:         ENEMIES[region.boss],
-            enemyInstance: 'boss_hard',
-            regionId:      region.id,
-            isBoss:        true,
-            isHardMode:    true,
-            returnScene:   'OverworldScene',
-            returnData:    {},
-          });
-        });
-      });
     }
 
     // Enter Region button

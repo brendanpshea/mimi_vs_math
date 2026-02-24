@@ -91,20 +91,12 @@ for (const region of REGIONS) {
   assert(Array.isArray(spawns) && spawns.length > 0,
     `${tag}: enemySpawns is non-empty array (${spawns?.length ?? 0} entries)`);
 
-  // Each spawn has valid shape and in-bounds coords
+  // Each spawn has a valid id (col/row are assigned procedurally, not stored here)
   if (Array.isArray(spawns)) {
     for (const [i, spawn] of spawns.entries()) {
-      const hasShape = typeof spawn.col === 'number' &&
-                       typeof spawn.row === 'number' &&
-                       typeof spawn.id  === 'string';
-      assert(hasShape,
-        `${tag}.enemySpawns[${i}] has {col, row, id}`,
+      assert(typeof spawn.id === 'string' && spawn.id.length > 0,
+        `${tag}.enemySpawns[${i}] has a non-empty id string`,
         `got: ${JSON.stringify(spawn)}`);
-      if (hasShape) {
-        assert(inBounds(spawn),
-          `${tag}.enemySpawns[${i}] "${spawn.id}" within map bounds`,
-          `col:${spawn.col} row:${spawn.row}`);
-      }
     }
   }
 
@@ -182,9 +174,7 @@ for (const region of REGIONS) {
     ...(region.mimiStart ? [{ field: 'mimiStart', ...region.mimiStart }] : []),
     ...(region.npcTile   ? [{ field: 'npcTile',   ...region.npcTile   }] : []),
     ...(region.bossTile  ? [{ field: 'bossTile',  ...region.bossTile  }] : []),
-    ...(Array.isArray(region.enemySpawns)
-      ? region.enemySpawns.map((s, i) => ({ field: `enemySpawns[${i}]`, col: s.col, row: s.row }))
-      : []),
+    // enemySpawns positions are procedurally assigned — not checked here
   ];
 
   for (const pos of keyPositions) {

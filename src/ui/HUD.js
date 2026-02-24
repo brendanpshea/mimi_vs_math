@@ -87,13 +87,9 @@ export default class HUD {
     const unlockKills = this.regionData.bossUnlockKills;
     let enemyStr;
     if (unlockKills != null) {
-      if (GameState.hasDefeatedBoss(this.regionData.id)) {
-        enemyStr = '⚔ Boss defeated!';
-      } else {
-        // _killCount lives on the ExploreScene instance (this.scene)
-        const killCount = this.scene._killCount ?? 0;
-        enemyStr = `⚔ ${killCount} / ${unlockKills} defeated`;
-      }
+      // _killCount lives on the ExploreScene instance (this.scene)
+      const killCount = this.scene._killCount ?? 0;
+      enemyStr = `⚔ ${killCount} / ${unlockKills} defeated`;
     } else {
       // Legacy fallback: count enemies not yet flagged as defeated
       const remaining = this.regionData.enemySpawns.filter(

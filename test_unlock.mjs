@@ -17,7 +17,6 @@ const GameState = {
   defeatedEnemies:           {},
   defeatedBosses:            [],
   regionStars:               {},
-  regionHardModeCleared:     [],
   collectedItems:            {},
   bestiaryHighestDifficulty: {},
   regionMaxDifficulty:       {},
@@ -52,14 +51,6 @@ const GameState = {
   setRegionStars(regionId, stars) {
     const prev = this.regionStars[regionId] ?? 0;
     if (stars > prev) this.regionStars[regionId] = stars;
-  },
-  hasDefeatedBossHardMode(regionId) {
-    return this.regionHardModeCleared.includes(regionId);
-  },
-  defeatBossHardMode(regionId) {
-    if (!this.regionHardModeCleared.includes(regionId)) {
-      this.regionHardModeCleared.push(regionId);
-    }
   },
   recordEnemyHighestDifficulty(enemyId, diff) {
     const prev = this.bestiaryHighestDifficulty[enemyId] ?? 0;
@@ -106,7 +97,6 @@ const GameState = {
     this.defeatedEnemies           = {};
     this.defeatedBosses            = [];
     this.regionStars               = {};
-    this.regionHardModeCleared     = [];
     this.collectedItems            = {};
     this.bestiaryHighestDifficulty = {};
     this.regionMaxDifficulty       = {};
@@ -296,14 +286,14 @@ test('count in region 1 unaffected by region 0 defeats', () => {
 console.log('\njustUnlockedBoss logic (kill-count threshold)');
 
 // Mirrors the formula in ExploreScene.create():
-//   _justUnlockedBoss = killCount + 1 >= unlockKills && killCount < unlockKills && !hasDefeatedBoss
+//   _justUnlockedBoss = killCount + 1 >= unlockKills && killCount < unlockKills
+// (fires on every run — re-entry after a prior boss clear is treated as a new run)
 function calcJustUnlocked(regionId, killCount) {
   const unlockKills = REGIONS[regionId].bossUnlockKills;
   if (unlockKills == null) return false;
   return (
     killCount + 1 >= unlockKills &&
-    killCount < unlockKills &&
-    !GameState.hasDefeatedBoss(regionId)
+    killCount < unlockKills
   );
 }
 
@@ -320,11 +310,11 @@ test('justUnlockedBoss is false before the threshold - 1 kill', () => {
   assert(!calcJustUnlocked(regionId, 0),                'should NOT unlock at count = 0');
 });
 
-test('justUnlockedBoss is false if boss already beaten', () => {
+test('justUnlockedBoss fires again on re-entry even if boss already beaten', () => {
   const regionId    = 0;
   GameState.defeatBoss(regionId);
   const unlockKills = REGIONS[regionId].bossUnlockKills;
-  assert(!calcJustUnlocked(regionId, unlockKills - 1), 'should not re-announce if boss already beaten');
+  assert(calcJustUnlocked(regionId, unlockKills - 1), 'should re-announce on every run — re-entry is a new run');
 });
 
 test('bossOpen uses kill count threshold for all regions', () => {
@@ -334,12 +324,12 @@ test('bossOpen uses kill count threshold for all regions', () => {
     assert(unlockKills != null, `region ${r} should have bossUnlockKills`);
     assertEqual(unlockKills, 10, `region ${r} bossUnlockKills should be 10`);
 
-    // Door closed before threshold
-    const closedAt = (unlockKills - 1 >= unlockKills) || GameState.hasDefeatedBoss(r);
+    // Door closed before threshold — kill count alone determines state
+    const closedAt = (unlockKills - 1 >= unlockKills);
     assert(!closedAt, `door should be closed at kill count ${unlockKills - 1} for region ${r}`);
 
     // Door open at threshold
-    const openAt = (unlockKills >= unlockKills) || GameState.hasDefeatedBoss(r);
+    const openAt = (unlockKills >= unlockKills);
     assert(openAt, `door should be open at kill count ${unlockKills} for region ${r}`);
   }
 });
@@ -560,43 +550,10 @@ test('empty battle (0 questions) → 3 stars', () => {
   assertEqual(calcStars(0, 0), 3, 'edge case: no questions defaults to 0% wrong = 3 stars');
 });
 
-// ── Hard-mode tracking ────────────────────────────────────────────────────
-console.log('\nHard Mode — defeatBossHardMode / hasDefeatedBossHardMode');
-
-test('hasDefeatedBossHardMode returns false before clear', () => {
-  assert(!GameState.hasDefeatedBossHardMode(0), 'should be false before any clear');
-  assert(!GameState.hasDefeatedBossHardMode(4), 'should be false for all regions');
-});
-
-test('defeatBossHardMode marks the region and persists', () => {
-  GameState.defeatBossHardMode(0);
-  assert(GameState.hasDefeatedBossHardMode(0), 'region 0 should be marked cleared');
-  assert(!GameState.hasDefeatedBossHardMode(1), 'region 1 should remain uncleard');
-});
-
-test('defeatBossHardMode is idempotent — no duplicates', () => {
-  GameState.defeatBossHardMode(2);
-  GameState.defeatBossHardMode(2);
-  const count = GameState.regionHardModeCleared.filter(id => id === 2).length;
-  assertEqual(count, 1, 'region 2 should appear exactly once in the array');
-});
-
-test('hard-mode clears are independent per region', () => {
-  GameState.defeatBossHardMode(0);
-  GameState.defeatBossHardMode(3);
-  assert( GameState.hasDefeatedBossHardMode(0), 'region 0 cleared');
-  assert(!GameState.hasDefeatedBossHardMode(1), 'region 1 not cleared');
-  assert(!GameState.hasDefeatedBossHardMode(2), 'region 2 not cleared');
-  assert( GameState.hasDefeatedBossHardMode(3), 'region 3 cleared');
-  assert(!GameState.hasDefeatedBossHardMode(4), 'region 4 not cleared');
-});
-
-test('reset() clears hard-mode state and stars', () => {
-  GameState.defeatBossHardMode(0);
+test('reset() clears stars and restores lives', () => {
   GameState.setRegionStars(0, 3);
   GameState.lives = 3;
   GameState.reset();
-  assert(!GameState.hasDefeatedBossHardMode(0), 'hard-mode cleared after reset');
   assertEqual(GameState.getRegionStars(0), 0, 'stars cleared after reset');
   assertEqual(GameState.lives, 9, 'lives restored to 9 after reset');
 });

@@ -12,7 +12,20 @@
     auraColor:   0xAAFF88,
     bossTint:    0xFFEEFF,
     floorTile: 'floor_moss',
-    wallTile: 'wall_mycelium',
+    wallTile:  'wall_mycelium',
+
+    // ── Map generation config ──────────────────────────────────────────────
+    blockingTiles: [
+      { key: 'decoration_vine' },
+      { key: 'decoration_mushroom' },
+    ],
+    accentLayers: [
+      { key: 'decoration_lily',     freq: 0.13, threshold: 0.80, seed: 550 },
+      { key: 'decoration_mushroom', freq: 0.09, threshold: 0.86, seed: 650 },
+    ],
+    landmark: { key: 'landmark_mushroom_circle', tilesW: 5, tilesH: 4, blocking: false, margin: 2 },
+    itemPool:  ['yarn_ball', 'catnip'],
+
     mimiStart:     { col: 4, row: 26 },
     mimiStartPool: [
       { col: 4,  row: 26 }, { col: 4,  row: 40 },
@@ -29,16 +42,16 @@
     // ── Enemies: 10 — 3 native types + 2 hard reviews from R2 ────────────
     bossUnlockKills: 10,
     enemySpawns: [
-      { col: 20, row: 10, id: 'fungus_toad' },                               // D1 multiDigitMult
-      { col: 52, row:  9, id: 'mycelium_wisp' },                             // D1 factorPairs
-      { col: 30, row: 40, id: 'spore_puff' },                                // D2 multiDigitMult
-      { col: 40, row:  7, id: 'fungus_toad',    difficultyOverride: 2 },     // D2 multiDigitMult
-      { col: 44, row: 26, id: 'mycelium_wisp',  difficultyOverride: 2 },     // D2 factorPairs
-      { col: 14, row: 40, id: 'spore_puff',     difficultyOverride: 3 },     // D3 multiDigitMult
-      { col: 57, row: 40, id: 'mycelium_wisp',  difficultyOverride: 3 },     // D3 factorPairs (word problem)
-      { col: 35, row: 26, id: 'slime_pup',      difficultyOverride: 3 },     // D3 multTables review
-      { col: 60, row: 12, id: 'double_bunny',   difficultyOverride: 3 },     // D3 doubling review
-      { col: 50, row: 42, id: 'fungus_toad',    difficultyOverride: 3 },     // D3 multiDigitMult
+      { id: 'fungus_toad'                              },  // D1 multiDigitMult
+      { id: 'mycelium_wisp'                            },  // D1 factorPairs
+      { id: 'spore_puff'                               },  // D2 multiDigitMult
+      { id: 'fungus_toad'   },  // multiDigitMult
+      { id: 'mycelium_wisp' },  // factorPairs
+      { id: 'spore_puff'    },  // multiDigitMult
+      { id: 'mycelium_wisp' },  // factorPairs (word problem)
+      { id: 'slime_pup',      difficultyOverride: 3    },  // D3 multTables review
+      { id: 'double_bunny',   difficultyOverride: 3    },  // D3 doubling review
+      { id: 'fungus_toad'   },  // multiDigitMult
     ],
 
     boss: 'queen_sporella',

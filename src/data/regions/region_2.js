@@ -12,7 +12,20 @@
     auraColor:   0x44FF88,
     bossTint:    0xF0FFF4,
     floorTile: 'floor_grass',
-    wallTile: 'wall_hedge',
+    wallTile:  'wall_hedge',
+
+    // ── Map generation config ──────────────────────────────────────────────
+    blockingTiles: [
+      { key: 'decoration_tree_meadow' },
+      { key: 'decoration_tree_meadow_b' },
+    ],
+    accentLayers: [
+      { key: 'decoration_mushroom', freq: 0.10, threshold: 0.80, seed: 300 },
+      { key: 'decoration_clover',   freq: 0.14, threshold: 0.84, seed: 400 },
+    ],
+    landmark: { key: 'landmark_flower_ring', tilesW: 5, tilesH: 4, blocking: false, margin: 2 },
+    itemPool:  ['fish_fossil', 'sardine'],
+
     mimiStart:     { col: 4, row: 26 },
     mimiStartPool: [
       { col: 4,  row: 26 }, { col: 4,  row: 40 },
@@ -29,16 +42,16 @@
     // ── Enemies: 10 — 4 native + 4 hard reviews from R0 + 2 native D2 ──
     bossUnlockKills: 10,
     enemySpawns: [
-      { col: 20, row: 10, id: 'slime_pup' },                                  // D1 multTables
-      { col: 52, row:  9, id: 'cactus_sprite' },                              // D2 multiplication
-      { col: 30, row: 40, id: 'cloud_bully' },                                // D2 skipCounting
-      { col: 40, row:  7, id: 'double_bunny' },                               // D1 doubling (NEW)
-      { col: 44, row: 26, id: 'counting_caterpillar', difficultyOverride: 3 },// D3 addition review
-      { col: 14, row: 40, id: 'number_gnome',         difficultyOverride: 3 },// D3 subtraction review
-      { col: 57, row: 40, id: 'minus_mole',           difficultyOverride: 3 },// D3 comparison review
-      { col: 35, row: 26, id: 'number_bee',           difficultyOverride: 3 },// D3 numberOrder review
-      { col: 60, row: 12, id: 'slime_pup',            difficultyOverride: 2 },// D2 multTables
-      { col: 50, row: 42, id: 'double_bunny',         difficultyOverride: 2 },// D2 doubling
+      { id: 'slime_pup'                                    },  // D1 multTables
+      { id: 'cactus_sprite'                                },  // D2 multiplication
+      { id: 'cloud_bully'                                  },  // D2 skipCounting
+      { id: 'double_bunny'                                 },  // D1 doubling
+      { id: 'counting_caterpillar', difficultyOverride: 3  },  // D3 addition review
+      { id: 'number_gnome',         difficultyOverride: 3  },  // D3 subtraction review
+      { id: 'minus_mole',           difficultyOverride: 3  },  // D3 comparison review
+      { id: 'number_bee',           difficultyOverride: 3  },  // D3 numberOrder review
+      { id: 'slime_pup'    },  // multTables
+      { id: 'double_bunny' },  // doubling
     ],
 
     boss: 'count_multiplico',

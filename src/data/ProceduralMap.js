@@ -39,9 +39,8 @@ const CORRIDOR_HW = 3;   // corridor half-width: total width = 2*CORRIDOR_HW+1 =
 // 2D seeded value-noise (no dependencies)
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** Simple integer hash → float in [0,1).  Uses Math.imul for proper 32-bit
- *  multiplication without float-precision loss, then multiple xor-shift rounds
- *  to ensure values spread across the full range. */
+/** Simple integer hash → uint32.  Used by noise2d AND by the blocking-tile
+ *  selector (both need a full-range hash, not the old 0/1 version). */
 function _hash2d(ix, iy, seed) {
   let h = Math.imul(ix, 374761393) + Math.imul(iy, 668265263) + Math.imul(seed, 1274126177);
   h = Math.imul(h ^ (h >>> 13), 1103515245);
@@ -68,101 +67,30 @@ function noise2d(x, y, freq, seed) {
   return a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Blocking-tile constructors (one sprite theme per region)
-// ═══════════════════════════════════════════════════════════════════════════
-
-const _tileHash = (c, r) => ((Math.imul(c, 1073741827) ^ Math.imul(r, 2147483693)) >>> 0) % 2;
-
-const TILE_FN = [
-  (c, r) => { const h = _tileHash(c, r);                                                           // R0 Sunny Village
-    return { col: c, row: r, key: h === 0 ? 'decoration_tree'         : 'decoration_tree_b',         blocking: true }; },
-  (c, r) => { const h = _tileHash(c, r);                                                           // R1 Windmill Village
-    return { col: c, row: r, key: h === 0 ? 'decoration_hay_bale'     : 'decoration_hay_bale_b',     blocking: true }; },
-  (c, r) => { const h = _tileHash(c, r);                                                           // R2 Meadow Maze
-    return { col: c, row: r, key: h === 0 ? 'decoration_tree_meadow'  : 'decoration_tree_meadow_b',  blocking: true }; },
-  (c, r) => { const h = _tileHash(c, r);                                                           // R3 Desert Dunes
-    return { col: c, row: r, key: h === 0 ? 'decoration_rock'         : 'decoration_rock_b',         blocking: true }; },
-  (c, r) => { const h = _tileHash(c, r);                                                           // R4 Frostbite Cavern
-    return { col: c, row: r, key: h === 0 ? 'decoration_icicle'       : 'decoration_icicle_b',       blocking: true }; },
-  (c, r) => { const h = _tileHash(c, r);                                                           // R5 Shadow Castle
-    return { col: c, row: r, key: h === 0 ? 'decoration_pillar'       : 'decoration_pillar_b',       blocking: true }; },
-];
+/** Deterministic tile-selector hash for a given column/row → uint32. */
+const _tileHash = (c, r) =>
+  (Math.imul(c, 1073741827) ^ Math.imul(r, 2147483693)) >>> 0;
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Noise-driven accent layers (organic clusters instead of flat scatter)
+// Blocking-tile constructor — built from regionData.blockingTiles at runtime
 // ═══════════════════════════════════════════════════════════════════════════
-// Each region defines one or more accent layers.  Each layer has:
-//   key       — sprite key
-//   freq      — noise frequency (lower = bigger blobs)
-//   threshold — noise value above which an accent is placed (~0.52–0.62)
-//   seed      — unique noise seed so layers don't overlap identically
-//   blocking  — whether the accent blocks movement (default false)
+// regionData.blockingTiles: Array<{ key: string }>
+//   Each entry is a sprite variant.  The tile hash picks one deterministically.
+//   Accent layers, landmarks, and item pools are likewise read from regionData
+//   (see regionData.accentLayers, regionData.landmark, regionData.itemPool).
 
-const ACCENT_LAYERS = [
-  [ // R0 — Sunny Village: flower meadows + scattered hay bales
-    { key: 'decoration_flower',   freq: 0.12, threshold: 0.82, seed: 100 },
-    { key: 'decoration_hay_bale', freq: 0.08, threshold: 0.86, seed: 200 },
-  ],
-  [ // R1 — Windmill Village: wheat stalk clusters + sunflowers + rare standalone windmills
-    { key: 'decoration_wheat_stalk', freq: 0.12, threshold: 0.82, seed: 250 },
-    { key: 'decoration_sunflower',   freq: 0.07, threshold: 0.90, seed: 350 },
-    { key: 'decoration_windmill',    freq: 0.04, threshold: 0.94, seed: 450 },
-  ],
-  [ // R2 — Meadow Maze: mushroom groves + lily clusters
-    { key: 'decoration_mushroom', freq: 0.10, threshold: 0.80, seed: 300 },
-    { key: 'decoration_clover',   freq: 0.14, threshold: 0.84, seed: 400 },
-  ],
-  [ // R3 — Mycelium Hollow: luminous lily pads + spore clusters
-    { key: 'decoration_lily',     freq: 0.13, threshold: 0.80, seed: 550 },
-    { key: 'decoration_mushroom', freq: 0.09, threshold: 0.86, seed: 650 },
-  ],
-  [ // R4 — Desert Dunes: bone fields + tumbleweeds
-    { key: 'decoration_bones',       freq: 0.11, threshold: 0.82, seed: 500 },
-    { key: 'decoration_tumbleweed',  freq: 0.09, threshold: 0.84, seed: 600 },
-  ],
-  [ // R5 — Frostbite Cavern: snow drifts + frost flowers
-    { key: 'decoration_snowpile',    freq: 0.10, threshold: 0.78, seed: 700 },
-    { key: 'decoration_frost_flower',freq: 0.13, threshold: 0.84, seed: 800 },
-  ],
-  [ // R6 — Shadow Castle: skulls only.
-    // Torches are placed as live animated objects at corridor elbows
-    // (returned via animatedDecorations) — never noise-scattered.
-    { key: 'decoration_skull',  freq: 0.12, threshold: 0.84, seed: 900 },
-  ],
-];
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Set-pieces — large multi-tile landmarks (one per region)
-// ═══════════════════════════════════════════════════════════════════════════
-// Each set-piece is a single large sprite rendered at a target tile position.
-// `tilesW`/`tilesH` define how many tiles it occupies for blocking/clearance.
-// `blocking` marks every tile in the footprint as impassable.
-// `margin` is extra clearance beyond the footprint that must also be open.
-
-const SET_PIECES = [
-  { // R0 — Village pond
-    key: 'landmark_pond', tilesW: 5, tilesH: 4, blocking: true, margin: 2,
-  },
-  { // R1 — Windmill mill
-    key: 'landmark_windmill_mill', tilesW: 5, tilesH: 4, blocking: true, margin: 2,
-  },
-  { // R2 — Meadow flower ring
-    key: 'landmark_flower_ring', tilesW: 5, tilesH: 4, blocking: false, margin: 2,
-  },
-  { // R3 — Mycelium: mushroom circle
-    key: 'landmark_mushroom_circle', tilesW: 5, tilesH: 4, blocking: false, margin: 2,
-  },
-  { // R4 — Lava pool
-    key: 'landmark_lava_pool', tilesW: 5, tilesH: 4, blocking: true, margin: 2,
-  },
-  { // R5 — Frozen lake
-    key: 'landmark_frozen_lake', tilesW: 6, tilesH: 5, blocking: true, margin: 2,
-  },
-  { // R6 — Dark altar
-    key: 'landmark_dark_altar', tilesW: 4, tilesH: 4, blocking: true, margin: 2,
-  },
-];
+/**
+ * Build a tile-generator function from the region's blockingTiles array.
+ * Falls back to rock if the region provides no blockingTiles.
+ */
+function makeTileFn(regionData) {
+  const tiles = regionData.blockingTiles ?? [{ key: 'decoration_rock' }];
+  return (c, r) => ({
+    col: c, row: r,
+    key: tiles[_tileHash(c, r) % tiles.length].key,
+    blocking: true,
+  });
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Position randomization — NPC + enemies get fresh locations each run
@@ -278,30 +206,19 @@ function randomizePositions(regionData) {
   return { mimiStart, bossTile, npcTile, enemySpawns };
 }
 
-// ── Interactive item pools (2 items per region) ───────────────────────────
-/** Items awarded per region, cycling through all 5 types. */
-export const ITEM_POOLS = [
-  ['sardine',      'yarn_ball'],    // R0
-  ['catnip',       'lucky_collar'], // R1 Windmill Village
-  ['fish_fossil',  'sardine'],      // R2 Meadow Maze
-  ['yarn_ball',    'catnip'],       // R3 Desert Dunes
-  ['lucky_collar', 'fish_fossil'],  // R4 Frostbite Cavern
-  ['sardine',      'yarn_ball'],    // R5 Shadow Castle
-];
-
 /**
  * Scan carved-open tiles for 2 interactive item pickup spots.
  * Tiles must be at least ITEM_MIN_DIST from every key position.
  *
  * @param {Set}    blocked    blocked-tile set after corridor carving
  * @param {Array}  keyNodes   [{col,row}] key positions to clear around
- * @param {number} regionId
+ * @param {Array}  itemPool   regionData.itemPool — item IDs to award
  * @returns {Array<{col,row,itemId}>} 0–2 entries
  */
-function pickInteractiveItems(blocked, keyNodes, regionId) {
+function pickInteractiveItems(blocked, keyNodes, itemPool) {
   const ITEM_MIN_DIST    = 8;
   const MIN_ITEM_SPACING = 12;
-  const pool = ITEM_POOLS[regionId] ?? ITEM_POOLS[0];
+  const pool = itemPool ?? [];
 
   // ── BFS from mimiStart to collect only truly reachable tiles ──────────────
   const mimiStart = keyNodes[0];
@@ -369,7 +286,7 @@ function pickInteractiveItems(blocked, keyNodes, regionId) {
  *   npcTile / enemySpawns — randomized positions for this run
  */
 export function generateRegionMap(regionData) {
-  const tileFn = TILE_FN[regionData.id] ?? TILE_FN[0];
+  const tileFn = makeTileFn(regionData);
 
   // Randomize all key positions (mimiStart + bossTile drawn from per-region pools)
   const { mimiStart, bossTile, npcTile, enemySpawns } = randomizePositions(regionData);
@@ -414,7 +331,7 @@ export function generateRegionMap(regionData) {
   }
 
   // ── Step 5: Place set-piece landmark ────────────────────────────────
-  const sp = SET_PIECES[regionData.id];
+  const sp = regionData.landmark ?? null;
   const decorations = [];
   const landmarks   = [];          // separate channel — NOT filtered by decoration pipeline
   const landmarkTiles = new Set();  // tiles occupied by landmarks — excluded from decoration gen
@@ -491,7 +408,7 @@ export function generateRegionMap(regionData) {
   }
 
   // ── Step 7: Noise-driven accent clustering ──────────────────────────
-  const layers = ACCENT_LAYERS[regionData.id] || [];
+  const layers = regionData.accentLayers ?? [];
   const accentOccupied = new Set();            // prevent two accents on same tile
 
   for (const layer of layers) {
@@ -509,14 +426,14 @@ export function generateRegionMap(regionData) {
   }
 
   // ── Find open spots for interactive item pickups ─────────────────────
-  const interactiveItems = pickInteractiveItems(blocked, nodes, regionData.id);
+  const interactiveItems = pickInteractiveItems(blocked, nodes, regionData.itemPool);
 
   // ── Animated decorations (live objects, NOT baked into the canvas) ───
-  // R6 only: torches at corridor elbow positions, min-spaced 10 tiles apart.
+  // Torches: placed at corridor elbow positions, min-spaced 10 tiles apart.
   // Each elbow is the corner tile { col: b.col, row: a.row } of an L-corridor,
   // which always sits against a wall face — exactly where a sconce belongs.
   const animatedDecorations = [];
-  if (regionData.id === 6) {
+  if (regionData.animatedDecorationType === 'torch') {
     const MIN_TORCH_SPACING = 10;
     for (const e of _elbows) {
       if (blocked.has(`${e.col},${e.row}`)) continue;  // skip if still walled

@@ -835,6 +835,108 @@ test('reset() clears topicTier and topicPerfectStreak', () => {
   assertEqual(GameState.topicPerfectStreak['addition'] ?? 0, 0, 'topicPerfectStreak cleared by reset');
 });
 
+// ── Map generation config — per-region fields ─────────────────────────────
+console.log('\nMap generation config — regionData fields');
+
+test('all regions have blockingTiles as a non-empty array', () => {
+  for (const r of REGIONS) {
+    assert(Array.isArray(r.blockingTiles),    `R${r.id}: blockingTiles must be an array`);
+    assert(r.blockingTiles.length >= 1,       `R${r.id}: blockingTiles must have at least 1 entry`);
+  }
+});
+
+test('every blockingTile entry has a non-empty key string', () => {
+  for (const r of REGIONS) {
+    for (const tile of r.blockingTiles) {
+      assert(typeof tile.key === 'string' && tile.key.length > 0,
+        `R${r.id}: blockingTile.key must be a non-empty string, got: ${JSON.stringify(tile)}`);
+    }
+  }
+});
+
+test('all regions have accentLayers as an array', () => {
+  for (const r of REGIONS) {
+    assert(Array.isArray(r.accentLayers), `R${r.id}: accentLayers must be an array`);
+  }
+});
+
+test('every accentLayer entry has required noise fields', () => {
+  for (const r of REGIONS) {
+    for (const layer of r.accentLayers) {
+      assert(typeof layer.key       === 'string', `R${r.id}: accentLayer.key must be string`);
+      assert(typeof layer.freq      === 'number', `R${r.id}: accentLayer.freq must be number`);
+      assert(typeof layer.threshold === 'number', `R${r.id}: accentLayer.threshold must be number`);
+      assert(typeof layer.seed      === 'number', `R${r.id}: accentLayer.seed must be number`);
+    }
+  }
+});
+
+test('all regions have a landmark object with required fields', () => {
+  for (const r of REGIONS) {
+    const lm = r.landmark;
+    assert(lm && typeof lm === 'object', `R${r.id}: landmark must be an object`);
+    assert(typeof lm.key    === 'string',  `R${r.id}: landmark.key must be string`);
+    assert(typeof lm.tilesW === 'number',  `R${r.id}: landmark.tilesW must be number`);
+    assert(typeof lm.tilesH === 'number',  `R${r.id}: landmark.tilesH must be number`);
+    assert(typeof lm.blocking === 'boolean', `R${r.id}: landmark.blocking must be boolean`);
+    assert(typeof lm.margin  === 'number',   `R${r.id}: landmark.margin must be number`);
+  }
+});
+
+test('all regions have a non-empty itemPool array', () => {
+  for (const r of REGIONS) {
+    assert(Array.isArray(r.itemPool),  `R${r.id}: itemPool must be an array`);
+    assert(r.itemPool.length >= 1,     `R${r.id}: itemPool must have at least 1 item`);
+    for (const item of r.itemPool) {
+      assert(typeof item === 'string' && item.length > 0,
+        `R${r.id}: itemPool entry must be a non-empty string`);
+    }
+  }
+});
+
+test('only R6 declares animatedDecorationType torch', () => {
+  for (const r of REGIONS) {
+    if (r.id === 6) {
+      assertEqual(r.animatedDecorationType, 'torch', 'R6 should have animatedDecorationType torch');
+    } else {
+      assert(!r.animatedDecorationType,
+        `R${r.id}: should NOT have animatedDecorationType, got: ${r.animatedDecorationType}`);
+    }
+  }
+});
+
+test('no enemySpawn entry has col or row properties', () => {
+  for (const r of REGIONS) {
+    for (const spawn of r.enemySpawns) {
+      assert(!('col' in spawn), `R${r.id} spawn "${spawn.id}": col should have been removed`);
+      assert(!('row' in spawn), `R${r.id} spawn "${spawn.id}": row should have been removed`);
+      assert(typeof spawn.id === 'string' && spawn.id.length > 0,
+        `R${r.id}: spawn.id must be a non-empty string`);
+    }
+  }
+});
+
+test('blockingTile keys differ from landmark keys (no overlap)', () => {
+  for (const r of REGIONS) {
+    const blockKeys   = new Set(r.blockingTiles.map(t => t.key));
+    const accentKeys  = new Set(r.accentLayers.map(l => l.key));
+    // blockingTiles and landmark key should not be the same sprite
+    assert(!blockKeys.has(r.landmark.key),
+      `R${r.id}: landmark key "${r.landmark.key}" should not also be a blockingTile`);
+    // accent layer keys and landmark key should not be the same sprite
+    assert(!accentKeys.has(r.landmark.key),
+      `R${r.id}: landmark key "${r.landmark.key}" should not also be an accentLayer key`);
+  }
+});
+
+test('accentLayer seeds are unique within each region', () => {
+  for (const r of REGIONS) {
+    const seeds = r.accentLayers.map(l => l.seed);
+    const unique = new Set(seeds);
+    assertEqual(unique.size, seeds.length, `R${r.id}: all accentLayer seeds must be unique`);
+  }
+});
+
 // ── Summary ────────────────────────────────────────────────────────────────
 console.log(`\n${passed + failed} tests:  ${passed} passed, ${failed} failed\n`);
 if (failed > 0) process.exit(1);

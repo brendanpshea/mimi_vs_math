@@ -12,7 +12,20 @@
     auraColor:   0xFFDD33,
     bossTint:    0xFFFFF0,
     floorTile: 'floor_grass',
-    wallTile: 'wall_hedge',
+    wallTile:  'wall_hedge',
+
+    // ── Map generation config ──────────────────────────────────────────────
+    blockingTiles: [
+      { key: 'decoration_tree' },
+      { key: 'decoration_tree_b' },
+    ],
+    accentLayers: [
+      { key: 'decoration_flower',   freq: 0.12, threshold: 0.82, seed: 100 },
+      { key: 'decoration_hay_bale', freq: 0.08, threshold: 0.86, seed: 200 },
+    ],
+    landmark: { key: 'landmark_pond', tilesW: 5, tilesH: 4, blocking: true, margin: 2 },
+    itemPool:  ['sardine', 'yarn_ball'],
+
     // ── Map key positions ──────────────────────────────────────────────────
     mimiStart:     { col: 4, row: 26 },
     mimiStartPool: [                         // ProceduralMap picks one randomly each session
@@ -35,13 +48,13 @@
     // ── Enemies: 7 (intro region — all base D1; difficulty adapts via System C) ──
     bossUnlockKills: 10,
     enemySpawns: [
-      { col: 20, row: 10, id: 'counting_caterpillar' },  // NW quadrant — addition
-      { col: 60, row: 10, id: 'number_gnome'         },  // NE quadrant — subtraction
-      { col: 40, row:  7, id: 'number_bee'           },  // north-centre — comparison
-      { col: 25, row: 26, id: 'counting_caterpillar' },  // mid-left — addition
-      { col: 55, row: 26, id: 'number_gnome'         },  // mid-right — subtraction
-      { col: 30, row: 42, id: 'minus_mole'           },  // south-left — comparison
-      { col: 60, row: 42, id: 'number_bee'           },  // south-right — comparison
+      { id: 'counting_caterpillar' },  // addition
+      { id: 'number_gnome'         },  // subtraction
+      { id: 'number_bee'           },  // comparison
+      { id: 'counting_caterpillar' },  // addition
+      { id: 'number_gnome'         },  // subtraction
+      { id: 'minus_mole'           },  // comparison
+      { id: 'number_bee'           },  // comparison
     ],
 
     boss: 'subtraction_witch',

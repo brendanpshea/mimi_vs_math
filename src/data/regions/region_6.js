@@ -12,7 +12,22 @@
     auraColor:   0xAA44FF,
     bossTint:    0xF8F0FF,
     floorTile: 'floor_stone',
-    wallTile: 'wall_obsidian',
+    wallTile:  'wall_obsidian',
+
+    // ── Map generation config ──────────────────────────────────────────────
+    blockingTiles: [
+      { key: 'decoration_pillar' },
+      { key: 'decoration_pillar_b' },
+    ],
+    accentLayers: [
+      // Torches are placed as live animated objects at corridor elbows
+      // (via animatedDecorationType: 'torch') — never noise-scattered.
+      { key: 'decoration_skull', freq: 0.12, threshold: 0.84, seed: 900 },
+    ],
+    landmark:             { key: 'landmark_dark_altar', tilesW: 4, tilesH: 4, blocking: true, margin: 2 },
+    itemPool:             ['catnip', 'lucky_collar'],
+    animatedDecorationType: 'torch',
+
     mimiStart:     { col: 4, row: 26 },
     mimiStartPool: [
       { col: 4,  row: 26 }, { col: 4,  row: 40 },
@@ -29,16 +44,16 @@
     // ── Enemies: 10 — 4 native + 4 hard reviews from R3 + 2 native D3 ──
     bossUnlockKills: 10,
     enemySpawns: [
-      { col: 20, row: 10, id: 'shadow_knight' },                              // D1 orderOfOps
-      { col: 52, row:  9, id: 'ratio_raven' },                                // D2 percentages
-      { col: 30, row: 40, id: 'percent_wraith' },                             // D2 ratiosProp
-      { col: 40, row:  7, id: 'shadow_knight', difficultyOverride: 2 },       // D2 orderOfOps
-      { col: 44, row: 26, id: 'ice_frog',      difficultyOverride: 3 },       // D3 fractionCompare review
-      { col: 14, row: 40, id: 'snow_golem',    difficultyOverride: 3 },       // D3 fractionAdd review
-      { col: 57, row: 40, id: 'crystal_bat',   difficultyOverride: 3 },       // D3 decimals review
-      { col: 35, row: 26, id: 'ratio_raven',   difficultyOverride: 3 },       // D3 percentages
-      { col: 60, row: 12, id: 'percent_wraith', difficultyOverride: 3 },      // D3 ratiosProp
-      { col: 50, row: 42, id: 'shadow_knight', difficultyOverride: 3 },       // D3 orderOfOps
+      { id: 'shadow_knight'                              },  // D1 orderOfOps
+      { id: 'ratio_raven'                                },  // D2 percentages
+      { id: 'percent_wraith'                             },  // D2 ratiosProp
+      { id: 'shadow_knight'  },  // orderOfOps
+      { id: 'ice_frog',       difficultyOverride: 3      },  // D3 fractionCompare review
+      { id: 'snow_golem',     difficultyOverride: 3      },  // D3 fractionAdd review
+      { id: 'crystal_bat',    difficultyOverride: 3      },  // D3 decimals review
+      { id: 'ratio_raven'    },  // percentages
+      { id: 'percent_wraith' },  // ratiosProp
+      { id: 'shadow_knight'  },  // orderOfOps
     ],
 
     boss: 'fenwick',

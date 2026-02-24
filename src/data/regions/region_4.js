@@ -12,7 +12,20 @@
     auraColor:   0xFF8833,
     bossTint:    0xFFF5EE,
     floorTile: 'floor_sand',
-    wallTile: 'wall_sandstone',
+    wallTile:  'wall_sandstone',
+
+    // ── Map generation config ──────────────────────────────────────────────
+    blockingTiles: [
+      { key: 'decoration_rock' },
+      { key: 'decoration_rock_b' },
+    ],
+    accentLayers: [
+      { key: 'decoration_bones',      freq: 0.11, threshold: 0.82, seed: 500 },
+      { key: 'decoration_tumbleweed', freq: 0.09, threshold: 0.84, seed: 600 },
+    ],
+    landmark: { key: 'landmark_lava_pool', tilesW: 5, tilesH: 4, blocking: true, margin: 2 },
+    itemPool:  ['lucky_collar', 'fish_fossil'],
+
     mimiStart:     { col: 4, row: 26 },
     mimiStartPool: [
       { col: 4,  row: 26 }, { col: 4,  row: 40 },
@@ -29,16 +42,16 @@
     // ── Enemies: 10 — 4 native + 4 hard reviews from R1 + 2 native D2 ──
     bossUnlockKills: 10,
     enemySpawns: [
-      { col: 20, row: 10, id: 'sand_scarab' },                                // D1 division
-      { col: 52, row:  9, id: 'mummy_cat' },                                  // D2 mult review
-      { col: 30, row: 40, id: 'mirage_fox' },                                 // D2 divisionWord
-      { col: 40, row:  7, id: 'riddle_scarab' },                              // D1 missingNumber (NEW)
-      { col: 44, row: 26, id: 'slime_pup',     difficultyOverride: 3 },       // D3 multTables review
-      { col: 14, row: 40, id: 'cactus_sprite', difficultyOverride: 3 },       // D3 multiplication review
-      { col: 57, row: 40, id: 'cloud_bully',   difficultyOverride: 3 },       // D3 skipCounting review
-      { col: 35, row: 26, id: 'double_bunny',  difficultyOverride: 3 },       // D3 doubling review
-      { col: 60, row: 12, id: 'sand_scarab',   difficultyOverride: 2 },       // D2 division
-      { col: 50, row: 42, id: 'riddle_scarab', difficultyOverride: 2 },       // D2 missingNumber
+      { id: 'sand_scarab'                              },  // D1 division
+      { id: 'mummy_cat'                                },  // D2 mult review
+      { id: 'mirage_fox'                               },  // D2 divisionWord
+      { id: 'riddle_scarab'                            },  // D1 missingNumber
+      { id: 'slime_pup',     difficultyOverride: 3     },  // D3 multTables review
+      { id: 'cactus_sprite', difficultyOverride: 3     },  // D3 multiplication review
+      { id: 'cloud_bully',   difficultyOverride: 3     },  // D3 skipCounting review
+      { id: 'double_bunny',  difficultyOverride: 3     },  // D3 doubling review
+      { id: 'sand_scarab'   },  // division
+      { id: 'riddle_scarab' },  // missingNumber
     ],
 
     boss: 'the_diviner',

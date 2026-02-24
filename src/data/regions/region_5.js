@@ -12,7 +12,20 @@
     auraColor:   0x44CCFF,
     bossTint:    0xEEF8FF,
     floorTile: 'floor_snow',
-    wallTile: 'wall_ice',
+    wallTile:  'wall_ice',
+
+    // ── Map generation config ──────────────────────────────────────────────
+    blockingTiles: [
+      { key: 'decoration_icicle' },
+      { key: 'decoration_icicle_b' },
+    ],
+    accentLayers: [
+      { key: 'decoration_snowpile',    freq: 0.10, threshold: 0.78, seed: 700 },
+      { key: 'decoration_frost_flower',freq: 0.13, threshold: 0.84, seed: 800 },
+    ],
+    landmark: { key: 'landmark_frozen_lake', tilesW: 6, tilesH: 5, blocking: true, margin: 2 },
+    itemPool:  ['sardine', 'yarn_ball'],
+
     mimiStart:     { col: 4, row: 26 },
     mimiStartPool: [
       { col: 4,  row: 26 }, { col: 4,  row: 40 },
@@ -29,16 +42,16 @@
     // ── Enemies: 10 — 4 native + 4 hard reviews from R2 + 2 native D3 ──
     bossUnlockKills: 10,
     enemySpawns: [
-      { col: 20, row: 10, id: 'ice_frog' },                                   // D1 fractionCompare
-      { col: 52, row:  9, id: 'snow_golem' },                                 // D2 fractionAdd
-      { col: 30, row: 40, id: 'crystal_bat' },                                // D2 decimals
-      { col: 40, row:  7, id: 'ice_frog',      difficultyOverride: 2 },       // D2 fractionCompare
-      { col: 44, row: 26, id: 'sand_scarab',   difficultyOverride: 3 },       // D3 division review
-      { col: 14, row: 40, id: 'mummy_cat',     difficultyOverride: 3 },       // D3 mult review
-      { col: 57, row: 40, id: 'mirage_fox',    difficultyOverride: 3 },       // D3 word-problem review
-      { col: 35, row: 26, id: 'riddle_scarab', difficultyOverride: 3 },       // D3 missingNumber review
-      { col: 60, row: 12, id: 'snow_golem',    difficultyOverride: 3 },       // D3 fractionAdd
-      { col: 50, row: 42, id: 'crystal_bat',   difficultyOverride: 3 },       // D3 decimals
+      { id: 'ice_frog'                               },  // D1 fractionCompare
+      { id: 'snow_golem'                             },  // D2 fractionAdd
+      { id: 'crystal_bat'                            },  // D2 decimals
+      { id: 'ice_frog'      },  // fractionCompare
+      { id: 'sand_scarab',   difficultyOverride: 3   },  // D3 division review
+      { id: 'mummy_cat',     difficultyOverride: 3   },  // D3 mult review
+      { id: 'mirage_fox',    difficultyOverride: 3   },  // D3 word-problem review
+      { id: 'riddle_scarab', difficultyOverride: 3   },  // D3 missingNumber review
+      { id: 'snow_golem'    },  // fractionAdd
+      { id: 'crystal_bat'   },  // decimals
     ],
 
     boss: 'glacius',

@@ -13,6 +13,20 @@ const REGION = {
     bossTint:    0xFFF0CC,
     floorTile: 'floor_wheat',
     wallTile:  'wall_cobble',
+
+    // ── Map generation config ──────────────────────────────────────────────
+    blockingTiles: [
+      { key: 'decoration_hay_bale' },
+      { key: 'decoration_hay_bale_b' },
+    ],
+    accentLayers: [
+      { key: 'decoration_wheat_stalk', freq: 0.12, threshold: 0.82, seed: 250 },
+      { key: 'decoration_sunflower',   freq: 0.07, threshold: 0.90, seed: 350 },
+      { key: 'decoration_windmill',    freq: 0.04, threshold: 0.94, seed: 450 },
+    ],
+    landmark: { key: 'landmark_windmill_mill', tilesW: 5, tilesH: 4, blocking: true, margin: 2 },
+    itemPool:  ['catnip', 'lucky_collar'],
+
     mimiStart:     { col: 4, row: 26 },
     mimiStartPool: [
       { col: 4,  row: 26 }, { col: 4,  row: 40 },
@@ -29,16 +43,16 @@ const REGION = {
     // ── Enemies: 10 — 4 native + 4 hard reviews from R0 + 2 native D2 ──
     bossUnlockKills: 10,
     enemySpawns: [
-      { col: 20, row: 10, id: 'gear_gnome' },                               // D1 placeValue
-      { col: 52, row:  9, id: 'windmill_sprite' },                           // D1 addCarry
-      { col: 30, row: 40, id: 'harvest_scarecrow' },                         // D2 subBorrow
-      { col: 40, row:  7, id: 'counting_crow' },                             // D2 addCarry
-      { col: 44, row: 26, id: 'counting_caterpillar', difficultyOverride: 3 }, // D3 addition review
-      { col: 14, row: 40, id: 'minus_mole',            difficultyOverride: 3 }, // D3 comparison review
-      { col: 57, row: 40, id: 'number_gnome',          difficultyOverride: 3 }, // D3 subtraction review
-      { col: 35, row: 26, id: 'number_bee',            difficultyOverride: 3 }, // D3 numberOrder review
-      { col: 60, row: 12, id: 'gear_gnome',            difficultyOverride: 2 }, // D2 placeValue
-      { col: 50, row: 42, id: 'windmill_sprite',       difficultyOverride: 2 }, // D2 addCarry
+      { id: 'gear_gnome'                                    },  // D1 placeValue
+      { id: 'windmill_sprite'                               },  // D1 addCarry
+      { id: 'harvest_scarecrow'                             },  // D2 subBorrow
+      { id: 'counting_crow'                                 },  // D2 addCarry
+      { id: 'counting_caterpillar', difficultyOverride: 3   },  // D3 addition review
+      { id: 'minus_mole',           difficultyOverride: 3   },  // D3 comparison review
+      { id: 'number_gnome',         difficultyOverride: 3   },  // D3 subtraction review
+      { id: 'number_bee',           difficultyOverride: 3   },  // D3 numberOrder review
+      { id: 'gear_gnome'      },  // placeValue
+      { id: 'windmill_sprite' },  // addCarry
     ],
 
     boss: 'grand_miller',

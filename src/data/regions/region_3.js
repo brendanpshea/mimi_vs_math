@@ -27,6 +27,7 @@
     ],
 
     // ── Enemies: 10 — 3 native types + 2 hard reviews from R2 ────────────
+    bossUnlockKills: 10,
     enemySpawns: [
       { col: 20, row: 10, id: 'fungus_toad' },                               // D1 multiDigitMult
       { col: 52, row:  9, id: 'mycelium_wisp' },                             // D1 factorPairs

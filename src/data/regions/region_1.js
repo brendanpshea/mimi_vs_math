@@ -27,6 +27,7 @@ const REGION = {
     ],
 
     // ── Enemies: 10 — 4 native + 4 hard reviews from R0 + 2 native D2 ──
+    bossUnlockKills: 10,
     enemySpawns: [
       { col: 20, row: 10, id: 'gear_gnome' },                               // D1 placeValue
       { col: 52, row:  9, id: 'windmill_sprite' },                           // D1 addCarry

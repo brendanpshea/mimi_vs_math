@@ -195,6 +195,22 @@ export default class BestiaryScene extends Phaser.Scene {
       }
     }
 
+    // Difficulty achievement badge (bottom-left corner) — shown once beaten at D2/D3.
+    // Matches the aura colours: amber = D2, purple = D3.
+    if (isDefeated) {
+      const highDiff = GameState.getEnemyHighestDifficulty(id);
+      if (highDiff >= 2) {
+        const isD3 = highDiff >= 3;
+        this.add.text(cx - CARD_W / 2 + 4, cy + CARD_H / 2 - 16,
+          isD3 ? '★★' : '★', {
+          fontSize: '11px', fontFamily: FONT,
+          color:           isD3 ? '#CC33FF' : '#FFAA33',
+          stroke:          '#000000',
+          strokeThickness: 2,
+        });
+      }
+    }
+
     // Interactivity (seen or defeated only)
     if (isSeen) {
       bg.setInteractive({ useHandCursor: true });
@@ -302,6 +318,18 @@ export default class BestiaryScene extends Phaser.Scene {
       });
       grp.add(kcTxt);
       ty += lineH;
+      // Difficulty mastery badge — shown if D2 or D3 was ever beaten
+      const highDiff = GameState.getEnemyHighestDifficulty(id);
+      if (highDiff >= 2) {
+        const isD3     = highDiff >= 3;
+        const mastTxt  = this.add.text(tx, ty,
+          isD3 ? '🌟 Expert mode conquered!' : '⭐ Tough mode conquered!', {
+          fontSize: '11px', fontFamily: FONT,
+          color: isD3 ? '#DD88FF' : '#FFCC44',
+        });
+        grp.add(mastTxt);
+        ty += lineH;
+      }
     } else {
       const unknownTxt = this.add.text(tx, ty, '❤ HP: ???   ⚔ DMG: ???', {
         fontSize: '11px', fontFamily: FONT, color: '#556677',

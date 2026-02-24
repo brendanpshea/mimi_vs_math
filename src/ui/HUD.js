@@ -1,9 +1,9 @@
 /**
  * HUD — exploration scene heads-up display.
  *
- * Shows:  ♥ hearts  |  Region name  |  Accuracy stat  |  Inventory pills
+ * Shows:  ♥ hearts  |  Region name  |  Kill-count progress  |  Inventory pills
  *
- * Call update() each frame so the accuracy stays current.
+ * Call update() each frame so the kill count stays current.
  */
 import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
@@ -42,7 +42,7 @@ export default class HUD {
       fontSize: '14px', color: '#FFEEAA', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(51);
 
-    // Accuracy stat + enemies remaining
+    // Kill-count / enemies-defeated progress indicator
     this._statsText = scene.add.text(W / 2, 30, '', {
       fontSize: '13px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(51);
@@ -72,31 +72,36 @@ export default class HUD {
   }
 
   refresh() {
-    const { hp, maxHP, stats, inventory } = GameState;
+    const { hp, inventory } = GameState;
 
     // Hearts
-    const fullHearts  = Math.floor(hp / 2);
-    const halfHeart   = hp % 2 === 1;
+    const fullHearts = Math.floor(hp / 2);
+    const halfHeart  = hp % 2 === 1;
     for (let i = 0; i < 6; i++) {
-      if (i < fullHearts)                         this._hearts[i].setTexture('heart_full');
-      else if (i === fullHearts && halfHeart)      this._hearts[i].setTexture('heart_half');
-      else                                         this._hearts[i].setTexture('heart_empty');
+      if (i < fullHearts)                        this._hearts[i].setTexture('heart_full');
+      else if (i === fullHearts && halfHeart)    this._hearts[i].setTexture('heart_half');
+      else                                       this._hearts[i].setTexture('heart_empty');
     }
 
-    // Accuracy stat
-    const pct = stats.answered > 0
-      ? Math.round(stats.correct / stats.answered * 100)
-      : 100;
-
-    // Enemies remaining in the current region
-    const remaining = this.regionData.enemySpawns.filter(
-      (spawn, i) => !GameState.isEnemyDefeated(this.regionData.id, spawn.id + i),
-    ).length;
-    const enemyStr = remaining > 0 ? `⚔ ${remaining} left` : '⚔ all clear';
-
-    this._statsText.setText(
-      `✓ ${stats.correct}/${stats.answered}  ·  ${pct}% accuracy  ·  streak best: ${stats.bestStreak}  ·  ${enemyStr}`,
-    );
+    // Kill-count progress (⚔ K / N defeated) — or legacy remaining count
+    const unlockKills = this.regionData.bossUnlockKills;
+    let enemyStr;
+    if (unlockKills != null) {
+      if (GameState.hasDefeatedBoss(this.regionData.id)) {
+        enemyStr = '⚔ Boss defeated!';
+      } else {
+        // _killCount lives on the ExploreScene instance (this.scene)
+        const killCount = this.scene._killCount ?? 0;
+        enemyStr = `⚔ ${killCount} / ${unlockKills} defeated`;
+      }
+    } else {
+      // Legacy fallback: count enemies not yet flagged as defeated
+      const remaining = this.regionData.enemySpawns.filter(
+        (spawn, i) => !GameState.isEnemyDefeated(this.regionData.id, spawn.id + i),
+      ).length;
+      enemyStr = remaining > 0 ? `⚔ ${remaining} left` : '⚔ all clear';
+    }
+    this._statsText.setText(enemyStr);
 
     // Inventory icon slots
     this._invSlots.forEach(slot => {

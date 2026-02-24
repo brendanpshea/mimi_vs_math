@@ -27,6 +27,7 @@
     ],
 
     // ── Enemies: 10 — 4 native + 4 hard reviews from R1 + 2 native D2 ──
+    bossUnlockKills: 10,
     enemySpawns: [
       { col: 20, row: 10, id: 'sand_scarab' },                                // D1 division
       { col: 52, row:  9, id: 'mummy_cat' },                                  // D2 mult review

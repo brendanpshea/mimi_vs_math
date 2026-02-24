@@ -7,7 +7,6 @@
  */
 import * as Phaser from 'phaser';
 import GameState from '../config/GameState.js';
-import REGIONS   from '../data/regions/index.js';
 import BGM       from '../audio/BGM.js';
 import { openSettings, closeSettings } from '../ui/SettingsOverlay.js';
 
@@ -131,88 +130,90 @@ export default class TitleScene extends Phaser.Scene {
   _showWorldSelect() {
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
-    const D = 200;   // depth base for overlay
+    const D = 200;
 
     const items = this._worldSelectItems = [];
     const add = obj => { items.push(obj); return obj; };
 
     // Dim background
-    const dim = add(this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.78).setDepth(D).setInteractive());
+    const dim = add(this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.80)
+      .setDepth(D).setInteractive());
     dim.on('pointerdown', () => this._closeWorldSelect());
 
     // Panel
-    add(this.add.rectangle(W / 2, H / 2, W * 0.92, 400, 0x080824)
+    add(this.add.rectangle(W / 2, H / 2, Math.min(680, W * 0.94), 330, 0x080824)
       .setDepth(D + 1).setStrokeStyle(2, 0x4488FF));
 
-    add(this.add.text(W / 2, H / 2 - 178, 'Choose a Starting World', {
-      fontSize: '22px', color: '#FFD700', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+    // Title
+    add(this.add.text(W / 2, H / 2 - 145, 'Choose Your Grade', {
+      fontSize: '24px', color: '#FFD700',
+      fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(D + 2));
 
-    add(this.add.text(W / 2, H / 2 - 155, 'Earlier worlds will be unlocked automatically', {
+    add(this.add.text(W / 2, H / 2 - 118, 'Earlier grades unlock automatically', {
       fontSize: '12px', color: '#8899BB', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5).setDepth(D + 2));
 
-    // Cards — two rows: 3 top, 2 bottom
-    const cardW  = 128;
-    const cardH  = 108;
-    const gapX   = 16;
-    const rowY   = [H / 2 - 90, H / 2 + 60];
-    const rowCounts = [3, 2];
+    // One card per grade — each maps to the first region of that grade level
+    const GRADES = [
+      { num: 1, topic: 'Adding &\nSubtracting',     regionId: 0, fill: 0x2A1A00, hover: 0x3D2800, stroke: 0xFFCC44 },
+      { num: 2, topic: 'Place Value &\nTimes Tables', regionId: 1, fill: 0x0A2010, hover: 0x153020, stroke: 0x44CC66 },
+      { num: 3, topic: 'Multiplication\n& Division',  regionId: 3, fill: 0x0A1428, hover: 0x142040, stroke: 0x44AAFF },
+      { num: 4, topic: 'Fractions &\nDecimals',       regionId: 5, fill: 0x1A0A28, hover: 0x281440, stroke: 0xAA44FF },
+      { num: 5, topic: 'Percentages\n& Ratios',       regionId: 6, fill: 0x280A0A, hover: 0x3D1414, stroke: 0xFF6644 },
+    ];
 
-    REGIONS.forEach((region, i) => {
-      const row  = i < 3 ? 0 : 1;
-      const col  = i < 3 ? i : i - 3;
-      const cols = rowCounts[row];
-      const totalW = cols * cardW + (cols - 1) * gapX;
-      const cx   = W / 2 - totalW / 2 + col * (cardW + gapX) + cardW / 2;
-      const cy   = rowY[row];
+    const cardW  = 108;
+    const cardH  = 148;
+    const gap    = 12;
+    const totalW = GRADES.length * cardW + (GRADES.length - 1) * gap;
+    const startX = W / 2 - totalW / 2 + cardW / 2;
+    const cardY  = H / 2 + 8;
 
-      // Card background
-      const card = this.add.rectangle(cx, cy, cardW, cardH, 0x0E1A3A)
-        .setDepth(D + 2).setStrokeStyle(2, 0x2244AA)
-        .setInteractive({ useHandCursor: true });
-      add(card);
+    GRADES.forEach((g, i) => {
+      const cx = startX + i * (cardW + gap);
 
-      // Region number badge
-      add(this.add.circle(cx - cardW / 2 + 14, cy - cardH / 2 + 14, 12, 0x1A3A6E)
-        .setDepth(D + 3).setStrokeStyle(1.5, 0x4488FF));
-      add(this.add.text(cx - cardW / 2 + 14, cy - cardH / 2 + 14, String(i + 1), {
-        fontSize: '13px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
-      }).setOrigin(0.5).setDepth(D + 4));
+      const card = add(this.add.rectangle(cx, cardY, cardW, cardH, g.fill)
+        .setDepth(D + 2).setStrokeStyle(2.5, g.stroke)
+        .setInteractive({ useHandCursor: true }));
 
-      // Region name
-      add(this.add.text(cx, cy - 26, region.name, {
-        fontSize: '11px', color: '#FFE8A0', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
-        wordWrap: { width: cardW - 12 }, align: 'center',
+      // Large grade number
+      add(this.add.text(cx, cardY - 48, String(g.num), {
+        fontSize: '46px', color: '#FFFFFF',
+        fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
       }).setOrigin(0.5).setDepth(D + 3));
 
-      // Subtitle (trim after ·)
-      add(this.add.text(cx, cy - 6, region.subtitle.split('·')[0].trim(), {
-        fontSize: '9px', color: '#7799BB', fontFamily: "'Nunito', Arial, sans-serif",
-        wordWrap: { width: cardW - 12 }, align: 'center',
+      // "Grade" label beneath number
+      add(this.add.text(cx, cardY - 14, 'Grade', {
+        fontSize: '10px', color: '#AABBCC', fontFamily: "'Nunito', Arial, sans-serif",
       }).setOrigin(0.5).setDepth(D + 3));
 
-      // Grade label
-      add(this.add.text(cx, cy + 14, region.subtitle.split('·')[1]?.trim() ?? '', {
-        fontSize: '9px', color: '#55AA88', fontFamily: "'Nunito', Arial, sans-serif",
+      // Thin separator
+      add(this.add.rectangle(cx, cardY + 2, cardW - 20, 1, g.stroke, 0.35)
+        .setDepth(D + 3));
+
+      // Topic text
+      add(this.add.text(cx, cardY + 26, g.topic, {
+        fontSize: '10px', color: '#DDEEFF', fontFamily: "'Nunito', Arial, sans-serif",
+        align: 'center', wordWrap: { width: cardW - 10 },
       }).setOrigin(0.5).setDepth(D + 3));
 
-      // "Start here" label
-      add(this.add.text(cx, cy + 36, '▶ Start here', {
-        fontSize: '10px', color: '#88DDFF', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+      // "Start here" call-to-action
+      add(this.add.text(cx, cardY + 60, '▶ Start', {
+        fontSize: '10px', fontStyle: 'bold',
+        color: '#' + g.stroke.toString(16).padStart(6, '0'),
+        fontFamily: "'Nunito', Arial, sans-serif",
       }).setOrigin(0.5).setDepth(D + 3));
 
-      card.on('pointerover', () => { card.setFillStyle(0x1A2E5A); card.setStrokeStyle(2, 0x88CCFF); });
-      card.on('pointerout',  () => { card.setFillStyle(0x0E1A3A); card.setStrokeStyle(2, 0x2244AA); });
-      card.on('pointerdown', () => this._startAtWorld(i));
+      card.on('pointerover', () => { card.setFillStyle(g.hover); });
+      card.on('pointerout',  () => { card.setFillStyle(g.fill);  });
+      card.on('pointerdown', () => this._startAtWorld(g.regionId));
     });
 
-    // Cancel button — shifts left if Stats button also appears
-    const hasStats = GameState.stats.answered > 0;
-    const cancelX  = hasStats ? W / 2 - 95 : W / 2;
-    const cb = add(this.add.rectangle(cancelX, H / 2 + 175, 150, 36, 0x2A0A0A)
+    // Cancel button
+    const cb = add(this.add.rectangle(W / 2, H / 2 + 145, 150, 36, 0x2A0A0A)
       .setDepth(D + 2).setStrokeStyle(1.5, 0xCC4444).setInteractive({ useHandCursor: true }));
-    const ct = add(this.add.text(cancelX, H / 2 + 175, '✕  Cancel', {
+    const ct = add(this.add.text(W / 2, H / 2 + 145, '✕  Cancel', {
       fontSize: '14px', color: '#FF8888', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(D + 3));
     cb.on('pointerover', () => { cb.setFillStyle(0x401515); ct.setColor('#FFAAAA'); });
@@ -221,18 +222,6 @@ export default class TitleScene extends Phaser.Scene {
 
     // ESC closes
     this._escKey = this.input.keyboard.once('keydown-ESC', () => this._closeWorldSelect());
-
-    // Stats button inside world-select
-    if (hasStats) {
-      const wsb = add(this.add.rectangle(W / 2 + 95, H / 2 + 175, 150, 36, 0x0C1A0C)
-        .setDepth(D + 2).setStrokeStyle(1.5, 0x44AA44).setInteractive({ useHandCursor: true }));
-      const wst = add(this.add.text(W / 2 + 95, H / 2 + 175, '📊 Stats',
-        { fontSize: '14px', color: '#88FF88', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' },
-      ).setOrigin(0.5).setDepth(D + 3));
-      wsb.on('pointerover', () => { wsb.setFillStyle(0x153015); wst.setColor('#AAFFAA'); });
-      wsb.on('pointerout',  () => { wsb.setFillStyle(0x0C1A0C); wst.setColor('#88FF88'); });
-      wsb.on('pointerdown', () => this._showStatsOverlay());
-    }
   }
 
   _closeWorldSelect() {

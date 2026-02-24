@@ -27,6 +27,7 @@
     ],
 
     // ── Enemies: 10 — 4 native + 4 hard reviews from R2 + 2 native D3 ──
+    bossUnlockKills: 10,
     enemySpawns: [
       { col: 20, row: 10, id: 'ice_frog' },                                   // D1 fractionCompare
       { col: 52, row:  9, id: 'snow_golem' },                                 // D2 fractionAdd

@@ -32,18 +32,16 @@
       { col: 4,  row: 50 },                  // SW
     ],
 
-    // ── Enemies: 10 (intro region — native types at rising difficulties) ──
+    // ── Enemies: 7 (intro region — all base D1; difficulty adapts via System C) ──
+    bossUnlockKills: 10,
     enemySpawns: [
-      { col: 20, row: 10, id: 'counting_caterpillar' },                       // D1 addition
-      { col: 52, row:  9, id: 'number_gnome' },                               // D1 subtraction
-      { col: 30, row: 40, id: 'minus_mole' },                                 // D1 comparison
-      { col: 40, row:  7, id: 'number_bee' },                                 // D1 numberOrder (NEW)
-      { col: 44, row: 26, id: 'counting_caterpillar', difficultyOverride: 2 },// D2 addition
-      { col: 14, row: 40, id: 'number_gnome',         difficultyOverride: 2 },// D2 subtraction
-      { col: 57, row: 40, id: 'minus_mole',           difficultyOverride: 2 },// D2 comparison
-      { col: 35, row: 26, id: 'number_bee',           difficultyOverride: 2 },// D2 numberOrder
-      { col: 60, row: 12, id: 'counting_caterpillar', difficultyOverride: 3 },// D3 addition
-      { col: 50, row: 42, id: 'minus_mole',           difficultyOverride: 3 },// D3 comparison
+      { col: 20, row: 10, id: 'counting_caterpillar' },  // NW quadrant — addition
+      { col: 60, row: 10, id: 'number_gnome'         },  // NE quadrant — subtraction
+      { col: 40, row:  7, id: 'number_bee'           },  // north-centre — comparison
+      { col: 25, row: 26, id: 'counting_caterpillar' },  // mid-left — addition
+      { col: 55, row: 26, id: 'number_gnome'         },  // mid-right — subtraction
+      { col: 30, row: 42, id: 'minus_mole'           },  // south-left — comparison
+      { col: 60, row: 42, id: 'number_bee'           },  // south-right — comparison
     ],
 
     boss: 'subtraction_witch',

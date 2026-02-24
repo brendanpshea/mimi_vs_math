@@ -14,15 +14,19 @@ import REGIONS from './src/data/regions/index.js';
 
 // ── Minimal GameState stub ─────────────────────────────────────────────────
 const GameState = {
-  defeatedEnemies:       {},
-  defeatedBosses:        [],
-  regionStars:           {},
-  regionHardModeCleared: [],
-  collectedItems:        {},
-  lives:                 9,
-  maxLives:              9,
-  hp:                    12,
-  maxHP:                 12,
+  defeatedEnemies:           {},
+  defeatedBosses:            [],
+  regionStars:               {},
+  regionHardModeCleared:     [],
+  collectedItems:            {},
+  bestiaryHighestDifficulty: {},
+  regionMaxDifficulty:       {},
+  topicTier:                 {},   // persisted per-topic difficulty tier
+  topicPerfectStreak:        {},   // session-only consecutive perfect count
+  lives:                     9,
+  maxLives:                  9,
+  hp:                        12,
+  maxHP:                     12,
 
   isEnemyDefeated(regionId, enemyId) {
     return !!this.defeatedEnemies[`r${regionId}_${enemyId}`];
@@ -57,14 +61,59 @@ const GameState = {
       this.regionHardModeCleared.push(regionId);
     }
   },
+  recordEnemyHighestDifficulty(enemyId, diff) {
+    const prev = this.bestiaryHighestDifficulty[enemyId] ?? 0;
+    if (diff > prev) this.bestiaryHighestDifficulty[enemyId] = diff;
+  },
+  getEnemyHighestDifficulty(enemyId) {
+    return this.bestiaryHighestDifficulty?.[enemyId] ?? 0;
+  },
+  recordRegionMaxDifficulty(regionId, diff) {
+    const prev = this.regionMaxDifficulty[regionId] ?? 0;
+    if (diff > prev) this.regionMaxDifficulty[regionId] = diff;
+  },
+  getRegionMaxDifficulty(regionId) {
+    return this.regionMaxDifficulty?.[regionId] ?? 0;
+  },
+
+  getTopicTier(topic, floor = 1) {
+    return Math.max(this.topicTier[topic] ?? 1, floor);
+  },
+  recordTopicBattle(topic, tier, perfect) {
+    const currentTier = this.topicTier[topic] ?? 1;
+    if (tier < currentTier) return;
+    if (perfect) {
+      const streak = (this.topicPerfectStreak[topic] ?? 0) + 1;
+      if (streak >= 3 && currentTier < 3) {
+        this.topicTier[topic]          = currentTier + 1;
+        this.topicPerfectStreak[topic] = 0;
+      } else {
+        this.topicPerfectStreak[topic] = streak;
+      }
+    } else {
+      this.topicPerfectStreak[topic] = 0;
+    }
+  },
+  regressTopicTier(topic) {
+    const currentTier = this.topicTier[topic] ?? 1;
+    if (currentTier > 1) {
+      this.topicTier[topic]          = currentTier - 1;
+      this.topicPerfectStreak[topic] = 0;
+    }
+  },
+
   reset() {
-    this.defeatedEnemies       = {};
-    this.defeatedBosses        = [];
-    this.regionStars           = {};
-    this.regionHardModeCleared = [];
-    this.collectedItems        = {};
-    this.lives                 = 9;
-    this.hp                    = 12;
+    this.defeatedEnemies           = {};
+    this.defeatedBosses            = [];
+    this.regionStars               = {};
+    this.regionHardModeCleared     = [];
+    this.collectedItems            = {};
+    this.bestiaryHighestDifficulty = {};
+    this.regionMaxDifficulty       = {};
+    this.topicTier                 = {};
+    this.topicPerfectStreak        = {};
+    this.lives                     = 9;
+    this.hp                        = 12;
   },
 };
 
@@ -106,18 +155,16 @@ function assertEqual(a, b, msg) {
 console.log('\nGameState key format');
 
 test('instanceKey region 0 produces correct keys', () => {
-  assertEqual(instanceKey(0, 0), 'counting_caterpillar0');
-  assertEqual(instanceKey(0, 1), 'number_gnome1');
-  assertEqual(instanceKey(0, 2), 'minus_mole2');
-  assertEqual(instanceKey(0, 3), 'number_bee3');            // D1 numberOrder
-  assertEqual(instanceKey(0, 4), 'counting_caterpillar4'); // D2 addition review
-  assertEqual(instanceKey(0, 5), 'number_gnome5');          // D2 subtraction review
-  assertEqual(instanceKey(0, 6), 'minus_mole6');            // D2 comparison review
-  assertEqual(instanceKey(0, 7), 'number_bee7');            // D2 numberOrder review
-  assertEqual(instanceKey(0, 8), 'counting_caterpillar8'); // D3 addition review
-  assertEqual(instanceKey(0, 9), 'minus_mole9');            // D3 comparison review
-  // Verify count matches the live data
-  assertEqual(REGIONS[0].enemySpawns.length, 10, 'R0 should have 10 spawns');
+  assertEqual(instanceKey(0, 0), 'counting_caterpillar0');  // NW addition
+  assertEqual(instanceKey(0, 1), 'number_gnome1');           // NE subtraction
+  assertEqual(instanceKey(0, 2), 'number_bee2');             // north-centre comparison
+  assertEqual(instanceKey(0, 3), 'counting_caterpillar3');  // mid-left addition
+  assertEqual(instanceKey(0, 4), 'number_gnome4');           // mid-right subtraction
+  assertEqual(instanceKey(0, 5), 'minus_mole5');             // south-left comparison
+  assertEqual(instanceKey(0, 6), 'number_bee6');             // south-right comparison
+  // Verify count and bossUnlockKills match the live data
+  assertEqual(REGIONS[0].enemySpawns.length, 7, 'R0 should have 7 spawns');
+  assertEqual(REGIONS[0].bossUnlockKills, 10, 'R0 bossUnlockKills should be 10');
 });
 
 test('instanceKey region 1 produces correct keys', () => {
@@ -246,70 +293,177 @@ test('count in region 1 unaffected by region 0 defeats', () => {
   assertEqual(remainingEnemyCount(1), expected, `region 1 should still show ${expected} alive`);
 });
 
-console.log('\njustUnlocked logic (the bug under test)');
+console.log('\njustUnlockedBoss logic (kill-count threshold)');
 
-test('preBattleAllClear correctly detects last-enemy scenario', () => {
-  // Simulate: all enemies except the last (slot 5) already defeated
-  const regionId = 1;
-  const spawnCount = REGIONS[regionId].enemySpawns.length;
-  const lastSlot = spawnCount - 1;
-  const battleEnemyInstance = instanceKey(regionId, lastSlot);
+// Mirrors the formula in ExploreScene.create():
+//   _justUnlockedBoss = killCount + 1 >= unlockKills && killCount < unlockKills && !hasDefeatedBoss
+function calcJustUnlocked(regionId, killCount) {
+  const unlockKills = REGIONS[regionId].bossUnlockKills;
+  if (unlockKills == null) return false;
+  return (
+    killCount + 1 >= unlockKills &&
+    killCount < unlockKills &&
+    !GameState.hasDefeatedBoss(regionId)
+  );
+}
 
-  for (let i = 0; i < lastSlot; i++) {
-    GameState.defeatEnemy(regionId, instanceKey(regionId, i));
-  }
-  // Last enemy NOT yet recorded — this is the state at _processBattleResult time
-
-  // Compute preBattleAllClear BEFORE recording the defeat (mirrors the fix)
-  const preBattleAllClear =
-    REGIONS[regionId].enemySpawns.every((spawn, i) => {
-      const key = spawn.id + i;
-      return key === battleEnemyInstance || GameState.isEnemyDefeated(regionId, key);
-    });
-
-  // Now record the defeat (simulates _processBattleResult)
-  GameState.defeatEnemy(regionId, battleEnemyInstance);
-
-  assert(preBattleAllClear, 'preBattleAllClear should be true before recording');
-  assertEqual(remainingEnemyCount(regionId), 0, 'remaining should be 0 after recording');
-  // justUnlocked = preBattleAllClear && !hasDefeatedBoss
-  assert(!GameState.hasDefeatedBoss(regionId), 'boss not yet defeated');
-  const justUnlocked = preBattleAllClear && !GameState.hasDefeatedBoss(regionId);
-  assert(justUnlocked, 'justUnlocked should be TRUE — this is the core fix');
+test('justUnlockedBoss is true when kill count crosses the threshold', () => {
+  const regionId    = 0;
+  const unlockKills = REGIONS[regionId].bossUnlockKills; // 10
+  assert(calcJustUnlocked(regionId, unlockKills - 1), 'should unlock at count = threshold - 1');
 });
 
-test('preBattleAllClear is false when more than 1 enemy remains', () => {
-  const regionId = 1;
-  const battleEnemyInstance = instanceKey(regionId, 0); // only first one
-  // No pre-existing defeats — 5 of 6 enemies still alive
-
-  const preBattleAllClear =
-    REGIONS[regionId].enemySpawns.every((spawn, i) => {
-      const key = spawn.id + i;
-      return key === battleEnemyInstance || GameState.isEnemyDefeated(regionId, key);
-    });
-
-  assert(!preBattleAllClear, 'should NOT unlock when 5 enemies still alive');
+test('justUnlockedBoss is false before the threshold - 1 kill', () => {
+  const regionId    = 0;
+  const unlockKills = REGIONS[regionId].bossUnlockKills;
+  assert(!calcJustUnlocked(regionId, unlockKills - 2), 'should NOT unlock at count = threshold - 2');
+  assert(!calcJustUnlocked(regionId, 0),                'should NOT unlock at count = 0');
 });
 
-test('justUnlocked is false if boss already beaten', () => {
-  const regionId = 1;
+test('justUnlockedBoss is false if boss already beaten', () => {
+  const regionId    = 0;
   GameState.defeatBoss(regionId);
-  const spawnCount = REGIONS[regionId].enemySpawns.length;
-  const lastSlot = spawnCount - 1;
-  for (let i = 0; i < lastSlot; i++) {
-    GameState.defeatEnemy(regionId, instanceKey(regionId, i));
+  const unlockKills = REGIONS[regionId].bossUnlockKills;
+  assert(!calcJustUnlocked(regionId, unlockKills - 1), 'should not re-announce if boss already beaten');
+});
+
+test('bossOpen uses kill count threshold for all regions', () => {
+  for (let r = 0; r <= 6; r++) {
+    GameState.reset();
+    const unlockKills = REGIONS[r].bossUnlockKills;
+    assert(unlockKills != null, `region ${r} should have bossUnlockKills`);
+    assertEqual(unlockKills, 10, `region ${r} bossUnlockKills should be 10`);
+
+    // Door closed before threshold
+    const closedAt = (unlockKills - 1 >= unlockKills) || GameState.hasDefeatedBoss(r);
+    assert(!closedAt, `door should be closed at kill count ${unlockKills - 1} for region ${r}`);
+
+    // Door open at threshold
+    const openAt = (unlockKills >= unlockKills) || GameState.hasDefeatedBoss(r);
+    assert(openAt, `door should be open at kill count ${unlockKills} for region ${r}`);
   }
-  const battleEnemyInstance = instanceKey(regionId, lastSlot);
+});
 
-  const preBattleAllClear =
-    REGIONS[regionId].enemySpawns.every((spawn, i) => {
-      const key = spawn.id + i;
-      return key === battleEnemyInstance || GameState.isEnemyDefeated(regionId, key);
-    });
+// ── Respawn behaviour (kill-count regions) ────────────────────────────────
+console.log('\nRespawn behaviour — enemies respawn in kill-count regions');
 
-  const justUnlocked = preBattleAllClear && !GameState.hasDefeatedBoss(regionId);
-  assert(!justUnlocked, 'should not re-announce unlock if boss already beaten');
+// Mirrors the _setupEnemies skip logic (respawn + rolling cooldown):
+//   kill-count region → skip justDefeated key AND any key in recentDefeats
+//   legacy region     → skip any enemy flagged by isEnemyDefeated
+const COOLDOWN_WINDOW = 2;  // must match ExploreScene constant
+
+function shouldSkipEnemy(regionId, iKey, justDefeated, recentDefeats) {
+  const usesKillCount = REGIONS[regionId].bossUnlockKills != null;
+  if (usesKillCount) {
+    if (iKey === justDefeated)          return true;  // just killed
+    if (recentDefeats.includes(iKey))  return true;  // in cooldown
+    return false;
+  }
+  return GameState.isEnemyDefeated(regionId, iKey);
+}
+
+function spawnsInRegion(regionId, justDefeated, recentDefeats = []) {
+  return REGIONS[regionId].enemySpawns.filter((spawn, i) =>
+    !shouldSkipEnemy(regionId, spawn.id + i, justDefeated, recentDefeats),
+  ).length;
+}
+
+// Mirrors _processBattleResult: kill-count regions do NOT call defeatEnemy
+// for regular enemies (only bosses / legacy regions do).
+function shouldCallDefeatEnemy(regionId, isBoss) {
+  const usesKillCount = REGIONS[regionId].bossUnlockKills != null;
+  return !usesKillCount || isBoss;
+}
+
+test('all 7 enemies spawn on fresh entry (no exclusions)', () => {
+  assertEqual(spawnsInRegion(0, null, []), 7, 'all 7 spawn on fresh entry');
+});
+
+test('just-defeated enemy is excluded on immediate return', () => {
+  const killed0 = instanceKey(0, 0);
+  assertEqual(spawnsInRegion(0, killed0, []), 6, '6 after killing slot 0');
+  const killed6 = instanceKey(0, 6);
+  assertEqual(spawnsInRegion(0, killed6, []), 6, '6 after killing slot 6');
+});
+
+test('recentDefeats window also excludes recently killed enemies', () => {
+  const keyA = instanceKey(0, 0);
+  const keyB = instanceKey(0, 1);
+  // Kill A then B: recentDefeats=[B,A] on next return, justDefeated=C
+  const keyC = instanceKey(0, 2);
+  const recent = [keyB, keyA];  // window after A then B
+  // Only C+D+E+F available (A, B in recent; C is justDefeated)
+  assertEqual(spawnsInRegion(0, keyC, recent), 4,
+    '4 available when 3 enemies excluded (jd + 2 recent)');
+});
+
+test('cooldown expires: enemy available again after window passes', () => {
+  const keyA = instanceKey(0, 0);
+  const keyB = instanceKey(0, 1);
+  const keyC = instanceKey(0, 2);
+  const keyD = instanceKey(0, 3);
+  // Kill A, B, C in sequence — after killing C: recent=[C,B], jd=D
+  // A has fallen off the window → available
+  const recent = [keyC, keyB];
+  assert(!recent.includes(keyA), 'A has dropped off window after 2 subsequent kills');
+  assertEqual(
+    spawnsInRegion(0, keyD, recent),
+    REGIONS[0].enemySpawns.length - recent.length - 1,  // total − recent − justDefeated
+    'correct count with expired cooldown',
+  );
+});
+
+test('cannot alternate AB — must involve a 3rd enemy (anti-camping)', () => {
+  const keyA = instanceKey(0, 0);
+  const keyB = instanceKey(0, 1);
+
+  // Kill A → recentDefeats becomes [A]
+  let recent = [keyA];
+  // Kill B (justDefeated=B, recent=[A]) → A still in recent → A excluded
+  assert(recent.includes(keyA), 'A still excluded when B is killed (AB blocked)');
+
+  // Kill B → recentDefeats becomes [B, A]
+  recent = [keyB, ...recent].slice(0, COOLDOWN_WINDOW);
+  // Try A again (justDefeated=A) — A is in recent=[B,A] so excluded ✓
+  assert(recent.includes(keyA), 'A still in cooldown after AB sequence');
+
+  // Now kill a 3rd enemy (C): recentDefeats = [C, B]
+  const keyC = instanceKey(0, 2);
+  recent = [keyC, ...recent].slice(0, COOLDOWN_WINDOW);
+  // A has dropped off — available again
+  assert(!recent.includes(keyA), 'A back after 3rd kill (cooldown expired)');
+});
+
+test('10 kills reachable: at least 4 enemies always available after warmup', () => {
+  const spawns     = REGIONS[0].enemySpawns;
+  const totalSlots = spawns.length;  // 7
+  let recentDefeats = [];
+
+  for (let kill = 0; kill < REGIONS[0].bossUnlockKills; kill++) {
+    const slotKilled = kill % totalSlots;
+    const jdk        = instanceKey(0, slotKilled);
+    const available  = spawnsInRegion(0, jdk, recentDefeats);
+
+    assert(available >= 1, `kill ${kill + 1}: at least 1 enemy must be available`);
+    // After warmup (kill ≥ COOLDOWN_WINDOW) exactly totalSlots−(1+window) are present
+    if (kill >= COOLDOWN_WINDOW) {
+      assertEqual(available, totalSlots - (1 + COOLDOWN_WINDOW),
+        `kill ${kill + 1}: expected ${totalSlots - (1 + COOLDOWN_WINDOW)} enemies`);
+    }
+
+    // Advance the rolling window (mirrors _processBattleResult)
+    recentDefeats = [jdk, ...recentDefeats].slice(0, COOLDOWN_WINDOW);
+  }
+});
+
+test('defeatEnemy NOT called for regular enemy in kill-count region', () => {
+  assert(!shouldCallDefeatEnemy(0, false), 'R0 regular → no defeatEnemy');
+  assert(!shouldCallDefeatEnemy(1, false), 'R1 regular → no defeatEnemy');
+  assert(!shouldCallDefeatEnemy(6, false), 'R6 regular → no defeatEnemy');
+});
+
+test('defeatEnemy IS called for boss even in kill-count region', () => {
+  assert(shouldCallDefeatEnemy(0, true), 'R0 boss → defeatEnemy called');
 });
 
 // ── 9 Lives / useLife ────────────────────────────────────────────────────
@@ -477,6 +631,208 @@ test('reset() clears collectedItems', () => {
   GameState.collectedItems['0_10_10'] = true;
   GameState.reset();
   assert(Object.keys(GameState.collectedItems).length === 0, 'collectedItems cleared by reset');
+});
+
+// ── bestiaryHighestDifficulty / regionMaxDifficulty ──────────────────────
+console.log('\nbestiaryHighestDifficulty — recordEnemyHighestDifficulty / getEnemyHighestDifficulty');
+
+test('getEnemyHighestDifficulty returns 0 for unseen enemy', () => {
+  assertEqual(GameState.getEnemyHighestDifficulty('counting_caterpillar'), 0);
+  assertEqual(GameState.getEnemyHighestDifficulty('any_unknown'), 0);
+});
+
+test('recordEnemyHighestDifficulty stores and retrieves', () => {
+  GameState.recordEnemyHighestDifficulty('counting_caterpillar', 2);
+  assertEqual(GameState.getEnemyHighestDifficulty('counting_caterpillar'), 2);
+});
+
+test('recordEnemyHighestDifficulty only improves — never decreases', () => {
+  GameState.recordEnemyHighestDifficulty('minus_mole', 3);
+  GameState.recordEnemyHighestDifficulty('minus_mole', 1);  // attempt downgrade
+  assertEqual(GameState.getEnemyHighestDifficulty('minus_mole'), 3, 'should stay at 3');
+});
+
+test('recordEnemyHighestDifficulty allows improvement from lower to higher', () => {
+  GameState.recordEnemyHighestDifficulty('number_gnome', 1);
+  GameState.recordEnemyHighestDifficulty('number_gnome', 3);
+  assertEqual(GameState.getEnemyHighestDifficulty('number_gnome'), 3, 'should upgrade to 3');
+});
+
+test('bestiaryHighestDifficulty is independent per enemy type', () => {
+  GameState.recordEnemyHighestDifficulty('number_bee', 2);
+  GameState.recordEnemyHighestDifficulty('minus_mole', 1);
+  assertEqual(GameState.getEnemyHighestDifficulty('number_bee'), 2);
+  assertEqual(GameState.getEnemyHighestDifficulty('minus_mole'), 1);
+  assertEqual(GameState.getEnemyHighestDifficulty('counting_caterpillar'), 0, 'untouched = 0');
+});
+
+test('reset() clears bestiaryHighestDifficulty', () => {
+  GameState.recordEnemyHighestDifficulty('number_bee', 3);
+  GameState.reset();
+  assertEqual(GameState.getEnemyHighestDifficulty('number_bee'), 0, 'cleared after reset');
+});
+
+console.log('\nregionMaxDifficulty — recordRegionMaxDifficulty / getRegionMaxDifficulty');
+
+test('getRegionMaxDifficulty returns 0 with no data', () => {
+  assertEqual(GameState.getRegionMaxDifficulty(0), 0);
+  assertEqual(GameState.getRegionMaxDifficulty(5), 0);
+});
+
+test('recordRegionMaxDifficulty stores highest value', () => {
+  GameState.recordRegionMaxDifficulty(0, 2);
+  assertEqual(GameState.getRegionMaxDifficulty(0), 2);
+  GameState.recordRegionMaxDifficulty(0, 3);
+  assertEqual(GameState.getRegionMaxDifficulty(0), 3, 'should upgrade to 3');
+  GameState.recordRegionMaxDifficulty(0, 1);
+  assertEqual(GameState.getRegionMaxDifficulty(0), 3, 'should NOT decrease');
+});
+
+test('regionMaxDifficulty is independent per region', () => {
+  GameState.recordRegionMaxDifficulty(0, 3);
+  GameState.recordRegionMaxDifficulty(1, 1);
+  assertEqual(GameState.getRegionMaxDifficulty(0), 3);
+  assertEqual(GameState.getRegionMaxDifficulty(1), 1);
+  assertEqual(GameState.getRegionMaxDifficulty(2), 0, 'untouched region = 0');
+});
+
+test('reset() clears regionMaxDifficulty', () => {
+  GameState.recordRegionMaxDifficulty(0, 3);
+  GameState.reset();
+  assertEqual(GameState.getRegionMaxDifficulty(0), 0, 'cleared after reset');
+});
+
+// ── star ceiling using regionMaxDifficulty (mirrors BattleScene logic) ───
+console.log('\nStar ceiling — difficulty-based cap on boss stars');
+
+function calcStarsCeiled(totalQuestions, wrongAnswers, maxDiff) {
+  const wrRatio      = totalQuestions > 0 ? wrongAnswers / totalQuestions : 0;
+  const accuracyStars = wrRatio === 0 ? 3 : wrRatio <= 0.25 ? 2 : 1;
+  const starCeiling  = maxDiff >= 3 ? 3 : maxDiff >= 2 ? 2 : 1;
+  return Math.min(accuracyStars, starCeiling);
+}
+
+test('D1-only run caps stars at 1 regardless of accuracy', () => {
+  assertEqual(calcStarsCeiled(5, 0, 1), 1, 'perfect accuracy, D1 only → 1 star');
+  assertEqual(calcStarsCeiled(8, 1, 1), 1, '≤25% wrong, D1 only → 1 star');
+});
+
+test('D2 run caps stars at 2', () => {
+  assertEqual(calcStarsCeiled(5, 0, 2), 2, 'perfect accuracy, D2 max → 2 stars');
+  assertEqual(calcStarsCeiled(4, 2, 2), 1, '>25% wrong, D2 max → 1 star');
+});
+
+test('D3 run allows full 3 stars', () => {
+  assertEqual(calcStarsCeiled(5, 0, 3), 3, 'perfect accuracy, D3 → 3 stars');
+  assertEqual(calcStarsCeiled(8, 2, 3), 2, '≤25% wrong, D3 → 2 stars');
+  assertEqual(calcStarsCeiled(4, 2, 3), 1, '>25% wrong, D3 → 1 star');
+});
+
+// ── Adaptive difficulty tier system ───────────────────────────────────────
+console.log('\nAdaptive difficulty — getTopicTier / recordTopicBattle / regressTopicTier');
+
+test('getTopicTier returns 1 by default for any topic', () => {
+  assertEqual(GameState.getTopicTier('addition'),    1, 'unknown topic → 1');
+  assertEqual(GameState.getTopicTier('subtraction'), 1, 'unknown topic → 1');
+});
+
+test('getTopicTier respects floor — returns max(tier, floor)', () => {
+  // No data yet: tier defaults to 1; floor=2 wins
+  assertEqual(GameState.getTopicTier('addition', 2), 2, 'floor 2 beats default tier 1');
+  assertEqual(GameState.getTopicTier('addition', 3), 3, 'floor 3 beats default tier 1');
+  // Once player earns D2, floor of 1 shouldn't drag it down
+  GameState.topicTier['addition'] = 2;
+  assertEqual(GameState.getTopicTier('addition', 1), 2, 'earned tier 2 beats floor 1');
+  assertEqual(GameState.getTopicTier('addition', 3), 3, 'floor 3 beats earned tier 2');
+});
+
+test('3 consecutive perfect battles at D1 advance topic to D2', () => {
+  GameState.recordTopicBattle('addition', 1, true);
+  assertEqual(GameState.topicPerfectStreak['addition'], 1, 'streak = 1 after 1 perfect');
+  assertEqual(GameState.getTopicTier('addition'),       1, 'still D1 at streak 1');
+
+  GameState.recordTopicBattle('addition', 1, true);
+  assertEqual(GameState.topicPerfectStreak['addition'], 2, 'streak = 2 after 2 perfect');
+  assertEqual(GameState.getTopicTier('addition'),       1, 'still D1 at streak 2');
+
+  GameState.recordTopicBattle('addition', 1, true);
+  assertEqual(GameState.getTopicTier('addition'),        2, 'advanced to D2 after 3 perfect');
+  assertEqual(GameState.topicPerfectStreak['addition'],  0, 'streak reset to 0 on tier advance');
+});
+
+test('non-perfect battle resets streak, does not change tier', () => {
+  GameState.recordTopicBattle('subtraction', 1, true);
+  GameState.recordTopicBattle('subtraction', 1, true);
+  assertEqual(GameState.topicPerfectStreak['subtraction'], 2, 'streak at 2');
+
+  GameState.recordTopicBattle('subtraction', 1, false);
+  assertEqual(GameState.topicPerfectStreak['subtraction'], 0, 'streak reset on non-perfect');
+  assertEqual(GameState.getTopicTier('subtraction'),        1, 'tier unchanged');
+
+  // Must earn 3 more perfects from scratch
+  GameState.recordTopicBattle('subtraction', 1, true);
+  GameState.recordTopicBattle('subtraction', 1, true);
+  assertEqual(GameState.getTopicTier('subtraction'), 1, 'still D1 at 2 (needs 3 again)');
+  GameState.recordTopicBattle('subtraction', 1, true);
+  assertEqual(GameState.getTopicTier('subtraction'), 2, 'D2 after 3 fresh perfects');
+});
+
+test('battles below current tier do not count toward advancement', () => {
+  GameState.topicTier['comparison'] = 2;   // already D2
+  // Fighting D1 battles should not advance toward D3
+  GameState.recordTopicBattle('comparison', 1, true);
+  GameState.recordTopicBattle('comparison', 1, true);
+  GameState.recordTopicBattle('comparison', 1, true);
+  assertEqual(GameState.getTopicTier('comparison'), 2, 'D1 battles do not advance D2 player');
+  assertEqual(GameState.topicPerfectStreak['comparison'] ?? 0, 0, 'streak untouched by below-tier battles');
+});
+
+test('3 perfect battles at D2 advance topic to D3', () => {
+  GameState.topicTier['addition'] = 2;
+  GameState.recordTopicBattle('addition', 2, true);
+  GameState.recordTopicBattle('addition', 2, true);
+  GameState.recordTopicBattle('addition', 2, true);
+  assertEqual(GameState.getTopicTier('addition'), 3, 'D2 → D3 after 3 perfects at D2');
+});
+
+test('tier cannot advance beyond D3', () => {
+  GameState.topicTier['addition'] = 3;
+  GameState.recordTopicBattle('addition', 3, true);
+  GameState.recordTopicBattle('addition', 3, true);
+  GameState.recordTopicBattle('addition', 3, true);
+  assertEqual(GameState.getTopicTier('addition'), 3, 'tier stays at D3 — no D4');
+});
+
+test('regressTopicTier drops D2 → D1', () => {
+  GameState.topicTier['subtraction'] = 2;
+  GameState.regressTopicTier('subtraction');
+  assertEqual(GameState.getTopicTier('subtraction'), 1, 'D2 → D1 on regression');
+});
+
+test('regressTopicTier drops D3 → D2', () => {
+  GameState.topicTier['comparison'] = 3;
+  GameState.regressTopicTier('comparison');
+  assertEqual(GameState.getTopicTier('comparison'), 2, 'D3 → D2 on regression');
+});
+
+test('regressTopicTier at D1 does nothing', () => {
+  GameState.regressTopicTier('addition');   // no tier set → defaults to D1
+  assertEqual(GameState.getTopicTier('addition'), 1, 'D1 cannot regress further');
+});
+
+test('regressTopicTier resets the perfect streak', () => {
+  GameState.topicTier['addition']         = 2;
+  GameState.topicPerfectStreak['addition'] = 2;   // mid-progress toward D3
+  GameState.regressTopicTier('addition');
+  assertEqual(GameState.topicPerfectStreak['addition'], 0, 'streak reset on regression');
+});
+
+test('reset() clears topicTier and topicPerfectStreak', () => {
+  GameState.topicTier['addition']         = 3;
+  GameState.topicPerfectStreak['addition'] = 2;
+  GameState.reset();
+  assertEqual(GameState.getTopicTier('addition'), 1, 'topicTier cleared by reset');
+  assertEqual(GameState.topicPerfectStreak['addition'] ?? 0, 0, 'topicPerfectStreak cleared by reset');
 });
 
 // ── Summary ────────────────────────────────────────────────────────────────

@@ -13,7 +13,7 @@ const SAVE_KEY = 'mimi_vs_math_save';
  * stale keys from old configs can't keep boss doors permanently locked.
  * All other progress (stats, inventory, bosses, currentRegion) is preserved.
  */
-const SAVE_VERSION = 4;
+const SAVE_VERSION = 5;
 
 const GameState = {
   // ── Player stats ──────────────────────────────────────────────────────
@@ -62,9 +62,21 @@ const GameState = {
   // ── Hard-mode boss clears (region ids) ───────────────────────────────
   regionHardModeCleared: [],
 
-  // ── Per-topic rolling accuracy (session only — never persisted) ─────────
-  // key: topic string, value: boolean[] ring-buffer of last 8 answers
-  topicAccuracy: {},
+  // ── Per-topic difficulty tiers (persisted) ────────────────────────────
+  // key: topic string, value: tier 1–3 earned by the player
+  topicTier: {},
+
+  // ── Per-topic perfect-battle streak (session only — never persisted) ──
+  // key: topic string, value: consecutive perfect battles at current tier
+  topicPerfectStreak: {},
+
+  // ── Per-region max difficulty reached this session (session only — never persisted) ──
+  // key: regionId, value: highest difficulty tier (1–3) defeated by the player this run
+  regionMaxDifficulty: {},
+
+  // ── Bestiary: highest difficulty at which each enemy type was ever defeated ──
+  // key: enemy type id; value: 1–3
+  bestiaryHighestDifficulty: {},
 
   // ── Accessibility / audio preferences (persisted separately from game progress) ──
   // Timer multiplier: 1 = normal, 1.5 / 2 / 3 = extended time
@@ -112,9 +124,11 @@ const GameState = {
       collectedItems:         this.collectedItems,
       npcVisited:             this.npcVisited,
       npcBoonReceived:        this.npcBoonReceived,
-      seenEnemies:            this.seenEnemies,
-      defeatedEnemyTypes:     this.defeatedEnemyTypes,
-      bestiaryKillCounts:     this.bestiaryKillCounts,
+      seenEnemies:                this.seenEnemies,
+      defeatedEnemyTypes:         this.defeatedEnemyTypes,
+      bestiaryKillCounts:         this.bestiaryKillCounts,
+      bestiaryHighestDifficulty:  this.bestiaryHighestDifficulty,
+      topicTier:              this.topicTier,
       timeMult:               this.timeMult ?? 1.0,
       musicVol:               this.musicVol ?? 0.75,
       sfxVol:                 this.sfxVol  ?? 1.0,
@@ -135,9 +149,15 @@ const GameState = {
       if (!this.collectedItems)         this.collectedItems = {};
       if (!this.npcVisited)             this.npcVisited = {};
       if (!this.npcBoonReceived)        this.npcBoonReceived = {};
-      if (!this.seenEnemies)            this.seenEnemies = {};
-      if (!this.defeatedEnemyTypes)     this.defeatedEnemyTypes = {};
-      if (!this.bestiaryKillCounts)     this.bestiaryKillCounts = {};
+      if (!this.seenEnemies)                   this.seenEnemies = {};
+      if (!this.defeatedEnemyTypes)            this.defeatedEnemyTypes = {};
+      if (!this.bestiaryKillCounts)            this.bestiaryKillCounts = {};
+      if (!this.bestiaryHighestDifficulty)     this.bestiaryHighestDifficulty = {};
+      if (!this.topicTier)              this.topicTier = {};
+      // topicPerfectStreak is session-only — always reset on load
+      this.topicPerfectStreak = {};
+      // Strip legacy topicAccuracy field from old saves
+      delete this.topicAccuracy;
       if (this.timeMult === undefined)  this.timeMult = 1.0;
       if (this.musicVol === undefined)   this.musicVol = 0.75;
       if (this.sfxVol   === undefined)   this.sfxVol   = 1.0;
@@ -182,13 +202,16 @@ const GameState = {
     this.regionStars            = {};
     this.regionHardModeCleared  = [];
     this.activeEffects          = { timerBonus: 0, doubleHit: false, shield: false, hintCharges: 0 };
-    this.topicAccuracy          = {};
+    this.topicTier              = {};
+    this.topicPerfectStreak     = {};
     this.collectedItems         = {};
     this.npcVisited             = {};
     this.npcBoonReceived        = {};
-    this.seenEnemies            = {};
-    this.defeatedEnemyTypes     = {};
-    this.bestiaryKillCounts     = {};
+    this.seenEnemies                = {};
+    this.defeatedEnemyTypes         = {};
+    this.bestiaryKillCounts         = {};
+    this.bestiaryHighestDifficulty  = {};
+    this.regionMaxDifficulty        = {};
     // timeMult is an accessibility preference — intentionally NOT reset by new-game
     this.save();
   },
@@ -241,6 +264,34 @@ const GameState = {
   hasSeenEnemy(id)         { return !!this.seenEnemies?.[id]; },
   hasDefeatedEnemyType(id) { return !!this.defeatedEnemyTypes?.[id]; },
 
+  // ── Bestiary highest-difficulty helpers ──────────────────────────────
+  /** Record the difficulty tier at which this enemy type was defeated — only improves. */
+  recordEnemyHighestDifficulty(enemyId, diff) {
+    if (!this.bestiaryHighestDifficulty) this.bestiaryHighestDifficulty = {};
+    const prev = this.bestiaryHighestDifficulty[enemyId] ?? 0;
+    if (diff > prev) {
+      this.bestiaryHighestDifficulty[enemyId] = diff;
+      this.save();
+    }
+  },
+  /** Return the highest difficulty tier at which this enemy was ever defeated (0 if never). */
+  getEnemyHighestDifficulty(enemyId) {
+    return this.bestiaryHighestDifficulty?.[enemyId] ?? 0;
+  },
+
+  // ── Session region-max-difficulty helpers (never persisted) ──────────
+  /** Record the highest difficulty tier the player has defeated in a region this session. */
+  recordRegionMaxDifficulty(regionId, diff) {
+    if (!this.regionMaxDifficulty) this.regionMaxDifficulty = {};
+    const prev = this.regionMaxDifficulty[regionId] ?? 0;
+    if (diff > prev) this.regionMaxDifficulty[regionId] = diff;
+    // intentionally not saved — session-only
+  },
+  /** Return the highest difficulty tier defeated in this region this session (0 if none). */
+  getRegionMaxDifficulty(regionId) {
+    return this.regionMaxDifficulty?.[regionId] ?? 0;
+  },
+
   /** True if a specific enemy (by composite key) has been defeated. */
   isEnemyDefeated(regionId, enemyId) {
     return !!this.defeatedEnemies[`r${regionId}_${enemyId}`];
@@ -273,37 +324,59 @@ const GameState = {
   },
 
   // ─────────────────────────────────────────────────────────────────────
-  // Adaptive difficulty helpers (C — session accuracy per topic)
+  // Adaptive difficulty helpers (per-topic tier system)
   // ─────────────────────────────────────────────────────────────────────
 
   /**
-   * Push a correct/incorrect result into the per-topic ring buffer (last 8).
-   * @param {string}  topic
-   * @param {boolean} correct
+   * Return the current difficulty tier (1–3) the player has earned for a topic.
+   * The floor (e.g. from a spawn's difficultyOverride) is applied so enemies in
+   * later regions that are always hard are never shown below their intended tier.
    */
-  recordTopicAnswer(topic, correct) {
-    if (!this.topicAccuracy[topic]) this.topicAccuracy[topic] = [];
-    this.topicAccuracy[topic].push(correct);
-    if (this.topicAccuracy[topic].length > 8) this.topicAccuracy[topic].shift();
+  getTopicTier(topic, floor = 1) {
+    return Math.max(this.topicTier[topic] ?? 1, floor);
   },
 
   /**
-   * Derive a difficulty tier (1–3) for the given topic from recent session
-   * accuracy.  Returns `fallback` if fewer than 4 answers have been recorded
-   * (not enough data yet).
+   * Record the outcome of a battle for adaptive difficulty.
+   * Three consecutive perfect battles at the current tier → advance to next tier.
+   * Any non-perfect battle resets the consecutive streak.
    *
-   * Hit-rate thresholds:
-   *   ≥ 75% → D3 (mastered — challenge them)
-   *   40–74% → D2 (solid — keep it there)
-   *   < 40%  → D1 (struggling — ease off)
+   * Only battles fought at or above the player's current tier count toward
+   * advancement (fighting weak enemies below your tier doesn't help).
+   *
+   * @param {string}  topic    - mathTopic of the enemy fought
+   * @param {number}  tier     - difficulty tier at which the enemy was fought (1–3)
+   * @param {boolean} perfect  - true if zero wrong answers in the battle
    */
-  getTopicDifficulty(topic, fallback = 1) {
-    const history = this.topicAccuracy[topic];
-    if (!history || history.length < 4) return fallback;
-    const hitRate = history.filter(Boolean).length / history.length;
-    if (hitRate >= 0.75) return 3;
-    if (hitRate >= 0.40) return 2;
-    return 1;
+  recordTopicBattle(topic, tier, perfect) {
+    const currentTier = this.topicTier[topic] ?? 1;
+    if (tier < currentTier) return;   // below current tier — doesn't count
+    if (perfect) {
+      const streak = (this.topicPerfectStreak[topic] ?? 0) + 1;
+      if (streak >= 3 && currentTier < 3) {
+        this.topicTier[topic]          = currentTier + 1;
+        this.topicPerfectStreak[topic] = 0;
+        this.save();   // persist the tier advancement
+      } else {
+        this.topicPerfectStreak[topic] = streak;
+        // streak is session-only — no save() needed
+      }
+    } else {
+      this.topicPerfectStreak[topic] = 0;   // reset streak, no tier change
+    }
+  },
+
+  /**
+   * Regress the topic tier by one step (called on hard defeat vs D2/D3 enemy).
+   * The perfect streak for the lower tier also resets.
+   */
+  regressTopicTier(topic) {
+    const currentTier = this.topicTier[topic] ?? 1;
+    if (currentTier > 1) {
+      this.topicTier[topic]          = currentTier - 1;
+      this.topicPerfectStreak[topic] = 0;
+      this.save();   // persist the regression
+    }
   },
 
   /** Record a single question result. timeMs is the time taken to answer. */

@@ -27,6 +27,7 @@
     ],
 
     // ── Enemies: 10 — 4 native + 4 hard reviews from R3 + 2 native D3 ──
+    bossUnlockKills: 10,
     enemySpawns: [
       { col: 20, row: 10, id: 'shadow_knight' },                              // D1 orderOfOps
       { col: 52, row:  9, id: 'ratio_raven' },                                // D2 percentages

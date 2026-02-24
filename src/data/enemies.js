@@ -32,7 +32,7 @@ const ENEMIES = {
     id: 'counting_caterpillar',
     name: 'Counting Caterpillar',
     region: 0,
-    hp: 6,
+    hp: 8,
     damage: 1,
     xp: 8,
     mathTopic: 'addition',         // pure addition
@@ -44,11 +44,11 @@ const ENEMIES = {
     id: 'number_gnome',
     name: 'Number Gnome',
     region: 0,
-    hp: 6,
+    hp: 8,
     damage: 1,
     xp: 10,
     mathTopic: 'subtraction',       // pure subtraction
-    difficulty: 2,
+    difficulty: 1,
     timerSeconds: 22,              // Gr 1: subtraction harder than addition
     color: 0xFF6633,
   },
@@ -56,11 +56,11 @@ const ENEMIES = {
     id: 'minus_mole',
     name: 'Minus Mole',
     region: 0,
-    hp: 6,
+    hp: 8,
     damage: 2,
     xp: 12,
     mathTopic: 'comparison',        // number comparison (new type)
-    difficulty: 2,
+    difficulty: 1,
     timerSeconds: 26,              // Gr 1: reading-heavy word problem; +8 s wordProblem bonus → ~34 s total
     color: 0x886644,
   },
@@ -68,7 +68,7 @@ const ENEMIES = {
     id: 'number_bee',
     name: 'Number Bee',
     region: 0,
-    hp: 6,
+    hp: 8,
     damage: 1,
     xp: 10,
     mathTopic: 'comparison',               // number ordering / comparison

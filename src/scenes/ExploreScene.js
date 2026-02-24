@@ -42,11 +42,30 @@ export default class ExploreScene extends Phaser.Scene {
     this.regionId     = data?.regionId ?? GameState.currentRegion;
     this.regionData   = REGIONS[this.regionId];
     this.battleResult = data?.battleResult ?? null;
-    // Hard defeat (no lives left, not ran away) → reset to spawn so position is 
+    // Hard defeat (no lives left, not ran away) → reset to spawn so position is
     // not restored. Soft defeat (usedLife) and ran-away restore world/position.
     const isHardDefeat = data?.battleResult?.victory === false
                       && !data?.battleResult?.usedLife
                       && !data?.battleResult?.ranAway;
+
+    // Kill count — session-local, carried through battle roundtrips via returnData.
+    // No killCount in data means fresh entry to the region → start at 0 and
+    // clear stale defeatedEnemies so enemies spawn fresh on every new visit.
+    const freshEntry = data?.killCount == null;
+    // On a hard defeat OR fresh entry, fully reset enemy-exclusion state so
+    // all enemies respawn at their home positions.
+    const resetState = freshEntry || isHardDefeat;
+    this._killCount     = resetState ? 0 : (data.killCount ?? 0);
+    // Rolling defeat cooldown — keeps the last N enemy instance-keys the
+    // player defeated so _setupEnemies can exclude them until they "cool down".
+    // This prevents camping the same 1-2 enemies for all 10 kills.
+    this._recentDefeats = resetState ? [] : (data?.recentDefeats ?? []);
+    if (freshEntry) {
+      GameState.clearRegionEnemies(this.regionId);
+      if (GameState.regionMaxDifficulty) {
+        delete GameState.regionMaxDifficulty[this.regionId];
+      }
+    }
 
     // On a run-away, push Mimi 96 px away from the enemy so she doesn't
     // immediately re-trigger the same battle the moment she returns.
@@ -84,18 +103,17 @@ export default class ExploreScene extends Phaser.Scene {
     this._placeAnimatedDecorations();
     this._addColorGrade();
 
-    // Compute whether THIS battle just cleared the last enemy, BEFORE recording
-    // the defeat in GameState.  If we wait until after _processBattleResult the
-    // door setup already sees n===0 so the "just unlocked" flag would always be
-    // false.  The test file (test_unlock.mjs) validates this formula.
-    this._preBattleAllClear = false;
+    // Compute whether THIS battle just crossed the kill-count threshold.
+    // Use the pre-increment _killCount (set in init(), before _processBattleResult).
+    this._justUnlockedBoss = false;
     if (this.battleResult?.victory && !this.battleResult?.isBoss) {
-      const inst = this.battleResult.enemyInstance;
-      const spawns = POSITIONS[this.regionId].enemySpawns;
-      this._preBattleAllClear = spawns.every((spawn, i) => {
-        const key = spawn.id + i;
-        return key === inst || GameState.isEnemyDefeated(this.regionId, key);
-      });
+      const unlockKills = this.regionData.bossUnlockKills;
+      if (unlockKills != null) {
+        this._justUnlockedBoss =
+          this._killCount + 1 >= unlockKills &&
+          this._killCount < unlockKills &&
+          !GameState.hasDefeatedBoss(this.regionId);
+      }
     }
 
     // Apply battle result before creating enemies (so defeated ones are skipped)
@@ -596,17 +614,44 @@ export default class ExploreScene extends Phaser.Scene {
   //  Enemies 
 
   _setupEnemies() {
-    this._enemies   = [];
-    this._liveCount = 0;
+    this._enemies    = [];
+    this._liveCount  = 0;
+    // Destroy any orbiting-dot auras from a previous call before resetting the list
+    if (this._enemyAuras?.length) {
+      this._enemyAuras.forEach(pair => pair.dots?.forEach(d => d.destroy()));
+    }
+    this._enemyAuras = [];   // { enemy, dots, speed, angle } pairs for orbit update()
+
+    // Kill-count regions (bossUnlockKills set): enemies respawn every visit.
+    // Two layers of exclusion prevent camping:
+    //   1. justDefeated   – the single enemy just killed (never shown immediately)
+    //   2. _recentDefeats – a rolling window of the last 2 kills (cooldown period)
+    // Together these force the player to seek a 3rd distinct enemy before
+    // revisiting any one spawn, eliminating simple back-and-forth farming.
+    // Legacy regions (no bossUnlockKills) keep the old per-session tracking.
+    const usesKillCount = this.regionData.bossUnlockKills != null;
+    const justDefeated  = usesKillCount
+      ? (this.battleResult?.enemyInstance ?? null)
+      : null;
 
     POSITIONS[this.regionId].enemySpawns.forEach((spawn, i) => {
       const instanceKey = spawn.id + i;
-      if (GameState.isEnemyDefeated(this.regionId, instanceKey)) return;
+      if (usesKillCount) {
+        if (instanceKey === justDefeated)              return;  // just killed
+        if (this._recentDefeats.includes(instanceKey)) return;  // in cooldown
+      } else {
+        if (GameState.isEnemyDefeated(this.regionId, instanceKey)) return;
+      }
 
-      // difficultyOverride lets earlier enemies reappear as harder review enemies
       const base = ENEMIES[spawn.id];
-      const data = spawn.difficultyOverride
-        ? { ...base, difficulty: spawn.difficultyOverride }
+      // Adaptive spawn difficulty: use the player's earned topic tier.
+      // spawn.difficultyOverride (if set) acts as a hard floor — used in later
+      // regions to ensure review enemies are always at their intended tier.
+      // getTopicTier applies the floor internally via Math.max.
+      const floor     = spawn.difficultyOverride ?? 1;
+      const spawnDiff = GameState.getTopicTier(base.mathTopic, floor);
+      const data = spawnDiff !== base.difficulty
+        ? { ...base, difficulty: spawnDiff }
         : base;
 
       const enemyHomeX = tx(spawn.col);
@@ -622,26 +667,63 @@ export default class ExploreScene extends Phaser.Scene {
       this.physics.add.collider(enemy.sprite, this._landmarkObstacles);
       this._enemies.push(enemy);
       this._liveCount++;
+
+      // Aura glow for D2 (amber) and D3 (purple) enemies
+      if (spawnDiff >= 2) {
+        const auraData = this._addDifficultyAura(enemy, spawnDiff);
+        if (auraData) this._enemyAuras.push({ enemy, ...auraData });
+      }
     });
+  }
+
+  /**
+   * Create orbiting-dot auras around an enemy sprite to signal adaptive difficulty.
+   * D2 = 2 amber dots, D3 = 3 purple dots orbiting faster.
+   * Returns { dots, speed, angle } for the update() orbit loop.
+   */
+  _addDifficultyAura(enemy, difficulty) {
+    const isD3   = difficulty >= 3;
+    const color  = isD3 ? 0xCC33FF : 0xFFAA33;
+    const count  = isD3 ? 3 : 2;
+    const dotR   = 4;
+    const orbitR = 20;
+    const speed  = isD3 ? 0.032 : 0.018;   // radians per frame (~60 fps)
+    const depth  = enemy.sprite.depth + 0.5;
+
+    const dots = [];
+    for (let i = 0; i < count; i++) {
+      const a = (i / count) * Math.PI * 2;
+      const dot = this.add.circle(
+        enemy.sprite.x + Math.cos(a) * orbitR,
+        enemy.sprite.y + Math.sin(a) * orbitR,
+        dotR, color, 0.9,
+      ).setDepth(depth);
+      dots.push(dot);
+    }
+    return { dots, speed, angle: 0 };
   }
 
   _startBattle(enemyData, instanceKey, enemyHomeX, enemyHomeY) {
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.cameras.main.once('camerafadeoutcomplete', () => {
       this.scene.start('BattleScene', {
-        enemy:         enemyData,
-        enemyInstance: instanceKey,
-        regionId:      this.regionId,
-        isBoss:        false,
-        returnScene:   'ExploreScene',
-        returnData:    {
-          regionId:   this.regionId,
-          mimiX:      this.mimi.x,
-          mimiY:      this.mimi.y,
-          enemyHomeX: enemyHomeX ?? this.mimi.x,
-          enemyHomeY: enemyHomeY ?? this.mimi.y,
-          npcX:       this._npc?.sprite.x ?? null,
-          npcY:       this._npc?.sprite.y ?? null,
+        enemy:          enemyData,
+        enemyInstance:  instanceKey,
+        enemyTypeId:    enemyData.id,           // used in result for bestiary tracking
+        spawnDifficulty: enemyData.difficulty,  // the adaptive tier used this encounter
+        regionId:       this.regionId,
+        isBoss:         false,
+        returnScene:    'ExploreScene',
+        returnData:     {
+          regionId:      this.regionId,
+          mimiX:         this.mimi.x,
+          mimiY:         this.mimi.y,
+          enemyHomeX:    enemyHomeX ?? this.mimi.x,
+          enemyHomeY:    enemyHomeY ?? this.mimi.y,
+          npcX:          this._npc?.sprite.x ?? null,
+          npcY:          this._npc?.sprite.y ?? null,
+          killCount:     this._killCount,        // carried through the battle roundtrip
+          recentDefeats: this._recentDefeats,    // cooldown window for anti-camping
         },
       });
     });
@@ -657,14 +739,52 @@ export default class ExploreScene extends Phaser.Scene {
     if (!battleResult) return;
     if (battleResult.victory) {
       const key = battleResult.enemyInstance;
-      if (key !== undefined) {
+      // Kill-count regions: regular enemies respawn, so do NOT mark them as
+      // permanently defeated (defeatEnemy).  Only bosses and enemies in legacy
+      // regions (no bossUnlockKills) are permanently removed from the world.
+      const usesKillCount = this.regionData.bossUnlockKills != null;
+      if (key !== undefined && (!usesKillCount || battleResult.isBoss)) {
         GameState.defeatEnemy(this.regionId, key);
       }
+      if (!battleResult.isBoss) {
+        this._killCount++;
+        // Rolling defeat cooldown: prepend the killed key and trim to 2.
+        // This is consumed by _setupEnemies on the NEXT battle return to
+        // prevent the player farming the same 1-2 nearby enemies.
+        if (key !== undefined && usesKillCount) {
+          this._recentDefeats = [key, ...this._recentDefeats].slice(0, 2);
+        }
+        // Record session high-water mark and persistent bestiary difficulty
+        const diff = battleResult.spawnDifficulty ?? 1;
+        GameState.recordRegionMaxDifficulty(this.regionId, diff);
+        if (battleResult.enemyTypeId) {
+          GameState.recordEnemyHighestDifficulty(battleResult.enemyTypeId, diff);
+        }
+        // Adaptive difficulty: record per-topic battle outcome.
+        // Perfect = zero wrong answers (timeouts already counted as wrong in BattleScene).
+        const topic = battleResult.enemyTypeId
+          ? ENEMIES[battleResult.enemyTypeId]?.mathTopic
+          : null;
+        if (topic) {
+          const perfect = (battleResult.battleWrongAnswers ?? 0) === 0;
+          GameState.recordTopicBattle(topic, diff, perfect);
+        }
+      }
     } else if (!battleResult.usedLife && !battleResult.ranAway) {
-      // Hard defeat (no lives left) — clear enemies so they respawn at entrance
+      // Hard defeat (HP hit 0) — reset exploration state so enemies respawn
+      // fresh and the boss door re-locks.
       GameState.clearRegionEnemies(this.regionId);
+      this._killCount     = 0;
+      this._recentDefeats = [];
+      // Regress topic tier if the enemy that killed the player was D2 or D3.
+      const topic = battleResult.enemyTypeId
+        ? ENEMIES[battleResult.enemyTypeId]?.mathTopic
+        : null;
+      if (topic && (battleResult.spawnDifficulty ?? 1) >= 2) {
+        GameState.regressTopicTier(topic);
+      }
     }
-    // usedLife / ranAway: enemy positions and progress are preserved
+    // usedLife / ranAway: enemy positions, kill progress, and topic tiers are preserved
   }
 
   _showBattleMessages() {
@@ -719,22 +839,21 @@ export default class ExploreScene extends Phaser.Scene {
 
     if (!battleResult.victory) return;
 
-    // _preBattleAllClear was computed in create() BEFORE _processBattleResult(),
-    // so it is true only when THIS battle defeated the final enemy.
-    // We also guard against the boss already being defeated (re-entry).
+    // _justUnlockedBoss was computed in create() using the pre-increment kill count,
+    // so it is true only when THIS battle crossed the bossUnlockKills threshold.
     const justUnlocked =
-      this._preBattleAllClear && !GameState.hasDefeatedBoss(this.regionId);
+      this._justUnlockedBoss && !GameState.hasDefeatedBoss(this.regionId);
 
     // Redraw door now that state is final
     this._checkBossDoor();
 
     if (justUnlocked) {
       this.sound.play('sfx_level_up', { volume: 0.80 });
-      this.dialog.show(
-        `All enemies defeated!\nThe boss seal is broken — enter when ready.`,
-        null,
-        '\u2728 Seal Broken!',
-      );
+      const unlockKills = this.regionData.bossUnlockKills;
+      const msg = unlockKills != null
+        ? `${unlockKills} enemies defeated!\nThe boss seal is broken — enter when ready.`
+        : `All enemies defeated!\nThe boss seal is broken — enter when ready.`;
+      this.dialog.show(msg, null, '\u2728 Seal Broken!');
     }
   }
 
@@ -890,9 +1009,17 @@ export default class ExploreScene extends Phaser.Scene {
       () => {
         if (!this._bossOpen && !this._doorMsgCooldown && !this.dialog.isOpen) {
           this._doorMsgCooldown = true;
-          const n = this._remainingEnemyCount();
+          const unlockKills = this.regionData.bossUnlockKills;
+          let msg;
+          if (unlockKills != null) {
+            const need = unlockKills - this._killCount;
+            msg = `The boss seal is unbroken.\nDefeat ${need} more enem${need === 1 ? 'y' : 'ies'} to enter.`;
+          } else {
+            const n = this._remainingEnemyCount();
+            msg = `The boss seal is unbroken.\nDefeat the ${n} remaining enemi${n === 1 ? 'y' : 'es'} to enter.`;
+          }
           this.dialog.show(
-            `The boss seal is unbroken.\nDefeat the ${n} remaining enemi${n === 1 ? 'y' : 'es'} to enter.`,
+            msg,
             () => { this.time.delayedCall(2500, () => { this._doorMsgCooldown = false; }); },
             '\uD83D\uDD12 Sealed',
           );
@@ -920,8 +1047,11 @@ export default class ExploreScene extends Phaser.Scene {
    * Safe to call at any point (including during create() before dialog exists).
    */
   _checkBossDoor() {
-    const n = this._remainingEnemyCount();
-    this._bossOpen = (n === 0) || GameState.hasDefeatedBoss(this.regionId);
+    const unlockKills = this.regionData.bossUnlockKills;
+    const n = unlockKills == null ? this._remainingEnemyCount() : 0;
+    this._bossOpen = unlockKills != null
+      ? (this._killCount >= unlockKills) || GameState.hasDefeatedBoss(this.regionId)
+      : (n === 0) || GameState.hasDefeatedBoss(this.regionId);
 
     const { px, py, openX, openTopY, OPEN_W, OPEN_H } = this._doorGeom;
     this._doorFill.clear();
@@ -990,9 +1120,15 @@ export default class ExploreScene extends Phaser.Scene {
       this._doorDeco.fillCircle(lx, ly + 5, 2.5);
       this._doorDeco.fillTriangle(lx - 2, ly + 7, lx + 2, ly + 7, lx, ly + 11);
 
-      this._enemyCountText
-        .setText(`${n} of ${POSITIONS[this.regionId].enemySpawns.length} enemies remain`)
-        .setVisible(true);
+      if (unlockKills != null) {
+        this._enemyCountText
+          .setText(`${this._killCount} / ${unlockKills} defeated`)
+          .setVisible(true);
+      } else {
+        this._enemyCountText
+          .setText(`${n} of ${POSITIONS[this.regionId].enemySpawns.length} enemies remain`)
+          .setVisible(true);
+      }
       this._bossLabel.setColor('#CC88FF');
     }
   }
@@ -1009,11 +1145,13 @@ export default class ExploreScene extends Phaser.Scene {
       isBoss:        true,
       returnScene:   'ExploreScene',
       returnData:    {
-        regionId: this.regionId,
-        mimiX:    this.mimi.x,
-        mimiY:    this.mimi.y,
-        npcX:     this._npc?.sprite.x ?? null,
-        npcY:     this._npc?.sprite.y ?? null,
+        regionId:      this.regionId,
+        mimiX:         this.mimi.x,
+        mimiY:         this.mimi.y,
+        npcX:          this._npc?.sprite.x ?? null,
+        npcY:          this._npc?.sprite.y ?? null,
+        killCount:     this._killCount,     // preserve kill progress through boss roundtrip
+        recentDefeats: this._recentDefeats, // preserve cooldown state
       },
     };
 
@@ -1070,10 +1208,12 @@ export default class ExploreScene extends Phaser.Scene {
         };
 
         const rd         = this.regionData;
-        const bossBeaten = GameState.hasDefeatedBoss(regionId);
-        const spawns     = POSITIONS[regionId].enemySpawns;
-        const allClear   = spawns.every((s, i) =>
-          GameState.isEnemyDefeated(regionId, s.id + i));
+        const bossBeaten  = GameState.hasDefeatedBoss(regionId);
+        const unlockKills = this.regionData.bossUnlockKills;
+        const allClear    = unlockKills != null
+          ? this._killCount >= unlockKills
+          : POSITIONS[regionId].enemySpawns.every((s, i) =>
+              GameState.isEnemyDefeated(regionId, s.id + i));
 
         this._mewtonMenu(wrappedDone, rd, { bossBeaten, allClear });
       },
@@ -1241,6 +1381,29 @@ export default class ExploreScene extends Phaser.Scene {
     // Tick enemy wander AI
     for (const enemy of this._enemies) {
       if (enemy.alive) enemy.update();
+    }
+
+    // Orbit difficulty-aura dots around their patrolling enemies
+    if (this._enemyAuras?.length) {
+      const ORBIT_R = 20;
+      for (const pair of this._enemyAuras) {
+        if (!pair.enemy.alive) {
+          pair.dots.forEach(d => d.destroy());
+          continue;
+        }
+        pair.angle += pair.speed;
+        const ex = pair.enemy.sprite.x;
+        const ey = pair.enemy.sprite.y;
+        pair.dots.forEach((dot, i) => {
+          const a = pair.angle + (i / pair.dots.length) * Math.PI * 2;
+          dot.setPosition(
+            ex + Math.cos(a) * ORBIT_R,
+            ey + Math.sin(a) * ORBIT_R,
+          );
+        });
+      }
+      // Prune dead pairs
+      this._enemyAuras = this._enemyAuras.filter(p => p.enemy.alive);
     }
 
     // Tick NPC wander AI

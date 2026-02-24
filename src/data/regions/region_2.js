@@ -27,6 +27,7 @@
     ],
 
     // ── Enemies: 10 — 4 native + 4 hard reviews from R0 + 2 native D2 ──
+    bossUnlockKills: 10,
     enemySpawns: [
       { col: 20, row: 10, id: 'slime_pup' },                                  // D1 multTables
       { col: 52, row:  9, id: 'cactus_sprite' },                              // D2 multiplication

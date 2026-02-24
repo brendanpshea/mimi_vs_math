@@ -26,12 +26,13 @@ Each region has multiple enemy types, each with its own question sub-type(s) and
 
 | # | Region | Grade | Topics |
 |---|--------|-------|--------|
-| 0 | Sunny Village    | 1–3 | Addition, Subtraction, Comparison (ordering + word problems) |
+| 0 | Sunny Village    | 1   | Addition, Subtraction, Comparison (ordering + word problems) |
 | 1 | Windmill Village | 2   | Place Value, Addition with carrying, Subtraction with borrowing |
-| 2 | Meadow Maze      | 3–5 | Times Tables, Skip Counting, Doubling & Halving, Multiplication |
-| 3 | Desert Dunes     | 4–5 | Division, Division Word Problems, Missing Number |
-| 4 | Frostbite Cavern | 5   | Fraction Comparison, Fraction Addition, Decimals |
-| 5 | Shadow Castle    | 5   | Order of Operations, Percentages, Ratios & Proportions |
+| 2 | Meadow Maze      | 2.5 | Times Tables, Skip Counting, Doubling & Halving |
+| 3 | Mycelium Hollow  | 3   | Multi-Digit Multiplication, Factor Pairs / Missing Factor |
+| 4 | Desert Dunes     | 3.5 | Division, Division Word Problems, Missing Number |
+| 5 | Frostbite Cavern | 4   | Fraction Comparison, Fraction Addition, Decimals |
+| 6 | Shadow Castle    | 5   | Order of Operations, Percentages, Ratios & Proportions |
 
 Word problems receive an automatic +8 second reading bonus on top of the base timer.
 
@@ -310,9 +311,9 @@ In `_addDecorations()` find the `SCALES` map and add an entry for each new decor
 ### 10. Run the full test suite
 
 ```bash
-node test_unlock.mjs        # 33 GameState / save-logic checks
-node test_questions.mjs     # ~68 k question-sample bounds & structure checks
-node test_connectivity.mjs  # BFS pathfinding for every region map
+node test_unlock.mjs        # 37 GameState / save-logic checks
+node test_questions.mjs     # ~75 k question-sample bounds & structure checks
+node test_connectivity.mjs  # BFS pathfinding for every region map (210 checks)
 ```
 
 All three must exit with **0 failures** before shipping.
@@ -342,8 +343,8 @@ mimi_vs_math/
 │   │   └── GameState.js     ← save/load + stats tracking
 │   ├── scenes/              ← Boot, Title, Overworld, Explore, Battle, Story, BossIntro, Bestiary
 │   ├── entities/            ← Mimi (4-frame walk cycles), Enemy (patrol/aggro AI), NPC
-│   ├── math/                ← QuestionBank (17 topic generators, D1–D3), Distractors, Explanations
-   ├── data/                ← regions/ (region_0–5.js + index.js barrel), enemies.js, items.js, maps.js, ProceduralMap.js
+│   ├── math/                ← QuestionBank (19 topic generators, D1–D3), Distractors, Explanations
+   ├── data/                ← regions/ (region_0–6.js + index.js barrel), enemies.js, items.js, maps.js, ProceduralMap.js
 │   └── ui/                  ← HUD, DialogBox, VirtualDPad (touch), SettingsOverlay
 └── assets/
     ├── sprites/             ← SVG files (walk cycles A/B/C frames, battle poses, bosses, UI)

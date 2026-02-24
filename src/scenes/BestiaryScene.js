@@ -33,8 +33,8 @@ const GRADE_LABELS = REGIONS.map(r => r.subtitle.split(' · ')[0]);
 // Dark card-background and border-accent colour per region.
 // Extend this array when adding a new region; unknown regions fall back to
 // neutral colours so the bestiary never hard-crashes on a missing entry.
-const REGION_BG     = [0x1A2A0A, 0x200A00, 0x0A2A0A, 0x2A1A08, 0x081A28, 0x0C0818];
-const REGION_ACCENT = [0x44AA22, 0xFFAA33, 0x44DD22, 0xCC8822, 0x44AADD, 0x7744CC];
+const REGION_BG     = [0x1A2A0A, 0x200A00, 0x0A2A0A, 0x0A2010, 0x2A1A08, 0x081A28, 0x0C0818];
+const REGION_ACCENT = [0x44AA22, 0xFFAA33, 0x44DD22, 0x44FF88, 0xCC8822, 0x44AADD, 0x7744CC];
 const DEFAULT_BG     = 0x0A0A1A;   // fallback for regions beyond the colour table
 const DEFAULT_ACCENT = 0x8866CC;
 

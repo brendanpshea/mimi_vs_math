@@ -65,20 +65,25 @@ export const SPRITE_DEFS = [
   { key: 'double_bunny',          file: 'double_bunny',          size: 64, frames: ['b', 'c'] },
   { key: 'count_multiplico',      file: 'count_multiplico',      size: 96, frames: ['b'] },
 
-  // Region 3 — Desert Dunes
+  // Region 3 — Mycelium Hollow
+  { key: 'fungus_toad',          file: 'fungus_toad',          size: 64, frames: ['b'] },
+  { key: 'mycelium_wisp',        file: 'mycelium_wisp',        size: 64, frames: ['b'] },
+  { key: 'spore_puff',           file: 'spore_puff',           size: 64, frames: ['b'] },
+  { key: 'queen_sporella',       file: 'queen_sporella',       size: 96, frames: ['b'] },
+
+  // Region 4 — Desert Dunes
   { key: 'sand_scarab',           file: 'sand_scarab',           size: 64, frames: ['b'] },
   { key: 'mummy_cat',             file: 'mummy_cat',             size: 64, frames: ['b'] },
   { key: 'mirage_fox',            file: 'mirage_fox',            size: 64, frames: ['b', 'c'] },
   { key: 'riddle_scarab',         file: 'riddle_scarab',         size: 64, frames: ['b'] },
   { key: 'the_diviner',           file: 'the_diviner',           size: 96, frames: ['b'] },
 
-  // Region 4 — Frostbite Cavern
+  // Region 5 — Frostbite Cavern
   { key: 'ice_frog',              file: 'ice_frog',              size: 64, frames: ['b'] },
   { key: 'snow_golem',            file: 'snow_golem',            size: 64, frames: ['b'] },
   { key: 'crystal_bat',           file: 'crystal_bat',           size: 64, frames: ['b', 'c'] },
   { key: 'glacius',               file: 'glacius',               size: 96, frames: ['b'] },
 
-  // Region 5 — Shadow Castle
   { key: 'shadow_knight',         file: 'shadow_knight',         size: 64, frames: ['b'] },
   { key: 'ratio_raven',           file: 'ratio_raven',           size: 64, frames: ['b'] },
   { key: 'percent_wraith',        file: 'percent_wraith',        size: 64, frames: ['b'] },
@@ -121,6 +126,12 @@ export const TERRAIN_DEFS = [
   { key: 'floor_stone_b', file: 'floor_stone_b', size: 32 },
   { key: 'floor_stone_c', file: 'floor_stone_c', size: 32 },
   
+  // Mycelium Hollow floor + wall tiles
+  { key: 'floor_moss',   file: 'floor_moss',   size: 32 },
+  { key: 'floor_moss_b', file: 'floor_moss_b', size: 32 },
+  { key: 'floor_moss_c', file: 'floor_moss_c', size: 32 },
+  { key: 'wall_mycelium', file: 'wall_mycelium', size: 32 },
+
   // Wall tiles
   { key: 'wall_brick',  file: 'wall_brick',  size: 32 },
   { key: 'wall_cobble', file: 'wall_cobble', size: 32 },
@@ -160,16 +171,20 @@ export const TERRAIN_DEFS = [
   // New decorations — Region 1 (Meadow)
   { key: 'decoration_vine',        file: 'decoration_vine',        size: { width: 32, height: 48 } },
   { key: 'decoration_clover',      file: 'decoration_clover',      size: 32 },
-  // New decorations — Region 2 (Desert)
+  // New decorations — Region 4 (Desert Dunes)
   { key: 'decoration_bones',       file: 'decoration_bones',       size: 32 },
   { key: 'decoration_tumbleweed',  file: 'decoration_tumbleweed',  size: 32 },
-  // New decorations — Region 3 (Ice)
+  // New decorations — Region 5 (Frostbite)
   { key: 'decoration_ice_crystal', file: 'decoration_ice_crystal', size: { width: 32, height: 48 } },
   { key: 'decoration_frost_flower',file: 'decoration_frost_flower',size: 32 },
-  // New decorations — Region 4 (Shadow)
+  // New decorations — Region 6 (Shadow Castle)
   { key: 'decoration_skull',       file: 'decoration_skull',       size: 32 },
   { key: 'decoration_chains',      file: 'decoration_chains',      size: { width: 32, height: 48 } },
   { key: 'decoration_bookshelf',   file: 'decoration_bookshelf',   size: { width: 32, height: 48 } },
+
+  // Decorations — Region 3 (Mycelium Hollow)
+  { key: 'decoration_lily',        file: 'decoration_lily',        size: 32 },
+  { key: 'landmark_mushroom_circle', file: 'landmark_mushroom_circle', size: { width: 160, height: 128 } },
 
   // Landmark set-pieces (multi-tile, one per region)
   { key: 'landmark_pond',         file: 'landmark_pond',         size: { width: 160, height: 128 } },
@@ -190,6 +205,7 @@ export const BACKDROP_DEFS = [
   { key: 'backdrop_windmill', file: 'backdrop_windmill', size: { width: 800, height: 600 } },
   { key: 'backdrop_village', file: 'backdrop_village', size: { width: 800, height: 600 } },
   { key: 'backdrop_meadow',  file: 'backdrop_meadow',  size: { width: 800, height: 600 } },
+  { key: 'backdrop_hollow',  file: 'backdrop_hollow',  size: { width: 800, height: 600 } },
   { key: 'backdrop_desert',  file: 'backdrop_desert',  size: { width: 800, height: 600 } },
   { key: 'backdrop_ice',     file: 'backdrop_ice',     size: { width: 800, height: 600 } },
   { key: 'backdrop_shadow',  file: 'backdrop_shadow',  size: { width: 800, height: 600 } },

@@ -818,7 +818,7 @@ function missingNumberD3() {
   return { text: `? + ${b} = ${sum}`, answer: a, answerDisplay: String(a), topic: 'missingNumber' };
 }
 
-// ── Ratios & proportions (Region 5 — NEW additional type) ───────────────────────
+// ── Ratios & proportions (Region 6 — NEW additional type) ───────────────────────
 
 function ratiosPropD1() {
   const a = rand(2, 5); const k = rand(2, 5);
@@ -831,6 +831,67 @@ function ratiosPropD2() {
 function ratiosPropD3() {
   const p = rand(2, 5); const q = rand(2, 6); const k = rand(2, 4);
   return { text: `For every ${p} red, ${q} blue.\nIf there are ${p*k} red,\nhow many blue?`, answer: q*k, answerDisplay: String(q*k), topic: 'ratiosProp' };
+}
+
+// ── Multi-digit multiplication (Region 3 — Mycelium Hollow) ──────────────────────
+
+function multiDigitMultD1() {
+  // Teen number × small digit (13–19 × 2–5) — first non-table multiplication
+  const a = rand(13, 19);
+  const b = rand(2, 5);
+  return { text: `${a} × ${b} = ?`, answer: a * b, answerDisplay: String(a * b), topic: 'multiDigitMult' };
+}
+function multiDigitMultD2() {
+  // 2-digit × 1-digit (22–49 × 2–9)
+  const a = rand(22, 49);
+  const b = rand(2, 9);
+  return { text: `${a} × ${b} = ?`, answer: a * b, answerDisplay: String(a * b), topic: 'multiDigitMult' };
+}
+function multiDigitMultD3() {
+  if (Math.random() < 0.4) {
+    // 3-digit × 1-digit (accessible range: 100s × 2–4)
+    const a = rand(102, 219);
+    const b = rand(2, 4);
+    return { text: `${a} × ${b} = ?`, answer: a * b, answerDisplay: String(a * b), topic: 'multiDigitMult' };
+  }
+  // Tougher 2-digit × 1-digit
+  const a = rand(52, 99);
+  const b = rand(2, 9);
+  return { text: `${a} × ${b} = ?`, answer: a * b, answerDisplay: String(a * b), topic: 'multiDigitMult' };
+}
+
+// ── Factor pairs / missing factor (Region 3 — Mycelium Hollow) ───────────────────
+
+function factorPairsD1() {
+  // Small tables: × 2–5, products up to 30
+  const a = rand(2, 5); const b = rand(2, 6);
+  if (Math.random() < 0.5) {
+    return { text: `? × ${b} = ${a * b}`, answer: a, answerDisplay: String(a), topic: 'factorPairs' };
+  }
+  return { text: `${a * b} ÷ ${b} = ?`, answer: a, answerDisplay: String(a), topic: 'factorPairs' };
+}
+function factorPairsD2() {
+  // Full tables × 2–9
+  const a = rand(2, 9); const b = rand(2, 9);
+  if (Math.random() < 0.5) {
+    return { text: `? × ${b} = ${a * b}`, answer: a, answerDisplay: String(a), topic: 'factorPairs' };
+  }
+  return { text: `${a * b} ÷ ${a} = ?`, answer: b, answerDisplay: String(b), topic: 'factorPairs' };
+}
+function factorPairsD3() {
+  // Word problem: equal groups from a 2-digit product
+  const a = rand(3, 9); const b = rand(3, 9); const product = a * b;
+  const items  = ['mushrooms', 'spores', 'glowworms', 'crystals', 'fireflies'];
+  const places = ['rows', 'groups', 'baskets', 'clusters', 'patches'];
+  const item   = items[rand(0, items.length - 1)];
+  const place  = places[rand(0, places.length - 1)];
+  return {
+    text:          `${product} ${item} split into\n${b} equal ${place}.\nHow many in each?`,
+    answer:        a,
+    answerDisplay: String(a),
+    topic:         'factorPairs',
+    wordProblem:   true,
+  };
 }
 
 // ── Public API ────────────────────────────────────────────────────────────────
@@ -853,14 +914,17 @@ const generators = {
   multTables:     [multTablesD1,     multTablesD2,     multTablesD3],
   skipCounting:   [skipCountingD1,   skipCountingD2,   skipCountingD3],
   doubling:       [doublingD1,       doublingD2,       doublingD3],
-  // Region 3 — Desert Dunes
+  // Region 3 — Mycelium Hollow
+  multiDigitMult: [multiDigitMultD1, multiDigitMultD2, multiDigitMultD3],
+  factorPairs:    [factorPairsD1,    factorPairsD2,    factorPairsD3],
+  // Region 4 — Desert Dunes
   divisionWord:   [divisionWordD1,   divisionWordD2,   divisionWordD3],
   missingNumber:  [missingNumberD1,  missingNumberD2,  missingNumberD3],
-  // Region 4 — Frostbite Cavern
+  // Region 5 — Frostbite Cavern
   fractionCompare:[fractionCompareD1,fractionCompareD2,fractionCompareD3],
   fractionAdd:    [fractionAddD1,    fractionAddD2,    fractionAddD3],
   decimals:       [decimalsD1,       decimalsD2,       decimalsD3],
-  // Region 5 — Shadow Castle
+  // Region 6 — Shadow Castle
   orderOfOps:     [orderOfOpsD1,     orderOfOpsD2,     orderOfOpsD3],
   percentages:    [percentagesD1,    percentagesD2,    percentagesD3],
   ratiosProp:     [ratiosPropD1,     ratiosPropD2,     ratiosPropD3],

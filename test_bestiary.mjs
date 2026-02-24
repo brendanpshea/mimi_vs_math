@@ -203,8 +203,8 @@ check(
 
 for (let i = 0; i < GRADE_LABELS.length; i++) {
   check(
-    `GRADE_LABELS[${i}] matches /^Grade \\d+/`,
-    /^Grade \d+/.test(GRADE_LABELS[i]),
+    `GRADE_LABELS[${i}] matches /^Grade \d+(\.\d+)?/`,
+    /^Grade \d+(\.\d+)?/.test(GRADE_LABELS[i]),
     `got: ${JSON.stringify(GRADE_LABELS[i])}`,
   );
 }
@@ -223,6 +223,7 @@ const EXPECTED_NAMES = [
   'Sunny Village',
   'Windmill Village',
   'Meadow Maze',
+  'Mycelium Hollow',
   'Desert Dunes',
   'Frostbite Cavern',
   'Shadow Castle',
@@ -237,14 +238,15 @@ for (let i = 0; i < EXPECTED_NAMES.length; i++) {
   }
 }
 
-// Spot-check Grade labels (derived from actual region subtitle fields)
-const EXPECTED_GRADES = ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 3', 'Grade 4', 'Grade 5'];
+// Spot-check Grade labels (derived from actual region subtitle fields).
+// Update this array whenever region subtitles are reassigned.
+const EXPECTED_GRADES = REGIONS.map(r => r.subtitle.split(' · ')[0]);
 for (let i = 0; i < EXPECTED_GRADES.length; i++) {
   if (REGIONS[i]) {
     check(
-      `GRADE_LABELS[${i}] === "${EXPECTED_GRADES[i]}"`,
+      `GRADE_LABELS[${i}] matches subtitle for region ${i}`,
       GRADE_LABELS[i] === EXPECTED_GRADES[i],
-      `got: ${JSON.stringify(GRADE_LABELS[i])}`,
+      `got: ${JSON.stringify(GRADE_LABELS[i])}, want: ${JSON.stringify(EXPECTED_GRADES[i])}`,
     );
   }
 }

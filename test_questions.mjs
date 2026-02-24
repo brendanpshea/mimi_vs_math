@@ -66,6 +66,8 @@ const TOPIC_BOUNDS = {
   subBorrow:      [0,  99],
   skipCounting:   [0,  1000],
   doubling:       [0,  100],
+  multiDigitMult: [0,  900],  // D3 max: 219×4=876
+  factorPairs:    [0,  81],   // missing factor or equal-groups ÷ product; max 9×9
   fractions:      null,        // string
   fractionCompare:null,        // string
   fractionAdd:    null,        // string

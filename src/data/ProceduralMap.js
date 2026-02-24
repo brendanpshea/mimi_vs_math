@@ -113,15 +113,19 @@ const ACCENT_LAYERS = [
     { key: 'decoration_mushroom', freq: 0.10, threshold: 0.80, seed: 300 },
     { key: 'decoration_clover',   freq: 0.14, threshold: 0.84, seed: 400 },
   ],
-  [ // R3 — Desert Dunes: bone fields + tumbleweeds
+  [ // R3 — Mycelium Hollow: luminous lily pads + spore clusters
+    { key: 'decoration_lily',     freq: 0.13, threshold: 0.80, seed: 550 },
+    { key: 'decoration_mushroom', freq: 0.09, threshold: 0.86, seed: 650 },
+  ],
+  [ // R4 — Desert Dunes: bone fields + tumbleweeds
     { key: 'decoration_bones',       freq: 0.11, threshold: 0.82, seed: 500 },
     { key: 'decoration_tumbleweed',  freq: 0.09, threshold: 0.84, seed: 600 },
   ],
-  [ // R4 — Frostbite Cavern: snow drifts + frost flowers
+  [ // R5 — Frostbite Cavern: snow drifts + frost flowers
     { key: 'decoration_snowpile',    freq: 0.10, threshold: 0.78, seed: 700 },
     { key: 'decoration_frost_flower',freq: 0.13, threshold: 0.84, seed: 800 },
   ],
-  [ // R5 — Shadow Castle: skulls only.
+  [ // R6 — Shadow Castle: skulls only.
     // Torches are placed as live animated objects at corridor elbows
     // (returned via animatedDecorations) — never noise-scattered.
     { key: 'decoration_skull',  freq: 0.12, threshold: 0.84, seed: 900 },
@@ -146,13 +150,16 @@ const SET_PIECES = [
   { // R2 — Meadow flower ring
     key: 'landmark_flower_ring', tilesW: 5, tilesH: 4, blocking: false, margin: 2,
   },
-  { // R3 — Lava pool
+  { // R3 — Mycelium: mushroom circle
+    key: 'landmark_mushroom_circle', tilesW: 5, tilesH: 4, blocking: false, margin: 2,
+  },
+  { // R4 — Lava pool
     key: 'landmark_lava_pool', tilesW: 5, tilesH: 4, blocking: true, margin: 2,
   },
-  { // R4 — Frozen lake
+  { // R5 — Frozen lake
     key: 'landmark_frozen_lake', tilesW: 6, tilesH: 5, blocking: true, margin: 2,
   },
-  { // R5 — Dark altar
+  { // R6 — Dark altar
     key: 'landmark_dark_altar', tilesW: 4, tilesH: 4, blocking: true, margin: 2,
   },
 ];
@@ -398,7 +405,7 @@ export function generateRegionMap(regionData) {
 
   // ── Steps 3 & 4: MST + corridor carving ─────────────────────────────
   // Collect the elbow of every L-corridor (corner where horizontal leg meets
-  // vertical leg) so R5 can place animated torches at architecturally correct
+  // vertical leg) so R6 can place animated torches at architecturally correct
   // spots rather than noise-scattered patches.
   const _elbows = [];
   for (const [a, b] of buildMST(nodes)) {
@@ -505,11 +512,11 @@ export function generateRegionMap(regionData) {
   const interactiveItems = pickInteractiveItems(blocked, nodes, regionData.id);
 
   // ── Animated decorations (live objects, NOT baked into the canvas) ───
-  // R5 only: torches at corridor elbow positions, min-spaced 10 tiles apart.
+  // R6 only: torches at corridor elbow positions, min-spaced 10 tiles apart.
   // Each elbow is the corner tile { col: b.col, row: a.row } of an L-corridor,
   // which always sits against a wall face — exactly where a sconce belongs.
   const animatedDecorations = [];
-  if (regionData.id === 5) {
+  if (regionData.id === 6) {
     const MIN_TORCH_SPACING = 10;
     for (const e of _elbows) {
       if (blocked.has(`${e.col},${e.row}`)) continue;  // skip if still walled

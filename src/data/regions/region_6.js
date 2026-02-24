@@ -20,7 +20,7 @@
     ],
     npcTile:   { col: 6, row: 29 },
     chestTile: { col: 75, row: 50 },
-    bossTile:  { col: 4, row: 5 },
+    bossTile:  { col: 76, row: 5 },
     bossTilePool: [
       { col: 76, row: 5  }, { col: 4,  row: 5  }, { col: 40, row: 5  },
       { col: 76, row: 50 }, { col: 4,  row: 50 },

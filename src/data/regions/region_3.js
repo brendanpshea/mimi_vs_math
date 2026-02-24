@@ -1,18 +1,18 @@
 ﻿const REGION = {
     id: 3,
-    name: 'Desert Dunes',
-    subtitle: 'Grade 3 · Multiplication & Division',
-    mathTopic: 'division',
+    name: 'Mycelium Hollow',
+    subtitle: 'Grade 3 · Multi-Digit Multiplication',
+    mathTopic: 'multiDigitMult',
     unlocked: false,
-    floorColor: 0xD4A044,
-    wallColor: 0xAA7722,
-    accentColor: 0xFFCC66,
-    bgColor: 0xC8943C,
-    backdropKey: 'backdrop_desert',
-    auraColor:   0xFF8833,
-    bossTint:    0xFFF5EE,
-    floorTile: 'floor_sand',
-    wallTile: 'wall_sandstone',
+    floorColor: 0x2D4A2D,
+    wallColor: 0x1A2E1A,
+    accentColor: 0x88FFAA,
+    bgColor: 0x243824,
+    backdropKey: 'backdrop_hollow',
+    auraColor:   0xAAFF88,
+    bossTint:    0xFFEEFF,
+    floorTile: 'floor_moss',
+    wallTile: 'wall_mycelium',
     mimiStart:     { col: 4, row: 26 },
     mimiStartPool: [
       { col: 4,  row: 26 }, { col: 4,  row: 40 },
@@ -26,53 +26,60 @@
       { col: 76, row: 50 }, { col: 4,  row: 50 },
     ],
 
-    // ── Enemies: 10 — 4 native + 4 hard reviews from R1 + 2 native D2 ──
+    // ── Enemies: 10 — 3 native types + 2 hard reviews from R2 ────────────
     enemySpawns: [
-      { col: 20, row: 10, id: 'sand_scarab' },                                // D1 division
-      { col: 52, row:  9, id: 'mummy_cat' },                                  // D2 mult review
-      { col: 30, row: 40, id: 'mirage_fox' },                                 // D2 divisionWord
-      { col: 40, row:  7, id: 'riddle_scarab' },                              // D1 missingNumber (NEW)
-      { col: 44, row: 26, id: 'slime_pup',     difficultyOverride: 3 },       // D3 multTables review
-      { col: 14, row: 40, id: 'cactus_sprite', difficultyOverride: 3 },       // D3 multiplication review
-      { col: 57, row: 40, id: 'cloud_bully',   difficultyOverride: 3 },       // D3 skipCounting review
-      { col: 35, row: 26, id: 'double_bunny',  difficultyOverride: 3 },       // D3 doubling review
-      { col: 60, row: 12, id: 'sand_scarab',   difficultyOverride: 2 },       // D2 division
-      { col: 50, row: 42, id: 'riddle_scarab', difficultyOverride: 2 },       // D2 missingNumber
+      { col: 20, row: 10, id: 'fungus_toad' },                               // D1 multiDigitMult
+      { col: 52, row:  9, id: 'mycelium_wisp' },                             // D1 factorPairs
+      { col: 30, row: 40, id: 'spore_puff' },                                // D2 multiDigitMult
+      { col: 40, row:  7, id: 'fungus_toad',    difficultyOverride: 2 },     // D2 multiDigitMult
+      { col: 44, row: 26, id: 'mycelium_wisp',  difficultyOverride: 2 },     // D2 factorPairs
+      { col: 14, row: 40, id: 'spore_puff',     difficultyOverride: 3 },     // D3 multiDigitMult
+      { col: 57, row: 40, id: 'mycelium_wisp',  difficultyOverride: 3 },     // D3 factorPairs (word problem)
+      { col: 35, row: 26, id: 'slime_pup',      difficultyOverride: 3 },     // D3 multTables review
+      { col: 60, row: 12, id: 'double_bunny',   difficultyOverride: 3 },     // D3 doubling review
+      { col: 50, row: 42, id: 'fungus_toad',    difficultyOverride: 3 },     // D3 multiDigitMult
     ],
 
-    boss: 'the_diviner',
-    bossName: 'The Diviner',
-    description: 'Trek through scorching sands and master Grade 3 skills — complete multiplication tables, learn division as the inverse of multiplication, and solve division word problems to reveal the ancient Diviner!',
-    npcHint: 'Division is just multiplication in reverse — if 4 × 3 = 12, then 12 ÷ 4 = 3!',
+    boss: 'queen_sporella',
+    bossName: 'Queen Sporella',
+    description: 'Deep in the bioluminescent Mycelium Hollow, Queen Sporella has grown a network of spores that blocks the path forward. Master multi-digit multiplication and factor pairs to break through her spore network and continue the quest!',
+    npcHint: 'Break big multiplication into parts — 14 × 3 is just (10 × 3) + (4 × 3) = 42!',
     npcBossStory: [
-      'The Diviner has been sitting in this desert for four hundred years, dividing everything into equal parts. Sand dunes. Scholarly debates. Visiting academics.\n\nI sent her a letter proposing a collaboration. She replied: \'Your methodology divides into errors and more errors.\' Rude. Accurate, that particular week. But rude.',
-      'Her trick: she reframes multiplication as a missing number.\n\'4 × ☐ = 28\' — it\'s designed to seem mysterious.\nIt isn\'t. Ask: what times 4 is 28? Seven.\nDivision is multiplication in a different hat. She knows that. Now so do you.',
+      'Queen Sporella.\nI have studied her mycelium network for three years. Every spore connects to every other spore. Every branch multiplies into more branches.\n\nShe does not fight with claws. She fights with mathematics. Specifically: with the distributive property.\n\nI once saw her decompose a 47 × 6 problem in her head in two seconds. I am still embarrassed about this.',
+      'Her trick: she makes 2-digit multiplication feel enormous.\nIt isn\'t.\n47 × 6 = (40 × 6) + (7 × 6) = 240 + 42 = 282.\nBreak the big number into tens and ones. Multiply each part. Add the pieces.\n\nShe can\'t stop you once you see the pattern.',
     ],
     npcLesson: [
-      'Division = multiplication backwards.\n42 ÷ 6 = ?   Ask yourself: 6 × ? = 42.\nYou know 6 × 7 = 42. Answer: 7. ✓\nFact family: 6×7=42, 7×6=42, 42÷6=7, 42÷7=6.\nFour facts. One set of numbers. Learn one, get three free.',
-      'For word problems:\n① What is being shared? (the large number)\n② Into how many groups? (the divisor)\n③ How many in each? (your answer)\n\'24 biscuits, 8 cats: 24 ÷ 8 = 3 each.\'\nAlways verify: 3 × 8 = 24 ✓.',
+      'Multi-digit multiplication:\nSplit the number into tens and ones!\n14 × 3:\n  10 × 3 = 30\n  4 × 3  = 12\n  30 + 12 = 42 ✓\n\n23 × 4:\n  20 × 4 = 80\n  3 × 4  = 12\n  80 + 12 = 92 ✓',
+      'Factor pairs — × and ÷ are inverses:\nIf 6 × 8 = 48, then:\n  48 ÷ 6 = 8  and  48 ÷ 8 = 6.\n\n"? × 7 = 56" — ask yourself:\nWhat times 7 is 56? You know 7 × 8 = 56.\nAnswer: 8. ✓\n\nKnowing your tables means you can always find the missing factor.',
     ],
-    npcBoon: 'fish_fossil',
-    npcQuizTopic: 'divisionWord',
+    npcBoon: 'yarn_ball',
+    npcQuizTopic: 'multiDigitMult',
     bossIntro: [
       {
-        speaker:   'The Diviner',
+        speaker:   'Queen Sporella',
         side:      'right',
-        spriteKey: 'the_diviner',
-        nameColor: '#DDBB44',
-        bg:        0x1A1205,
-        text:      'Long have I studied the art of division.\nKingdoms divided.  Armies halved.  Hopes quartered.\n\nI have divided more things than you have ever counted, little cat.\nWhat could you possibly divide ME by?',
+        spriteKey: 'queen_sporella',
+        nameColor: '#FFAADD',
+        bg:        0x0A1A0A,
+        text:      'Another visitor.\nMy spores have already counted you — your heartbeats, your hesitations, the exact number of steps you took through my hollow.\n\nSixty-three. I was expecting a round number.\nYou are already imprecise.',
       },
       {
         speaker:   'Mimi',
         side:      'left',
         spriteKey: 'mimi_battle',
         nameColor: '#AAFFCC',
-        bg:        0x1A1205,
-        text:      'How about dividing you from that throne?\n\n… that sounded better in my head.\n\nCome on.  Let\'s fight.',
+        bg:        0x0A1A0A,
+        text:      'I stopped to smell a mushroom.\nSeveral mushrooms, actually.\nThey were very interesting mushrooms.',
+      },
+      {
+        speaker:   'Queen Sporella',
+        side:      'right',
+        spriteKey: 'queen_sporella',
+        nameColor: '#FFAADD',
+        bg:        0x0C1E0C,
+        text:      'Those mushrooms are part of my network.\nThey reported back.\n\nRegardless. You\'ve made it this deep into my hollow, which means you can multiply.\nLet\'s see how you handle the bigger numbers.\n\nI do hope you know your distributive property.',
       },
     ],
   };
 
 export default REGION;
-

@@ -58,8 +58,8 @@ const TILE_FIELDS = ['mimiStart', 'npcTile', 'bossTile'];
 // ══════════════════════════════════════════════════════════════════════════════
 console.log(`\n${B('── 1. Region schema ──')}`);
 
-assert(Array.isArray(REGIONS) && REGIONS.length === 6,
-  `regions.js exports 6 regions (got ${REGIONS?.length})`);  // bump when adding a region
+assert(Array.isArray(REGIONS) && REGIONS.length === 7,
+  `regions.js exports 7 regions (got ${REGIONS?.length})`);  // bump when adding a region
 
 for (const region of REGIONS) {
   const tag = `Region ${region.id} (${region.name ?? '?'})`;
@@ -353,7 +353,7 @@ const src = path => readFileSync(path, 'utf8');
 // which erodes trust in comments and can hide merge conflicts.
 // IMPORTANT: if you change enemy counts, also bump SAVE_VERSION in GameState.js.
 {
-  const regionsSrc = [0,1,2,3,4,5].map(i => src(`./src/data/regions/region_${i}.js`)).join('\n');  // keep in sync with REGIONS
+  const regionsSrc = [0,1,2,3,4,5,6].map(i => src(`./src/data/regions/region_${i}.js`)).join('\n');  // keep in sync with REGIONS
   const commentPattern = /\/\/.*?Enemies:\s*(\d+)/g;
   let commentMatch;
   let commentIdx = 0;
@@ -372,6 +372,58 @@ const src = path => readFileSync(path, 'utf8');
       `Region ${region.id} (${region.name}): "Enemies: ${commentCount}" comment matches spawn array length (${actualCount})`,
     );
   }
+}
+
+// ── 5g. OverworldScene.js — per-region arrays stay in sync with REGIONS ──────
+//
+// Three arrays in OverworldScene.js are indexed by region id and must each
+// have exactly REGIONS.length entries.  When a new region is added and these
+// are forgotten the scene crashes at runtime with "can't access property x,
+// pos is undefined" (the exact bug that prompted this check).
+//
+// Checked arrays:
+//   NODE_POSITIONS  — { x, y } objects, one per region node
+//   TERRAIN_COLORS  — 0xRRGGBB hex tints, one per region
+//   bossKeys        — string texture keys inside _getBossKey(), one per region
+//
+// Technique: regex-count array literal entries from the source text, then
+// compare to REGIONS.length.  This requires no browser / Phaser context.
+{
+  const owSrc = src('./src/scenes/OverworldScene.js');
+
+  // Count entries in NODE_POSITIONS: each node is a `{ x: N, y: N }` object.
+  // We grab the literal from const NODE_POSITIONS = [ ... ]; up to the closing ];
+  const nodeBlock = owSrc.match(/const\s+NODE_POSITIONS\s*=\s*\[([\s\S]*?)\];/);
+  const nodeCount = nodeBlock ? (nodeBlock[1].match(/\{\s*x:/g) || []).length : -1;
+  assert(
+    nodeCount === REGIONS.length,
+    `OverworldScene: NODE_POSITIONS has ${nodeCount} entries (need ${REGIONS.length})`,
+    nodeCount < REGIONS.length
+      ? `Add ${REGIONS.length - nodeCount} more { x, y } entry/entries for the new region(s).`
+      : `Remove ${nodeCount - REGIONS.length} extra entry/entries.`,
+  );
+
+  // Count entries in TERRAIN_COLORS: each entry is a hex literal 0xRRGGBB.
+  const terrainBlock = owSrc.match(/const\s+TERRAIN_COLORS\s*=\s*\[([\s\S]*?)\];/);
+  const terrainCount = terrainBlock ? (terrainBlock[1].match(/0x[0-9A-Fa-f]+/g) || []).length : -1;
+  assert(
+    terrainCount === REGIONS.length,
+    `OverworldScene: TERRAIN_COLORS has ${terrainCount} entries (need ${REGIONS.length})`,
+    terrainCount < REGIONS.length
+      ? `Add ${REGIONS.length - terrainCount} more 0xRRGGBB colour(s) for the new region(s).`
+      : `Remove ${terrainCount - REGIONS.length} extra colour(s).`,
+  );
+
+  // Count entries in _getBossKey's bossKeys array: each entry is a quoted string.
+  const bossBlock = owSrc.match(/_getBossKey[\s\S]*?const\s+bossKeys\s*=\s*\[([\s\S]*?)\];/);
+  const bossCount = bossBlock ? (bossBlock[1].match(/'[^']*'/g) || []).length : -1;
+  assert(
+    bossCount === REGIONS.length,
+    `OverworldScene: _getBossKey bossKeys has ${bossCount} entries (need ${REGIONS.length})`,
+    bossCount < REGIONS.length
+      ? `Add ${REGIONS.length - bossCount} more boss texture key(s) for the new region(s).`
+      : `Remove ${bossCount - REGIONS.length} extra key(s).`,
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════

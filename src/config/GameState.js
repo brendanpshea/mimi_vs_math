@@ -13,7 +13,7 @@ const SAVE_KEY = 'mimi_vs_math_save';
  * stale keys from old configs can't keep boss doors permanently locked.
  * All other progress (stats, inventory, bosses, currentRegion) is preserved.
  */
-const SAVE_VERSION = 3;
+const SAVE_VERSION = 4;
 
 const GameState = {
   // ── Player stats ──────────────────────────────────────────────────────

@@ -151,45 +151,59 @@ test('instanceKey region 2 produces correct keys', () => {
 });
 
 test('instanceKey region 3 produces correct keys', () => {
-  assertEqual(instanceKey(3, 0), 'sand_scarab0');              // D1 division
-  assertEqual(instanceKey(3, 1), 'mummy_cat1');                // D2 mult review
-  assertEqual(instanceKey(3, 2), 'mirage_fox2');               // D2 divisionWord
-  assertEqual(instanceKey(3, 3), 'riddle_scarab3');            // D1 missingNumber
-  assertEqual(instanceKey(3, 4), 'slime_pup4');                // D3 multTables review
-  assertEqual(instanceKey(3, 5), 'cactus_sprite5');            // D3 multiplication review
-  assertEqual(instanceKey(3, 6), 'cloud_bully6');              // D3 skipCounting review
-  assertEqual(instanceKey(3, 7), 'double_bunny7');             // D3 doubling review
-  assertEqual(instanceKey(3, 8), 'sand_scarab8');              // D2 division
-  assertEqual(instanceKey(3, 9), 'riddle_scarab9');            // D2 missingNumber
+  assertEqual(instanceKey(3, 0), 'fungus_toad0');              // D1 multiDigitMult
+  assertEqual(instanceKey(3, 1), 'mycelium_wisp1');            // D1 factorPairs
+  assertEqual(instanceKey(3, 2), 'spore_puff2');               // D2 multiDigitMult
+  assertEqual(instanceKey(3, 3), 'fungus_toad3');              // D2 multiDigitMult
+  assertEqual(instanceKey(3, 4), 'mycelium_wisp4');            // D2 factorPairs
+  assertEqual(instanceKey(3, 5), 'spore_puff5');               // D3 multiDigitMult
+  assertEqual(instanceKey(3, 6), 'mycelium_wisp6');            // D3 factorPairs word
+  assertEqual(instanceKey(3, 7), 'slime_pup7');                // D3 multTables review
+  assertEqual(instanceKey(3, 8), 'double_bunny8');             // D3 doubling review
+  assertEqual(instanceKey(3, 9), 'fungus_toad9');              // D3 multiDigitMult
   assertEqual(REGIONS[3].enemySpawns.length, 10, 'R3 should have 10 spawns');
 });
 
 test('instanceKey region 4 produces correct keys', () => {
-  assertEqual(instanceKey(4, 0), 'ice_frog0');                 // D1 fractionCompare
-  assertEqual(instanceKey(4, 1), 'snow_golem1');               // D2 fractionAdd
-  assertEqual(instanceKey(4, 2), 'crystal_bat2');              // D2 decimals
-  assertEqual(instanceKey(4, 3), 'ice_frog3');                 // D2 fractionCompare
-  assertEqual(instanceKey(4, 4), 'sand_scarab4');              // D3 division review
-  assertEqual(instanceKey(4, 5), 'mummy_cat5');                // D3 mult review
-  assertEqual(instanceKey(4, 6), 'mirage_fox6');               // D3 divisionWord review
-  assertEqual(instanceKey(4, 7), 'riddle_scarab7');            // D3 missingNumber review
-  assertEqual(instanceKey(4, 8), 'snow_golem8');               // D3 fractionAdd
-  assertEqual(instanceKey(4, 9), 'crystal_bat9');              // D3 decimals
+  assertEqual(instanceKey(4, 0), 'sand_scarab0');              // D1 division
+  assertEqual(instanceKey(4, 1), 'mummy_cat1');                // D2 mult review
+  assertEqual(instanceKey(4, 2), 'mirage_fox2');               // D2 divisionWord
+  assertEqual(instanceKey(4, 3), 'riddle_scarab3');            // D1 missingNumber
+  assertEqual(instanceKey(4, 4), 'slime_pup4');                // D3 multTables review
+  assertEqual(instanceKey(4, 5), 'cactus_sprite5');            // D3 multiplication review
+  assertEqual(instanceKey(4, 6), 'cloud_bully6');              // D3 skipCounting review
+  assertEqual(instanceKey(4, 7), 'double_bunny7');             // D3 doubling review
+  assertEqual(instanceKey(4, 8), 'sand_scarab8');              // D2 division
+  assertEqual(instanceKey(4, 9), 'riddle_scarab9');            // D2 missingNumber
   assertEqual(REGIONS[4].enemySpawns.length, 10, 'R4 should have 10 spawns');
 });
 
 test('instanceKey region 5 produces correct keys', () => {
-  assertEqual(instanceKey(5, 0), 'shadow_knight0');            // D1 orderOfOps
-  assertEqual(instanceKey(5, 1), 'ratio_raven1');              // D2 percentages
-  assertEqual(instanceKey(5, 2), 'percent_wraith2');           // D2 ratiosProp
-  assertEqual(instanceKey(5, 3), 'shadow_knight3');            // D2 orderOfOps
-  assertEqual(instanceKey(5, 4), 'ice_frog4');                 // D3 fractionCompare review
-  assertEqual(instanceKey(5, 5), 'snow_golem5');               // D3 fractionAdd review
-  assertEqual(instanceKey(5, 6), 'crystal_bat6');              // D3 decimals review
-  assertEqual(instanceKey(5, 7), 'ratio_raven7');              // D3 percentages
-  assertEqual(instanceKey(5, 8), 'percent_wraith8');           // D3 ratiosProp
-  assertEqual(instanceKey(5, 9), 'shadow_knight9');            // D3 orderOfOps
+  assertEqual(instanceKey(5, 0), 'ice_frog0');                 // D1 fractionCompare
+  assertEqual(instanceKey(5, 1), 'snow_golem1');               // D2 fractionAdd
+  assertEqual(instanceKey(5, 2), 'crystal_bat2');              // D2 decimals
+  assertEqual(instanceKey(5, 3), 'ice_frog3');                 // D2 fractionCompare
+  assertEqual(instanceKey(5, 4), 'sand_scarab4');              // D3 division review
+  assertEqual(instanceKey(5, 5), 'mummy_cat5');                // D3 mult review
+  assertEqual(instanceKey(5, 6), 'mirage_fox6');               // D3 divisionWord review
+  assertEqual(instanceKey(5, 7), 'riddle_scarab7');            // D3 missingNumber review
+  assertEqual(instanceKey(5, 8), 'snow_golem8');               // D3 fractionAdd
+  assertEqual(instanceKey(5, 9), 'crystal_bat9');              // D3 decimals
   assertEqual(REGIONS[5].enemySpawns.length, 10, 'R5 should have 10 spawns');
+});
+
+test('instanceKey region 6 produces correct keys', () => {
+  assertEqual(instanceKey(6, 0), 'shadow_knight0');            // D1 orderOfOps
+  assertEqual(instanceKey(6, 1), 'ratio_raven1');              // D2 percentages
+  assertEqual(instanceKey(6, 2), 'percent_wraith2');           // D2 ratiosProp
+  assertEqual(instanceKey(6, 3), 'shadow_knight3');            // D2 orderOfOps
+  assertEqual(instanceKey(6, 4), 'ice_frog4');                 // D3 fractionCompare review
+  assertEqual(instanceKey(6, 5), 'snow_golem5');               // D3 fractionAdd review
+  assertEqual(instanceKey(6, 6), 'crystal_bat6');              // D3 decimals review
+  assertEqual(instanceKey(6, 7), 'ratio_raven7');              // D3 percentages
+  assertEqual(instanceKey(6, 8), 'percent_wraith8');           // D3 ratiosProp
+  assertEqual(instanceKey(6, 9), 'shadow_knight9');            // D3 orderOfOps
+  assertEqual(REGIONS[6].enemySpawns.length, 10, 'R6 should have 10 spawns');
 });
 
 console.log('\ndefeatEnemy / isEnemyDefeated round-trip');

@@ -1,7 +1,7 @@
 ﻿const REGION = {
     id: 2,
     name: 'Meadow Maze',
-    subtitle: 'Grade 3 · Skip Counting & Times Tables',
+    subtitle: 'Grade 2.5 · Skip Counting & Times Tables',
     mathTopic: 'multiplication',
     unlocked: false,
     floorColor: 0x5FA827,

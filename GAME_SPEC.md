@@ -6,7 +6,7 @@ Mimi vs. Math is a browser-based, Zelda-style top-down adventure game built with
 **JavaScript + Phaser.js**. Mimi the cat explores a whimsical world, encounters enemies,
 and defeats them by answering math questions. The game targets **elementary players (ages 6–11)**
 and covers addition, subtraction, multiplication, division, fractions,
-decimals, and mixed challenge content across six regions.
+decimals, and mixed challenge content across seven regions.
 
 ---
 
@@ -31,10 +31,11 @@ decimals, and mixed challenge content across six regions.
 Overworld Map
 ├── Region 0: Sunny Village        (Addition, Subtraction & Comparison)
 ├── Region 1: Windmill Village     (Place Value, Carry Addition & Borrow Subtraction)
-├── Region 2: Meadow Maze          (Multiplication)
-├── Region 3: Desert Dunes         (Division)
-├── Region 4: Frostbite Cavern     (Fractions & Decimals)
-└── Region 5: Shadow Castle        (Order of Operations, Percentages & Ratios)
+├── Region 2: Meadow Maze          (Times Tables, Skip Counting & Doubling)
+├── Region 3: Mycelium Hollow      (Multi-Digit Multiplication & Factor Pairs)
+├── Region 4: Desert Dunes         (Division)
+├── Region 5: Frostbite Cavern     (Fractions & Decimals)
+└── Region 6: Shadow Castle        (Order of Operations, Percentages & Ratios)
 ```
 
 Each region contains:
@@ -192,26 +193,33 @@ Each "turn" presents one math problem:
 - 2-digit subtraction **with borrowing**, minuend ≤ 49
 - Word problems at grade-2 number ranges
 
-### Region 2 — Multiplication (grades 3–5)
+### Region 2 — Times Tables & Multiplication Foundations (grade 2.5)
 
 - Times tables: factors 2–12
-- Multi-digit × single-digit (e.g., `23 × 4`)
-- Word problems presented as story text above the equation
+- Skip counting by 2s, 5s, and 10s up to 120
+- Doubling & halving to 100
 
-### Region 3 — Division (grades 4–5)
+### Region 3 — Multi-Digit Multiplication (grade 3)
 
-- Division facts derived from Region 2 times tables
+- Teen number × single digit (13–19 × 2–5)
+- 2-digit × single digit (22–49 × 2–9)
+- 3-digit × single digit (accessible range, e.g., 102–219 × 2–4)
+- Factor pairs: missing-factor equations (`? × b = product`) and equal-groups word problems
+
+### Region 4 — Division (grades 3.5–4)
+
+- Division facts derived from Region 3 times tables
 - Long division with remainders (quotient only required)
 - Division word problems
 
-### Region 4 — Fractions & Decimals (grade 5)
+### Region 5 — Fractions & Decimals (grade 4)
 
 - Comparing fractions (which is larger?)
 - Adding/subtracting fractions with like & unlike denominators
 - Converting fractions ↔ decimals
 - Multiplying a fraction by a whole number
 
-### Region 5 — Shadow Castle (grade 5)
+### Region 6 — Shadow Castle (grade 5)
 
 - Order of operations with brackets: `(a + b) × c`, `(a − b) × c`, `a × b + c × d`, `a × b − c`
 - Percentages: 10 %, 20 %, 25 %, 50 %, 75 % of a whole number
@@ -242,16 +250,26 @@ Each "turn" presents one math problem:
 
 ### Region 2 — Meadow Maze
 
-| Enemy | Sprite concept | Special behavior |
+| Enemy | Sprite concept | Math topic |
 |---|---|---|
-| Slime Pup | Green blob with eyes | None |
-| Cactus Sprite | Small cactus with arms | Presents 2 problems per turn (answer both) |
-| Cloud Bully | Angry cloud | Timer is 3 s shorter |
+| Slime Pup | Green blob with eyes | Times tables |
+| Cactus Sprite | Small cactus with arms | Multiplication word problems |
+| Cloud Bully | Angry cloud | Skip counting |
+| Double Bunny | Rabbit with clock ears | Doubling & halving |
 
-**Boss: Count Multiplico** — Giant owl with a monocle; 30 HP; presents chained
-multiplication (e.g., `(3 × 4) × 2`).
+**Boss: Count Multiplico** — Giant owl with a monocle; 30 HP; mixed times-tables and doubling at D3.
 
-### Region 3 — Desert Dunes
+### Region 3 — Mycelium Hollow
+
+| Enemy | Sprite concept | Math topic |
+|---|---|---|
+| Fungus Toad | Squat toad dusted with spores | Multi-digit multiplication (D1) |
+| Mycelium Wisp | Glowing fungal wisp | Factor pairs / missing factor |
+| Spore Puff | Floating puffball with spores | Multi-digit multiplication (D2) |
+
+**Boss: Queen Sporella** — 35 HP; mixed multi-digit multiplication, factor pairs, times tables, and doubling at D3.
+
+### Region 4 — Desert Dunes
 
 | Enemy | Sprite concept | Special behavior |
 |---|---|---|
@@ -261,7 +279,7 @@ multiplication (e.g., `(3 × 4) × 2`).
 
 **Boss: The Diviner** — Ancient sphinx; 30 HP; asks division word problems.
 
-### Region 4 — Frostbite Cavern
+### Region 5 — Frostbite Cavern
 
 | Enemy | Sprite concept | Special behavior |
 |---|---|---|
@@ -272,7 +290,7 @@ multiplication (e.g., `(3 × 4) × 2`).
 **Boss: Glacius the Fraction Dragon** — 30 HP; problems involve both fractions
 and decimals.
 
-### Region 5 — Shadow Castle
+### Region 6 — Shadow Castle
 
 | Enemy | Sprite concept | Special behavior |
 |---|---|---|
@@ -346,7 +364,7 @@ mimi_vs_math/
 │   ├── data/
 │   │   ├── enemies.js         # Enemy definitions (HP, damage, math topic)
 │   │   ├── items.js           # Item definitions and effects
-│   │   ├── regions/           # Per-region metadata (region_0.js – region_5.js + index.js barrel)
+│   │   ├── regions/           # Per-region metadata (region_0.js – region_6.js + index.js barrel)
 │   │   ├── ProceduralMap.js   # Tile-fn, accent layers, set-pieces & item pools per region
 │   │   ├── maps.js            # Procedural decoration data per region
 │   │   └── npcJokes.json      # NPC dialogue lines
@@ -392,7 +410,7 @@ After defeating a region's boss, a **⚔ Hard Mode** button appears in the node 
 |---|---|---|
 | M1 | ✅ Done | Phaser project scaffolded; Mimi moves in procedurally-decorated regions |
 | M2 | ✅ Done | Battle scene works end-to-end with Region 0 math questions |
-| M3 | ✅ Done | All 6 regions with enemies, bosses, boss-intro cutscenes, item drops |
+| M3 | ✅ Done | All 7 regions with enemies, bosses, boss-intro cutscenes, item drops |
 | M4 | ✅ Done | Full progression, save/load, world-select, stats tracking |
 | M5 | ✅ Done | 9 lives, star ratings, hard-mode rematch, BGM/SFX, heart HUD |
 | M6 | ✅ Done | Bestiary, adaptive difficulty, interactive decorations, NPC Mewton, teacher-reviewed question bank |
@@ -520,9 +538,9 @@ In `_addDecorations()` find the `SCALES` map and add an entry for each new decor
 ### 10. Run the full test suite
 
 ```bash
-node test_unlock.mjs        # 33 GameState / save-logic checks
-node test_questions.mjs     # ~68 k question-sample bounds & structure checks
-node test_connectivity.mjs  # BFS pathfinding for every region map
+node test_unlock.mjs        # 37 GameState / save-logic checks
+node test_questions.mjs     # ~75 k question-sample bounds & structure checks
+node test_connectivity.mjs  # BFS pathfinding for every region map (210 checks)
 ```
 
 All three must exit with **0 failures** before the region is shippable.

@@ -19,19 +19,21 @@ const TERRAIN_COLORS = [
   0x6DB83A,   // R0 – grassland (Sunny Village)
   0xC8A840,   // R1 – wheat     (Windmill Village)
   0x4A9820,   // R2 – meadow    (Meadow Maze)
-  0xD4952A,   // R3 – desert    (Desert Dunes)
-  0x88C8E0,   // R4 – frost     (Frostbite Cavern)
-  0x2A1850,   // R5 – shadow    (Shadow Castle)
+  0x2A7A3A,   // R3 – mycelium  (Mycelium Hollow)
+  0xD4952A,   // R4 – desert    (Desert Dunes)
+  0x88C8E0,   // R5 – frost     (Frostbite Cavern)
+  0x2A1850,   // R6 – shadow    (Shadow Castle)
 ];
 
 // Fixed positions for each region node on the 800×600 canvas
 const NODE_POSITIONS = [
   { x: 130, y: 480 },  // 0 Sunny Village
-  { x: 260, y: 370 },  // 1 Windmill Village
-  { x: 400, y: 260 },  // 2 Meadow Maze
-  { x: 540, y: 200 },  // 3 Desert Dunes
-  { x: 660, y: 330 },  // 4 Frostbite Cavern
-  { x: 640, y: 475 },  // 5 Shadow Castle
+  { x: 240, y: 370 },  // 1 Windmill Village
+  { x: 360, y: 260 },  // 2 Meadow Maze
+  { x: 460, y: 155 },  // 3 Mycelium Hollow
+  { x: 590, y: 185 },  // 4 Desert Dunes
+  { x: 690, y: 330 },  // 5 Frostbite Cavern
+  { x: 650, y: 475 },  // 6 Shadow Castle
 ];
 
 export default class OverworldScene extends Phaser.Scene {
@@ -607,7 +609,7 @@ export default class OverworldScene extends Phaser.Scene {
   _getBossKey(regionId) {
     const bossKeys = [
       'subtraction_witch', 'grand_miller', 'count_multiplico',
-      'the_diviner', 'glacius', 'fenwick',
+      'queen_sporella', 'the_diviner', 'glacius', 'fenwick',
     ];
     return bossKeys[regionId] ?? 'mimi';
   }

@@ -1,18 +1,18 @@
 ﻿const REGION = {
     id: 4,
-    name: 'Frostbite Cavern',
-    subtitle: 'Grade 4 · Fractions & Decimals',
-    mathTopic: 'fractions',
+    name: 'Desert Dunes',
+    subtitle: 'Grade 3.5 · Division & Word Problems',
+    mathTopic: 'division',
     unlocked: false,
-    floorColor: 0x99C8DD,
-    wallColor: 0x5588AA,
-    accentColor: 0xCCEEFF,
-    bgColor: 0x7AB4CC,
-    backdropKey: 'backdrop_ice',
-    auraColor:   0x44CCFF,
-    bossTint:    0xEEF8FF,
-    floorTile: 'floor_snow',
-    wallTile: 'wall_ice',
+    floorColor: 0xD4A044,
+    wallColor: 0xAA7722,
+    accentColor: 0xFFCC66,
+    bgColor: 0xC8943C,
+    backdropKey: 'backdrop_desert',
+    auraColor:   0xFF8833,
+    bossTint:    0xFFF5EE,
+    floorTile: 'floor_sand',
+    wallTile: 'wall_sandstone',
     mimiStart:     { col: 4, row: 26 },
     mimiStartPool: [
       { col: 4,  row: 26 }, { col: 4,  row: 40 },
@@ -26,50 +26,50 @@
       { col: 76, row: 50 }, { col: 4,  row: 50 },
     ],
 
-    // ── Enemies: 10 — 4 native + 4 hard reviews from R2 + 2 native D3 ──
+    // ── Enemies: 10 — 4 native + 4 hard reviews from R1 + 2 native D2 ──
     enemySpawns: [
-      { col: 20, row: 10, id: 'ice_frog' },                                   // D1 fractionCompare
-      { col: 52, row:  9, id: 'snow_golem' },                                 // D2 fractionAdd
-      { col: 30, row: 40, id: 'crystal_bat' },                                // D2 decimals
-      { col: 40, row:  7, id: 'ice_frog',      difficultyOverride: 2 },       // D2 fractionCompare
-      { col: 44, row: 26, id: 'sand_scarab',   difficultyOverride: 3 },       // D3 division review
-      { col: 14, row: 40, id: 'mummy_cat',     difficultyOverride: 3 },       // D3 mult review
-      { col: 57, row: 40, id: 'mirage_fox',    difficultyOverride: 3 },       // D3 word-problem review
-      { col: 35, row: 26, id: 'riddle_scarab', difficultyOverride: 3 },       // D3 missingNumber review
-      { col: 60, row: 12, id: 'snow_golem',    difficultyOverride: 3 },       // D3 fractionAdd
-      { col: 50, row: 42, id: 'crystal_bat',   difficultyOverride: 3 },       // D3 decimals
+      { col: 20, row: 10, id: 'sand_scarab' },                                // D1 division
+      { col: 52, row:  9, id: 'mummy_cat' },                                  // D2 mult review
+      { col: 30, row: 40, id: 'mirage_fox' },                                 // D2 divisionWord
+      { col: 40, row:  7, id: 'riddle_scarab' },                              // D1 missingNumber (NEW)
+      { col: 44, row: 26, id: 'slime_pup',     difficultyOverride: 3 },       // D3 multTables review
+      { col: 14, row: 40, id: 'cactus_sprite', difficultyOverride: 3 },       // D3 multiplication review
+      { col: 57, row: 40, id: 'cloud_bully',   difficultyOverride: 3 },       // D3 skipCounting review
+      { col: 35, row: 26, id: 'double_bunny',  difficultyOverride: 3 },       // D3 doubling review
+      { col: 60, row: 12, id: 'sand_scarab',   difficultyOverride: 2 },       // D2 division
+      { col: 50, row: 42, id: 'riddle_scarab', difficultyOverride: 2 },       // D2 missingNumber
     ],
 
-    boss: 'glacius',
-    bossName: 'Glacius the Fraction Dragon',
-    description: 'Brave the icy depths and conquer Grade 4 skills — compare and add fractions, and work with decimal tenths to prove to Glacius that fractions hold no fear!',
-    npcHint: 'To compare fractions, find a common denominator first!',
+    boss: 'the_diviner',
+    bossName: 'The Diviner',
+    description: 'Trek through scorching sands and master Grade 3 skills — complete multiplication tables, learn division as the inverse of multiplication, and solve division word problems to reveal the ancient Diviner!',
+    npcHint: 'Division is just multiplication in reverse — if 4 × 3 = 12, then 12 ÷ 4 = 3!',
     npcBossStory: [
-      'Glacius. I have complicated feelings about Glacius.\nLast visit, she froze half my notes into solid ice. Said it was \'technically still information, just a different phase.\' She isn\'t wrong. That\'s the problem.\n\nShe thinks in fractions. Everything must divide into equal, exact parts. Decimals offend her — except tenths. She tolerates tenths.',
-      'Her weakness: a correct common denominator. She respects the process.\n½ + ⅓ = 5/6? She won\'t dispute that. She can\'t.\n\nPanic around fractions and she\'ll sense it. She froze my left ear once because I said \'roughly a half.\'\'Roughly\' has no place in mathematics, Mewton.\'\n\nShe\'s not wrong about that either.',
+      'The Diviner has been sitting in this desert for four hundred years, dividing everything into equal parts. Sand dunes. Scholarly debates. Visiting academics.\n\nI sent her a letter proposing a collaboration. She replied: \'Your methodology divides into errors and more errors.\' Rude. Accurate, that particular week. But rude.',
+      'Her trick: she reframes multiplication as a missing number.\n\'4 × ☐ = 28\' — it\'s designed to seem mysterious.\nIt isn\'t. Ask: what times 4 is 28? Seven.\nDivision is multiplication in a different hat. She knows that. Now so do you.',
     ],
     npcLesson: [
-      'Comparing fractions: give them the same denominator.\n⅔ vs ½?  Multiply up → 4/6 vs 3/6.  So ⅔ > ½. ✓\nRule: find the smallest number both denominators divide into.\n2 and 3 → 6.  3 and 4 → 12.  This is called the LCD.',
-      'Adding fractions:\nSame denominator → just add the tops: ¼ + ¾ = 4/4 = 1. ✓\nDifferent denominators → find common denom first:\n½ + ⅓: use 6.  3/6 + 2/6 = 5/6. ✓\nDecimals: 0.1 = 1/10.  0.7 = 7/10.  Think in tenths.',
+      'Division = multiplication backwards.\n42 ÷ 6 = ?   Ask yourself: 6 × ? = 42.\nYou know 6 × 7 = 42. Answer: 7. ✓\nFact family: 6×7=42, 7×6=42, 42÷6=7, 42÷7=6.\nFour facts. One set of numbers. Learn one, get three free.',
+      'For word problems:\n① What is being shared? (the large number)\n② Into how many groups? (the divisor)\n③ How many in each? (your answer)\n\'24 biscuits, 8 cats: 24 ÷ 8 = 3 each.\'\nAlways verify: 3 × 8 = 24 ✓.',
     ],
-    npcBoon: 'lucky_collar',
-    npcQuizTopic: 'fractionCompare',
+    npcBoon: 'fish_fossil',
+    npcQuizTopic: 'divisionWord',
     bossIntro: [
       {
-        speaker:   'Glacius the Fraction Dragon',
+        speaker:   'The Diviner',
         side:      'right',
-        spriteKey: 'glacius',
-        nameColor: '#AADDFF',
-        bg:        0x060E1A,
-        text:      'Half a hero arrives.\nThree-quarters prepared, at generous rounding.\nYour fraction of courage is precisely… insufficient.\n\nThis cavern has frozen far greater champions than you.',
+        spriteKey: 'the_diviner',
+        nameColor: '#DDBB44',
+        bg:        0x1A1205,
+        text:      'Long have I studied the art of division.\nKingdoms divided.  Armies halved.  Hopes quartered.\n\nI have divided more things than you have ever counted, little cat.\nWhat could you possibly divide ME by?',
       },
       {
         speaker:   'Mimi',
         side:      'left',
         spriteKey: 'mimi_battle',
         nameColor: '#AAFFCC',
-        bg:        0x060E1A,
-        text:      'I once ate exactly half my dinner and saved the rest for later.\nAdmittedly I ate the rest immediately.\nBut I UNDERSTAND fractions.\n\nReady when you are.',
+        bg:        0x1A1205,
+        text:      'How about dividing you from that throne?\n\n… that sounded better in my head.\n\nCome on.  Let\'s fight.',
       },
     ],
   };

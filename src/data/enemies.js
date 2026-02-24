@@ -219,11 +219,63 @@ const ENEMIES = {
     color: 0xCC6600,
   },
 
-  // ── Region 3: Desert Dunes ───────────────────────────────────────────────
+  // ── Region 3: Mycelium Hollow ──────────────────────────────────────────
+  fungus_toad: {
+    id: 'fungus_toad',
+    name: 'Fungus Toad',
+    region: 3,
+    hp: 6,
+    damage: 1,
+    xp: 11,
+    mathTopic: 'multiDigitMult',    // teen × 1-digit
+    difficulty: 1,
+    timerSeconds: 25,              // Gr 3: new concept — 14×3 needs place-value split
+    color: 0x447755,
+  },
+  mycelium_wisp: {
+    id: 'mycelium_wisp',
+    name: 'Mycelium Wisp',
+    region: 3,
+    hp: 6,
+    damage: 1,
+    xp: 11,
+    mathTopic: 'factorPairs',       // missing factor (? × b = product)
+    difficulty: 1,
+    timerSeconds: 22,              // Gr 3: factor recall from known tables
+    color: 0xAAFFCC,
+  },
+  spore_puff: {
+    id: 'spore_puff',
+    name: 'Spore Puff',
+    region: 3,
+    hp: 7,
+    damage: 2,
+    xp: 13,
+    mathTopic: 'multiDigitMult',    // 2-digit × 1-digit
+    difficulty: 2,
+    timerSeconds: 22,              // Gr 3: stepping up to larger products
+    color: 0xAA8844,
+  },
+  queen_sporella: {
+    id: 'queen_sporella',
+    name: 'Queen Sporella',
+    region: 3,
+    hp: 35,
+    damage: 2,
+    xp: 75,
+    mathTopic: 'multiDigitMult',
+    mathTopics: ['multiDigitMult', 'factorPairs', 'multTables', 'doubling'],
+    difficulty: 3,
+    timerSeconds: 25,              // Boss: D3 reaches 3-digit × 1-digit
+    isBoss: true,
+    color: 0xFF88CC,
+  },
+
+  // ── Region 4: Desert Dunes ───────────────────────────────────────────
   sand_scarab: {
     id: 'sand_scarab',
     name: 'Sand Scarab',
-    region: 3,
+    region: 4,
     hp: 6,
     damage: 1,
     xp: 12,
@@ -235,7 +287,7 @@ const ENEMIES = {
   mummy_cat: {
     id: 'mummy_cat',
     name: 'Mummy Cat',
-    region: 3,
+    region: 4,
     hp: 7,
     damage: 2,
     xp: 15,
@@ -247,7 +299,7 @@ const ENEMIES = {
   mirage_fox: {
     id: 'mirage_fox',
     name: 'Mirage Fox',
-    region: 3,
+    region: 4,
     hp: 6,
     damage: 2,
     xp: 14,
@@ -259,7 +311,7 @@ const ENEMIES = {
   riddle_scarab: {
     id: 'riddle_scarab',
     name: 'Riddle Scarab',
-    region: 3,
+    region: 4,
     hp: 6,
     damage: 2,
     xp: 14,
@@ -271,7 +323,7 @@ const ENEMIES = {
   the_diviner: {
     id: 'the_diviner',
     name: 'The Diviner',
-    region: 3,
+    region: 4,
     hp: 30,
     damage: 2,
     xp: 65,
@@ -283,11 +335,11 @@ const ENEMIES = {
     color: 0xCC9922,
   },
 
-  // ── Region 4: Frostbite Cavern ───────────────────────────────────────────
+  // ── Region 5: Frostbite Cavern ───────────────────────────────────────────
   ice_frog: {
     id: 'ice_frog',
     name: 'Ice Frog',
-    region: 4,
+    region: 5,
     hp: 6,
     damage: 1,
     xp: 14,
@@ -299,7 +351,7 @@ const ENEMIES = {
   snow_golem: {
     id: 'snow_golem',
     name: 'Snow Golem',
-    region: 4,
+    region: 5,
     hp: 8,
     damage: 2,
     xp: 16,
@@ -311,7 +363,7 @@ const ENEMIES = {
   crystal_bat: {
     id: 'crystal_bat',
     name: 'Crystal Bat',
-    region: 4,
+    region: 5,
     hp: 7,
     damage: 2,
     xp: 15,
@@ -323,7 +375,7 @@ const ENEMIES = {
   glacius: {
     id: 'glacius',
     name: 'Glacius the Fraction Dragon',
-    region: 4,
+    region: 5,
     hp: 30,
     damage: 2,
     xp: 70,
@@ -335,11 +387,11 @@ const ENEMIES = {
     color: 0x44BBEE,
   },
 
-  // ── Region 5: Shadow Castle ──────────────────────────────────────────────
+  // ── Region 6: Shadow Castle ──────────────────────────────────────────────
   shadow_knight: {
     id: 'shadow_knight',
     name: 'Shadow Knight',
-    region: 5,
+    region: 6,
     hp: 8,
     damage: 2,
     xp: 18,
@@ -351,7 +403,7 @@ const ENEMIES = {
   ratio_raven: {
     id: 'ratio_raven',
     name: 'Ratio Raven',
-    region: 5,
+    region: 6,
     hp: 9,
     damage: 2,
     xp: 20,
@@ -363,7 +415,7 @@ const ENEMIES = {
   percent_wraith: {
     id: 'percent_wraith',
     name: 'Percent Wraith',
-    region: 5,
+    region: 6,
     hp: 10,
     damage: 2,
     xp: 22,
@@ -375,7 +427,7 @@ const ENEMIES = {
   fenwick: {
     id: 'fenwick',
     name: 'Fenwick the Sly Fox',
-    region: 5,
+    region: 6,
     hp: 40,
     damage: 3,
     xp: 100,

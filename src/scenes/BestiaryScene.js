@@ -17,12 +17,13 @@ import * as Phaser from 'phaser';
 import GameState         from '../config/GameState.js';
 import ENEMIES           from '../data/enemies.js';
 import REGIONS           from '../data/regions/index.js';
-import { buildCanonOrder } from '../data/bestiaryUtils.js';
+import { buildCanonOrder, buildEnemyRegionMap } from '../data/bestiaryUtils.js';
 
 // ── Canonical enemy display order — derived from live data ────────────────
 // Enemies appear at their first-encountered region; bosses last within that region.
 // Adding a region_N.js + its enemies makes them show up here automatically.
-const CANON_ORDER = buildCanonOrder(REGIONS, ENEMIES);
+const CANON_ORDER      = buildCanonOrder(REGIONS, ENEMIES);
+const ENEMY_REGION_MAP = buildEnemyRegionMap(REGIONS);
 
 // ── Region labels — derived from region data ──────────────────────────────
 const REGION_NAMES = REGIONS.map(r => r.name);
@@ -109,7 +110,7 @@ export default class BestiaryScene extends Phaser.Scene {
     const cx        = rowStartX + colIdx * (CARD_W + GAP_X) + CARD_W / 2;
     const cy        = GRID_START_Y + rowIdx * (CARD_H + GAP_Y) + CARD_H / 2;
 
-    const r        = data.region;
+    const r          = ENEMY_REGION_MAP.get(id) ?? 0;
     const isSeen     = GameState.hasSeenEnemy(id);
     const isDefeated = GameState.hasDefeatedEnemyType(id);
     const isBoss     = !!data.isBoss;
@@ -227,7 +228,7 @@ export default class BestiaryScene extends Phaser.Scene {
     const data = ENEMIES[id];
     if (!data) return;
 
-    const r          = data.region;
+    const r          = ENEMY_REGION_MAP.get(id) ?? 0;
     const isDefeated = GameState.hasDefeatedEnemyType(id);
     const isBoss     = !!data.isBoss;
     const grp        = this.add.group();
@@ -306,7 +307,7 @@ export default class BestiaryScene extends Phaser.Scene {
     // HP / Damage — only shown once defeated
     if (isDefeated) {
       const statTxt = this.add.text(tx, ty,
-        `❤ HP: ${data.hp}   ⚔ DMG: ${data.damage}   ✦ XP: ${data.xp}`, {
+        `❤ HP: ${data.hp ?? 8}   ⚔ DMG: ${data.damage ?? 1}`, {
         fontSize: '11px', fontFamily: FONT, color: '#AAFFAA',
       });
       grp.add(statTxt);
@@ -345,6 +346,16 @@ export default class BestiaryScene extends Phaser.Scene {
         grp.add(kcTxt);
         ty += lineH;
       }
+    }
+
+    // Bio — shown once the player has seen the enemy
+    if (data.bio && GameState.hasSeenEnemy(id)) {
+      const bioY = py + PH / 2 - 48;
+      const bioTxt = this.add.text(px - PW / 2 + 16, bioY, data.bio, {
+        fontSize: '10px', fontFamily: FONT, color: '#9999BB',
+        wordWrap: { width: PW - 32 }, lineSpacing: 2,
+      });
+      grp.add(bioTxt);
     }
 
     // Status badge (top-right of panel)

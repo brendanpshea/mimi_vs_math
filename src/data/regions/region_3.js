@@ -44,10 +44,10 @@
     enemySpawns: [
       { id: 'fungus_toad'                              },  // D1 multiDigitMult
       { id: 'mycelium_wisp'                            },  // D1 factorPairs
-      { id: 'spore_puff'                               },  // D2 multiDigitMult
+      { id: 'spore_puff'                               },  // D1 area
       { id: 'fungus_toad'   },  // multiDigitMult
       { id: 'mycelium_wisp' },  // factorPairs
-      { id: 'spore_puff'    },  // multiDigitMult
+      { id: 'spore_puff'    },  // area
       { id: 'mycelium_wisp' },  // factorPairs (word problem)
       { id: 'slime_pup',      difficultyOverride: 3    },  // D3 multTables review
       { id: 'double_bunny',   difficultyOverride: 3    },  // D3 doubling review

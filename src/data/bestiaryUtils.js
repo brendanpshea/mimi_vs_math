@@ -1,10 +1,14 @@
 /**
  * bestiaryUtils.js
  *
- * Shared utility for building the canonical bestiary display order.
+ * Shared utilities for the bestiary system.
  * Imported by both BestiaryScene (browser) and test_bestiary.mjs (Node),
  * so any enemy added to ENEMIES + REGIONS automatically appears in the
  * bestiary without touching BestiaryScene.js.
+ */
+
+/**
+ * Build the canonical bestiary display order.
  *
  * Rule:
  *  • Each non-boss enemy type appears exactly once, at the first region
@@ -36,4 +40,25 @@ export function buildCanonOrder(regions, enemies) {
   }
 
   return order;
+}
+
+/**
+ * Build a map from enemy ID → home region index.
+ *
+ * "Home region" is the first region whose enemySpawns list contains the ID,
+ * or whose boss field equals the ID.  This replaces the old `region` field
+ * that used to be stored directly on each enemy object.
+ *
+ * @param {Array}  regions  – REGIONS array from src/data/regions/index.js
+ * @returns {Map<string, number>}  enemyId → regionIndex
+ */
+export function buildEnemyRegionMap(regions) {
+  const map = new Map();
+  regions.forEach((region, idx) => {
+    for (const spawn of region.enemySpawns) {
+      if (!map.has(spawn.id)) map.set(spawn.id, idx);
+    }
+    if (region.boss && !map.has(region.boss)) map.set(region.boss, idx);
+  });
+  return map;
 }

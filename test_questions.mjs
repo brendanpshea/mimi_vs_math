@@ -33,10 +33,13 @@
  */
 
 import { generateQuestion, TOPICS as ALL_TOPICS } from './src/math/QuestionBank.js';
-import { getChoices }           from './src/math/Distractors.js';
-import ENEMIES_DEFAULT          from './src/data/enemies.js';
+import { getChoices }              from './src/math/Distractors.js';
+import ENEMIES_DEFAULT             from './src/data/enemies.js';
+import REGIONS                     from './src/data/regions/index.js';
+import { buildEnemyRegionMap }     from './src/data/bestiaryUtils.js';
 
-const ENEMIES = ENEMIES_DEFAULT;
+const ENEMIES          = ENEMIES_DEFAULT;
+const ENEMY_REGION_MAP = buildEnemyRegionMap(REGIONS);
 
 // ── Colour helpers (ANSI) ─────────────────────────────────────────────────
 const G  = s => `\x1b[32m${s}\x1b[0m`;   // green
@@ -68,6 +71,8 @@ const TOPIC_BOUNDS = {
   doubling:       [0,  100],
   multiDigitMult: [0,  900],  // D3 max: 219×4=876
   factorPairs:    [0,  81],   // missing factor or equal-groups ÷ product; max 9×9
+  rounding:       [0, 10000], // rounded numbers up to nearest 1,000 of a 4-digit input
+  area:           [0,  225],  // D3 max: 15×15=225; missing-side answers max 9
   fractions:      null,        // string
   fractionCompare:null,        // string
   fractionAdd:    null,        // string
@@ -236,8 +241,9 @@ for (const [key, enemy] of Object.entries(ENEMIES)) {
 
   // Build region map
   if (!enemy.isBoss) {
-    if (!regionTopicMap[enemy.region]) regionTopicMap[enemy.region] = new Set();
-    regionTopicMap[enemy.region].add(topic);
+    const rIdx = ENEMY_REGION_MAP.get(key) ?? 0;
+    if (!regionTopicMap[rIdx]) regionTopicMap[rIdx] = new Set();
+    regionTopicMap[rIdx].add(topic);
   }
 
   // Boss: every entry in mathTopics[] must be valid
@@ -249,7 +255,7 @@ for (const [key, enemy] of Object.entries(ENEMIES)) {
     }
 
     // Boss mathTopics must cover all non-boss enemy topics for this region
-    const regionTopics = regionTopicMap[enemy.region] ?? new Set();
+    const regionTopics = regionTopicMap[ENEMY_REGION_MAP.get(key) ?? 0] ?? new Set();
     for (const t of regionTopics) {
       const covered = topics.includes(t);
       check(covered, `  Boss ${key}: mathTopics covers enemy topic '${t}'`);

@@ -173,25 +173,7 @@ export default class BootScene extends Phaser.Scene {
     gfx.strokeRect(0, 0, SIZE, SIZE);
     gfx.generateTexture('wall_sandstone', SIZE, SIZE);
 
-    // R3 — wall_ice (Frostbite Cavern icy blue) ────────────────────
-    gfx.clear();
-    gfx.fillStyle(0x4A88BB);
-    gfx.fillRect(0, 0, SIZE, SIZE);
-    gfx.fillStyle(0x6AA8D8);
-    gfx.fillTriangle(0, 0, 16, 0, 8, 14);
-    gfx.fillTriangle(16, 0, SIZE, 0, 24, 12);
-    gfx.fillStyle(0x88C8EE, 0.55);
-    gfx.fillTriangle(0, 0, 12, 0, 0, 12);
-    gfx.fillTriangle(20, 0, SIZE, 0, SIZE, 8);
-    // Frost crack lines
-    gfx.lineStyle(1, 0xBBDDFF, 0.5);
-    gfx.lineBetween(4, 4, 12, 18); gfx.lineBetween(14, 2, 22, 16); gfx.lineBetween(22, 6, 30, 20);
-    // Surface sheen
-    gfx.lineStyle(1.5, 0xCCEEFF, 0.45);
-    gfx.lineBetween(0, 0, SIZE, 0); gfx.lineBetween(0, 0, 0, SIZE);
-    gfx.lineStyle(1, 0x2A5888, 0.35);
-    gfx.strokeRect(0, 0, SIZE, SIZE);
-    gfx.generateTexture('wall_ice', SIZE, SIZE);
+    // R3 — wall_ice removed; use static SVG asset instead
 
     // R4 — wall_obsidian (Shadow Castle dark purple blocks) ──────────
     gfx.clear();

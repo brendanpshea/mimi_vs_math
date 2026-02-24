@@ -29,10 +29,10 @@ globalThis.localStorage = {
 };
 
 // ── Imports ────────────────────────────────────────────────────────────────
-import REGIONS              from './src/data/regions/index.js';
-import ENEMIES              from './src/data/enemies.js';
-import { buildCanonOrder }  from './src/data/bestiaryUtils.js';
-import GameState            from './src/config/GameState.js';
+import REGIONS                               from './src/data/regions/index.js';
+import ENEMIES                               from './src/data/enemies.js';
+import { buildCanonOrder, buildEnemyRegionMap } from './src/data/bestiaryUtils.js';
+import GameState                             from './src/config/GameState.js';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 let passed = 0;
@@ -51,8 +51,9 @@ function section(title) {
   console.log(`\n── ${title} ──`);
 }
 
-// ── Pre-compute canonical order ────────────────────────────────────────────
-const CANON_ORDER = buildCanonOrder(REGIONS, ENEMIES);
+// ── Pre-compute canonical order and region map ─────────────────────────────
+const CANON_ORDER      = buildCanonOrder(REGIONS, ENEMIES);
+const ENEMY_REGION_MAP = buildEnemyRegionMap(REGIONS);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. buildCanonOrder — coverage, uniqueness, validity
@@ -141,10 +142,7 @@ for (let rIdx = 0; rIdx < REGIONS.length; rIdx++) {
     const id = spawn.id;
     if (!ENEMIES[id] || ENEMIES[id].isBoss) continue;
     if (orderIndex[id] === undefined) continue;   // not first in this region
-    if (ENEMIES[id].region !== rIdx) continue;     // first-seen earlier
-
-    // Skip if enemy's region field doesn't point here (may be first-seen via
-    // another region's spawns object — the ordering rule is first global appearance)
+    if (ENEMY_REGION_MAP.get(id) !== rIdx) continue;  // first-seen earlier
     check(
       `Region ${rIdx}: non-boss "${id}" (pos ${orderIndex[id]}) appears before boss "${bossId}" (pos ${bossPos})`,
       orderIndex[id] < bossPos,
@@ -152,19 +150,19 @@ for (let rIdx = 0; rIdx < REGIONS.length; rIdx++) {
   }
 }
 
-// Enemies whose ENEMIES[id].region === R should not appear before any enemy
-// whose ENEMIES[id].region === R-1 (strict region ordering property).
-// This uses the `region` field on each ENEMIES entry if it exists.
+// Enemies in CANON_ORDER should never decrease in region index
+// (strict region ordering property — derived from buildEnemyRegionMap).
 {
-  const enemiesWithRegion = CANON_ORDER.filter(id => ENEMIES[id].region !== undefined);
   let outOfOrder = 0;
-  for (let i = 0; i < enemiesWithRegion.length - 1; i++) {
-    const a = enemiesWithRegion[i];
-    const b = enemiesWithRegion[i + 1];
-    if (ENEMIES[b].region < ENEMIES[a].region) {
+  for (let i = 0; i < CANON_ORDER.length - 1; i++) {
+    const a = CANON_ORDER[i];
+    const b = CANON_ORDER[i + 1];
+    const rA = ENEMY_REGION_MAP.get(a) ?? 0;
+    const rB = ENEMY_REGION_MAP.get(b) ?? 0;
+    if (rB < rA) {
       outOfOrder++;
       if (outOfOrder <= 3) {
-        console.error(`  FAIL (detail): region order broken: "${a}" (r${ENEMIES[a].region}) before "${b}" (r${ENEMIES[b].region})`);
+        console.error(`  FAIL (detail): region order broken: "${a}" (r${rA}) before "${b}" (r${rB})`);
       }
     }
   }

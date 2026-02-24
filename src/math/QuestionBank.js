@@ -894,6 +894,121 @@ function factorPairsD3() {
   };
 }
 
+// ── Rounding (Region 1 — Grade 2) ────────────────────────────────────────────
+
+function roundingD1() {
+  // Round a 2-digit number to the nearest 10
+  let n;
+  do { n = rand(11, 99); } while (n % 10 === 0);
+  const answer = Math.round(n / 10) * 10;
+  return {
+    text:          `Round ${n}\nto the nearest 10.`,
+    answer,
+    answerDisplay: String(answer),
+    topic:         'rounding',
+  };
+}
+function roundingD2() {
+  // 3-digit number: nearest 10 or nearest 100 with equal probability
+  const toHundred = Math.random() < 0.5;
+  const place     = toHundred ? 100 : 10;
+  let n;
+  do { n = rand(102, 998); } while (n % place === 0);
+  const answer = Math.round(n / place) * place;
+  return {
+    text:          `Round ${n}\nto the nearest ${place}.`,
+    answer,
+    answerDisplay: String(answer),
+    topic:         'rounding',
+  };
+}
+function roundingD3() {
+  // 4-digit number: nearest 100 or nearest 1 000
+  const toThousand = Math.random() < 0.5;
+  const place      = toThousand ? 1000 : 100;
+  let n;
+  do { n = rand(1100, 8900); } while (n % place === 0);
+  const answer   = Math.round(n / place) * place;
+  const placeStr = toThousand ? '1,000' : '100';
+  return {
+    text:          `Round ${n}\nto the nearest ${placeStr}.`,
+    answer,
+    answerDisplay: String(answer),
+    topic:         'rounding',
+  };
+}
+
+// ── Area (Region 3 — Grade 3) ─────────────────────────────────────────────────
+
+function areaD1() {
+  // Area of a small rectangle; dimensions single-digit
+  const w   = rand(2, 9);
+  const h   = rand(2, 9);
+  const nouns  = ['rectangle', 'tile', 'garden patch', 'rug', 'poster'];
+  const units  = ['cm', 'm', 'units'];
+  const noun   = nouns[rand(0, nouns.length - 1)];
+  const unit   = units[rand(0, units.length - 1)];
+  return {
+    text:          `A ${noun} is ${w} ${unit} wide\nand ${h} ${unit} long.\nWhat is its area?`,
+    answer:        w * h,
+    answerDisplay: String(w * h),
+    topic:         'area',
+  };
+}
+function areaD2() {
+  if (Math.random() < 0.5) {
+    // Find missing side given area and one dimension (all single-digit)
+    const w   = rand(2, 9);
+    const h   = rand(2, 9);
+    const area = w * h;
+    return {
+      text:          `A rectangle has area ${area}.\nIt is ${w} units wide.\nHow long is it?`,
+      answer:        h,
+      answerDisplay: String(h),
+      topic:         'area',
+      wordProblem:   true,
+    };
+  } else {
+    // Area with one 2-digit dimension
+    const w   = rand(2, 9);
+    const h   = rand(10, 19);
+    return {
+      text:          `A rectangle is ${h} cm long\nand ${w} cm wide.\nWhat is its area in cm²?`,
+      answer:        w * h,
+      answerDisplay: String(w * h),
+      topic:         'area',
+    };
+  }
+}
+function areaD3() {
+  if (Math.random() < 0.5) {
+    // Larger l × w word problem
+    const w   = rand(6, 15);
+    const h   = rand(6, 15);
+    const nouns = ['classroom floor', 'swimming pool', 'field', 'courtyard'];
+    const noun  = nouns[rand(0, nouns.length - 1)];
+    return {
+      text:          `A ${noun} is ${h} m long\nand ${w} m wide.\nWhat is its area in m²?`,
+      answer:        w * h,
+      answerDisplay: String(w * h),
+      topic:         'area',
+      wordProblem:   true,
+    };
+  } else {
+    // Find missing side with a 2-digit area
+    const w   = rand(3, 9);
+    const h   = rand(3, 9);
+    const area = w * h;
+    return {
+      text:          `A garden has area ${area} m².\nIt is ${w} m wide.\nHow long is it?`,
+      answer:        h,
+      answerDisplay: String(h),
+      topic:         'area',
+      wordProblem:   true,
+    };
+  }
+}
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 const generators = {
@@ -910,6 +1025,7 @@ const generators = {
   placeValue:     [placeValueD1,     placeValueD2,     placeValueD3],
   addCarry:       [addCarryD1,       addCarryD2,       addCarryD3],
   subBorrow:      [subBorrowD1,      subBorrowD2,      subBorrowD3],
+  rounding:       [roundingD1,       roundingD2,       roundingD3],
   // Region 2 — Meadow Maze
   multTables:     [multTablesD1,     multTablesD2,     multTablesD3],
   skipCounting:   [skipCountingD1,   skipCountingD2,   skipCountingD3],
@@ -917,6 +1033,7 @@ const generators = {
   // Region 3 — Mycelium Hollow
   multiDigitMult: [multiDigitMultD1, multiDigitMultD2, multiDigitMultD3],
   factorPairs:    [factorPairsD1,    factorPairsD2,    factorPairsD3],
+  area:           [areaD1,           areaD2,           areaD3],
   // Region 4 — Desert Dunes
   divisionWord:   [divisionWordD1,   divisionWordD2,   divisionWordD3],
   missingNumber:  [missingNumberD1,  missingNumberD2,  missingNumberD3],
@@ -928,6 +1045,52 @@ const generators = {
   orderOfOps:     [orderOfOpsD1,     orderOfOpsD2,     orderOfOpsD3],
   percentages:    [percentagesD1,    percentagesD2,    percentagesD3],
   ratiosProp:     [ratiosPropD1,     ratiosPropD2,     ratiosPropD3],
+};
+
+/**
+ * Default question timer in seconds per topic.
+ * BattleScene reads this and multiplies by enemy.timerScale (default 1.0).
+ * The +8 s word-problem bonus is added separately in BattleScene.
+ *
+ * Tuning notes:
+ *   • Grade 1 topics (addition, comparison) are generous — youngest students.
+ *   • Multi-step topics (subBorrow, fractionAdd, skipCounting) get extra time.
+ *   • Fast-recall topics (doubling, decimals, percentages) are tighter.
+ */
+export const TOPIC_TIMERS = {
+  // Original compound topics
+  addSub:          22,
+  multiplication:  22,
+  division:        20,
+  fractions:       25,
+  // Region 0 — Sunny Village
+  addition:        25,   // Grade 1 — youngest students
+  subtraction:     22,
+  comparison:      22,
+  // Region 1 — Windmill Village
+  placeValue:      25,   // new concept; reading tens/ones takes time
+  addCarry:        25,   // two-step carry operation
+  subBorrow:       25,   // two-step borrow operation
+  rounding:        22,
+  // Region 2 — Meadow Maze
+  multTables:      22,
+  skipCounting:    28,   // read 5-item sequence, find step, compute blank
+  doubling:        20,
+  // Region 3 — Mycelium Hollow
+  multiDigitMult:  25,   // new concept; distributive split adds steps
+  factorPairs:     22,
+  area:            20,   // D2/D3 word-problem variants add +8 s automatically
+  // Region 4 — Desert Dunes
+  divisionWord:    22,   // +8 s word-problem bonus applied in BattleScene
+  missingNumber:   22,
+  // Region 5 — Frostbite Cavern
+  fractionCompare: 25,   // new concept; LCD reasoning
+  fractionAdd:     28,   // LCD → convert → add → simplify
+  decimals:        20,
+  // Region 6 — Shadow Castle
+  orderOfOps:      22,
+  percentages:     20,
+  ratiosProp:      22,
 };
 
 /**

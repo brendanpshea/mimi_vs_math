@@ -648,10 +648,10 @@ export default class ExploreScene extends Phaser.Scene {
       // spawn.difficultyOverride (if set) acts as a hard floor — used in later
       // regions to ensure review enemies are always at their intended tier.
       // getTopicTier applies the floor internally via Math.max.
-      const floor     = spawn.difficultyOverride ?? 1;
+      const floor     = Math.max(spawn.difficultyOverride ?? 1, base.baseTier ?? 1);
       const spawnDiff = GameState.getTopicTier(base.mathTopic, floor);
-      const data = spawnDiff !== base.difficulty
-        ? { ...base, difficulty: spawnDiff }
+      const data = spawnDiff !== (base.baseTier ?? 1)
+        ? { ...base, baseTier: spawnDiff }
         : base;
 
       const enemyHomeX = tx(spawn.col);
@@ -710,7 +710,7 @@ export default class ExploreScene extends Phaser.Scene {
         enemy:          enemyData,
         enemyInstance:  instanceKey,
         enemyTypeId:    enemyData.id,           // used in result for bestiary tracking
-        spawnDifficulty: enemyData.difficulty,  // the adaptive tier used this encounter
+        spawnDifficulty: enemyData.baseTier ?? 1,  // the adaptive tier used this encounter
         regionId:       this.regionId,
         isBoss:         false,
         returnScene:    'ExploreScene',

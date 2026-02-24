@@ -131,6 +131,65 @@ for (const region of REGIONS) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// 2b. Enemy field defaults — every read-site default must resolve to a sane value
+//
+// Catches the class of bug where an explicit field is removed from enemies.js
+// but the consumer still reads it without a fallback (e.g. enemyData.hp → NaN).
+// ══════════════════════════════════════════════════════════════════════════════
+console.log(`\n${B('── 2b. Enemy field defaults ──')}`);
+
+const HP_DEFAULT     = 8;
+const DAMAGE_DEFAULT = 1;
+
+for (const [key, enemy] of Object.entries(ENEMIES)) {
+  const tag = `Enemy "${key}"`;
+
+  // id must match its registry key
+  assert(enemy.id === key,
+    `${tag}: id field matches object key`);
+
+  // hp — explicit value must be a finite positive integer; effective value must be safe
+  if (enemy.hp !== undefined) {
+    assert(Number.isFinite(enemy.hp) && enemy.hp > 0 && Number.isInteger(enemy.hp),
+      `${tag}: explicit hp (${enemy.hp}) is a finite positive integer`);
+  }
+  const effectiveHP = enemy.hp ?? HP_DEFAULT;
+  assert(Number.isFinite(effectiveHP) && effectiveHP > 0,
+    `${tag}: effective hp resolves to finite positive (got ${effectiveHP})`);
+
+  // damage — same contract
+  if (enemy.damage !== undefined) {
+    assert(Number.isFinite(enemy.damage) && enemy.damage > 0 && Number.isInteger(enemy.damage),
+      `${tag}: explicit damage (${enemy.damage}) is a finite positive integer`);
+  }
+  const effectiveDamage = enemy.damage ?? DAMAGE_DEFAULT;
+  assert(Number.isFinite(effectiveDamage) && effectiveDamage > 0,
+    `${tag}: effective damage resolves to finite positive (got ${effectiveDamage})`);
+
+  // timerScale — if present, must be a finite positive number
+  if (enemy.timerScale !== undefined) {
+    assert(Number.isFinite(enemy.timerScale) && enemy.timerScale > 0,
+      `${tag}: timerScale (${enemy.timerScale}) is a finite positive number`);
+  }
+
+  // baseTier — if present, must be 1, 2, or 3
+  if (enemy.baseTier !== undefined) {
+    assert([1, 2, 3].includes(enemy.baseTier),
+      `${tag}: baseTier (${enemy.baseTier}) is 1, 2, or 3`);
+  }
+
+  // mathTopic — required, must be a non-empty string
+  assert(typeof enemy.mathTopic === 'string' && enemy.mathTopic.length > 0,
+    `${tag}: mathTopic is a non-empty string`);
+
+  // bio — if present, must be a non-empty string
+  if (enemy.bio !== undefined) {
+    assert(typeof enemy.bio === 'string' && enemy.bio.length > 0,
+      `${tag}: bio is a non-empty string`);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // 3.  Map and walk-grid coverage
 // ══════════════════════════════════════════════════════════════════════════════
 console.log(`\n${B('── 3. Map and walk-grid coverage ──')}`);

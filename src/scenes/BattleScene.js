@@ -14,7 +14,7 @@
 import * as Phaser from 'phaser';
 import GameState             from '../config/GameState.js';
 import BGM                   from '../audio/BGM.js';
-import { generateQuestion }  from '../math/QuestionBank.js';
+import { generateQuestion, TOPIC_TIMERS } from '../math/QuestionBank.js';
 import { getChoices }        from '../math/Distractors.js';
 import { getExplanation }    from '../math/Explanations.js';
 import ITEMS                 from '../data/items.js';
@@ -49,7 +49,7 @@ export default class BattleScene extends Phaser.Scene {
     this.returnData      = data.returnData  ?? {};
 
     // Battle state
-    this.enemyHP           = this.enemyData.hp;
+    this.enemyHP           = this.enemyData.hp ?? 8;
     this.streak            = 0;
     this.questionIdx       = 0;
     this.battleOver        = false;
@@ -226,7 +226,7 @@ export default class BattleScene extends Phaser.Scene {
       stroke: '#000000', strokeThickness: 4,
     }).setOrigin(0.5).setDepth(4);
 
-    this.enemyHPBar = this._makeHPBar(RC, H * 0.283, this.enemyData.hp, 0xCC3333);
+    this.enemyHPBar = this._makeHPBar(RC, H * 0.283, this.enemyData.hp ?? 8, 0xCC3333);
 
     if (this.isBoss) {
       this.add.text(RC, H * 0.018, '⚠ BOSS BATTLE', TEXT_STYLE(15, '#FF6633', true))
@@ -504,7 +504,7 @@ export default class BattleScene extends Phaser.Scene {
 
     // ── Adaptive difficulty (A + C) ────────────────────────────────────────
     // Enemy base: bosses start at 1 (lots of HP; questions stay manageable).
-    const enemyBase   = this.isBoss ? 1 : (this.enemyData.difficulty ?? 1);
+    const enemyBase   = this.isBoss ? 1 : (this.enemyData.baseTier ?? 1);
     // C: player's earned topic tier may raise the question difficulty above the base.
     const sessionDiff = GameState.getTopicTier(topic, enemyBase);
     // A: in-battle drift shifts the session tier by −1 or +1 based on live streak.
@@ -542,9 +542,12 @@ export default class BattleScene extends Phaser.Scene {
       this._refreshEffectsDisplay();
     }
 
-    // Timer — word problems get a flat +8 s reading bonus on top of the base timer
+    // Timer — base comes from the topic default scaled by the enemy's timerScale.
+    // Word problems get a flat +8 s reading bonus on top.
     const wordBonus   = q.wordProblem ? 8 : 0;
-    const baseSecs    = Math.max(8, this.enemyData.timerSeconds) + (GameState.activeEffects.timerBonus ?? 0) + wordBonus;
+    const topicSecs   = TOPIC_TIMERS[topic] ?? 22;
+    const scaledSecs  = Math.round(topicSecs * (this.enemyData.timerScale ?? 1.0));
+    const baseSecs    = Math.max(8, scaledSecs) + (GameState.activeEffects.timerBonus ?? 0) + wordBonus;
     const duration    = baseSecs * 1000 * (GameState.timeMult ?? 1.0);
     this._startTimer(duration);
     this._qStartTime = this.time.now;

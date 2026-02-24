@@ -40,13 +40,13 @@ const REGION = {
       { col: 76, row: 50 }, { col: 4,  row: 50 },
     ],
 
-    // ── Enemies: 10 — 4 native + 4 hard reviews from R0 + 2 native D2 ──
+    // ── Enemies: 10 — 4 native topics + 4 hard reviews from R0 + 1 native D2 ──
     bossUnlockKills: 10,
     enemySpawns: [
       { id: 'gear_gnome'                                    },  // D1 placeValue
       { id: 'windmill_sprite'                               },  // D1 addCarry
       { id: 'harvest_scarecrow'                             },  // D2 subBorrow
-      { id: 'counting_crow'                                 },  // D2 addCarry
+      { id: 'counting_crow'                                 },  // D1 rounding
       { id: 'counting_caterpillar', difficultyOverride: 3   },  // D3 addition review
       { id: 'minus_mole',           difficultyOverride: 3   },  // D3 comparison review
       { id: 'number_gnome',         difficultyOverride: 3   },  // D3 subtraction review

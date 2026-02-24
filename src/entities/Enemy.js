@@ -64,13 +64,6 @@ export default class Enemy {
     // Ground shadow — must sit just below the sprite but above the overlay
     this._shadow = scene.add.ellipse(x, y + 16, 28, 9, 0x000000, 0.25).setDepth(26);
 
-    // Tint sprite body by difficulty so players can gauge threat at a glance.
-    // Bosses are visually distinct already — skip tinting them.
-    if (!data.isBoss) {
-      const TINTS = { 1: 0xAAFFBB, 2: 0xFFCC88, 3: 0xFF9999 };
-      this.sprite.setTint(TINTS[data.difficulty] ?? 0xFFFFFF);
-    }
-
     // Idle bob — subtle float when standing still; recreated at current y each time
     this._bobTween = null;
     this._startBob();

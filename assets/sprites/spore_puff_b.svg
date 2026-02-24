@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!--
+    Spore Puff B — hover-up frame: body lifted 3px, antennae spread wider, particles shifted.
+    TINT ZONE: body fill (#D4C488) cream-yellow responds to setTint().
+  -->
+  <!-- Ground shadow (more faint — floated higher) -->
+  <ellipse cx="32" cy="62" rx="13" ry="2.5" fill="#00000018"/>
+
+  <!-- Cloud-puff bumps shifted up 3px -->
+  <circle cx="13" cy="35" r="9"  fill="#C4B678" stroke="#2A1440" stroke-width="2"/>
+  <circle cx="17" cy="19" r="8"  fill="#C4B678" stroke="#2A1440" stroke-width="2"/>
+  <circle cx="32" cy="13" r="9"  fill="#C4B678" stroke="#2A1440" stroke-width="2"/>
+  <circle cx="47" cy="19" r="8"  fill="#C4B678" stroke="#2A1440" stroke-width="2"/>
+  <circle cx="51" cy="35" r="9"  fill="#C4B678" stroke="#2A1440" stroke-width="2"/>
+  <circle cx="44" cy="47" r="8"  fill="#C4B678" stroke="#2A1440" stroke-width="2"/>
+  <circle cx="20" cy="47" r="8"  fill="#C4B678" stroke="#2A1440" stroke-width="2"/>
+
+  <!-- Main body circle — lifted 3px -->
+  <circle cx="32" cy="31" r="18" fill="#D4C488" stroke="#2A1440" stroke-width="3"/>
+  <ellipse cx="24" cy="21" rx="8" ry="5" fill="#FFFFFF" opacity="0.25"/>
+  <circle cx="24" cy="27" r="4.5" fill="#9922BB" opacity="0.22"/>
+  <circle cx="41" cy="37" r="3.5" fill="#7714AA" opacity="0.18"/>
+  <circle cx="28" cy="41" r="3.0" fill="#9922BB" opacity="0.16"/>
+
+  <!-- Spore antennae — spread wider for hover expression -->
+  <line x1="25" y1="13" x2="18" y2="3"  stroke="#2A1440" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="17" cy="2"  r="3.5" fill="#CC66FF" stroke="#2A1440" stroke-width="1.5"/>
+  <line x1="32" y1="12" x2="32" y2="1"  stroke="#2A1440" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="32" cy="0"  r="3.5" fill="#BB44FF" stroke="#2A1440" stroke-width="1.5"/>
+  <line x1="39" y1="13" x2="46" y2="3"  stroke="#2A1440" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="47" cy="2"  r="3.5" fill="#CC66FF" stroke="#2A1440" stroke-width="1.5"/>
+
+  <!-- Eyes -->
+  <ellipse cx="23" cy="25" rx="6.5" ry="6.5" fill="#111122"/>
+  <ellipse cx="41" cy="25" rx="6.5" ry="6.5" fill="#111122"/>
+  <ellipse cx="23" cy="25" rx="4.5" ry="4.5" fill="#22DDCC"/>
+  <ellipse cx="41" cy="25" rx="4.5" ry="4.5" fill="#22DDCC"/>
+  <circle  cx="23" cy="25" r="2.3" fill="#111122"/>
+  <circle  cx="41" cy="25" r="2.3" fill="#111122"/>
+  <circle  cx="24.5" cy="23" r="1.3" fill="white" opacity="0.8"/>
+  <circle  cx="42.5" cy="23" r="1.3" fill="white" opacity="0.8"/>
+
+  <!-- Mouth -->
+  <path d="M21,37 Q32,47 43,37" fill="#6622AA" stroke="#2A1440" stroke-width="2.5"/>
+  <polygon points="23,37 25.5,32.5 28,37" fill="white" stroke="#2A1440" stroke-width="1"/>
+  <polygon points="29,38 31.5,33 34,38"   fill="white" stroke="#2A1440" stroke-width="1"/>
+  <polygon points="35,37 37.5,32.5 40,37" fill="white" stroke="#2A1440" stroke-width="1"/>
+
+  <!-- Spore particles — repositioned for frame variety -->
+  <circle cx="6"  cy="24" r="1.5" fill="#44FFCC" opacity="0.70"/>
+  <circle cx="58" cy="28" r="1.2" fill="#BB44FF" opacity="0.65"/>
+  <circle cx="18" cy="56" r="1.0" fill="#44FFCC" opacity="0.55"/>
+  <circle cx="46" cy="55" r="1.1" fill="#BB44FF" opacity="0.55"/>
+</svg>

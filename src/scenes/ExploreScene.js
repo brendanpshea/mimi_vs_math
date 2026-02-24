@@ -227,7 +227,12 @@ export default class ExploreScene extends Phaser.Scene {
 
     // Tiled floor — randomised multi-variant grid for a 'bathroom tile' look.
     // Each cell independently draws the A (60%), B (25%), or C (15%) variant.
-    if (floorTile && this.textures.exists(floorTile)) {
+    // Canvas baking is only beneficial in WebGL mode — in Canvas renderer mode
+    // (Phaser fallback when WebGL is unavailable, e.g. Firefox without GPU) the
+    // large offscreen canvas causes rendering issues, so we skip it entirely.
+    const useCanvasBake = (this.game.renderer.type === Phaser.WEBGL);
+
+    if (floorTile && this.textures.exists(floorTile) && useCanvasBake) {
       // Bake the tiled floor into one Canvas texture, then cache it by region.
       // Canvas 2D ctx.drawImage() is a CPU-side operation and ~10-50× faster
       // than individual WebGL framebuffer draws (RenderTexture.drawFrame).
@@ -239,6 +244,7 @@ export default class ExploreScene extends Phaser.Scene {
           floor_grass: ['floor_grass', 'floor_grass_b', 'floor_grass_c'],
           floor_wheat: ['floor_wheat', 'floor_wheat_b', 'floor_wheat_c'],
           floor_sand:  ['floor_sand',  'floor_sand_b',  'floor_sand_c' ],
+          floor_moss:  ['floor_moss',  'floor_moss_b',  'floor_moss_c' ],
           floor_snow:  ['floor_snow',  'floor_snow_b',  'floor_snow_c' ],
           floor_stone: ['floor_stone', 'floor_stone_b', 'floor_stone_c'],
         };
@@ -249,20 +255,31 @@ export default class ExploreScene extends Phaser.Scene {
           if (r < 0.85) return pool[1];
           return pool[2];
         };
-        const canvas = document.createElement('canvas');
-        canvas.width  = worldW;
-        canvas.height = worldH;
-        const ctx = canvas.getContext('2d');
-        for (let row = 0; row < MAP_H; row++) {
-          for (let col = 0; col < MAP_W; col++) {
-            const variant = pickVariant();
-            const key = this.textures.exists(variant) ? variant : pool[0];
-            ctx.drawImage(this.textures.get(key).getSourceImage(), col * T, row * T, T, T);
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width  = worldW;
+          canvas.height = worldH;
+          const ctx = canvas.getContext('2d');
+          for (let row = 0; row < MAP_H; row++) {
+            for (let col = 0; col < MAP_W; col++) {
+              const variant = pickVariant();
+              const key = this.textures.exists(variant) ? variant : pool[0];
+              ctx.drawImage(this.textures.get(key).getSourceImage(), col * T, row * T, T, T);
+            }
           }
+          this.textures.addCanvas(cacheKey, canvas);
+        } catch (e) {
+          console.warn('[ExploreScene] Floor canvas bake failed:', e.message ?? e);
         }
-        this.textures.addCanvas(cacheKey, canvas);
       }
-      this.add.image(worldW / 2, worldH / 2, cacheKey).setOrigin(0.5, 0.5).setDepth(0);
+      if (this.textures.exists(cacheKey)) {
+        this.add.image(worldW / 2, worldH / 2, cacheKey).setOrigin(0.5, 0.5).setDepth(0);
+      } else {
+        this.add.rectangle(worldW / 2, worldH / 2, worldW, worldH, floorColor).setDepth(0);
+      }
+    } else if (floorTile && this.textures.exists(floorTile)) {
+      // Canvas renderer fallback: tile sprites (no large offscreen canvas).
+      this.add.tileSprite(worldW / 2, worldH / 2, worldW, worldH, floorTile).setDepth(0);
     } else {
       this.add.rectangle(worldW / 2, worldH / 2, worldW, worldH, floorColor).setDepth(0);
     }
@@ -345,6 +362,7 @@ export default class ExploreScene extends Phaser.Scene {
    */
   _addDecorations() {
     this._decorObstacles = this.physics.add.staticGroup();
+    const useCanvasBake = (this.game.renderer.type === Phaser.WEBGL);
     const layout = MAPS[this.regionId];
     if (!layout || layout.length === 0) return;
 
@@ -404,28 +422,45 @@ export default class ExploreScene extends Phaser.Scene {
     // so it is generated once per session and reused on every re-entry.
     // Physics bodies are still created each launch (physics world resets).
     const decorCacheKey = `__decorBaked_${this.regionId}`;
-    if (!this.textures.exists(decorCacheKey)) {
-      const canvas = document.createElement('canvas');
-      canvas.width  = MAP_W * T;
-      canvas.height = MAP_H * T;
-      const ctx = canvas.getContext('2d');
-      // Sort ascending by row: items lower on screen are drawn last → appear on top.
+    if (useCanvasBake && !this.textures.exists(decorCacheKey)) {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width  = MAP_W * T;
+        canvas.height = MAP_H * T;
+        const ctx = canvas.getContext('2d');
+        // Sort ascending by row: items lower on screen are drawn last → appear on top.
+        const sortedDecor = [...deduped].sort((a, b) => a.row - b.row);
+        for (const item of sortedDecor) {
+          if (!this.textures.exists(item.key)) continue;
+          const src    = this.textures.get(item.key).getSourceImage();
+          const texSrc = this.textures.get(item.key).source[0];
+          const scale  = SCALES[item.key] ?? 1.0;
+          const dw     = texSrc.width  * scale;
+          const dh     = texSrc.height * scale;
+          const px     = tx(item.col);
+          const py     = ty(item.row);
+          ctx.drawImage(src, px - dw / 2, py - dh / 2, dw, dh);
+        }
+        this.textures.addCanvas(decorCacheKey, canvas);
+      } catch (e) {
+        console.warn('[ExploreScene] Decoration canvas bake failed:', e.message ?? e);
+      }
+    }
+    if (useCanvasBake && this.textures.exists(decorCacheKey)) {
+      this.add.image(MAP_W * T / 2, MAP_H * T / 2, decorCacheKey)
+        .setOrigin(0.5, 0.5).setDepth(3);
+    } else {
+      // Canvas renderer path (or bake failed): individual images, depth-sorted by row.
       const sortedDecor = [...deduped].sort((a, b) => a.row - b.row);
       for (const item of sortedDecor) {
         if (!this.textures.exists(item.key)) continue;
-        const src    = this.textures.get(item.key).getSourceImage();
-        const texSrc = this.textures.get(item.key).source[0];
-        const scale  = SCALES[item.key] ?? 1.0;
-        const dw     = texSrc.width  * scale;
-        const dh     = texSrc.height * scale;
-        const px     = tx(item.col);
-        const py     = ty(item.row);
-        ctx.drawImage(src, px - dw / 2, py - dh / 2, dw, dh);
+        const scale = SCALES[item.key] ?? 1.0;
+        const depth = 3 + (item.row / MAP_H) * 6;
+        this.add.image(tx(item.col), ty(item.row), item.key)
+          .setScale(scale)
+          .setDepth(depth);
       }
-      this.textures.addCanvas(decorCacheKey, canvas);
     }
-    this.add.image(MAP_W * T / 2, MAP_H * T / 2, decorCacheKey)
-      .setOrigin(0.5, 0.5).setDepth(3);
 
     // Physics bodies for blocking decorations — must be created each scene launch.
     for (const item of deduped) {

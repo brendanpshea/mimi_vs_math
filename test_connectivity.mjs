@@ -14,6 +14,7 @@
 
 import MAPS, { WALK_GRIDS, POSITIONS } from './src/data/maps.js';
 import REGIONS               from './src/data/regions/index.js';
+import ITEMS                 from './src/data/items.js';
 
 // ── BFS ──────────────────────────────────────────────────────────────────────
 
@@ -128,7 +129,7 @@ for (const region of REGIONS) {
   const items = positions.interactiveItems;
   assert(Array.isArray(items), `interactiveItems is an Array`);
   assert(items.length >= 0 && items.length <= 2, `interactiveItems length 0-2 (got ${items.length})`);
-  const VALID_ITEM_IDS = new Set(['sardine','yarn_ball','catnip','lucky_collar','fish_fossil']);
+  const VALID_ITEM_IDS = new Set(Object.keys(ITEMS));  // derived from items.js — no manual list
   for (const [ii, it] of items.entries()) {
     assert(
       Number.isInteger(it.col) && it.col >= 2 && it.col <= 77,

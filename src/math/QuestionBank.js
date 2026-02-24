@@ -867,15 +867,24 @@ const generators = {
 };
 
 /**
+ * All valid topic keys — derived from the registry; import instead of hard-coding.
+ * Add a new topic to `generators` above and it appears here automatically.
+ * @type {string[]}
+ */
+export const TOPICS = Object.keys(generators);
+
+/**
  * Generate a single question.
- * @param {string} topic      One of: addSub | multiplication | division | fractions | mixed
+ * @param {string} topic      Any key from TOPICS.
  * @param {number} difficulty 1 (easy) | 2 (medium) | 3 (hard)
  * @returns {object} Question object
+ * @throws {Error} if topic is not registered in the generators registry.
  */
 export function generateQuestion(topic, difficulty = 1) {
-  const gen = generators[topic] ?? generators.addSub;
-  const d   = Math.min(Math.max(difficulty, 1), 3) - 1;
+  const gen = generators[topic];
+  if (!gen) throw new Error(`Unknown topic: '${topic}'. Valid topics: ${TOPICS.join(', ')}`);
+  const d = Math.min(Math.max(difficulty, 1), 3) - 1;
   return gen[d]();
 }
 
-export default { generateQuestion };
+export default { generateQuestion, TOPICS };

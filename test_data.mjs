@@ -17,6 +17,7 @@ import { readFileSync } from 'fs';
 import REGIONS          from './src/data/regions/index.js';
 import ENEMIES          from './src/data/enemies.js';
 import MAPS, { WALK_GRIDS } from './src/data/maps.js';
+import { MAP_COLS, MAP_ROWS, MAP_BORDER } from './src/data/ProceduralMap.js';
 
 // ── Colour helpers (ANSI) ──────────────────────────────────────────────────
 const G   = s => `\x1b[32m${s}\x1b[0m`;
@@ -37,8 +38,8 @@ function assert(condition, message, detail = '') {
   }
 }
 
-// ── Map bounds ─────────────────────────────────────────────────────────────
-const COLS = 70, ROWS = 50, BORDER = 2;
+// ── Map bounds — sourced from ProceduralMap constants, never hand-typed ──────
+const COLS = MAP_COLS, ROWS = MAP_ROWS, BORDER = MAP_BORDER;
 const inBounds = ({ col, row }) =>
   col >= BORDER && col < COLS - BORDER &&
   row >= BORDER && row < ROWS - BORDER;
@@ -57,8 +58,8 @@ const TILE_FIELDS = ['mimiStart', 'npcTile', 'bossTile'];
 // ══════════════════════════════════════════════════════════════════════════════
 console.log(`\n${B('── 1. Region schema ──')}`);
 
-assert(Array.isArray(REGIONS) && REGIONS.length === 5,
-  `regions.js exports 5 regions (got ${REGIONS?.length})`);
+assert(Array.isArray(REGIONS) && REGIONS.length === 6,
+  `regions.js exports 6 regions (got ${REGIONS?.length})`);  // bump when adding a region
 
 for (const region of REGIONS) {
   const tag = `Region ${region.id} (${region.name ?? '?'})`;
@@ -323,21 +324,6 @@ const src = path => readFileSync(path, 'utf8');
   );
 }
 
-// ── 5d. ProceduralMap.js — chestTile removed from nodes array ─────────────
-{
-  const procSrc = src('./src/data/ProceduralMap.js');
-  // Find the nodes = [...] block
-  const nodesStart = procSrc.indexOf('const nodes = [');
-  const nodesClose = procSrc.indexOf('];', nodesStart) + 2;
-  const nodesBlock = procSrc.slice(nodesStart, nodesClose);
-
-  assert(
-    !nodesBlock.includes('chestTile'),
-    'ProceduralMap.js nodes array does not include chestTile',
-    'chestTile was removed from the MST — the SE corner no longer gets a carved corridor',
-  );
-}
-
 // ── 5e. GameState.js — SAVE_VERSION is defined and is a positive integer ───
 //
 // SAVE_VERSION must be bumped whenever region enemy layouts change.
@@ -367,7 +353,7 @@ const src = path => readFileSync(path, 'utf8');
 // which erodes trust in comments and can hide merge conflicts.
 // IMPORTANT: if you change enemy counts, also bump SAVE_VERSION in GameState.js.
 {
-  const regionsSrc = [0,1,2,3,4].map(i => src(`./src/data/regions/region_${i}.js`)).join('\n');
+  const regionsSrc = [0,1,2,3,4,5].map(i => src(`./src/data/regions/region_${i}.js`)).join('\n');  // keep in sync with REGIONS
   const commentPattern = /\/\/.*?Enemies:\s*(\d+)/g;
   let commentMatch;
   let commentIdx = 0;

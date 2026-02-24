@@ -32,7 +32,7 @@
  * 5. Sample display — prints 2 random questions per topic for human spot-check
  */
 
-import { generateQuestion }     from './src/math/QuestionBank.js';
+import { generateQuestion, TOPICS as ALL_TOPICS } from './src/math/QuestionBank.js';
 import { getChoices }           from './src/math/Distractors.js';
 import ENEMIES_DEFAULT          from './src/data/enemies.js';
 
@@ -45,23 +45,7 @@ const Y  = s => `\x1b[33m${s}\x1b[0m`;   // yellow
 const DIM = s => `\x1b[2m${s}\x1b[0m`;
 const B  = s => `\x1b[1m${s}\x1b[0m`;    // bold
 
-// ── All topics exposed by QuestionBank ───────────────────────────────────
-const ALL_TOPICS = [
-  // legacy compound topics
-  'addSub', 'multiplication', 'division', 'fractions',
-  // Region 0
-  'addition', 'subtraction', 'comparison',
-  // Region 1
-  'placeValue', 'addCarry', 'subBorrow',
-  // Region 2
-  'multTables', 'skipCounting', 'doubling',
-  // Region 3
-  'divisionWord', 'missingNumber',
-  // Region 4
-  'fractionCompare', 'fractionAdd', 'decimals',
-  // Region 5
-  'orderOfOps', 'percentages', 'ratiosProp',
-];
+// ALL_TOPICS is now imported directly from QuestionBank.js — no manual list to maintain.
 
 // Topic-specific numeric bounds [ minAnswer, maxAnswer ] — null = string type
 const TOPIC_BOUNDS = {

@@ -25,9 +25,13 @@
  *    → { decorations: Array, blocked: Set<"col,row"> }
  */
 
-const COLS        = 80;
-const ROWS        = 56;
-const BORDER      = 2;   // border wall thickness — tiles 0–1 / 78–79 / etc.
+export const MAP_COLS   = 80;   // total tile columns
+export const MAP_ROWS   = 56;   // total tile rows
+export const MAP_BORDER = 2;    // wall border thickness — tiles 0–1 / 78–79 / etc.
+
+const COLS   = MAP_COLS;
+const ROWS   = MAP_ROWS;
+const BORDER = MAP_BORDER;
 const NODE_CLEAR  = 5;   // glade radius around every key position
 const CORRIDOR_HW = 3;   // corridor half-width: total width = 2*CORRIDOR_HW+1 = 7 tiles
 
@@ -269,7 +273,7 @@ function randomizePositions(regionData) {
 
 // ── Interactive item pools (2 items per region) ───────────────────────────
 /** Items awarded per region, cycling through all 5 types. */
-const ITEM_POOLS = [
+export const ITEM_POOLS = [
   ['sardine',      'yarn_ball'],    // R0
   ['catnip',       'lucky_collar'], // R1 Windmill Village
   ['fish_fossil',  'sardine'],      // R2 Meadow Maze

@@ -16,8 +16,19 @@ import ExploreScene     from './scenes/ExploreScene.js';
 import BattleScene      from './scenes/BattleScene.js';
 import BestiaryScene    from './scenes/BestiaryScene.js';
 
+// Pre-detect WebGL so Phaser doesn't attempt (and log) a failed context creation.
+function detectRendererType() {
+  try {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    return ctx ? Phaser.AUTO : Phaser.CANVAS;
+  } catch (e) {
+    return Phaser.CANVAS;
+  }
+}
+
 const config = {
-  type: Phaser.AUTO,          // WebGL with Canvas fallback
+  type: detectRendererType(),  // WebGL if available, Canvas otherwise (no error log)
   backgroundColor: '#0D0D2A',
 
   physics: {

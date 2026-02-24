@@ -32,11 +32,15 @@
 
 import REGIONS               from './src/data/regions/index.js';
 import { POSITIONS }         from './src/data/maps.js';
+import ITEMS                 from './src/data/items.js';
+import { ITEM_POOLS }        from './src/data/ProceduralMap.js';  // single source of truth
 
-// ── Colour helpers (ANSI) ─────────────────────────────────────────────────
+// ── Colour helpers (ANSI) ────────────────────────────────────────────────
 const G   = s => `\x1b[32m${s}\x1b[0m`;
 const R   = s => `\x1b[31m${s}\x1b[0m`;
 const B   = s => `\x1b[1m${s}\x1b[0m`;
+
+// NOTE: VALID_ITEM_IDS is derived from items.js below — no manual list to maintain.
 
 // ── Test harness ──────────────────────────────────────────────────────────
 let passed = 0, failed = 0;
@@ -63,16 +67,10 @@ function assertType(v, t, msg) {
   if (typeof v !== t) throw new Error(msg ?? `expected type ${t}, got ${typeof v}`);
 }
 
-// ── Pool constants (mirrors ProceduralMap.js ITEM_POOLS) ─────────────────
-const ITEM_POOLS = [
-  ['sardine',      'yarn_ball'],    // R0
-  ['catnip',       'lucky_collar'], // R1
-  ['fish_fossil',  'sardine'],      // R2
-  ['yarn_ball',    'catnip'],       // R3
-  ['lucky_collar', 'fish_fossil'],  // R4
-];
+// ── Pool constants — imported from ProceduralMap.js (single source of truth) ────
+// ITEM_POOLS is now imported above — no local copy to drift out of sync.
 
-const VALID_ITEM_IDS = new Set(['sardine', 'yarn_ball', 'catnip', 'lucky_collar', 'fish_fossil']);
+const VALID_ITEM_IDS = new Set(Object.keys(ITEMS));  // derived from items.js — no manual list
 
 function manhattan(a, b) {
   return Math.abs(a.col - b.col) + Math.abs(a.row - b.row);

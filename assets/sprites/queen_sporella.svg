@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <!--
+    Queen Sporella — boss of Mycelium Hollow. Towering mushroom monarch.
+    96×96 BOSS sprite. Bold shapes, thick outlines, strong colour blocking.
+    TINT ZONE: skin fill (#7744AA) purple responds to setTint().
+  -->
+  <!-- Ground shadow -->
+  <ellipse cx="48" cy="93" rx="30" ry="5" fill="#00000030"/>
+
+  <!-- === ROBE (wide bell train, back to front) === -->
+  <path d="M30,56 Q12,56 10,88 Q28,96 48,96 Q68,96 86,88 Q84,56 66,56 Z"
+        fill="#150825" stroke="#0A0010" stroke-width="3"/>
+  <!-- Mycelium thread veins on robe -->
+  <line x1="30" y1="58" x2="20" y2="90" stroke="#7A22CC" stroke-width="1.4" opacity="0.55"/>
+  <line x1="48" y1="56" x2="48" y2="94" stroke="#44FFCC" stroke-width="0.9" opacity="0.40"/>
+  <line x1="66" y1="58" x2="76" y2="90" stroke="#7A22CC" stroke-width="1.4" opacity="0.55"/>
+  <line x1="22" y1="68" x2="13" y2="84" stroke="#7A22CC" stroke-width="1.0" opacity="0.38"/>
+  <line x1="74" y1="68" x2="83" y2="84" stroke="#7A22CC" stroke-width="1.0" opacity="0.38"/>
+  <line x1="16" y1="76" x2="44" y2="80" stroke="#DDDCCC" stroke-width="0.5" opacity="0.20"/>
+  <line x1="52" y1="78" x2="80" y2="72" stroke="#DDDCCC" stroke-width="0.5" opacity="0.20"/>
+  <!-- Glowing hem -->
+  <path d="M10,88 Q28,94 48,94 Q68,94 86,88" fill="none" stroke="#BB44FF" stroke-width="2" opacity="0.45"/>
+  <!-- Robe glow nodes -->
+  <circle cx="20" cy="90" r="1.5" fill="#BB44FF" opacity="0.55"/>
+  <circle cx="48" cy="94" r="1.5" fill="#44FFCC" opacity="0.50"/>
+  <circle cx="76" cy="90" r="1.5" fill="#BB44FF" opacity="0.55"/>
+
+  <!-- === OUTER ARMS (behind torso, drawn first) === -->
+  <!-- Outer left arm — raised triumphantly up-left -->
+  <ellipse cx="22" cy="36" rx="8" ry="20" fill="#7744AA" stroke="#0A0010" stroke-width="3"
+           transform="rotate(-38 22 36)"/>
+  <circle  cx="10" cy="18" r="7" fill="#7744AA" stroke="#0A0010" stroke-width="2.5"/>
+  <!-- Outer right arm — raised triumphantly up-right -->
+  <ellipse cx="74" cy="36" rx="8" ry="20" fill="#7744AA" stroke="#0A0010" stroke-width="3"
+           transform="rotate(38 74 36)"/>
+  <circle  cx="86" cy="18" r="7" fill="#7744AA" stroke="#0A0010" stroke-width="2.5"/>
+
+  <!-- === TORSO (over robe) === -->
+  <ellipse cx="48" cy="54" rx="18" ry="20" fill="#5522AA" stroke="#0A0010" stroke-width="3"/>
+  <!-- Chest embroidery — mycelium pattern -->
+  <line x1="40" y1="42" x2="38" y2="68" stroke="#BB44FF" stroke-width="1.0" opacity="0.55"/>
+  <line x1="48" y1="40" x2="48" y2="68" stroke="#44FFCC" stroke-width="0.8" opacity="0.45"/>
+  <line x1="56" y1="42" x2="58" y2="68" stroke="#BB44FF" stroke-width="1.0" opacity="0.55"/>
+  <line x1="36" y1="54" x2="60" y2="54" stroke="#DDDCCC" stroke-width="0.5" opacity="0.30"/>
+  <!-- Cross embroidery nodes -->
+  <circle cx="48" cy="54" r="2" fill="#BB44FF" opacity="0.60"/>
+  <circle cx="38" cy="48" r="1.2" fill="#44FFCC" opacity="0.50"/>
+  <circle cx="58" cy="48" r="1.2" fill="#44FFCC" opacity="0.50"/>
+  <!-- Collar -->
+  <ellipse cx="48" cy="38" rx="12" ry="4" fill="#331188" stroke="#0A0010" stroke-width="2"/>
+
+  <!-- === INNER ARMS (in front of torso, lower position) === -->
+  <!-- Inner left arm -->
+  <ellipse cx="34" cy="58" rx="7" ry="16" fill="#7744AA" stroke="#0A0010" stroke-width="2.5"
+           transform="rotate(-25 34 58)"/>
+  <circle  cx="22" cy="70" r="6" fill="#7744AA" stroke="#0A0010" stroke-width="2.5"/>
+  <!-- Inner right arm -->
+  <ellipse cx="62" cy="58" rx="7" ry="16" fill="#7744AA" stroke="#0A0010" stroke-width="2.5"
+           transform="rotate(25 62 58)"/>
+  <circle  cx="74" cy="70" r="6" fill="#7744AA" stroke="#0A0010" stroke-width="2.5"/>
+
+  <!-- === FLOATING SPORE ORBS (sides) === -->
+  <!-- Left orb -->
+  <circle cx="10" cy="50" r="9"  fill="#330A4A" stroke="#0A0010" stroke-width="2"/>
+  <circle cx="10" cy="50" r="6"  fill="#8822CC"/>
+  <circle cx="10" cy="50" r="3.5" fill="#CC44FF"/>
+  <circle cx="10" cy="50" r="1.5" fill="white" opacity="0.75"/>
+  <circle cx="10" cy="50" r="11" fill="none" stroke="#BB44FF" stroke-width="1" opacity="0.50"/>
+  <!-- Right orb -->
+  <circle cx="86" cy="50" r="9"  fill="#0A3A30" stroke="#0A0010" stroke-width="2"/>
+  <circle cx="86" cy="50" r="6"  fill="#118866"/>
+  <circle cx="86" cy="50" r="3.5" fill="#44FFCC"/>
+  <circle cx="86" cy="50" r="1.5" fill="white" opacity="0.75"/>
+  <circle cx="86" cy="50" r="11" fill="none" stroke="#44FFCC" stroke-width="1" opacity="0.50"/>
+
+  <!-- === HEAD === -->
+  <ellipse cx="48" cy="26" rx="15" ry="17" fill="#7744AA" stroke="#0A0010" stroke-width="3"/>
+  <!-- Cheekbone highlight -->
+  <ellipse cx="38" cy="28" rx="6" ry="4" fill="#9966CC" opacity="0.40"/>
+  <ellipse cx="58" cy="28" rx="6" ry="4" fill="#9966CC" opacity="0.40"/>
+
+  <!-- Regal angry brows -->
+  <line x1="36" y1="20" x2="43" y2="24" stroke="#0A0010" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="60" y1="20" x2="53" y2="24" stroke="#0A0010" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Eyes — narrow, teal glowing -->
+  <ellipse cx="40" cy="26" rx="5"   ry="3.5" fill="#0A0018"/>
+  <ellipse cx="56" cy="26" rx="5"   ry="3.5" fill="#0A0018"/>
+  <ellipse cx="40" cy="26" rx="3.5" ry="2.5" fill="#44FFCC"/>
+  <ellipse cx="56" cy="26" rx="3.5" ry="2.5" fill="#44FFCC"/>
+  <ellipse cx="40" cy="26" rx="1.5" ry="2.0" fill="#0A0018"/>
+  <ellipse cx="56" cy="26" rx="1.5" ry="2.0" fill="#0A0018"/>
+  <circle  cx="41.5" cy="25" r="1.0" fill="white" opacity="0.70"/>
+  <circle  cx="57.5" cy="25" r="1.0" fill="white" opacity="0.70"/>
+
+  <!-- Delicate nose -->
+  <ellipse cx="48" cy="31" rx="2.5" ry="2" fill="#5533AA" stroke="#0A0010" stroke-width="1.5"/>
+
+  <!-- Thin regal mouth (slight superior smile) -->
+  <path d="M42,36 Q48,39 54,36" fill="none" stroke="#0A0010" stroke-width="2" stroke-linecap="round"/>
+  <path d="M42,36 Q48,37 54,36" fill="none" stroke="#9966CC" stroke-width="1" opacity="0.7"/>
+
+  <!-- === MUSHROOM CROWN (wide magenta cap) === -->
+  <!-- Cap underside -->
+  <ellipse cx="48" cy="12" rx="32" ry="7" fill="#770A88"/>
+  <!-- Main cap dome -->
+  <path d="M16,13 Q16,1 48,1 Q80,1 80,13 Z" fill="#BB11AA"/>
+  <!-- Cap sheen/highlight -->
+  <path d="M18,12 Q19,3 28,1"  fill="none" stroke="#DD44CC" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="28" cy="5" rx="10" ry="5.5" fill="#CC33BB" opacity="0.50"/>
+  <!-- White spore spots -->
+  <circle  cx="34" cy="9"  r="5"   fill="#EEEEDD" opacity="0.92"/>
+  <circle  cx="48" cy="5"  r="6"   fill="#EEEEDD" opacity="0.92"/>
+  <circle  cx="62" cy="9"  r="4.5" fill="#EEEEDD" opacity="0.90"/>
+  <circle  cx="24" cy="10" r="3.5" fill="#EEEEDD" opacity="0.85"/>
+  <circle  cx="72" cy="10" r="3"   fill="#EEEEDD" opacity="0.82"/>
+  <!-- Crown cap glow bloom -->
+  <ellipse cx="48" cy="13" rx="34" ry="8" fill="#FF44CC" opacity="0.12"/>
+  <!-- Crown side glow accents -->
+  <circle  cx="18" cy="8"  r="2" fill="#BB44FF" opacity="0.55"/>
+  <circle  cx="78" cy="8"  r="2" fill="#BB44FF" opacity="0.55"/>
+</svg>

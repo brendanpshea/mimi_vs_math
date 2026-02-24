@@ -61,8 +61,8 @@ export default class BootScene extends Phaser.Scene {
 
   // ── Tile texture generation ─────────────────────────────────────────────
   // Region-specific wall fragments are generated procedurally here.
-  // All floor/wall/door/chest/NPC art is now loaded from SVG assets; the
-  // old "tile_" textures have been removed as dead code.
+  // All floor/wall/door/chest/NPC/heart art is now loaded from SVG assets;
+  // the old "tile_" textures and heart textures have been removed as dead code.
 
   _generateTileTextures() {
     const SIZE = 32;
@@ -98,44 +98,9 @@ export default class BootScene extends Phaser.Scene {
     gfx.strokeRect(0, 0, SIZE, SIZE);
     gfx.generateTexture('wall_obsidian', SIZE, SIZE);
 
-    // ── HUD heart textures (20×20) ──────────────────────────────────────────────
-    // Heart shape: two overlapping circles (top bumps) + triangle (lower body).
-    // No physics body — display-only textures used by HUD.js.
-    const SH = 20;
-
-    // Full heart — bright red with a white shine spot
-    gfx.clear();
-    gfx.fillStyle(0xFF2244);
-    gfx.fillCircle(6, 7, 5.5);
-    gfx.fillCircle(14, 7, 5.5);
-    gfx.fillTriangle(1, 9, 19, 9, 10, 19);
-    gfx.fillStyle(0xFF88AA, 0.65);
-    gfx.fillCircle(7, 5, 2.5);       // shine
-    gfx.lineStyle(1, 0x880022, 0.4);
-    gfx.strokeCircle(6, 7, 5.5); gfx.strokeCircle(14, 7, 5.5);
-    gfx.generateTexture('heart_full', SH, SH);
-
-    // Half heart — right half bright red, left half dim
-    gfx.clear();
-    gfx.fillStyle(0x44223A);          // dim left bump
-    gfx.fillCircle(6, 7, 5.5);
-    gfx.fillTriangle(1, 9, 10, 9, 10, 19);
-    gfx.fillStyle(0xFF2244);          // bright right bump (painted over overlap)
-    gfx.fillCircle(14, 7, 5.5);
-    gfx.fillTriangle(10, 9, 19, 9, 10, 19);
-    gfx.fillStyle(0xFF88AA, 0.6);
-    gfx.fillCircle(15, 5, 2);
-    gfx.generateTexture('heart_half', SH, SH);
-
-    // Empty heart — very dark with faint purple outline
-    gfx.clear();
-    gfx.fillStyle(0x2A1A33);
-    gfx.fillCircle(6, 7, 5.5);
-    gfx.fillCircle(14, 7, 5.5);
-    gfx.fillTriangle(1, 9, 19, 9, 10, 19);
-    gfx.lineStyle(1.5, 0x664477, 0.75);
-    gfx.strokeCircle(6, 7, 5.5); gfx.strokeCircle(14, 7, 5.5);
-    gfx.generateTexture('heart_empty', SH, SH);
+    // ── (Heart textures removed – now loaded from SVG assets)
+    // UI hearts are defined in AssetConfig and preloaded; HUD.js will
+    // reference 'heart_full', 'heart_half', and 'heart_empty' directly.
     gfx.destroy();
   }
 }

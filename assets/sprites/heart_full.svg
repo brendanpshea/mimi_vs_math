@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <!-- Two overlapping red circles + triangle, with shine spot -->
+  <circle cx="6" cy="7" r="5.5" fill="#FF2244" stroke="#880022" stroke-width="0.4"/>
+  <circle cx="14" cy="7" r="5.5" fill="#FF2244" stroke="#880022" stroke-width="0.4"/>
+  <polygon points="1,9 19,9 10,19" fill="#FF2244"/>
+  <circle cx="7" cy="5" r="2.5" fill="#FF88AA" opacity="0.65"/>
+</svg>

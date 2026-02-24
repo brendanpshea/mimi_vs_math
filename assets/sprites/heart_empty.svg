@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <!-- Dark heart with purple outline -->
+  <circle cx="6" cy="7" r="5.5" fill="#2A1A33" stroke="#664477" stroke-width="1.5" opacity="0.75"/>
+  <circle cx="14" cy="7" r="5.5" fill="#2A1A33" stroke="#664477" stroke-width="1.5" opacity="0.75"/>
+  <polygon points="1,9 19,9 10,19" fill="#2A1A33"/>
+</svg>

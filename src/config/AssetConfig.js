@@ -97,6 +97,9 @@ export const SPRITE_DEFS = [
 export const UI_DEFS = [
   { key: 'ui_heart',     file: 'ui/heart',        size: 32 },
   { key: 'ui_star',      file: 'ui/star',         size: 28 },
+  { key: 'heart_full',   file: 'heart_full',      size: 20 },
+  { key: 'heart_half',   file: 'heart_half',      size: 20 },
+  { key: 'heart_empty',  file: 'heart_empty',     size: 20 },
   // Item (power-up) icons — used in HUD inventory and BattleScene effects row
   { key: 'item_sardine', file: 'ui/item_sardine', size: 32 },
   { key: 'item_yarn',    file: 'ui/item_yarn',    size: 32 },

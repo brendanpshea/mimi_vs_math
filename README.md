@@ -277,6 +277,7 @@ Grade-appropriate number ranges:
 | Battle pose | 96×96 | `{id}_battle.svg` |
 | Floor tile A/B/C | 32×32 | `floor_{theme}.svg / _b / _c` |
 | Wall tile | 32×32 | `wall_{theme}.svg` |
+| UI heart icons | 20×20 | `heart_full.svg`, `heart_half.svg`, `heart_empty.svg` |
 | Decorations | 32×32+ | `decoration_{name}.svg` |
 | Landmark (set-piece) | ~160×128 | `landmark_{name}.svg` |
 | Backdrop | 800×600 | `backdrop_{theme}.svg` |

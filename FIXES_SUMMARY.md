@@ -114,6 +114,14 @@ Ten improvements aligned with Grade 1–5 curriculum expectations:
 - Removed the corresponding generation blocks from `_generateTileTextures()`.
 - Ensures hand-crafted art appears immediately and avoids runtime overhead.
 
+## ✅ Feature: SVG hearts for HUD
+**Files**: `assets/sprites/heart_full.svg`, `assets/sprites/heart_half.svg`, `assets/sprites/heart_empty.svg`, `src/config/AssetConfig.js`, `src/scenes/BootScene.js`, `src/ui/HUD.js`
+- Converted the three HUD heart textures to standalone SVG files (20×20).
+- Added entries to `UI_DEFS` so BootScene preloads them instead of procedurally drawing.
+- Removed armed heart generation code from `_generateTileTextures()` and added explanatory comment.
+- HUD.js continues to reference the same keys; sizing set via `setDisplaySize(20,20)`.
+- Simplifies rendering startup and allows designers to tweak heart art easily.
+
 
 - `pointerout` releases direction immediately — prevents stuck movement when a finger slides off.
 - `Mimi.js`: added `_dpad` field, `setDPad()` method, reads D-pad state alongside keyboard.

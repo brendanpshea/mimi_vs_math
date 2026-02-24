@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <!-- Left half dim, right half bright -->
+  <circle cx="6" cy="7" r="5.5" fill="#44223A"/>
+  <circle cx="14" cy="7" r="5.5" fill="#FF2244"/>
+  <polygon points="1,9 10,9 10,19" fill="#44223A"/>
+  <polygon points="10,9 19,9 10,19" fill="#FF2244"/>
+  <circle cx="15" cy="5" r="2" fill="#FF88AA"/>
+</svg>

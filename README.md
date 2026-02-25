@@ -1,8 +1,6 @@
 # Mimi vs. Math
 
-**An AI-assisted educational game experiment**
-
-Zelda-style adventure + math battles for elementary students (Grades 1–5).
+**Zelda-style adventure + math battles for elementary students (Grades 1–5).**
 
 🎮 **[Play Now →](https://brendanpshea.github.io/mimi_vs_math/)**
 
@@ -10,7 +8,7 @@ Zelda-style adventure + math battles for elementary students (Grades 1–5).
 
 ## About This Project
 
-This game was developed almost entirely using AI models (**Claude Sonnet 4.6** and **Claude Opus 4.6**) as an exploration of what modern AI systems can create with appropriate guidance. The developer has limited Phaser/JavaScript/Node.js experience—this project demonstrates AI's capability to handle full-stack game development, including:
+All of the code and asssets for this project were developed using AI models (**Claude Sonnet 4.6** and **Claude Opus 4.6**) as an exploration of what modern AI systems can create with appropriate guidance. I (Brendan) have very limited Phaser/JavaScript/Node.js experience, though I do have experience in software engineering more generally. This project was meant--in part--as a test of how AI capability to handle full-stack game development for relative novices, including:
 
 **What AI built:**
 - ✨ **Game engine code** — Phaser 3 scene architecture, collision detection, entity AI

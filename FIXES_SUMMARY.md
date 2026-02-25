@@ -122,6 +122,15 @@ Ten improvements aligned with Grade 1–5 curriculum expectations:
 - HUD.js continues to reference the same keys; sizing set via `setDisplaySize(20,20)`.
 - Simplifies rendering startup and allows designers to tweak heart art easily.
 
+## 🔧 Bug fix: touch‑friendly dialog continuation
+**File**: `src/ui/DialogBox.js`
+- Added a transparent “continue” hit area/button beneath the prompt text.
+- Prompt now reads “▶ Tap or press SPACE” and blinks as before.
+- Button appears when typing finishes and hides on dialog close.
+- Button handles tap/click to either skip typing or dismiss, matching keyboard.
+- Resolves issue where Mewton’s (and all) dialogues were impossible to advance on
+  touch‑only devices.
+
 
 - `pointerout` releases direction immediately — prevents stuck movement when a finger slides off.
 - `Mimi.js`: added `_dpad` field, `setDPad()` method, reads D-pad state alongside keyboard.

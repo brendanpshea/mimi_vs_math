@@ -88,6 +88,12 @@ export default class StoryScene extends Phaser.Scene {
     this.cameras.main.fadeIn(400, 0, 0, 0);
 
     this._idx = 0;
+    // Persistent keyboard listener — shared across all beats and pages so
+    // listeners don't accumulate when _showBeat() is called multiple times.
+    this._kbAdvance = () => this._advance();
+    this.input.keyboard.on('keydown-SPACE', this._kbAdvance);
+    this.input.keyboard.on('keydown-ENTER', this._kbAdvance);
+
     this._draw();
   }
 
@@ -361,8 +367,6 @@ export default class StoryScene extends Phaser.Scene {
 
     this._bodyText.setText('');
     this._startTypewriter(this._bodyText, beats[this._beatIdx], 32);
-    this.input.keyboard.once('keydown-ENTER', () => this._advance());
-    this.input.keyboard.once('keydown-SPACE', () => this._advance());
   }
 
   _advance() {
@@ -414,6 +418,8 @@ export default class StoryScene extends Phaser.Scene {
   }
 
   _finish() {
+    this.input.keyboard.off('keydown-SPACE', this._kbAdvance);
+    this.input.keyboard.off('keydown-ENTER', this._kbAdvance);
     const regionId = GameState.currentRegion ?? 0;
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.cameras.main.once('camerafadeoutcomplete', () => {

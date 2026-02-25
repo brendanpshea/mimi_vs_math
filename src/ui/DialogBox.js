@@ -20,9 +20,11 @@ export default class DialogBox {
     const W = scene.cameras.main.width;
     const H = scene.cameras.main.height;
 
-    // Background panel
+    // Background panel — interactive so tapping it advances/closes the dialog
     this._panel = scene.add.rectangle(W / 2, H - 90, W - 40, 120, 0x000022, 0.92)
-      .setScrollFactor(0).setDepth(80).setVisible(false);
+      .setScrollFactor(0).setDepth(80).setVisible(false)
+      .setInteractive();
+    this._panel.on('pointerdown', () => this._handleAdvance());
 
     // Border
     this._border = scene.add.rectangle(W / 2, H - 90, W - 36, 124, 0x4488FF, 0)
@@ -50,8 +52,9 @@ export default class DialogBox {
     this._baseBodyW = W - 80;
     this._portBodyW = W - 132;
 
-    // Continue prompt
-    this._prompt = scene.add.text(W - 30, H - 42, '▶ Press SPACE', {
+    // Continue prompt — label adapts to input method available
+    const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    this._prompt = scene.add.text(W - 30, H - 42, hasTouch ? '▶ Tap to continue' : '▶ Press SPACE', {
       fontSize: '14px', color: '#88AAFF', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(1, 1).setScrollFactor(0).setDepth(81).setVisible(false);
 
@@ -243,20 +246,25 @@ export default class DialogBox {
     if (this._onClose) this._onClose();
   }
 
+  /** Shared advance handler — used by keyboard (update) and panel tap (pointerdown). */
+  _handleAdvance() {
+    if (!this._active) return;
+    if (this._choiceCallback) return;   // waiting for a choice tap — ignore
+    if (this._typing) {
+      this._finishTyping();   // first input: skip typewriter
+    } else {
+      this.hide();            // second input: close
+    }
+  }
+
   update() {
     if (!this._active) return;
-    if (this._choiceCallback) return;   // waiting for a choice tap — block keyboard
+    if (this._choiceCallback) return;
     if (
       Phaser.Input.Keyboard.JustDown(this._spaceKey) ||
       Phaser.Input.Keyboard.JustDown(this._enterKey)
     ) {
-      if (this._typing) {
-        // First press: skip to full text
-        this._finishTyping();
-      } else {
-        // Second press: close
-        this.hide();
-      }
+      this._handleAdvance();
     }
   }
 

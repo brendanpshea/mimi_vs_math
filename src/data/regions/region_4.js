@@ -14,6 +14,25 @@
     floorTile: 'floor_sand',
     wallTile:  'wall_sandstone',
 
+    colorGrade:      0xFFAA44,  // warm amber colour-grade overlay
+    gateAccentColor: 0xFFCC44,  // gold sun-baked arch highlights on boss door
+    weather: (camW, camH) => ({
+      texture: '_wx_line', depth: 22,
+      config: {
+        x: -8, y: { min: 0, max: camH },
+        speedX: { min: 340, max: 520 },
+        speedY: { min: -18, max: 18 },
+        lifespan: { min: 650, max: 1050 },
+        quantity: 2, frequency: 30,
+        alpha: { start: 0.45, end: 0 },
+        scale: { start: 1.3, end: 0.5 },
+        tint: 0xD4A844,
+        rotate: 90,
+        gravityY: 0, maxParticles: 0,
+      },
+    }),
+    animatedEffects: [],
+
     // ── Map generation config ──────────────────────────────────────────────
     blockingTiles: [
       { key: 'decoration_rock' },

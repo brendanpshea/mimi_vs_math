@@ -147,49 +147,50 @@ export const TERRAIN_DEFS = [
   { key: 'wall_ice',       file: 'wall_ice',       size: 32 },
   
   // Decorations
-  { key: 'decoration_tree',          file: 'decoration_tree',          size: { width: 32, height: 48 } },
-  { key: 'decoration_tree_b',         file: 'decoration_tree_b',         size: { width: 32, height: 48 } },
-  { key: 'decoration_tree_meadow',    file: 'decoration_tree_meadow',    size: { width: 32, height: 48 } },
-  { key: 'decoration_tree_meadow_b',  file: 'decoration_tree_meadow_b',  size: { width: 32, height: 48 } },
-  { key: 'decoration_rock',           file: 'decoration_rock',           size: 32 },
-  { key: 'decoration_rock_b',         file: 'decoration_rock_b',         size: 32 },
+  // clusterScale > 1.0 makes adjacent same-type items overlap and merge into clusters.
+  { key: 'decoration_tree',          file: 'decoration_tree',          size: { width: 32, height: 48 }, clusterScale: 1.35 },
+  { key: 'decoration_tree_b',         file: 'decoration_tree_b',         size: { width: 32, height: 48 }, clusterScale: 1.35 },
+  { key: 'decoration_tree_meadow',    file: 'decoration_tree_meadow',    size: { width: 32, height: 48 }, clusterScale: 1.35 },
+  { key: 'decoration_tree_meadow_b',  file: 'decoration_tree_meadow_b',  size: { width: 32, height: 48 }, clusterScale: 1.35 },
+  { key: 'decoration_rock',           file: 'decoration_rock',           size: 32,                        clusterScale: 1.20 },
+  { key: 'decoration_rock_b',         file: 'decoration_rock_b',         size: 32,                        clusterScale: 1.20 },
   { key: 'decoration_cactus',      file: 'decoration_cactus',      size: { width: 32, height: 48 } },
   { key: 'decoration_flower',      file: 'decoration_flower',      size: 32 },
-  { key: 'decoration_mushroom',    file: 'decoration_mushroom',    size: 32 },
+  { key: 'decoration_mushroom',    file: 'decoration_mushroom',    size: 32,                        clusterScale: 1.15 },
   { key: 'decoration_palmtree',    file: 'decoration_palmtree',    size: { width: 32, height: 48 } },
-  { key: 'decoration_icicle',      file: 'decoration_icicle',      size: { width: 32, height: 48 } },
-  { key: 'decoration_icicle_b',    file: 'decoration_icicle_b',    size: { width: 32, height: 48 } },
+  { key: 'decoration_icicle',      file: 'decoration_icicle',      size: { width: 32, height: 48 }, clusterScale: 1.25 },
+  { key: 'decoration_icicle_b',    file: 'decoration_icicle_b',    size: { width: 32, height: 48 }, clusterScale: 1.25 },
   { key: 'decoration_snowpile',    file: 'decoration_snowpile',    size: { width: 32, height: 16 } },
-  { key: 'decoration_pillar',      file: 'decoration_pillar',      size: { width: 24, height: 40 } },
-  { key: 'decoration_pillar_b',    file: 'decoration_pillar_b',    size: { width: 24, height: 40 } },
+  { key: 'decoration_pillar',      file: 'decoration_pillar',      size: { width: 24, height: 40 }, clusterScale: 1.15 },
+  { key: 'decoration_pillar_b',    file: 'decoration_pillar_b',    size: { width: 24, height: 40 }, clusterScale: 1.15 },
   { key: 'decoration_gravestone',  file: 'decoration_gravestone',  size: { width: 24, height: 32 } },
   { key: 'decoration_torch',        file: 'decoration_torch',        size: { width: 24, height: 40 } },
 
   // New decorations — Region 1 (Windmill Village)
-  { key: 'decoration_windmill',      file: 'decoration_windmill',      size: { width: 32, height: 56 } },
+  { key: 'decoration_windmill',      file: 'decoration_windmill',      size: { width: 32, height: 56 }, clusterScale: 1.10 },
   { key: 'decoration_hay_bale_b',    file: 'decoration_hay_bale_b',    size: { width: 32, height: 28 } },
-  { key: 'decoration_wheat_stalk',   file: 'decoration_wheat_stalk',   size: { width: 32, height: 48 } },
-  { key: 'decoration_sunflower',     file: 'decoration_sunflower',     size: { width: 32, height: 48 } },
+  { key: 'decoration_wheat_stalk',   file: 'decoration_wheat_stalk',   size: { width: 32, height: 48 }, clusterScale: 1.10 },
+  { key: 'decoration_sunflower',     file: 'decoration_sunflower',     size: { width: 32, height: 48 }, clusterScale: 1.15 },
   // Landmark — Region 1
   { key: 'landmark_windmill_mill',   file: 'landmark_windmill_mill',   size: { width: 160, height: 128 } },
 
   // New decorations — Region 0 (Village)
   { key: 'decoration_hay_bale',    file: 'decoration_hay_bale',    size: { width: 32, height: 24 } },
-  { key: 'decoration_well',        file: 'decoration_well',        size: { width: 32, height: 40 } },
+  { key: 'decoration_well',        file: 'decoration_well',        size: { width: 32, height: 40 }, clusterScale: 1.10 },
   { key: 'decoration_campfire',    file: 'decoration_campfire',    size: { width: 32, height: 40 } },
   // New decorations — Region 1 (Meadow)
-  { key: 'decoration_vine',        file: 'decoration_vine',        size: { width: 32, height: 48 } },
+  { key: 'decoration_vine',        file: 'decoration_vine',        size: { width: 32, height: 48 }, clusterScale: 1.25 },
   { key: 'decoration_clover',      file: 'decoration_clover',      size: 32 },
   // New decorations — Region 4 (Desert Dunes)
   { key: 'decoration_bones',       file: 'decoration_bones',       size: 32 },
   { key: 'decoration_tumbleweed',  file: 'decoration_tumbleweed',  size: 32 },
   // New decorations — Region 5 (Frostbite)
-  { key: 'decoration_ice_crystal', file: 'decoration_ice_crystal', size: { width: 32, height: 48 } },
+  { key: 'decoration_ice_crystal', file: 'decoration_ice_crystal', size: { width: 32, height: 48 }, clusterScale: 1.20 },
   { key: 'decoration_frost_flower',file: 'decoration_frost_flower',size: 32 },
   // New decorations — Region 6 (Shadow Castle)
   { key: 'decoration_skull',       file: 'decoration_skull',       size: 32 },
-  { key: 'decoration_chains',      file: 'decoration_chains',      size: { width: 32, height: 48 } },
-  { key: 'decoration_bookshelf',   file: 'decoration_bookshelf',   size: { width: 32, height: 48 } },
+  { key: 'decoration_chains',      file: 'decoration_chains',      size: { width: 32, height: 48 }, clusterScale: 1.15 },
+  { key: 'decoration_bookshelf',   file: 'decoration_bookshelf',   size: { width: 32, height: 48 }, clusterScale: 1.15 },
 
   // Decorations — Region 3 (Mycelium Hollow)
   { key: 'decoration_lily',        file: 'decoration_lily',        size: 32 },

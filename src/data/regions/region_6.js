@@ -14,6 +14,24 @@
     floorTile: 'floor_stone',
     wallTile:  'wall_obsidian',
 
+    colorGrade:      0x440077,  // deep purple colour-grade overlay
+    gateAccentColor: 0xCC66FF,  // violet shadow-magic arch highlights on boss door
+    weather: (camW, camH) => ({
+      texture: '_wx_dot', depth: 22,
+      config: {
+        x: { min: 0, max: camW }, y: camH + 8,
+        speedX: { min: -22, max: 22 },
+        speedY: { min: -75, max: -28 },
+        lifespan: { min: 3200, max: 5800 },
+        quantity: 1, frequency: 140,
+        alpha: { start: 0.55, end: 0 },
+        scale: { start: 0.55, end: 1.30 },
+        tint: 0x6622AA,
+        gravityY: 0, maxParticles: 0,
+      },
+    }),
+    animatedEffects: [],
+
     // ── Map generation config ──────────────────────────────────────────────
     blockingTiles: [
       { key: 'decoration_pillar' },

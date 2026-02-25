@@ -14,6 +14,24 @@ const REGION = {
     floorTile: 'floor_wheat',
     wallTile:  'wall_cobble',
 
+    colorGrade:      0xFFEE88,  // pale golden colour-grade overlay
+    gateAccentColor: 0x44EE88,  // soft green arch highlights on boss door
+    weather: (camW, camH) => ({
+      texture: '_wx_dot', depth: 22,
+      config: {
+        x: { min: 0, max: camW }, y: { min: 0, max: camH },
+        speedX: { min: 18, max: 55 },
+        speedY: { min: -25, max: 25 },
+        lifespan: { min: 4000, max: 7000 },
+        quantity: 1, frequency: 220,
+        alpha: { start: 0.55, end: 0 },
+        scale: { start: 0.35, end: 0.12 },
+        tint: 0xF0D060,
+        gravityY: 18, maxParticles: 0,
+      },
+    }),
+    animatedEffects: [],
+
     // ── Map generation config ──────────────────────────────────────────────
     blockingTiles: [
       { key: 'decoration_hay_bale' },

@@ -338,8 +338,9 @@ const src = path => readFileSync(path, 'utf8');
 {
   const exploreSrc = src('./src/scenes/ExploreScene.js');
 
-  // Find _addDecorations body
-  const fnStart = exploreSrc.indexOf('_addDecorations()');
+  // Find _addDecorations body — search for the method definition (not a call site
+  // or comment that also contains the string "_addDecorations()").
+  const fnStart = exploreSrc.indexOf('  _addDecorations() {');
   const fnClose = (() => {
     let depth = 0, i = exploreSrc.indexOf('{', fnStart);
     while (i < exploreSrc.length) {
@@ -472,6 +473,33 @@ const src = path => readFileSync(path, 'utf8');
     bossCount < REGIONS.length
       ? `Add ${REGIONS.length - bossCount} more boss texture key(s) for the new region(s).`
       : `Remove ${bossCount - REGIONS.length} extra key(s).`,
+  );
+}
+
+// ── 5f. BossDoor extraction contracts ────────────────────────────────────────
+//
+// After extracting BossDoor from ExploreScene, these contracts prevent
+// accidental regression: the scene must delegate to BossDoor rather than
+// owning door graphics directly.
+{
+  const exploreSrc = src('./src/scenes/ExploreScene.js');
+
+  assert(
+    exploreSrc.includes("from '../ui/BossDoor.js'"),
+    "ExploreScene.js imports BossDoor from '../ui/BossDoor.js'",
+  );
+
+  // _doorFill was the primary Graphics object owned inline by the scene.
+  // After extraction it lives inside BossDoor — not on the scene.
+  assert(
+    !exploreSrc.includes('this._doorFill'),
+    'ExploreScene.js does not own _doorFill (extracted to BossDoor)',
+  );
+
+  // _checkBossDoor was the inline redraw method — now BossDoor.check().
+  assert(
+    !exploreSrc.includes('_checkBossDoor()'),
+    'ExploreScene.js does not define _checkBossDoor (extracted to BossDoor)',
   );
 }
 

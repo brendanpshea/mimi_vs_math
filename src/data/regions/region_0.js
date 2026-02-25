@@ -14,6 +14,28 @@
     floorTile: 'floor_grass',
     wallTile:  'wall_hedge',
 
+    colorGrade:      0xFFDD88,  // warm gold colour-grade overlay
+    gateAccentColor: 0xFFDD33,  // golden arch highlights on boss door
+    weather: (camW, camH) => ({
+      texture: '_wx_line', depth: 22,
+      config: {
+        x: { min: -20, max: camW + 20 }, y: -12,
+        speedX: { min: 55, max: 95 },
+        speedY: { min: 280, max: 420 },
+        lifespan: 1800,
+        quantity: 2, frequency: 45,
+        alpha: { start: 0.30, end: 0 },
+        scale: { start: 0.9, end: 0.9 },
+        tint: 0xBBDDFF,
+        rotate: 12,
+        gravityY: 0, maxParticles: 0,
+      },
+    }),
+    animatedEffects: [
+      { type: 'campfire' },
+      { type: 'ripples', color: 0x66BBFF },
+    ],
+
     // ── Map generation config ──────────────────────────────────────────────
     blockingTiles: [
       { key: 'decoration_tree' },

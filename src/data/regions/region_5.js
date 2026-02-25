@@ -14,6 +14,26 @@
     floorTile: 'floor_snow',
     wallTile:  'wall_ice',
 
+    colorGrade:      0x88CCFF,  // ice-blue colour-grade overlay
+    gateAccentColor: 0x44CCFF,  // frost-glow arch highlights on boss door
+    weather: (camW, camH) => ({
+      texture: '_wx_dot', depth: 22,
+      config: {
+        x: { min: -20, max: camW + 20 }, y: -8,
+        speedX: { min: -28, max: 28 },
+        speedY: { min: 35, max: 90 },
+        lifespan: { min: 5000, max: 9000 },
+        quantity: 1, frequency: 100,
+        alpha: { start: 0.80, end: 0 },
+        scale: { start: 0.3, end: 0.65 },
+        tint: 0xDDEEFF,
+        gravityY: 0, maxParticles: 0,
+      },
+    }),
+    animatedEffects: [
+      { type: 'ripples', color: 0xAADDFF },
+    ],
+
     // ── Map generation config ──────────────────────────────────────────────
     blockingTiles: [
       { key: 'decoration_icicle' },

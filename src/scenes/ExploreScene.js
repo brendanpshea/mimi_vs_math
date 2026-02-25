@@ -18,12 +18,22 @@ import Enemy       from '../entities/Enemy.js';
 import NPC         from '../entities/NPC.js';
 import HUD         from '../ui/HUD.js';
 import DialogBox   from '../ui/DialogBox.js';
-import NPC_JOKES from '../data/npcJokes.json' with { type: 'json' };
-import ITEMS     from '../data/items.js';
+import ITEMS              from '../data/items.js';
 import { openSettings, closeSettings } from '../ui/SettingsOverlay.js';
-import VirtualDPad from '../ui/VirtualDPad.js';
+import VirtualDPad     from '../ui/VirtualDPad.js';
+import MewtonDialogue  from '../ui/MewtonDialogue.js';
+import BossDoor        from '../ui/BossDoor.js';
+import { TERRAIN_DEFS } from '../config/AssetConfig.js';
 
-//  World constants 
+// Module-level decoration scale map — built once from TERRAIN_DEFS so
+// _addDecorations() doesn't need a hardcoded SCALES object.
+const DECOR_SCALES = new Map(
+  TERRAIN_DEFS
+    .filter(d => d.clusterScale != null)
+    .map(d => [d.key, d.clusterScale]),
+);
+
+//  World constants
 const T     = 32;    // tile size in pixels
 const MAP_W = 80;    // map width  in tiles  (~5 screens wide)
 const MAP_H = 56;    // map height in tiles  (~3.5 screens tall)
@@ -86,10 +96,9 @@ export default class ExploreScene extends Phaser.Scene {
     // Phaser reuses the same scene instance across scene.start() calls, so
     // instance properties set in a previous run persist into the next.
     // Explicitly reset every flag that guards per-run behaviour.
-    this._bossBattleStarted = false;
-    this._bossOpen          = false;
-    this._exitConfirm       = null;
-    this._treatGiven        = false;
+    // (this._treatGiven owned by MewtonDialogue; _isOpen/_entered owned by BossDoor —
+    //  both are reset automatically via new instances created in create())
+    this._exitConfirm = null;
   }
 
   create() {
@@ -226,16 +235,8 @@ export default class ExploreScene extends Phaser.Scene {
   _addColorGrade() {
     const worldW = MAP_W * T;
     const worldH = MAP_H * T;
-    const TINTS = [
-      0xFFDD88,  // R0 Sunny Village    — very slight warm gold
-      0xFFEE88,  // R1 Windmill Village — pale golden
-      0x99EE66,  // R2 Meadow Maze      — cool leafy green
-      0xFFAA44,  // R3 Desert Dunes     — warm amber
-      0x88CCFF,  // R4 Frostbite Cavern — ice blue
-      0x440077,  // R5 Shadow Castle    — deep purple
-    ];
-    this.add.rectangle(worldW / 2, worldH / 2, worldW, worldH,
-      TINTS[this.regionId] ?? TINTS[0], 0.08).setDepth(25);
+    const tint   = this.regionData.colorGrade ?? 0xFFDD88;
+    this.add.rectangle(worldW / 2, worldH / 2, worldW, worldH, tint, 0.08).setDepth(25);
   }
 
   _drawRoom() {
@@ -258,15 +259,11 @@ export default class ExploreScene extends Phaser.Scene {
       // entire bake is skipped — cost is a single add.image() call.
       const cacheKey = `__floorBaked_${this.regionId}`;
       if (!this.textures.exists(cacheKey)) {
-        const FLOOR_VARIANTS = {
-          floor_grass: ['floor_grass', 'floor_grass_b', 'floor_grass_c'],
-          floor_wheat: ['floor_wheat', 'floor_wheat_b', 'floor_wheat_c'],
-          floor_sand:  ['floor_sand',  'floor_sand_b',  'floor_sand_c' ],
-          floor_moss:  ['floor_moss',  'floor_moss_b',  'floor_moss_c' ],
-          floor_snow:  ['floor_snow',  'floor_snow_b',  'floor_snow_c' ],
-          floor_stone: ['floor_stone', 'floor_stone_b', 'floor_stone_c'],
-        };
-        const pool = FLOOR_VARIANTS[floorTile] ?? [floorTile];
+        // Auto-derive tile variants by naming convention (base, _b, _c),
+        // keeping only those that exist as loaded textures.
+        const pool = [`${floorTile}`, `${floorTile}_b`, `${floorTile}_c`]
+          .filter(k => this.textures.exists(k));
+        if (!pool.length) pool.push(floorTile);
         const pickVariant = () => {
           const r = Math.random();
           if (r < 0.60) return pool[0];
@@ -409,31 +406,9 @@ export default class ExploreScene extends Phaser.Scene {
       }
     }
 
-    // --- Per-type scale factors (make clusters merge visually) -------------
-    const SCALES = {
-      decoration_tree:          1.35,
-      decoration_tree_b:        1.35,
-      decoration_tree_meadow:   1.35,
-      decoration_tree_meadow_b: 1.35,
-      decoration_rock:          1.20,
-      decoration_rock_b:        1.20,
-      decoration_mushroom:      1.15,
-      decoration_icicle:        1.25,
-      decoration_icicle_b:      1.25,
-      decoration_pillar:        1.15,
-      decoration_pillar_b:      1.15,
-      decoration_vine:          1.25,
-      decoration_well:          1.10,
-      decoration_ice_crystal:   1.20,
-      decoration_chains:        1.15,
-      decoration_bookshelf:     1.15,
-      // Region 1 — Windmill Village
-      decoration_windmill:      1.10,
-      decoration_hay_bale:      1.00,
-      decoration_hay_bale_b:    1.00,
-      decoration_wheat_stalk:   1.10,
-      decoration_sunflower:     1.15,
-    };
+    // Per-type scale factors (make adjacent same-type items overlap and merge
+    // into clusters).  Values come from TERRAIN_DEFS.clusterScale — see the
+    // module-level DECOR_SCALES Map built at import time.
 
     // Bake decoration sprites into a cached Canvas texture.
     // The decoration layout from ProceduralMap is deterministic per region,
@@ -452,7 +427,7 @@ export default class ExploreScene extends Phaser.Scene {
           if (!this.textures.exists(item.key)) continue;
           const src    = this.textures.get(item.key).getSourceImage();
           const texSrc = this.textures.get(item.key).source[0];
-          const scale  = SCALES[item.key] ?? 1.0;
+          const scale  = DECOR_SCALES.get(item.key) ?? 1.0;
           const dw     = texSrc.width  * scale;
           const dh     = texSrc.height * scale;
           const px     = tx(item.col);
@@ -472,7 +447,7 @@ export default class ExploreScene extends Phaser.Scene {
       const sortedDecor = [...deduped].sort((a, b) => a.row - b.row);
       for (const item of sortedDecor) {
         if (!this.textures.exists(item.key)) continue;
-        const scale = SCALES[item.key] ?? 1.0;
+        const scale = DECOR_SCALES.get(item.key) ?? 1.0;
         const depth = 3 + (item.row / MAP_H) * 6;
         this.add.image(tx(item.col), ty(item.row), item.key)
           .setScale(scale)
@@ -500,10 +475,11 @@ export default class ExploreScene extends Phaser.Scene {
    * be baked into the static canvas texture because they need tweens.
    *
    * Torch positions come from ANIMATED_DECORATIONS (ProceduralMap corridor elbows).
-   * Campfires (R0, R2) and water/ice ripples (R0, R4) are derived from LANDMARKS.
+   * Campfires and water/ice ripples are described by regionData.animatedEffects
+   * and positioned relative to the first landmark in LANDMARKS.
    */
   _placeAnimatedDecorations() {
-    // ── Corridor-elbow torches (R5 Shadow Castle) ─────────────
+    // ── Corridor-elbow torches (placed by ProceduralMap) ──────
     const items = ANIMATED_DECORATIONS[this.regionId];
     if (items?.length) {
       for (const item of items) {
@@ -511,29 +487,25 @@ export default class ExploreScene extends Phaser.Scene {
       }
     }
 
-    // ── Landmark-anchored effects ─────────────────────────────
+    // ── Landmark-anchored effects from regionData.animatedEffects ─
+    const effects = this.regionData.animatedEffects ?? [];
+    if (!effects.length) return;
+
     const lms = LANDMARKS[this.regionId];
     if (!lms?.length) return;
-    const lm    = lms[0];
-    const lw    = lm.tilesW * T;
-    const lh    = lm.tilesH * T;
-    const lmCx  = tx(lm.col) + lw / 2 - T / 2;
-    const lmCy  = ty(lm.row) + lh / 2 - T / 2;
+    const lm      = lms[0];
+    const lw      = lm.tilesW * T;
+    const lh      = lm.tilesH * T;
+    const lmCx    = tx(lm.col) + lw / 2 - T / 2;
+    const lmCy    = ty(lm.row) + lh / 2 - T / 2;
     const lmDepth = 3 + (lm.row / MAP_H) * 6;
 
-    // Campfire just below and left of the landmark bottom edge (R0 pond, R2 flower ring).
-    if (this.regionId === 0 || this.regionId === 2) {
-      this._spawnCampfire(
-        lmCx - lw * 0.20,
-        lmCy + lh * 0.5 + T * 0.7,
-        lmDepth + 1,
-      );
-    }
-
-    // Water / ice ripples centred on the water surface (R0 pond, R4 frozen lake).
-    if (this.regionId === 0 || this.regionId === 4) {
-      const rippleColor = this.regionId === 4 ? 0xAADDFF : 0x66BBFF;
-      this._spawnWaterRipples(lmCx, lmCy, lw * 0.38, lh * 0.22, rippleColor, lmDepth + 0.5);
+    for (const fx of effects) {
+      if (fx.type === 'campfire') {
+        this._spawnCampfire(lmCx - lw * 0.20, lmCy + lh * 0.5 + T * 0.7, lmDepth + 1);
+      } else if (fx.type === 'ripples') {
+        this._spawnWaterRipples(lmCx, lmCy, lw * 0.38, lh * 0.22, fx.color ?? 0x66BBFF, lmDepth + 0.5);
+      }
     }
   }
 
@@ -845,7 +817,7 @@ export default class ExploreScene extends Phaser.Scene {
     const justUnlocked = this._justUnlockedBoss;
 
     // Redraw door now that state is final
-    this._checkBossDoor();
+    this._bossDoor.check();
 
     if (justUnlocked) {
       this.sound.play('sfx_level_up', { volume: 0.80 });
@@ -860,179 +832,19 @@ export default class ExploreScene extends Phaser.Scene {
   //  Boss door 
 
   /**
-   * Draws an ornate stone-arch boss door.
-   *
-   * Physics design (no overlap/blocker conflict):
-   *  LOCKED  – a static body in its own group (_doorGroup) blocks Mimi.
-   *             A collider callback on that group fires the locked dialog.
-   *  OPEN    – the static body is disabled; update() does a distance check
-   *             and fires _startBossBattle when Mimi is close enough.
-   *             This avoids fighting between overlap zones and blockers.
+   * Creates the BossDoor instance for this region.
+   * All drawing, physics, and state logic is delegated to BossDoor.
    */
   _setupBossDoor() {
-    const _pos = POSITIONS[this.regionId];
-    const px = tx((_pos.bossTile ?? this.regionData.bossTile).col);
-    const py = ty((_pos.bossTile ?? this.regionData.bossTile).row);
+    const _pos    = POSITIONS[this.regionId];
+    const bossTile = _pos.bossTile ?? this.regionData.bossTile;
 
-    // Dimensions — the gate is intentionally large and imposing
-    const DW       = 88;
-    const DH       = 100;
-    const PILLAR_W = 14;
-    const OPEN_W   = DW - PILLAR_W * 2;
-    const OPEN_H   = DH - 6;
-    const ARCH_R   = OPEN_W / 2 + 2;
-    const archCY   = py - DH / 2 + ARCH_R;
-    const openX    = px - OPEN_W / 2;
-    const openTopY = py - DH / 2 + 6;
-    // Region-specific accent colour for arch highlights, turrets, and keystone gem
-    const GATE_ACCENTS = [0xFFDD33, 0x44EE88, 0xFF9933, 0x44CCFF, 0xCC66FF];
-    const accentColor  = GATE_ACCENTS[this.regionId] ?? GATE_ACCENTS[0];
-
-    // ── Static stone frame (never changes) ────────────────────────────────
-    const frame = this.add.graphics().setDepth(4);
-
-    frame.fillStyle(0x000000, 0.3);
-    frame.fillEllipse(px, py + DH / 2 + 3, DW + 12, 8);
-
-    frame.fillStyle(0x1E1E26);
-    frame.fillRect(px - DW / 2 - 3, py + DH / 2 - 8, DW + 6, 12);
-    frame.fillStyle(0x3E3E4E);
-    frame.fillRect(px - DW / 2 - 3, py + DH / 2 - 8, DW + 6, 4);
-
-    const lpx = px - DW / 2;
-    frame.fillStyle(0x1E1E26);
-    frame.fillRect(lpx - 3, py - DH / 2 - 3, PILLAR_W + 3, DH + 3);
-    frame.fillStyle(0x3C3C4C);
-    frame.fillRect(lpx, py - DH / 2, PILLAR_W, DH);
-    frame.fillStyle(0x545468, 0.85);
-    frame.fillRect(lpx + 1, py - DH / 2, 3, DH);
-    frame.fillStyle(0x18181E, 0.7);
-    frame.fillRect(lpx + PILLAR_W - 3, py - DH / 2, 3, DH);
-    frame.lineStyle(1, 0x14141A, 0.55);
-    for (let sy = py - DH / 2; sy < py + DH / 2; sy += 10) {
-      frame.lineBetween(lpx, sy, lpx + PILLAR_W, sy);
-    }
-
-    const rpx = px + DW / 2 - PILLAR_W;
-    frame.fillStyle(0x1E1E26);
-    frame.fillRect(rpx, py - DH / 2 - 3, PILLAR_W + 3, DH + 3);
-    frame.fillStyle(0x3C3C4C);
-    frame.fillRect(rpx, py - DH / 2, PILLAR_W, DH);
-    frame.fillStyle(0x545468, 0.85);
-    frame.fillRect(rpx + 1, py - DH / 2, 3, DH);
-    frame.fillStyle(0x18181E, 0.7);
-    frame.fillRect(rpx + PILLAR_W - 3, py - DH / 2, 3, DH);
-    frame.lineStyle(1, 0x14141A, 0.55);
-    for (let sy = py - DH / 2; sy < py + DH / 2; sy += 10) {
-      frame.lineBetween(rpx, sy, rpx + PILLAR_W, sy);
-    }
-
-    frame.fillStyle(0x1E1E26);
-    frame.fillCircle(px, archCY, ARCH_R + 3);
-    frame.fillStyle(0x3C3C4C);
-    frame.fillCircle(px, archCY, ARCH_R);
-    frame.fillStyle(0x3C3C4C);
-    frame.fillRect(lpx - 1, archCY, DW + 2, ARCH_R + 4);
-
-    // ── Battlements: twin turrets flanking the gate ─────────────────────────────
-    const TURR_W = PILLAR_W + 4;   // turret slightly wider than its pillar
-    const TURR_H = 28;
-    const MRL_W = 5; const MRL_H = 8; const MRL_GAP = 3;
-    const numMrl = Math.floor((TURR_W - 2) / (MRL_W + MRL_GAP));
-    for (const bx of [lpx - 2, rpx - 2]) {
-      // Turret body
-      frame.fillStyle(0x1E1E26);
-      frame.fillRect(bx, py - DH / 2 - TURR_H, TURR_W, TURR_H + 2);
-      frame.fillStyle(0x3C3C4C);
-      frame.fillRect(bx + 1, py - DH / 2 - TURR_H + 1, TURR_W - 2, TURR_H);
-      frame.fillStyle(0x545468, 0.65);
-      frame.fillRect(bx + 1, py - DH / 2 - TURR_H + 1, 3, TURR_H);
-      // Accent stripe
-      frame.fillStyle(accentColor, 0.25);
-      frame.fillRect(bx + 1, py - DH / 2 - TURR_H + TURR_H * 0.6, TURR_W - 2, 4);
-      // Merlons (crenellations) atop the turret
-      for (let m = 0; m < numMrl; m++) {
-        const mx = bx + 1 + m * (MRL_W + MRL_GAP);
-        frame.fillStyle(0x1E1E26);
-        frame.fillRect(mx, py - DH / 2 - TURR_H - MRL_H, MRL_W, MRL_H + 1);
-        frame.fillStyle(0x3C3C4C);
-        frame.fillRect(mx + 1, py - DH / 2 - TURR_H - MRL_H + 1, MRL_W - 2, MRL_H);
-      }
-    }
-
-    // Central finial — pointed peak above the arch crown
-    const finY = archCY - ARCH_R - 1;
-    frame.fillStyle(0x1E1E26);
-    frame.fillTriangle(px - 8, finY, px + 8, finY, px, finY - 14);
-    frame.fillStyle(0x3C3C4C);
-    frame.fillTriangle(px - 6, finY - 1, px + 6, finY - 1, px, finY - 11);
-
-    // Accent: glowing arch outline + keystone gem
-    frame.lineStyle(1.5, accentColor, 0.8);
-    frame.strokeCircle(px, archCY, ARCH_R);
-    frame.fillStyle(accentColor, 0.92);
-    frame.fillCircle(px, archCY - ARCH_R + 5, 5);   // gem
-    frame.fillStyle(0xFFFFFF, 0.5);
-    frame.fillCircle(px - 1, archCY - ARCH_R + 3, 2); // gem shine
-
-    // Boss name label
-    this._bossLabel = this.add.text(
-      px, py + DH / 2 + 10, this.regionData.bossName,
-      { fontSize: '9px', color: '#CC88FF', fontFamily: "'Nunito', Arial, sans-serif",
-        fontStyle: 'bold', align: 'center', stroke: '#000', strokeThickness: 2 },
-    ).setOrigin(0.5, 0).setDepth(10);
-
-    // Remaining-enemies counter (shown when locked)
-    this._enemyCountText = this.add.text(
-      px, py - DH / 2 - 14, '',
-      { fontSize: '9px', color: '#FF9999', fontFamily: "'Nunito', Arial, sans-serif",
-        align: 'center', stroke: '#000', strokeThickness: 2 },
-    ).setOrigin(0.5, 1).setDepth(10);
-
-    // ── Dynamic layers (redrawn on state change) ──────────────────────────
-    this._doorFill = this.add.graphics().setDepth(5);
-    this._doorDeco = this.add.graphics().setDepth(6);
-
-    // ── Physics: ONE static body in its own group ─────────────────────────
-    // When LOCKED  : body is enabled  → blocks Mimi; collider callback fires dialog
-    // When OPEN    : body is disabled → Mimi can enter; update() checks distance
-    this._doorGroup = this.physics.add.staticGroup();
-    const blocker   = this.add.rectangle(px, py, OPEN_W, DH, 0, 0);
-    this.physics.add.existing(blocker, true);
-    this._doorGroup.add(blocker);
-    this._doorBodyRect = blocker;  // keep reference for enable/disable
-
-    // Collider fires the locked message (Mimi bumps door → dialog)
-    this._doorMsgCooldown = false;
-    this.physics.add.collider(
-      this.mimi.sprite, this._doorGroup,
-      () => {
-        if (!this._bossOpen && !this._doorMsgCooldown && !this.dialog.isOpen) {
-          this._doorMsgCooldown = true;
-          const unlockKills = this.regionData.bossUnlockKills;
-          let msg;
-          if (unlockKills != null) {
-            const need = unlockKills - this._killCount;
-            msg = `The boss seal is unbroken.\nDefeat ${need} more enem${need === 1 ? 'y' : 'ies'} to enter.`;
-          } else {
-            const n = this._remainingEnemyCount();
-            msg = `The boss seal is unbroken.\nDefeat the ${n} remaining enemi${n === 1 ? 'y' : 'es'} to enter.`;
-          }
-          this.dialog.show(
-            msg,
-            () => { this.time.delayedCall(2500, () => { this._doorMsgCooldown = false; }); },
-            '\uD83D\uDD12 Sealed',
-          );
-        }
-      },
-    );
-
-    // Stash geometry for _checkBossDoor redraws
-    this._doorGeom = { px, py, openX, openTopY, OPEN_W, OPEN_H };
-
-    // Evaluate initial state — always start locked; kill count must be earned each run.
-    this._bossOpen = false;
-    this._checkBossDoor();
+    this._bossDoor = new BossDoor(this, this.regionData, {
+      bossTile,
+      getKillCount:      () => this._killCount,
+      getRemainingCount: () => this._remainingEnemyCount(),
+      onEnter:           () => this._startBossBattle(),
+    });
   }
 
   /** How many region enemies are not yet defeated. */
@@ -1042,101 +854,7 @@ export default class ExploreScene extends Phaser.Scene {
     ).length;
   }
 
-  /**
-   * Recompute open/locked state and redraw the door visuals.
-   * Safe to call at any point (including during create() before dialog exists).
-   */
-  _checkBossDoor() {
-    const unlockKills = this.regionData.bossUnlockKills;
-    const n = unlockKills == null ? this._remainingEnemyCount() : 0;
-    this._bossOpen = unlockKills != null
-      ? (this._killCount >= unlockKills)
-      : (n === 0);
-
-    const { px, py, openX, openTopY, OPEN_W, OPEN_H } = this._doorGeom;
-    this._doorFill.clear();
-    this._doorDeco.clear();
-
-    if (this._bossOpen) {
-      // Disable the physics body so Mimi can walk through.
-      // Use all available mechanisms: enable flag + checkCollision.none + group refresh.
-      if (this._doorBodyRect?.body) {
-        this._doorBodyRect.body.enable = false;
-        this._doorBodyRect.body.checkCollision.none = true;
-        this._doorGroup.refresh();
-      }
-
-      // Purple portal glow
-      this._doorFill.fillStyle(0x110022);
-      this._doorFill.fillRect(openX, openTopY, OPEN_W, OPEN_H);
-      this._doorFill.fillStyle(0x5500AA, 0.7);
-      this._doorFill.fillEllipse(px, py, OPEN_W * 0.82, OPEN_H * 0.76);
-      this._doorFill.fillStyle(0xAA44FF, 0.45);
-      this._doorFill.fillEllipse(px, py - 4, OPEN_W * 0.45, OPEN_H * 0.45);
-      this._doorDeco.lineStyle(2, 0xFFDD44, 1);
-      this._doorDeco.strokeRect(openX + 1, openTopY + 1, OPEN_W - 2, OPEN_H - 2);
-
-      // Pulsing tween (only add once)
-      if (!this._doorPulseTween) {
-        this._doorPulseTween = this.tweens.add({
-          targets: this._doorFill, alpha: 0.65, duration: 900, yoyo: true, repeat: -1,
-        });
-      }
-
-      this._bossLabel.setColor('#FFDD44').setFontStyle('bold');
-      this._enemyCountText.setVisible(false);
-
-    } else {
-      // Re-enable physics body if it was disabled (shouldn't happen, but safe)
-      if (this._doorBodyRect?.body) {
-        this._doorBodyRect.body.enable = true;
-        this._doorBodyRect.body.checkCollision.none = false;
-        this._doorGroup.refresh();
-      }
-
-      // Stone door fill
-      this._doorFill.fillStyle(0x2A2A36);
-      this._doorFill.fillRect(openX, openTopY, OPEN_W, OPEN_H);
-      this._doorFill.fillStyle(0x38384A);
-      this._doorFill.fillRect(openX + 2, openTopY + 2, OPEN_W - 4, OPEN_H / 3);
-      this._doorFill.lineStyle(1, 0x1A1A24, 0.6);
-      for (let sy = openTopY + 10; sy < openTopY + OPEN_H; sy += 11) {
-        this._doorFill.lineBetween(openX + 2, sy, openX + OPEN_W - 2, sy);
-      }
-      this._doorFill.lineStyle(1, 0x1A1A24, 0.5);
-      this._doorFill.lineBetween(px, openTopY + 2, px, openTopY + OPEN_H - 2);
-
-      // Padlock
-      const lx = px, ly = py - 2;
-      this._doorDeco.fillStyle(0x997700);
-      this._doorDeco.fillRoundedRect(lx - 9, ly - 2, 18, 14, 2);
-      this._doorDeco.fillStyle(0xFFCC22);
-      this._doorDeco.fillRoundedRect(lx - 7, ly, 14, 11, 2);
-      this._doorDeco.lineStyle(4, 0xAA8800, 1);
-      this._doorDeco.strokeCircle(lx, ly - 2, 6);
-      this._doorDeco.fillStyle(0x2A2A36);
-      this._doorDeco.fillRect(lx - 10, ly - 2, 20, 7);
-      this._doorDeco.fillStyle(0x6E5500);
-      this._doorDeco.fillCircle(lx, ly + 5, 2.5);
-      this._doorDeco.fillTriangle(lx - 2, ly + 7, lx + 2, ly + 7, lx, ly + 11);
-
-      if (unlockKills != null) {
-        this._enemyCountText
-          .setText(`${this._killCount} / ${unlockKills} defeated`)
-          .setVisible(true);
-      } else {
-        this._enemyCountText
-          .setText(`${n} of ${POSITIONS[this.regionId].enemySpawns.length} enemies remain`)
-          .setVisible(true);
-      }
-      this._bossLabel.setColor('#CC88FF');
-    }
-  }
-
   _startBossBattle() {
-    if (this._bossBattleStarted) return;
-    this._bossBattleStarted = true;
-
     const bossData   = ENEMIES[this.regionData.boss];
     const battleData = {
       enemy:         bossData,
@@ -1175,14 +893,22 @@ export default class ExploreScene extends Phaser.Scene {
   //  NPC 
 
   _setupNPC() {
-    const npc       = POSITIONS[this.regionId].npcTile;
-    const px        = this._returnNpcX ?? tx(npc.col);
-    const py        = this._returnNpcY ?? ty(npc.row);
-    const regionId  = this.regionId;
+    const npc      = POSITIONS[this.regionId].npcTile;
+    const px       = this._returnNpcX ?? tx(npc.col);
+    const py       = this._returnNpcY ?? ty(npc.row);
+    const regionId = this.regionId;
+
+    // Create MewtonDialogue helper (owns beacon, treat-given state, all conversation logic)
+    this._mewton = new MewtonDialogue(this, this.regionData, {
+      onItemGiven: (itemId) => {
+        this._showPickupToast(itemId);
+        this.hud.refresh();
+      },
+    });
 
     // Pulsing beacon if Mewton hasn't been visited this region yet
     if (!GameState.npcVisited?.[regionId]) {
-      this._mewtonBeacon = this._createMewtonBeacon(px, py);
+      this._mewton.showBeacon(px, py);
     }
 
     this._npc = new NPC(
@@ -1193,10 +919,7 @@ export default class ExploreScene extends Phaser.Scene {
         if (this.dialog.isOpen) return;
 
         // Dismiss beacon on first contact
-        if (this._mewtonBeacon) {
-          this._mewtonBeacon.forEach(o => o.destroy());
-          this._mewtonBeacon = null;
-        }
+        this._mewton.hideBeacon();
 
         // Freeze Mewton and all enemies so nothing wanders off during conversation
         this._npc.freeze();
@@ -1207,7 +930,6 @@ export default class ExploreScene extends Phaser.Scene {
           done();
         };
 
-        const rd         = this.regionData;
         const bossBeaten  = GameState.hasDefeatedBoss(regionId);
         const unlockKills = this.regionData.bossUnlockKills;
         const allClear    = unlockKills != null
@@ -1215,7 +937,7 @@ export default class ExploreScene extends Phaser.Scene {
           : POSITIONS[regionId].enemySpawns.every((s, i) =>
               GameState.isEnemyDefeated(regionId, s.id + i));
 
-        this._mewtonMenu(wrappedDone, rd, { bossBeaten, allClear });
+        this._mewton.talk(wrappedDone, { bossBeaten, allClear });
       },
     );
     this._npc.registerOverlap(this.mimi.sprite);
@@ -1256,106 +978,9 @@ export default class ExploreScene extends Phaser.Scene {
       g.destroy();
     }
 
-    // ── Per-region emitter definitions ─────────────────────────────────
-    // Each entry: { texture, depth, config }  where config is the full
-    // Phaser 3.60 ParticleEmitter config object.
-    const WEATHER = [
-      // R0 Sunny Village — gentle angled rain
-      {
-        texture: '_wx_line', depth: 22,
-        config: {
-          x: { min: -20, max: camW + 20 }, y: -12,
-          speedX: { min: 55, max: 95 },
-          speedY: { min: 280, max: 420 },
-          lifespan: 1800,
-          quantity: 2, frequency: 45,
-          alpha: { start: 0.30, end: 0 },
-          scale: { start: 0.9, end: 0.9 },
-          tint: 0xBBDDFF,
-          rotate: 12,
-          gravityY: 0, maxParticles: 0,
-        },
-      },
-      // R1 Windmill Village — drifting wheat chaff
-      {
-        texture: '_wx_dot', depth: 22,
-        config: {
-          x: { min: 0, max: camW }, y: { min: 0, max: camH },
-          speedX: { min: 18, max: 55 },
-          speedY: { min: -25, max: 25 },
-          lifespan: { min: 4000, max: 7000 },
-          quantity: 1, frequency: 220,
-          alpha: { start: 0.55, end: 0 },
-          scale: { start: 0.35, end: 0.12 },
-          tint: 0xF0D060,
-          gravityY: 18, maxParticles: 0,
-        },
-      },
-      // R2 Meadow Maze — lighter angled rain
-      {
-        texture: '_wx_line', depth: 22,
-        config: {
-          x: { min: -20, max: camW + 20 }, y: -12,
-          speedX: { min: 35, max: 70 },
-          speedY: { min: 200, max: 320 },
-          lifespan: 2200,
-          quantity: 1, frequency: 70,
-          alpha: { start: 0.25, end: 0 },
-          scale: { start: 0.75, end: 0.75 },
-          tint: 0xCCEEBB,
-          rotate: 10,
-          gravityY: 0, maxParticles: 0,
-        },
-      },
-      // R3 Desert Dunes — horizontal sand-grain streaks
-      {
-        texture: '_wx_line', depth: 22,
-        config: {
-          x: -8, y: { min: 0, max: camH },
-          speedX: { min: 340, max: 520 },
-          speedY: { min: -18, max: 18 },
-          lifespan: { min: 650, max: 1050 },
-          quantity: 2, frequency: 30,
-          alpha: { start: 0.45, end: 0 },
-          scale: { start: 1.3, end: 0.5 },
-          tint: 0xD4A844,
-          rotate: 90,
-          gravityY: 0, maxParticles: 0,
-        },
-      },
-      // R4 Frostbite Cavern — slowly drifting snowflakes with alpha fade
-      {
-        texture: '_wx_dot', depth: 22,
-        config: {
-          x: { min: -20, max: camW + 20 }, y: -8,
-          speedX: { min: -28, max: 28 },
-          speedY: { min: 35, max: 90 },
-          lifespan: { min: 5000, max: 9000 },
-          quantity: 1, frequency: 100,
-          alpha: { start: 0.80, end: 0 },
-          scale: { start: 0.3, end: 0.65 },
-          tint: 0xDDEEFF,
-          gravityY: 0, maxParticles: 0,
-        },
-      },
-      // R5 Shadow Castle — rising dark smoke motes
-      {
-        texture: '_wx_dot', depth: 22,
-        config: {
-          x: { min: 0, max: camW }, y: camH + 8,
-          speedX: { min: -22, max: 22 },
-          speedY: { min: -75, max: -28 },
-          lifespan: { min: 3200, max: 5800 },
-          quantity: 1, frequency: 140,
-          alpha: { start: 0.55, end: 0 },
-          scale: { start: 0.55, end: 1.30 },
-          tint: 0x6622AA,
-          gravityY: 0, maxParticles: 0,
-        },
-      },
-    ];
-
-    const weatherCfg = WEATHER[this.regionId];
+    // Per-region emitter config comes from regionData.weather (a factory function
+    // that receives camW and camH so spawn ranges fill the viewport correctly).
+    const weatherCfg = this.regionData.weather?.(camW, camH);
     if (!weatherCfg) return;
 
     const emitter = this.add.particles(0, 0, weatherCfg.texture, weatherCfg.config);
@@ -1409,16 +1034,8 @@ export default class ExploreScene extends Phaser.Scene {
     // Tick NPC wander AI
     if (this._npc) this._npc.update();
 
-    // Boss door — check proximity when open (collision handles the locked case)
-    if (this._bossOpen && !this._bossBattleStarted && this._doorGeom) {
-      const { px, py } = this._doorGeom;
-      const dx = this.mimi.x - px;
-      const dy = this.mimi.y - py;
-      const dist2 = dx * dx + dy * dy;
-      if (dist2 < 40 * 40) {
-        this._startBossBattle();
-      }
-    }
+    // Boss door — proximity trigger when open (collision handles the locked case)
+    this._bossDoor?.update();
 
     // Interactive items — auto-collect on proximity
     if (this._interactiveItems?.length) {
@@ -1495,29 +1112,11 @@ export default class ExploreScene extends Phaser.Scene {
 
   // ── Interactive item pickups ─────────────────────────────────────────────
 
-  /** Map itemId → registered spriteKey (SVG asset key). */
-  static get ITEM_SPRITE_KEYS() {
-    return {
-      sardine:      'item_sardine',
-      yarn_ball:    'item_yarn',
-      catnip:       'item_catnip',
-      lucky_collar: 'item_collar',
-      fish_fossil:  'item_fossil',
-    };
-  }
-
   /** Create pulsing orbs for every uncollected interactive item in this region. */
   _setupInteractiveItems() {
     this._interactiveItems = [];
 
     const items = POSITIONS[this.regionId]?.interactiveItems ?? [];
-    const ORB_COLORS = {
-      sardine:      0x44AAFF,
-      yarn_ball:    0xFF8833,
-      catnip:       0x44CC44,
-      lucky_collar: 0x44CCFF,
-      fish_fossil:  0xFFDD44,
-    };
 
     for (const item of items) {
       const key = `${this.regionId}_${item.col}_${item.row}`;
@@ -1525,7 +1124,7 @@ export default class ExploreScene extends Phaser.Scene {
 
       const px    = tx(item.col);
       const py    = ty(item.row);
-      const color = ORB_COLORS[item.itemId] ?? 0xFFDD44;
+      const color = ITEMS[item.itemId]?.color ?? 0xFFDD44;
 
       // Glow orb (Graphics)
       const gfx = this.add.graphics().setDepth(8);
@@ -1538,7 +1137,7 @@ export default class ExploreScene extends Phaser.Scene {
       gfx.setPosition(px, py);
 
       // Sprite icon on top of orb
-      const spriteKey = ExploreScene.ITEM_SPRITE_KEYS[item.itemId];
+      const spriteKey = ITEMS[item.itemId]?.spriteKey;
       const icon = spriteKey && this.textures.exists(spriteKey)
         ? this.add.image(px, py, spriteKey).setDisplaySize(20, 20).setDepth(9)
         : null;
@@ -1591,153 +1190,11 @@ export default class ExploreScene extends Phaser.Scene {
     this.hud.refresh();
   }
 
-  // ═══════════════════════════════════════════════════════════════════════
-  //  Mewton NPC helpers
-  // ═══════════════════════════════════════════════════════════════════════
-
-  /**
-   * Creates a pulsing gold orb + "?" floating above the wizard's initial
-   * tile so the player can spot him before making first contact.
-   * @returns {Phaser.GameObjects.GameObject[]} objects to destroy on contact
-   */
-  _createMewtonBeacon(px, py) {
-    const orbY = py - 28;
-    const orb = this.add.circle(px, orbY, 6, 0xFFDD44, 0.85)
-      .setDepth(22).setScrollFactor(1);
-
-    this.tweens.add({
-      targets: orb, y: orbY - 6,
-      duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
-    });
-    this.tweens.add({
-      targets: orb, alpha: { from: 0.55, to: 0.95 },
-      duration: 900, yoyo: true, repeat: -1,
-    });
-    return [orb];
-  }
-
-  /**
-   * Chains an array of dialog pages (shows them sequentially) then calls onDone.
-   * @param {string[]} pages
-   * @param {string}   speaker
-   * @param {string}   portrait
-   * @param {Function} onDone
-   */
-  _dialogChain(pages, speaker, portrait, onDone) {
-    if (!pages || pages.length === 0) { onDone?.(); return; }
-    const [first, ...rest] = pages;
-    this.dialog.show(first,
-      () => this._dialogChain(rest, speaker, portrait, onDone),
-      speaker, portrait);
-  }
-
-  /**
-   * Shows a context-aware greeting then the player-driven topic menu.
-   * @param {Function} done
-   * @param {object}   rd     - regionData
-   * @param {object}   flags  - { bossBeaten, allClear }
-   */
-  _mewtonMenu(done, rd, { bossBeaten, allClear }) {
-    const SPEAKER  = '🧙 Mewton';
-    const PORTRAIT = 'npc_wizard';
-    const rid      = this.regionId;
-
-    const firstVisit = !GameState.npcVisited?.[rid];
-
-    // Mark visited
-    if (!GameState.npcVisited) GameState.npcVisited = {};
-    GameState.npcVisited[rid] = true;
-    GameState.save();
-
-    // Context-aware greeting
-    let greeting;
-    if (bossBeaten) {
-      greeting = `You defeated ${rd.bossName ?? 'the boss'}! I knew you would manage it.\n\n...I had a contingency plan. We do not need to discuss the contingency plan.`;
-    } else if (allClear) {
-      greeting = `Every enemy cleared — boss door is open.\n\nI predicted this. 50% probability still counts.`;
-    } else if (firstVisit) {
-      greeting = `Ah — Mimi! I'm Mewton. Wizard and cat-genius.\n\nWhat can I do for you?`;
-    } else {
-      greeting = `Back again? The boss won't defeat itself.\n\nCan I help?`;
-    }
-
-    this.dialog.show(greeting, () => {
-      const labels = [
-        '😂 Tell me a joke',
-        '📖 About the boss',
-        ...(!this._treatGiven ? ['🐟 Can I have a treat?'] : []),
-        '👋 All good, thanks!',
-      ];
-      this.dialog.showChoice('What would you like to know?', labels, (idx) => {
-        const treatIdx = this._treatGiven ? -1 : 2;
-        const byeIdx   = labels.length - 1;
-        if      (idx === 0)       this._mewtonJoke(done);
-        else if (idx === 1)       this._mewtonBossStory(done, rd);
-        else if (idx === treatIdx) this._mewtonTreat(done, rd);
-        else if (idx === byeIdx)  done();
-        else                      done();
-      }, SPEAKER, PORTRAIT);
-    }, SPEAKER, PORTRAIT);
-  }
-
-  /** Tells a random joke then calls done. */
-  _mewtonJoke(done) {
-    const SPEAKER  = '🧙 Mewton';
-    const PORTRAIT = 'npc_wizard';
-    const joke = NPC_JOKES[Math.floor(Math.random() * NPC_JOKES.length)];
-    this.dialog.show(joke.setup, () => {
-      this.dialog.show(joke.punchline, done, SPEAKER, PORTRAIT);
-    }, SPEAKER, PORTRAIT);
-  }
-
-  /** Shows the 2-page boss background story then calls done. */
-  _mewtonBossStory(done, rd) {
-    const SPEAKER  = '🧙 Mewton';
-    const PORTRAIT = 'npc_wizard';
-    this._dialogChain(rd.npcBossStory ?? [rd.npcHint], SPEAKER, PORTRAIT, done);
-  }
-
-  /**
-   * Give Mimi the region boon item as a treat — once per ExploreScene visit.
-   * Tracked via this._treatGiven (scene-local, resets on re-entry).
-   * @param {Function} done
-   * @param {object}   rd - regionData
-   */
-  _mewtonTreat(done, rd) {
-    const SPEAKER  = '🧙 Mewton';
-    const PORTRAIT = 'npc_wizard';
-    const boonId   = rd.npcBoon;
-    const item     = ITEMS[boonId];
-
-    if (!item) {
-      this.dialog.show(
-        "Hmm — I seem to have misplaced my treat supply. Come back another time!",
-        done, SPEAKER, PORTRAIT,
-      );
-      return;
-    }
-
-    this._treatGiven = true;
-    GameState.addItem(boonId);
-    GameState.save();
-    this._showPickupToast(boonId);
-    this.hud.refresh();
-
-    this.dialog.show(
-      `Here — take this. Don't tell anyone I'm a soft touch.\n\n${item.emoji ?? '✨'} ${item.name} — ${item.description}`,
-      done, SPEAKER, PORTRAIT,
-    );
-  }
-
   _showPickupToast(itemId) {
-    const INFO = {
-      sardine:      { name: 'Sardine',       desc: 'Heals 2 HP at battle start.' },
-      yarn_ball:    { name: 'Yarn Ball',     desc: '+5 seconds on the battle timer.' },
-      catnip:       { name: 'Catnip',        desc: 'Next correct answer deals ×2 damage.' },
-      lucky_collar: { name: 'Lucky Collar',  desc: 'Block one hit in battle.' },
-      fish_fossil:  { name: 'Fish Fossil',   desc: 'Reveal a wrong choice (×3 uses).' },
-    };
-    const info = INFO[itemId] ?? { name: itemId, desc: '' };
+    const itemDef = ITEMS[itemId];
+    const info    = itemDef
+      ? { name: itemDef.name, desc: itemDef.description }
+      : { name: itemId, desc: '' };
     const W    = this.cameras.main.width;
     const FONT = "'Nunito', Arial, sans-serif";
     const objs = [];

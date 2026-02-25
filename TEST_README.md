@@ -8,7 +8,7 @@ Four test suites run directly in Node with no browser or server needed:
 node test_questions.mjs    # QuestionBank + Distractors contracts  (~75,351 checks)
 node test_unlock.mjs       # boss-door unlock, 9 lives, stars, hard mode, bestiary  (37 checks)
 node test_connectivity.mjs # map BFS reachability for all 7 regions  (210 checks)
-node test_data.mjs         # data integrity + source-text contracts  (438 checks)
+node test_data.mjs         # data integrity + source-text contracts  (579 checks)
 ```
 
 ### test_unlock.mjs

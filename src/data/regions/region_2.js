@@ -14,6 +14,27 @@
     floorTile: 'floor_grass',
     wallTile:  'wall_hedge',
 
+    colorGrade:      0x99EE66,  // cool leafy green colour-grade overlay
+    gateAccentColor: 0xFF9933,  // warm amber arch highlights on boss door
+    weather: (camW, camH) => ({
+      texture: '_wx_line', depth: 22,
+      config: {
+        x: { min: -20, max: camW + 20 }, y: -12,
+        speedX: { min: 35, max: 70 },
+        speedY: { min: 200, max: 320 },
+        lifespan: 2200,
+        quantity: 1, frequency: 70,
+        alpha: { start: 0.25, end: 0 },
+        scale: { start: 0.75, end: 0.75 },
+        tint: 0xCCEEBB,
+        rotate: 10,
+        gravityY: 0, maxParticles: 0,
+      },
+    }),
+    animatedEffects: [
+      { type: 'campfire' },
+    ],
+
     // ── Map generation config ──────────────────────────────────────────────
     blockingTiles: [
       { key: 'decoration_tree_meadow' },

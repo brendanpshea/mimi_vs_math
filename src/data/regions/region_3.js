@@ -14,6 +14,24 @@
     floorTile: 'floor_moss',
     wallTile:  'wall_mycelium',
 
+    colorGrade:      0x88FFAA,  // bioluminescent green colour-grade overlay
+    gateAccentColor: 0xAAFF66,  // lime spore-glow arch highlights on boss door
+    weather: (camW, camH) => ({
+      texture: '_wx_dot', depth: 22,
+      config: {
+        x: { min: 0, max: camW }, y: { min: 0, max: camH },
+        speedX: { min: -15, max: 15 },
+        speedY: { min: -30, max: 10 },
+        lifespan: { min: 3000, max: 6000 },
+        quantity: 1, frequency: 180,
+        alpha: { start: 0.45, end: 0 },
+        scale: { start: 0.25, end: 0.55 },
+        tint: 0x88FF99,
+        gravityY: -8, maxParticles: 0,
+      },
+    }),
+    animatedEffects: [],
+
     // ── Map generation config ──────────────────────────────────────────────
     blockingTiles: [
       { key: 'decoration_vine' },

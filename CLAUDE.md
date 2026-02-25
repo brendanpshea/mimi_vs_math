@@ -29,7 +29,7 @@ python -m http.server 8080
 node test_questions.mjs    # ~75k checks: QuestionBank + Distractors
 node test_unlock.mjs       # 37 checks: boss-unlock, lives, stars, hard mode, bestiary
 node test_connectivity.mjs # 210 checks: BFS pathfinding for all 7 regions
-node test_data.mjs         # 438 checks: data integrity
+node test_data.mjs         # 579 checks: data integrity
 ```
 
 Tests use pure Node.js with no browser or server required. They import live source files directly.
@@ -54,7 +54,7 @@ src/
 │   ├── items.js           # Power-up item definitions
 │   ├── regions/           # region_0.js – region_6.js + index.js
 │   └── ProceduralMap.js   # Tile functions, accent layers, set-pieces per region
-├── ui/                    # HUD, DialogBox, VirtualDPad, SettingsOverlay
+├── ui/                    # HUD, DialogBox, VirtualDPad, SettingsOverlay, MewtonDialogue, BossDoor
 └── audio/
     └── BGM.js             # Tone.js procedural track manager
 ```
@@ -76,6 +76,8 @@ src/
 | `src/data/regions/region_N.js` | Add/modify regions |
 | `src/scenes/BattleScene.js` | Battle rules (damage, streak, timing) |
 | `src/scenes/ExploreScene.js` | Exploration mechanics |
+| `src/ui/MewtonDialogue.js`   | Mewton NPC conversation logic |
+| `src/ui/BossDoor.js`         | Boss door visuals, physics, and state machine |
 
 ## Adding a New Region
 

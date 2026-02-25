@@ -21,7 +21,7 @@
  */
 
 export const ASSET_TYPE = 'png';  // ← change to 'png' when ready
-export const ATLAS_MODE = true;   // ← change to true to load from texture atlases
+export const ATLAS_MODE = false;  // ← change to true to load from texture atlases (requires code updates for atlas+frame syntax)
 
 /**
  * All character/enemy sprite definitions.

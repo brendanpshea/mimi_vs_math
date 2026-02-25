@@ -42,7 +42,8 @@ const config = {
     width: 800,
     height: 600,
     min: { width: 640, height: 480 },
-    max: { width: 1366, height: 768 },
+    // No max — letting EXPAND fill any aspect ratio freely shows more world
+    // on wider screens rather than distorting content to fit a fixed 16:9 cap.
   },
 
   scene: [

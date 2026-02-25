@@ -432,7 +432,7 @@ const src = path => readFileSync(path, 'utf8');
 // pos is undefined" (the exact bug that prompted this check).
 //
 // Checked arrays:
-//   NODE_POSITIONS  — { x, y } objects, one per region node
+//   BASE_NODE_POS   — { x, y } objects, one per region node (scaled in create())
 //   TERRAIN_COLORS  — 0xRRGGBB hex tints, one per region
 //   bossKeys        — string texture keys inside _getBossKey(), one per region
 //
@@ -441,13 +441,13 @@ const src = path => readFileSync(path, 'utf8');
 {
   const owSrc = src('./src/scenes/OverworldScene.js');
 
-  // Count entries in NODE_POSITIONS: each node is a `{ x: N, y: N }` object.
-  // We grab the literal from const NODE_POSITIONS = [ ... ]; up to the closing ];
-  const nodeBlock = owSrc.match(/const\s+NODE_POSITIONS\s*=\s*\[([\s\S]*?)\];/);
+  // Count entries in BASE_NODE_POS: each node is a `{ x: N, y: N }` object.
+  // We grab the literal from const BASE_NODE_POS = [ ... ]; up to the closing ];
+  const nodeBlock = owSrc.match(/const\s+BASE_NODE_POS\s*=\s*\[([\s\S]*?)\];/);
   const nodeCount = nodeBlock ? (nodeBlock[1].match(/\{\s*x:/g) || []).length : -1;
   assert(
     nodeCount === REGIONS.length,
-    `OverworldScene: NODE_POSITIONS has ${nodeCount} entries (need ${REGIONS.length})`,
+    `OverworldScene: BASE_NODE_POS has ${nodeCount} entries (need ${REGIONS.length})`,
     nodeCount < REGIONS.length
       ? `Add ${REGIONS.length - nodeCount} more { x, y } entry/entries for the new region(s).`
       : `Remove ${nodeCount - REGIONS.length} extra entry/entries.`,

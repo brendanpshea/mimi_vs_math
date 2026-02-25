@@ -13,12 +13,11 @@
  * pointerup OR pointerout (prevents stuck-direction when a finger slides off).
  */
 import * as Phaser from 'phaser';
+import { uiSizes } from './uiSizes.js';
 
 // ── Layout constants ──────────────────────────────────────────────────────────
-const DEPTH  = 48;   // above world, below dialog / HUD overlays
-const OFFSET = 46;   // px from d-pad centre to each arrow centre
-const BSIZE  = 50;   // invisible hit-area square side (px) — generous for thumbs
-const FONT   = "'Nunito', Arial, sans-serif";
+const DEPTH = 48;   // above world, below dialog / HUD overlays
+const FONT  = "'Nunito', Arial, sans-serif";
 
 export default class VirtualDPad {
   /** @param {Phaser.Scene} scene */
@@ -27,23 +26,26 @@ export default class VirtualDPad {
     this._state = { up: false, down: false, left: false, right: false };
     this._objs  = [];
 
+    const W  = scene.cameras.main.width;
     const H  = scene.cameras.main.height;
-    const CX = 82;
-    const CY = H - 82;
+    const sz = uiSizes(W, H);
 
-    this._build(CX, CY);
+    const CX = sz.dpadEdgePad;
+    const CY = H - sz.dpadEdgePad;
+
+    this._build(CX, CY, sz);
   }
 
-  _build(CX, CY) {
+  _build(CX, CY, sz) {
     const scene = this._scene;
     const push  = o => { this._objs.push(o); return o; };
 
     // ── Outer ring / base ─────────────────────────────────────────────────
     const base = push(scene.add.graphics().setScrollFactor(0).setDepth(DEPTH));
     base.fillStyle(0x000000, 0.30);
-    base.fillCircle(CX, CY, 72);
+    base.fillCircle(CX, CY, sz.dpadBaseRadius);
     base.lineStyle(1.5, 0xFFFFFF, 0.18);
-    base.strokeCircle(CX, CY, 72);
+    base.strokeCircle(CX, CY, sz.dpadBaseRadius);
 
     // Centre nub
     push(
@@ -53,10 +55,10 @@ export default class VirtualDPad {
 
     // ── Four directional buttons ──────────────────────────────────────────
     const dirs = [
-      { key: 'up',    label: '▲', dx:  0,      dy: -OFFSET },
-      { key: 'down',  label: '▼', dx:  0,      dy:  OFFSET },
-      { key: 'left',  label: '◀', dx: -OFFSET, dy:  0      },
-      { key: 'right', label: '▶', dx:  OFFSET, dy:  0      },
+      { key: 'up',    label: '▲', dx:  0,               dy: -sz.dpadOffset },
+      { key: 'down',  label: '▼', dx:  0,               dy:  sz.dpadOffset },
+      { key: 'left',  label: '◀', dx: -sz.dpadOffset,   dy:  0             },
+      { key: 'right', label: '▶', dx:  sz.dpadOffset,   dy:  0             },
     ];
 
     for (const { key, label, dx, dy } of dirs) {
@@ -65,7 +67,7 @@ export default class VirtualDPad {
 
       // Filled circle indicator (visual feedback on press)
       const circle = push(
-        scene.add.arc(bx, by, 20, 0, 360, false, 0x000000, 0.45)
+        scene.add.arc(bx, by, sz.dpadRadius, 0, 360, false, 0x000000, 0.45)
           .setStrokeStyle(1.5, 0xFFFFFF, 0.35)
           .setScrollFactor(0).setDepth(DEPTH + 1),
       );
@@ -79,7 +81,7 @@ export default class VirtualDPad {
 
       // Invisible square hit-area (larger than the circle for fat-finger friendliness)
       const btn = push(
-        scene.add.rectangle(bx, by, BSIZE, BSIZE, 0x000000, 0)
+        scene.add.rectangle(bx, by, sz.dpadBtnSize, sz.dpadBtnSize, 0x000000, 0)
           .setScrollFactor(0).setDepth(DEPTH + 4)
           .setInteractive({ useHandCursor: false }),
       );

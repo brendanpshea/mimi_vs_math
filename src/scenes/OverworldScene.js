@@ -10,8 +10,8 @@ import REGIONS   from '../data/regions/index.js';
 import ENEMIES   from '../data/enemies.js';
 import BGM       from '../audio/BGM.js';
 import { openSettings, closeSettings } from '../ui/SettingsOverlay.js';
+import { uiSizes } from '../ui/uiSizes.js';
 
-const NODE_RADIUS = 40;
 const PATH_COLOR  = 0x8B6A3A;
 
 // Per-region terrain tint painted behind each node
@@ -25,8 +25,8 @@ const TERRAIN_COLORS = [
   0x2A1850,   // R6 – shadow    (Shadow Castle)
 ];
 
-// Fixed positions for each region node on the 800×600 canvas
-const NODE_POSITIONS = [
+// Base node positions authored for 800×600; scaled linearly to the viewport in create().
+const BASE_NODE_POS = [
   { x: 130, y: 480 },  // 0 Sunny Village
   { x: 240, y: 370 },  // 1 Windmill Village
   { x: 360, y: 260 },  // 2 Meadow Maze
@@ -35,6 +35,13 @@ const NODE_POSITIONS = [
   { x: 690, y: 330 },  // 5 Frostbite Cavern
   { x: 650, y: 475 },  // 6 Shadow Castle
 ];
+function nodePositions(W, H) {
+  const rx = W / 800, ry = H / 600;
+  return BASE_NODE_POS.map(p => ({
+    x: Math.round(p.x * rx),
+    y: Math.round(p.y * ry),
+  }));
+}
 
 export default class OverworldScene extends Phaser.Scene {
   constructor() { super({ key: 'OverworldScene' }); }
@@ -45,19 +52,21 @@ export default class OverworldScene extends Phaser.Scene {
 
     if (data?.bossDefeated) GameState.defeatBoss(data.regionId);
 
-    const W = this.cameras.main.width;
-    const H = this.cameras.main.height;
+    const W       = this.cameras.main.width;
+    const H       = this.cameras.main.height;
+    const nodePos = nodePositions(W, H);
+    const sz      = uiSizes(W, H);
 
-    this._drawBackground(W, H);
+    this._drawBackground(W, H, nodePos);
     this._drawDecor(W, H);
-    this._drawPaths();
+    this._drawPaths(nodePos);
     this._drawBorder(W, H);
     this._drawTitle(W);
-    this._drawCompass(W, H);
+    this._drawCompass(W, H, sz);
 
-    REGIONS.forEach((region, i) => this._drawNode(region, NODE_POSITIONS[i]));
+    REGIONS.forEach((region, i) => this._drawNode(region, nodePos[i], sz));
 
-    this._drawPlayerInfo(W, H);
+    this._drawPlayerInfo(W, H, sz);
 
     // ESC: close overlay/popup first; then confirm before returning to title
     this.input.keyboard.on('keydown-ESC', () => {
@@ -69,7 +78,7 @@ export default class OverworldScene extends Phaser.Scene {
     });
 
     this.add.text(W / 2, H - 8, 'Click a region to enter  ·  Esc → Exit prompt', {
-      fontSize: '11px', color: '#8A7050', fontFamily: "'Nunito', Arial, sans-serif",
+      fontSize: `${sz.fontXs}px`, color: '#8A7050', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5, 1);
 
     // Auto-show stats after boss defeat
@@ -79,7 +88,7 @@ export default class OverworldScene extends Phaser.Scene {
   }
 
   // ── Background: sky gradient + parchment land + water + terrain patches ──
-  _drawBackground(W, H) {
+  _drawBackground(W, H, nodePos) {
     const gfx = this.add.graphics();
 
     // Sky gradient (top 110 px, dark-to-medium blue)
@@ -110,7 +119,7 @@ export default class OverworldScene extends Phaser.Scene {
     for (let i = 0; i < 4; i++) gfx.lineBetween(18, 492 + i * 10, 108, 492 + i * 10);
 
     // Terrain patches per region
-    NODE_POSITIONS.forEach((pos, i) => {
+    nodePos.forEach((pos, i) => {
       gfx.fillStyle(TERRAIN_COLORS[i], 0.45);
       gfx.fillEllipse(pos.x, pos.y + 18, 205, 150);
     });
@@ -190,7 +199,7 @@ export default class OverworldScene extends Phaser.Scene {
   }
 
   // ── Compass rose (bottom left) ────────────────────────────────────────────
-  _drawCompass(W, H) {
+  _drawCompass(W, H, sz) {
     const cx = 50, cy = H - 55;
     const gfx = this.add.graphics();
     gfx.fillStyle(0xF5E8C0, 0.78);  gfx.fillCircle(cx, cy, 34);
@@ -201,14 +210,14 @@ export default class OverworldScene extends Phaser.Scene {
     // North arrow — red; South — grey
     gfx.fillStyle(0xCC2222, 0.9); gfx.fillTriangle(cx, cy - 28, cx - 6, cy, cx + 6, cy);
     gfx.fillStyle(0xBBBBBB, 0.9); gfx.fillTriangle(cx, cy + 28, cx - 6, cy, cx + 6, cy);
-    this.add.text(cx, cy - 36, 'N', { fontSize: '11px', color: '#4A2A0A', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' }).setOrigin(0.5, 1);
+    this.add.text(cx, cy - 36, 'N', { fontSize: `${sz.fontXs}px`, color: '#4A2A0A', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' }).setOrigin(0.5, 1);
   }
 
-  _drawPaths() {
+  _drawPaths(nodePos) {
     const gfx = this.add.graphics();
-    for (let i = 0; i < NODE_POSITIONS.length - 1; i++) {
-      const a = NODE_POSITIONS[i];
-      const b = NODE_POSITIONS[i + 1];
+    for (let i = 0; i < nodePos.length - 1; i++) {
+      const a = nodePos[i];
+      const b = nodePos[i + 1];
       const dx = b.x - a.x, dy = b.y - a.y;
       const len = Math.sqrt(dx * dx + dy * dy);
 
@@ -228,19 +237,20 @@ export default class OverworldScene extends Phaser.Scene {
     }
   }
 
-  _drawNode(region, pos) {
+  _drawNode(region, pos, sz) {
     const unlocked  = this._isUnlocked(region.id);
     const completed = GameState.hasDefeatedBoss(region.id);
     const isCurrent = GameState.currentRegion === region.id;
+    const NR        = sz.nodeRadius;
 
     const ringColor = unlocked
       ? (completed ? 0x44CC44 : (isCurrent ? 0xFFDD44 : 0x4488FF))
       : 0x444455;
 
     // Drop shadow
-    if (unlocked) this.add.circle(pos.x + 4, pos.y + 4, NODE_RADIUS + 3, 0x000000, 0.30);
+    if (unlocked) this.add.circle(pos.x + 4, pos.y + 4, NR + 3, 0x000000, 0.30);
 
-    const circle = this.add.circle(pos.x, pos.y, NODE_RADIUS,
+    const circle = this.add.circle(pos.x, pos.y, NR,
       unlocked ? 0x1A2A44 : 0x1E1E2E, unlocked ? 1 : 0.55)
       .setStrokeStyle(4, ringColor, unlocked ? 1 : 0.4);
 
@@ -253,28 +263,28 @@ export default class OverworldScene extends Phaser.Scene {
     }
 
     // Badge
-    this.add.circle(pos.x + NODE_RADIUS - 5, pos.y - NODE_RADIUS + 5, 13, 0x110A00)
+    this.add.circle(pos.x + NR - 5, pos.y - NR + 5, 13, 0x110A00)
       .setStrokeStyle(1.5, 0xFFAA22);
-    this.add.text(pos.x + NODE_RADIUS - 5, pos.y - NODE_RADIUS + 5, String(region.id + 1), {
-      fontSize: '13px', color: '#FFCC44', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
+    this.add.text(pos.x + NR - 5, pos.y - NR + 5, String(region.id + 1), {
+      fontSize: `${sz.fontMd}px`, color: '#FFCC44', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
     // Star rating (1–3 filled stars when boss defeated)
     if (completed) {
       const stars = Math.max(1, GameState.getRegionStars(region.id));
-      this.add.text(pos.x, pos.y + NODE_RADIUS - 7,
+      this.add.text(pos.x, pos.y + NR - 7,
         '★'.repeat(stars) + '☆'.repeat(3 - stars),
-        { fontSize: '13px', color: '#FFD700', stroke: '#000', strokeThickness: 2 },
+        { fontSize: `${sz.fontMd}px`, color: '#FFD700', stroke: '#000', strokeThickness: 2 },
       ).setOrigin(0.5, 1);
     }
     // Name + subtitle labels
-    this.add.text(pos.x, pos.y + NODE_RADIUS + 8, region.name, {
-      fontSize: '13px', color: unlocked ? '#FFE8A0' : '#777799',
+    this.add.text(pos.x, pos.y + NR + 8, region.name, {
+      fontSize: `${sz.fontMd}px`, color: unlocked ? '#FFE8A0' : '#777799',
       fontFamily: "'Nunito', Arial, sans-serif", fontStyle: unlocked ? 'bold' : 'normal',
       stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0.5, 0);
-    this.add.text(pos.x, pos.y + NODE_RADIUS + 24, region.subtitle.split('·')[0].trim(), {
-      fontSize: '12px', color: unlocked ? '#AACCEE' : '#555577',
+    this.add.text(pos.x, pos.y + NR + 24, region.subtitle.split('·')[0].trim(), {
+      fontSize: `${sz.fontSm}px`, color: unlocked ? '#AACCEE' : '#555577',
       fontFamily: "'Nunito', Arial, sans-serif", stroke: '#000000', strokeThickness: 1,
     }).setOrigin(0.5, 0);
 
@@ -290,7 +300,7 @@ export default class OverworldScene extends Phaser.Scene {
     }
   }
 
-  _drawPlayerInfo(W, H) {
+  _drawPlayerInfo(W, H, sz) {
     const { hp, maxHP, stats } = GameState;
     const pct = stats.answered > 0
       ? Math.round(stats.correct / stats.answered * 100) : 100;
@@ -301,19 +311,19 @@ export default class OverworldScene extends Phaser.Scene {
     this.add.text(px, 40,  '🐱  Mimi',
       { fontSize: '15px', color: '#FFD700', fontFamily: "'Nunito', Arial, sans-serif", fontStyle: 'bold' }).setOrigin(0.5);
     this.add.text(px, 59,  `HP: ${hp}/${maxHP}`,
-      { fontSize: '13px', color: '#FF8899', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+      { fontSize: `${sz.fontMd}px`, color: '#FF8899', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     this.add.text(px, 75,  `✓ ${stats.correct}/${stats.answered}`,
-      { fontSize: '13px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+      { fontSize: `${sz.fontMd}px`, color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     this.add.text(px, 89,  `${pct}% accuracy`,
-      { fontSize: '13px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+      { fontSize: `${sz.fontMd}px`, color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     this.add.text(px, 103, `Best streak: ${stats.bestStreak}`,
-      { fontSize: '12px', color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+      { fontSize: `${sz.fontSm}px`, color: '#AADDFF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
 
     // Stats button
     const sb = this.add.rectangle(px, 120, 130, 22, 0x0C1A0C)
       .setStrokeStyle(1.5, 0x44AA44).setInteractive({ useHandCursor: true });
     const st = this.add.text(px, 120, '📊 Full Stats',
-      { fontSize: '12px', color: '#88FF88', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+      { fontSize: `${sz.fontSm}px`, color: '#88FF88', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     sb.on('pointerover', () => { sb.setFillStyle(0x153015); st.setColor('#AAFFAA'); });
     sb.on('pointerout',  () => { sb.setFillStyle(0x0C1A0C); st.setColor('#88FF88'); });
     sb.on('pointerdown', () => this._showStatsOverlay());
@@ -322,7 +332,7 @@ export default class OverworldScene extends Phaser.Scene {
     const eb = this.add.rectangle(px, 146, 130, 22, 0x1A0C0C)
       .setStrokeStyle(1.5, 0xAA4444).setInteractive({ useHandCursor: true });
     const et = this.add.text(px, 146, '🚪 Exit to Title',
-      { fontSize: '12px', color: '#FF8888', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+      { fontSize: `${sz.fontSm}px`, color: '#FF8888', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     eb.on('pointerover', () => { eb.setFillStyle(0x3A1515); et.setColor('#FFAAAA'); });
     eb.on('pointerout',  () => { eb.setFillStyle(0x1A0C0C); et.setColor('#FF8888'); });
     eb.on('pointerdown', () => this._showExitConfirm());
@@ -331,7 +341,7 @@ export default class OverworldScene extends Phaser.Scene {
     const bb = this.add.rectangle(px, 172, 130, 22, 0x0A0A1C)
       .setStrokeStyle(1.5, 0x8866CC).setInteractive({ useHandCursor: true });
     const bt = this.add.text(px, 172, '📖 Bestiary',
-      { fontSize: '12px', color: '#BB99FF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+      { fontSize: `${sz.fontSm}px`, color: '#BB99FF', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     bb.on('pointerover', () => { bb.setFillStyle(0x1A1A3A); bt.setColor('#DDBBFF'); });
     bb.on('pointerout',  () => { bb.setFillStyle(0x0A0A1C); bt.setColor('#BB99FF'); });
     bb.on('pointerdown', () => {
@@ -344,7 +354,7 @@ export default class OverworldScene extends Phaser.Scene {
     const gb = this.add.rectangle(px, 198, 130, 22, 0x0A0A1C)
       .setStrokeStyle(1.5, 0x4466AA).setInteractive({ useHandCursor: true });
     const gt = this.add.text(px, 198, '⚙ Settings',
-      { fontSize: '12px', color: '#99BBDD', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
+      { fontSize: `${sz.fontSm}px`, color: '#99BBDD', fontFamily: "'Nunito', Arial, sans-serif" }).setOrigin(0.5);
     gb.on('pointerover', () => { gb.setFillStyle(0x1A2050); gt.setColor('#CCDDFF'); });
     gb.on('pointerout',  () => { gb.setFillStyle(0x0A0A1C); gt.setColor('#99BBDD'); });
     gb.on('pointerdown', () => openSettings(this));
@@ -354,7 +364,9 @@ export default class OverworldScene extends Phaser.Scene {
 
   _showStatsOverlay() {
     if (this._statsItems) return;
-    const W = 800, H = 600, D = 150;
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+    const D = 150;
     const s  = GameState.stats;
     const items = this._statsItems = [];
     const add = o => { items.push(o); return o; };
@@ -428,7 +440,8 @@ export default class OverworldScene extends Phaser.Scene {
   // ── Node info popup ────────────────────────────────────────────────────────
   _showNodeInfo(region) {
     this._closePopup();
-    const W = 800, H = 600;
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
     const items = (this._popup = []);
     const mk = obj => { items.push(obj); return obj; };
 
@@ -519,7 +532,9 @@ export default class OverworldScene extends Phaser.Scene {
 
   _showExitConfirm() {
     if (this._exitConfirm) return;
-    const W = 800, H = 600, D = 200;
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+    const D = 200;
     const items = this._exitConfirm = [];
     const mk = o => { items.push(o); return o; };
 

@@ -1,0 +1,22 @@
+# Node.js
+node_modules/
+package-lock.json
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Generated assets (comment out if you want to commit PNGs/atlases)
+# assets/sprites/*.png
+# assets/atlases/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

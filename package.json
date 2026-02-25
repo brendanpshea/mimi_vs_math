@@ -1,0 +1,15 @@
+{
+  "name": "mimi-vs-math-tools",
+  "version": "1.0.0",
+  "description": "Build tools for Mimi vs. Math asset pipeline",
+  "private": true,
+  "scripts": {
+    "convert": "node tools/svg_to_png.js",
+    "pack": "node tools/pack_atlases.js"
+  },
+  "dependencies": {
+    "sharp": "^0.33.0",
+    "glob": "^11.0.0",
+    "pngjs": "^7.0.0"
+  }
+}

@@ -196,14 +196,42 @@ Enemies drop items at the end of battle (30% chance for regular enemies, 100% fo
 
 ---
 
-## Swapping SVG → PNG Assets
+## Asset Pipeline & Optimization
 
-1. Open `src/config/AssetConfig.js`
-2. Change `ASSET_TYPE` from `'svg'` to `'png'`
-3. Place PNG files at the same paths as the SVG files (same name, `.png` extension)
-   - Character sprites: **64×64 px** · Boss sprites: **96×96 px** · Battle sprite: **96×96 px** · UI icons: **32×32 px**
+### Using SVG (Default)
 
-No other code changes needed — all scenes reference texture keys only.
+By default, the game loads 176 individual SVG files at runtime. This is simple and works well for development.
+
+### Using PNG (Better Performance)
+
+For better performance, convert SVGs to PNGs:
+
+1. **Install Node.js dependencies:** `npm install`
+2. **Convert SVGs to PNGs:** `npm run convert`
+   - This parses `AssetConfig.js` to get exact sizes and converts all SVGs to PNGs
+3. **Update AssetConfig.js:** Change `ASSET_TYPE` from `'svg'` to `'png'`
+
+### Using Texture Atlases (Best Performance) ⚡
+
+For production, use texture atlases to reduce HTTP requests from **176 files → 10 files**:
+
+1. **Install dependencies:** `npm install`
+2. **Convert SVGs to PNGs:** `npm run convert`
+3. **Pack into atlases:** `npm run pack`
+4. **Enable atlas mode:** In `src/config/AssetConfig.js`, set:
+   ```js
+   export const ASSET_TYPE = 'png';
+   export const ATLAS_MODE = true;
+   ```
+
+This creates 3 texture atlases:
+- `atlas_characters.png/json` — 91 character/enemy sprites
+- `atlas_terrain.png/json` — 68 floor/wall/decoration sprites  
+- `atlas_ui.png/json` — 10 UI icons
+
+Backdrops (7 files) remain individual due to their large size (800×600px each).
+
+**Performance gain:** ~90% fewer HTTP requests, faster initial load, better caching.
 
 ---
 

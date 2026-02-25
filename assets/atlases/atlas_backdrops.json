@@ -1,0 +1,135 @@
+{
+  "frames": {
+    "backdrop_windmill": {
+      "frame": {
+        "x": 2,
+        "y": 2,
+        "w": 800,
+        "h": 600
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 800,
+        "h": 600
+      },
+      "sourceSize": {
+        "w": 800,
+        "h": 600
+      }
+    },
+    "backdrop_village": {
+      "frame": {
+        "x": 806,
+        "y": 2,
+        "w": 800,
+        "h": 600
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 800,
+        "h": 600
+      },
+      "sourceSize": {
+        "w": 800,
+        "h": 600
+      }
+    },
+    "backdrop_meadow": {
+      "frame": {
+        "x": 2,
+        "y": 606,
+        "w": 800,
+        "h": 600
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 800,
+        "h": 600
+      },
+      "sourceSize": {
+        "w": 800,
+        "h": 600
+      }
+    },
+    "backdrop_hollow": {
+      "frame": {
+        "x": 806,
+        "y": 606,
+        "w": 800,
+        "h": 600
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 800,
+        "h": 600
+      },
+      "sourceSize": {
+        "w": 800,
+        "h": 600
+      }
+    },
+    "backdrop_desert": {
+      "frame": {
+        "x": 2,
+        "y": 1210,
+        "w": 800,
+        "h": 600
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 800,
+        "h": 600
+      },
+      "sourceSize": {
+        "w": 800,
+        "h": 600
+      }
+    },
+    "backdrop_ice": {
+      "frame": {
+        "x": 806,
+        "y": 1210,
+        "w": 800,
+        "h": 600
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 800,
+        "h": 600
+      },
+      "sourceSize": {
+        "w": 800,
+        "h": 600
+      }
+    }
+  },
+  "meta": {
+    "app": "Mimi vs. Math Atlas Packer",
+    "version": "1.0",
+    "image": "atlas_backdrops.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1024,
+      "h": 2048
+    },
+    "scale": "1"
+  }
+}

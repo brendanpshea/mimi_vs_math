@@ -9,11 +9,19 @@
  *    e.g.  assets/sprites/mimi.svg  →  assets/sprites/mimi.png
  * 3. Recommended PNG sizes: 64×64 px for characters, 32×32 px for UI icons.
  *
+ * HOW TO ENABLE TEXTURE ATLASES
+ * ──────────────────────────────
+ * 1. Run: node tools/svg_to_png.js (convert SVGs to PNGs)
+ * 2. Run: node tools/pack_atlases.js (pack PNGs into atlases)
+ * 3. Change `ATLAS_MODE` below to `true`.
+ * 4. This reduces 176 HTTP requests to just 4 atlas loads!
+ *
  * All scene code uses texture keys (e.g. `'mimi'`) and never references file
  * extensions directly, so no other code needs to change.
  */
 
-export const ASSET_TYPE = 'svg'; // ← change to 'png' when ready
+export const ASSET_TYPE = 'png';  // ← change to 'png' when ready
+export const ATLAS_MODE = true;   // ← change to true to load from texture atlases
 
 /**
  * All character/enemy sprite definitions.
@@ -265,21 +273,35 @@ export function loadAllAudio(scene) {
  * @param {Phaser.Scene} scene
  */
 export function loadAllAssets(scene) {
-  for (const def of SPRITE_DEFS) {
-    loadSprite(scene, def.key, def.file, def.size);
-    if (def.frames) {
-      for (const suffix of def.frames) {
-        loadSprite(scene, `${def.key}_${suffix}`, `${def.file}_${suffix}`, def.size);
+  if (ATLAS_MODE) {
+    // Atlas mode: load texture atlases (4 files instead of 176)
+    console.log('📦 Loading texture atlases...');
+    scene.load.atlas('atlas_characters', 'assets/atlases/atlas_characters.png', 'assets/atlases/atlas_characters.json');
+    scene.load.atlas('atlas_terrain', 'assets/atlases/atlas_terrain.png', 'assets/atlases/atlas_terrain.json');
+    scene.load.atlas('atlas_ui', 'assets/atlases/atlas_ui.png', 'assets/atlases/atlas_ui.json');
+    
+    // Backdrops are loaded individually (too large for efficient atlasing)
+    for (const def of BACKDROP_DEFS) {
+      loadSprite(scene, def.key, def.file, def.size);
+    }
+  } else {
+    // Individual file mode (default)
+    for (const def of SPRITE_DEFS) {
+      loadSprite(scene, def.key, def.file, def.size);
+      if (def.frames) {
+        for (const suffix of def.frames) {
+          loadSprite(scene, `${def.key}_${suffix}`, `${def.file}_${suffix}`, def.size);
+        }
       }
     }
-  }
-  for (const def of UI_DEFS) {
-    loadSprite(scene, def.key, def.file, def.size);
-  }
-  for (const def of TERRAIN_DEFS) {
-    loadSprite(scene, def.key, def.file, def.size);
-  }
-  for (const def of BACKDROP_DEFS) {
-    loadSprite(scene, def.key, def.file, def.size);
+    for (const def of UI_DEFS) {
+      loadSprite(scene, def.key, def.file, def.size);
+    }
+    for (const def of TERRAIN_DEFS) {
+      loadSprite(scene, def.key, def.file, def.size);
+    }
+    for (const def of BACKDROP_DEFS) {
+      loadSprite(scene, def.key, def.file, def.size);
+    }
   }
 }

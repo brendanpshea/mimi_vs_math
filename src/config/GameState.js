@@ -37,6 +37,7 @@ const GameState = {
   // ── World progress ────────────────────────────────────────────────────
   currentRegion: 0,
   defeatedBosses: [],  // array of region ids whose boss has been beaten
+  clearedLevels: [],   // array of level ids (e.g. "0-1") that have been cleared
 
   // ── Enemy tracking (per region) ───────────────────────────────────────
   // key: `r${regionId}_${enemyId}`, value: true when defeated in current visit
@@ -131,6 +132,7 @@ const GameState = {
       stats:           this.stats,
       currentRegion:   this.currentRegion,
       defeatedBosses:  this.defeatedBosses,
+      clearedLevels:   this.clearedLevels,
       defeatedEnemies: this.defeatedEnemies,
       inventory:              this.inventory,
       bossIntroSeen:          this.bossIntroSeen,
@@ -163,6 +165,7 @@ const GameState = {
       Object.assign(this, data);
       // Ensure fields added after old saves exist
       if (!this.bossIntroSeen)          this.bossIntroSeen = [];
+      if (!this.clearedLevels)          this.clearedLevels = [];
       if (!this.regionStars)            this.regionStars = {};
       if (!this.collectedItems)         this.collectedItems = {};
       if (!this.npcVisited)             this.npcVisited = {};
@@ -229,6 +232,7 @@ const GameState = {
     };
     this.currentRegion   = 0;
     this.defeatedBosses  = [];
+    this.clearedLevels   = [];
     this.defeatedEnemies = {};
     this.inventory       = {};
     this.bossIntroSeen          = [];
@@ -257,6 +261,19 @@ const GameState = {
   // ─────────────────────────────────────────────────────────────────────
   // Helpers
   // ─────────────────────────────────────────────────────────────────────
+
+  /** True if a specific sub-level (e.g. "0-1") has been cleared. */
+  isLevelCleared(levelId) {
+    return this.clearedLevels.includes(levelId);
+  },
+
+  /** Mark a specific sub-level as cleared. */
+  markLevelCleared(levelId) {
+    if (!this.clearedLevels.includes(levelId)) {
+      this.clearedLevels.push(levelId);
+    }
+    this.save();
+  },
 
   /** True if the player has defeated the boss of the given region id. */
   hasDefeatedBoss(regionId) {

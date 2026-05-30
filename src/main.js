@@ -12,6 +12,7 @@ import TitleScene       from './scenes/TitleScene.js';
 import StoryScene       from './scenes/StoryScene.js';
 import BossIntroScene   from './scenes/BossIntroScene.js';
 import OverworldScene   from './scenes/OverworldScene.js';
+import LevelSelectScene from './scenes/LevelSelectScene.js';
 import ExploreScene     from './scenes/ExploreScene.js';
 import BattleScene      from './scenes/BattleScene.js';
 import BestiaryScene    from './scenes/BestiaryScene.js';
@@ -52,6 +53,7 @@ const config = {
     StoryScene,
     BossIntroScene,
     OverworldScene,
+    LevelSelectScene,
     ExploreScene,
     BattleScene,
     BestiaryScene,

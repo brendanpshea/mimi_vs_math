@@ -522,7 +522,7 @@ export default class BattleScene extends Phaser.Scene {
     const difficulty  = Math.max(1, Math.min(3, sessionDiff + this.battleDiffOffset));
     // ────────────────────────────────────────────────────────
 
-    const q = generateQuestion(topic, difficulty);
+    const q = generateQuestion(topic, difficulty, this.enemyData);
     this.currentQuestion = q;
     this.currentChoices = getChoices(q);
 
@@ -1391,6 +1391,9 @@ export default class BattleScene extends Phaser.Scene {
           if (this.isBoss) {
             GameState.defeatBoss(this.regionId);
             GameState.setRegionStars(this.regionId, this._bossStars ?? 1);
+            if (this.returnData?.levelId) {
+              GameState.markLevelCleared(this.returnData.levelId);
+            }
             GameState.save();
             this.scene.start('OverworldScene', { bossDefeated: true, regionId: this.regionId });
           } else {

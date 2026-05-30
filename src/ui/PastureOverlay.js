@@ -11,8 +11,8 @@ export function openPasture(scene, depth = 200, onClose = null) {
   const D = depth;
   const W = scene.cameras.main.width;
   const H = scene.cameras.main.height;
-  const items = scene._pastureItems = [];
-  const add   = o => { items.push(o); return o; };
+  let items = scene._pastureItems = [];
+  const add = o => { items.push(o); return o; };
 
   // Calculate pasture rewards early
   const rewards = GameState.calculatePastureRewards();
@@ -46,7 +46,8 @@ export function openPasture(scene, depth = 200, onClose = null) {
   const refresh = () => {
     // Clear dynamic cards (anything past index 2)
     items.slice(3).forEach(o => o.destroy());
-    scene._pastureItems = items.slice(0, 3);
+    items = items.slice(0, 3);
+    scene._pastureItems = items;
 
     const pets = GameState.capturedEnemies || [];
 

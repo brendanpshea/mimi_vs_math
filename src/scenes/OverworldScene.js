@@ -524,7 +524,11 @@ export default class OverworldScene extends Phaser.Scene {
       GameState.save();
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start('ExploreScene', { regionId: region.id });
+        if (region.levels && region.levels.length > 0) {
+          this.scene.start('LevelSelectScene', { regionId: region.id });
+        } else {
+          this.scene.start('ExploreScene', { regionId: region.id });
+        }
       });
     });
 

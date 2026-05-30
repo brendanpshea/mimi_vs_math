@@ -26,7 +26,11 @@ export function buildCanonOrder(regions, enemies) {
 
   for (const region of regions) {
     // Non-boss enemies: add on first global appearance only
-    for (const spawn of region.enemySpawns) {
+    const spawns = region.levels 
+      ? region.levels.flatMap(l => l.enemySpawns || [])
+      : (region.enemySpawns || []);
+
+    for (const spawn of spawns) {
       if (!globalSeen.has(spawn.id) && enemies[spawn.id] && !enemies[spawn.id].isBoss) {
         globalSeen.add(spawn.id);
         order.push(spawn.id);
@@ -55,7 +59,11 @@ export function buildCanonOrder(regions, enemies) {
 export function buildEnemyRegionMap(regions) {
   const map = new Map();
   regions.forEach((region, idx) => {
-    for (const spawn of region.enemySpawns) {
+    const spawns = region.levels 
+      ? region.levels.flatMap(l => l.enemySpawns || [])
+      : (region.enemySpawns || []);
+
+    for (const spawn of spawns) {
       if (!map.has(spawn.id)) map.set(spawn.id, idx);
     }
     if (region.boss && !map.has(region.boss)) map.set(region.boss, idx);

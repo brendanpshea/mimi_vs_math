@@ -12,7 +12,7 @@ import GameState   from '../config/GameState.js';
 import BGM         from '../audio/BGM.js';
 import REGIONS     from '../data/regions/index.js';
 import ENEMIES     from '../data/enemies.js';
-import MAPS, { LANDMARKS, POSITIONS, ANIMATED_DECORATIONS } from '../data/maps.js';
+import { generateRegionMap } from '../data/ProceduralMap.js';
 import Mimi        from '../entities/Mimi.js';
 import Enemy       from '../entities/Enemy.js';
 import NPC         from '../entities/NPC.js';
@@ -25,8 +25,6 @@ import MewtonDialogue  from '../ui/MewtonDialogue.js';
 import BossDoor        from '../ui/BossDoor.js';
 import { TERRAIN_DEFS } from '../config/AssetConfig.js';
 import { openGear, closeGear } from '../ui/GearOverlay.js';
-import { openBounties, closeBounties } from '../ui/BountyOverlay.js';
-import { openPasture, closePasture } from '../ui/PastureOverlay.js';
 
 // Module-level decoration scale map — built once from TERRAIN_DEFS so
 // _addDecorations() doesn't need a hardcoded SCALES object.
@@ -53,9 +51,28 @@ export default class ExploreScene extends Phaser.Scene {
 
   init(data) {
     this.regionId     = data?.regionId ?? GameState.currentRegion;
-    this.regionData   = REGIONS[this.regionId];
+    this.levelId      = data?.levelId ?? null;
+    const baseRegion  = REGIONS[this.regionId];
+    
+    // Merge specific sub-level config into the base region config
+    if (this.levelId && baseRegion.levels) {
+      const subLvl = baseRegion.levels.find(l => l.id === this.levelId) || {};
+      this.regionData = { ...baseRegion, ...subLvl };
+    } else {
+      this.regionData = baseRegion;
+    }
+    
     this.battleResult = data?.battleResult ?? null;
-    // Hard defeat (no lives left, not ran away) → reset to spawn so position is
+
+    // Generate map dynamically for this specific sub-level unless returning from battle
+    if (!this.battleResult || !window._currentExploreMap) {
+      if (this.textures.exists('__floorBaked_current')) this.textures.remove('__floorBaked_current');
+      if (this.textures.exists('__decorBaked_current')) this.textures.remove('__decorBaked_current');
+      window._currentExploreMap = generateRegionMap(this.regionData);
+    }
+    this.mapData = window._currentExploreMap;
+
+    // Optional override for Mimi's spawn location (e.g., returning from battle) → reset to spawn so position is
     // not restored. Soft defeat (usedLife) and ran-away restore world/position.
     const isHardDefeat = data?.battleResult?.victory === false
                       && !data?.battleResult?.usedLife
@@ -133,8 +150,8 @@ export default class ExploreScene extends Phaser.Scene {
       this._processBattleResult();
     }
 
-    // Player — restore battle-exit position if available, otherwise use randomised spawn
-    const dynStart = POSITIONS[this.regionId].mimiStart ?? this.regionData.mimiStart;
+    // Player - restore battle-exit position if available, otherwise use randomised spawn
+    const dynStart = this.mapData.mimiStart;
     const startX = this._returnX ?? tx(dynStart.col);
     const startY = this._returnY ?? ty(dynStart.row);
     this.mimi = new Mimi(this, startX, startY);
@@ -279,7 +296,7 @@ export default class ExploreScene extends Phaser.Scene {
       // than individual WebGL framebuffer draws (RenderTexture.drawFrame).
       // On return from battle (the hot path) textures.exists() is true and the
       // entire bake is skipped — cost is a single add.image() call.
-      const cacheKey = `__floorBaked_${this.regionId}`;
+      const cacheKey = `__floorBaked_current`;
       if (!this.textures.exists(cacheKey)) {
         // Auto-derive tile variants by naming convention (base, _b, _c),
         // keeping only those that exist as loaded textures.
@@ -358,7 +375,7 @@ export default class ExploreScene extends Phaser.Scene {
    */
   _placeLandmarks() {
     this._landmarkObstacles = this.physics.add.staticGroup();
-    const list = LANDMARKS[this.regionId];
+    const list = this.mapData.landmarks;
     if (!list || list.length === 0) return;
 
     for (const lm of list) {
@@ -400,16 +417,16 @@ export default class ExploreScene extends Phaser.Scene {
   _addDecorations() {
     this._decorObstacles = this.physics.add.staticGroup();
     const useCanvasBake = (this.game.renderer.type === Phaser.WEBGL);
-    const layout = MAPS[this.regionId];
+    const layout = this.mapData.decorations;
     if (!layout || layout.length === 0) return;
 
     // --- Clearance guard ---------------------------------------------------
     const CLEAR_R = 3;  // tile radius to keep clear around key positions
-    const positions = POSITIONS[this.regionId];
+    const positions = this.mapData;
     const keyPositions = [
-      positions.mimiStart ?? this.regionData.mimiStart,
+      positions.mimiStart,
       positions.npcTile,
-      positions.bossTile ?? this.regionData.bossTile,
+      positions.bossTile,
       ...positions.enemySpawns.map(s => ({ col: s.col, row: s.row })),
     ];
     const isClear = (col, row) => keyPositions.every(
@@ -436,7 +453,7 @@ export default class ExploreScene extends Phaser.Scene {
     // The decoration layout from ProceduralMap is deterministic per region,
     // so it is generated once per session and reused on every re-entry.
     // Physics bodies are still created each launch (physics world resets).
-    const decorCacheKey = `__decorBaked_${this.regionId}`;
+    const decorCacheKey = `__decorBaked_current`;
     if (useCanvasBake && !this.textures.exists(decorCacheKey)) {
       try {
         const canvas = document.createElement('canvas');
@@ -502,7 +519,7 @@ export default class ExploreScene extends Phaser.Scene {
    */
   _placeAnimatedDecorations() {
     // ── Corridor-elbow torches (placed by ProceduralMap) ──────
-    const items = ANIMATED_DECORATIONS[this.regionId];
+    const items = this.mapData.animatedDecorations;
     if (items?.length) {
       for (const item of items) {
         if (item.type === 'torch') this._spawnTorch(tx(item.col), ty(item.row));
@@ -513,7 +530,7 @@ export default class ExploreScene extends Phaser.Scene {
     const effects = this.regionData.animatedEffects ?? [];
     if (!effects.length) return;
 
-    const lms = LANDMARKS[this.regionId];
+    const lms = this.mapData.landmarks;
     if (!lms?.length) return;
     const lm      = lms[0];
     const lw      = lm.tilesW * T;
@@ -641,7 +658,8 @@ export default class ExploreScene extends Phaser.Scene {
       ? (this.battleResult?.enemyInstance ?? null)
       : null;
 
-    POSITIONS[this.regionId].enemySpawns.forEach((spawn, i) => {
+    const spawns = this.regionData.enemySpawns || this.mapData.enemySpawns || [];
+    spawns.forEach((spawn, i) => {
       const instanceKey = spawn.id + i;
       if (usesKillCount) {
         if (instanceKey === justDefeated)              return;  // just killed
@@ -657,12 +675,20 @@ export default class ExploreScene extends Phaser.Scene {
       // getTopicTier applies the floor internally via Math.max.
       const floor     = Math.max(spawn.difficultyOverride ?? 1, base.baseTier ?? 1);
       const spawnDiff = GameState.getTopicTier(base.mathTopic, floor);
-      const data = spawnDiff !== (base.baseTier ?? 1)
-        ? { ...base, baseTier: spawnDiff }
-        : base;
+      
+      const data = {
+        maxSum: this.regionData.maxSum,
+        maxMinuend: this.regionData.maxMinuend,
+        ...base,
+        ...spawn,
+        baseTier: spawnDiff,
+      };
+      if (spawn.topicOverride) data.mathTopic = spawn.topicOverride;
 
-      const enemyHomeX = tx(spawn.col);
-      const enemyHomeY = ty(spawn.row);
+      // Get the corresponding pre-generated coordinate from the static map positions
+      const mapPos = this.mapData.enemySpawns[i] || this.mapData.enemySpawns[0] || { col: 5, row: 5 };
+      const enemyHomeX = tx(mapPos.col);
+      const enemyHomeY = ty(mapPos.row);
       const enemy = new Enemy(
         this, enemyHomeX, enemyHomeY, data,
         (d) => this._startBattle(d, instanceKey, enemyHomeX, enemyHomeY),
@@ -723,6 +749,7 @@ export default class ExploreScene extends Phaser.Scene {
         returnScene:    'ExploreScene',
         returnData:     {
           regionId:      this.regionId,
+          levelId:       this.levelId,
           mimiX:         this.mimi.x,
           mimiY:         this.mimi.y,
           enemyHomeX:    enemyHomeX ?? this.mimi.x,
@@ -871,7 +898,7 @@ export default class ExploreScene extends Phaser.Scene {
    * All drawing, physics, and state logic is delegated to BossDoor.
    */
   _setupBossDoor() {
-    const _pos    = POSITIONS[this.regionId];
+    const _pos    = this.mapData;
     const bossTile = _pos.bossTile ?? this.regionData.bossTile;
 
     this._bossDoor = new BossDoor(this, this.regionData, {
@@ -884,12 +911,28 @@ export default class ExploreScene extends Phaser.Scene {
 
   /** How many region enemies are not yet defeated. */
   _remainingEnemyCount() {
-    return POSITIONS[this.regionId].enemySpawns.filter((spawn, i) =>
+    return this.mapData.enemySpawns.filter((spawn, i) =>
       !GameState.isEnemyDefeated(this.regionId, spawn.id + i),
     ).length;
   }
 
   _startBossBattle() {
+    // If this is not a boss level, the 'boss door' acts as a Level Exit!
+    if (this.levelId && !this.regionData.isBossLevel) {
+      GameState.markLevelCleared(this.levelId);
+      
+      // Give a little bonus HP for clearing a level
+      GameState.hp = Math.min(GameState.maxHP, GameState.hp + 2);
+      GameState.save();
+      
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        window._currentExploreMap = null;
+        this.scene.start('LevelSelectScene', { regionId: this.regionId });
+      });
+      return;
+    }
+
     const bossData   = ENEMIES[this.regionData.boss];
     const battleData = {
       enemy:         bossData,
@@ -899,6 +942,7 @@ export default class ExploreScene extends Phaser.Scene {
       returnScene:   'ExploreScene',
       returnData:    {
         regionId:      this.regionId,
+        levelId:       this.levelId,
         mimiX:         this.mimi.x,
         mimiY:         this.mimi.y,
         npcX:          this._npc?.sprite.x ?? null,
@@ -928,39 +972,10 @@ export default class ExploreScene extends Phaser.Scene {
   //  NPC 
 
   _setupNPC() {
-    const npc      = POSITIONS[this.regionId].npcTile;
+    const npc      = this.mapData.npcTile;
     const px       = this._returnNpcX ?? tx(npc.col);
     const py       = this._returnNpcY ?? ty(npc.row);
     const regionId = this.regionId;
-
-    // Spawn Bounty Board and Pasture Gate in Region 0 (Sunny Village) near spawn
-    if (regionId === 0) {
-      // Bounty Board (represented as Bookshelf sprite)
-      const bbx = tx(36);
-      const bby = ty(38);
-      this.add.image(bbx, bby, 'decoration_bookshelf').setDepth(3).setDisplaySize(32, 48);
-      const bbBody = this.add.rectangle(bbx, bby, 32, 48, 0, 0);
-      this.physics.add.existing(bbBody, true);
-      this._decorObstacles.add(bbBody);
-      this.physics.add.overlap(this.mimi.sprite, bbBody, null, () => {
-        if (Phaser.Input.Keyboard.JustDown(this._spaceKey) && !this.dialog.isOpen) {
-          openBounties(this, 300, () => this.hud.refresh());
-        }
-      });
-
-      // Pasture Gate (represented as Well sprite)
-      const pgx = tx(40);
-      const pgy = ty(38);
-      this.add.image(pgx, pgy, 'decoration_well').setDepth(3).setDisplaySize(32, 40);
-      const pgBody = this.add.rectangle(pgx, pgy, 32, 40, 0, 0);
-      this.physics.add.existing(pgBody, true);
-      this._decorObstacles.add(pgBody);
-      this.physics.add.overlap(this.mimi.sprite, pgBody, null, () => {
-        if (Phaser.Input.Keyboard.JustDown(this._spaceKey) && !this.dialog.isOpen) {
-          openPasture(this, 300, () => this.hud.refresh());
-        }
-      });
-    }
 
     // Create MewtonDialogue helper (owns beacon, treat-given state, all conversation logic)
     this._mewton = new MewtonDialogue(this, this.regionData, {
@@ -998,7 +1013,7 @@ export default class ExploreScene extends Phaser.Scene {
         const unlockKills = this.regionData.bossUnlockKills;
         const allClear    = unlockKills != null
           ? this._killCount >= unlockKills
-          : POSITIONS[regionId].enemySpawns.every((s, i) =>
+          : this.mapData.enemySpawns.every((s, i) =>
               GameState.isEnemyDefeated(regionId, s.id + i));
 
         this._mewton.talk(wrappedDone, { bossBeaten, allClear });
@@ -1161,7 +1176,10 @@ export default class ExploreScene extends Phaser.Scene {
     yb.on('pointerdown', () => {
       this._closeExitConfirm();
       this.cameras.main.fadeOut(300, 0, 0, 0);
-      this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('OverworldScene'));
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        window._currentExploreMap = null;
+        this.scene.start('OverworldScene');
+      });
     });
 
     const nb = add(this.add.rectangle(W / 2 + 72, H / 2 + 38, 104, 40, 0x2A0A0A)
@@ -1186,7 +1204,7 @@ export default class ExploreScene extends Phaser.Scene {
   _setupInteractiveItems() {
     this._interactiveItems = [];
 
-    const items = POSITIONS[this.regionId]?.interactiveItems ?? [];
+    const items = this.mapData.interactiveItems ?? [];
 
     for (const item of items) {
       const key = `${this.regionId}_${item.col}_${item.row}`;

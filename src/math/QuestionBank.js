@@ -244,33 +244,39 @@ function mixedD3() {
 
 // ── Addition only (Region 0 enemy 1) ─────────────────────────────────────────
 
-function additionD1() {
-  const a = rand(1, 8); const b = rand(1, 9 - a);
+function additionD1(opts = {}) {
+  const max = opts.maxSum || 9;
+  const a = rand(1, max - 1); const b = rand(1, max - a);
   return { text: `${a} + ${b} = ?`, answer: a + b, answerDisplay: String(a + b), topic: 'addition' };
 }
-function additionD2() {
-  const a = rand(5, 15); const b = rand(1, 20 - a);
+function additionD2(opts = {}) {
+  const max = opts.maxSum || 20;
+  const a = rand(Math.max(2, Math.floor(max/4)), Math.max(3, max - 1)); const b = rand(1, max - a);
   return { text: `${a} + ${b} = ?`, answer: a + b, answerDisplay: String(a + b), topic: 'addition' };
 }
-function additionD3() {
+function additionD3(opts = {}) {
   // Grade 3 cap: sums stay under ~65
-  const a = rand(11, 39); const b = rand(5, Math.min(25, 99 - a));
+  const max = opts.maxSum || 65;
+  const a = rand(11, Math.min(39, max - 5)); const b = rand(5, Math.max(5, max - a));
   return { text: `${a} + ${b} = ?`, answer: a + b, answerDisplay: String(a + b), topic: 'addition' };
 }
 
 // ── Subtraction only (Region 0 enemy 2) ──────────────────────────────────────
 
-function subtractionD1() {
-  const a = rand(3, 10); const b = rand(1, a - 1);
+function subtractionD1(opts = {}) {
+  const max = opts.maxMinuend || 10;
+  const a = rand(3, max); const b = rand(1, a - 1);
   return { text: `${a} − ${b} = ?`, answer: a - b, answerDisplay: String(a - b), topic: 'subtraction' };
 }
-function subtractionD2() {
-  const a = rand(10, 20); const b = rand(1, a - 1);
+function subtractionD2(opts = {}) {
+  const max = opts.maxMinuend || 20;
+  const a = rand(10, Math.max(10, max)); const b = rand(1, a - 1);
   return { text: `${a} − ${b} = ?`, answer: a - b, answerDisplay: String(a - b), topic: 'subtraction' };
 }
-function subtractionD3() {
+function subtractionD3(opts = {}) {
   // Grade 3 cap: minuend ≤59, subtrahend ≤20
-  const a = rand(15, 59); const b = rand(3, Math.min(20, a - 1));
+  const max = opts.maxMinuend || 59;
+  const a = rand(15, Math.max(15, max)); const b = rand(3, Math.min(20, a - 1));
   return { text: `${a} − ${b} = ?`, answer: a - b, answerDisplay: String(a - b), topic: 'subtraction' };
 }
 
@@ -1104,14 +1110,15 @@ export const TOPICS = Object.keys(generators);
  * Generate a single question.
  * @param {string} topic      Any key from TOPICS.
  * @param {number} difficulty 1 (easy) | 2 (medium) | 3 (hard)
+ * @param {object} options    Config options for specific topics (e.g. maxSum).
  * @returns {object} Question object
  * @throws {Error} if topic is not registered in the generators registry.
  */
-export function generateQuestion(topic, difficulty = 1) {
+export function generateQuestion(topic, difficulty = 1, options = {}) {
   const gen = generators[topic];
   if (!gen) throw new Error(`Unknown topic: '${topic}'. Valid topics: ${TOPICS.join(', ')}`);
   const d = Math.min(Math.max(difficulty, 1), 3) - 1;
-  return gen[d]();
+  return gen[d](options);
 }
 
 export default { generateQuestion, TOPICS };

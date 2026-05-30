@@ -12,8 +12,8 @@ export function openBounties(scene, depth = 200, onClose = null) {
   const D = depth;
   const W = scene.cameras.main.width;
   const H = scene.cameras.main.height;
-  const items = scene._bountyItems = [];
-  const add   = o => { items.push(o); return o; };
+  let items = scene._bountyItems = [];
+  const add = o => { items.push(o); return o; };
 
   // Generate bounties if none exist
   if (!GameState.activeBounties || GameState.activeBounties.length === 0) {
@@ -40,7 +40,8 @@ export function openBounties(scene, depth = 200, onClose = null) {
   const refresh = () => {
     // Clear dynamic cards (anything past index 2)
     items.slice(3).forEach(o => o.destroy());
-    scene._bountyItems = items.slice(0, 3);
+    items = items.slice(0, 3);
+    scene._bountyItems = items;
 
     const bounties = GameState.activeBounties;
 
@@ -161,8 +162,14 @@ function generateBounties(regionId) {
   const rData = REGIONS[regionId];
   if (!rData) return;
 
+  let enemies = rData.enemies;
+  if (!enemies && rData.levels) {
+    enemies = Array.from(new Set(rData.levels.flatMap(l => (l.enemySpawns || []).map(e => e.id))));
+  }
+  if (!enemies || enemies.length === 0) enemies = ['slime_pup']; // fallback
+
   const templates = [
-    { type: 'defeat_enemy', count: 3, targets: rData.enemies },
+    { type: 'defeat_enemy', count: 3, targets: enemies },
     { type: 'defeat_any', count: 5 },
     { type: 'streak', count: 4 }
   ];

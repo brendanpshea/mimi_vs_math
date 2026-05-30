@@ -190,9 +190,17 @@ function randomizePositions(regionData) {
 
   // Enemies — distribute across north / mid / south zones
   const enemySpawns = [];
-  for (let i = 0; i < regionData.enemySpawns.length; i++) {
-    const orig     = regionData.enemySpawns[i];
-    const zoneName = ZONE_SLOTS[i] || 'south';
+  
+  // For World/Sub-level structure, grab all enemies from all levels to carve enough space
+  let sourceSpawns = regionData.enemySpawns;
+  if (!sourceSpawns && regionData.levels) {
+    sourceSpawns = regionData.levels.flatMap(l => l.enemySpawns || []);
+  }
+  sourceSpawns = sourceSpawns || [];
+
+  for (let i = 0; i < sourceSpawns.length; i++) {
+    const orig     = sourceSpawns[i];
+    const zoneName = ZONE_SLOTS[i % ZONE_SLOTS.length] || 'south';
     const pos      = pickRandomInZone(PLACE_ZONES[zoneName], placed, MIN_DIST);
     placed.push(pos);
     enemySpawns.push({

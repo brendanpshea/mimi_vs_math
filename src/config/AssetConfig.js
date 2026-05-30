@@ -106,6 +106,9 @@ export const UI_DEFS = [
   { key: 'portrait_mimi',   file: 'portrait_mimi',   size: 256 },
   { key: 'portrait_mewton', file: 'portrait_mewton', size: 256 },
   { key: 'portrait_witch',  file: 'portrait_witch',  size: 256 },
+  { key: 'game_logo',       file: 'game_logo',       size: { width: 600, height: 200 } },
+  { key: 'map_pin',         file: 'map_pin',         size: 64 },
+  { key: 'scepter_loading', file: 'scepter_loading', size: { width: 400, height: 60 } },
   { key: 'particle_sparkle',file: 'particle_sparkle',size: 32 },
   { key: 'particle_ring',   file: 'particle_ring',   size: 64 },
   { key: 'light_mask',      file: 'light_mask',      size: 128 },
@@ -233,6 +236,12 @@ export const BACKDROP_DEFS = [
   { key: 'backdrop_desert',  file: 'backdrop_desert',  size: { width: 800, height: 600 } },
   { key: 'backdrop_ice',     file: 'backdrop_ice',     size: { width: 800, height: 600 } },
   { key: 'backdrop_shadow',  file: 'backdrop_shadow',  size: { width: 800, height: 600 } },
+  { key: 'title_splash',     file: 'title_splash',     size: { width: 800, height: 600 } },
+  { key: 'story_village',    file: 'story_village',    size: { width: 800, height: 600 } },
+  { key: 'story_thief',      file: 'story_thief',      size: { width: 800, height: 600 } },
+  { key: 'story_kingdoms',   file: 'story_kingdoms',   size: { width: 800, height: 600 } },
+  { key: 'map_parchment',    file: 'map_parchment',    size: { width: 800, height: 600 } },
+  { key: 'grimoire_open',    file: 'grimoire_open',    size: { width: 800, height: 600 } },
 ];
 
 /**

@@ -45,7 +45,7 @@ const CARD_W     = 102;
 const CARD_H     = 84;
 const GAP_X      = 7;
 const GAP_Y      = 7;
-const GRID_START_Y = 60;
+const GRID_START_Y = 80;
 
 const FONT = "'Nunito', Arial, sans-serif";
 const W = 800, H = 600;
@@ -60,7 +60,12 @@ export default class BestiaryScene extends Phaser.Scene {
 
   create() {
     // — Background ──────────────────────────────────────────────────────
-    this.add.rectangle(W / 2, H / 2, W, H, 0x050510);
+    if (this.textures.exists('grimoire_open')) {
+      this.add.image(W / 2, H / 2, 'grimoire_open').setDisplaySize(W, H);
+      this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.4);
+    } else {
+      this.add.rectangle(W / 2, H / 2, W, H, 0x050510);
+    }
 
     // — Title bar ───────────────────────────────────────────────────────
     this.add.rectangle(W / 2, 24, W, 48, 0x0A0A22);

@@ -15,8 +15,6 @@ export default class BootScene extends Phaser.Scene {
     const H = this.cameras.main.height;
 
     // ── Loading bar ────────────────────────────────────────────────────
-    const barBg   = this.add.rectangle(W / 2, H / 2 + 20, 400, 20, 0x333355);
-    const barFill = this.add.rectangle(W / 2 - 200, H / 2 + 20, 0, 20, 0x6688FF).setOrigin(0, 0.5);
     this.add.text(W / 2, H / 2 - 20, 'Loading…', {
       fontSize: '20px', color: '#FFFFFF', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5);
@@ -24,7 +22,18 @@ export default class BootScene extends Phaser.Scene {
       fontSize: '32px', color: '#FFD700', fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    this.load.on('progress', v => barFill.setDisplaySize(400 * v, 20));
+    // Load the SVG outline immediately so we can use it as a progress bar frame
+    this.load.svg('scepter_loading_boot', 'assets/sprites/scepter_loading.svg', { width: 400, height: 60 });
+    
+    let barFill = null;
+    this.load.once('filecomplete-svg-scepter_loading_boot', () => {
+      this.add.image(W / 2, H / 2 + 20, 'scepter_loading_boot').setDepth(2);
+      barFill = this.add.rectangle(W / 2 - 200 + 20, H / 2 + 20, 0, 12, 0xFFDD44).setOrigin(0, 0.5).setDepth(1);
+    });
+
+    this.load.on('progress', v => {
+      if (barFill) barFill.setDisplaySize(320 * v, 12);
+    });
     
     this.load.on('loaderror', (file) => {
       console.error(`Failed to load: ${file.key} from ${file.src}`);

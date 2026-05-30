@@ -33,29 +33,47 @@ export default class TitleScene extends Phaser.Scene {
     const hasSave = !!localStorage.getItem('mimi_vs_math_save');
     if (hasSave) GameState.load();
 
-    // Background gradient
-    this.add.rectangle(W / 2, H / 2, W, H, BG_COLOR);
+    // Background splash image
+    if (this.textures.exists('title_splash')) {
+      this.add.image(W / 2, H / 2, 'title_splash').setDisplaySize(W, H);
+      // Dark overlay to ensure buttons pop
+      this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.4);
+    } else {
+      this.add.rectangle(W / 2, H / 2, W, H, BG_COLOR);
+    }
+    
     this._addStars(W, H);
 
-    // Floating Mimi
-    const mimi = this.add.image(W / 2, H * 0.3, 'mimi').setScale(3);
-    this.tweens.add({
-      targets: mimi, y: H * 0.3 - 12,
-      duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
-    });
-
-    // Title text with shadow
-    this.add.text(W / 2 + 3, H * 0.52 + 3, 'Mimi vs. Math', {
-      fontSize: '52px', color: '#442200', fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
-    }).setOrigin(0.5);
-    this.add.text(W / 2, H * 0.52, 'Mimi vs. Math', {
-      fontSize: '52px', color: TITLE_COLOR, fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    // Tagline
-    this.add.text(W / 2, H * 0.61, 'A Math Adventure for Grades 1–5', {
-      fontSize: '18px', color: '#AACCFF', fontFamily: "'Nunito', Arial, sans-serif",
-    }).setOrigin(0.5);
+    // Title SVG Logo
+    if (this.textures.exists('game_logo')) {
+      const logo = this.add.image(W / 2, H * 0.35, 'game_logo');
+      this.tweens.add({
+        targets: logo,
+        y: H * 0.35 - 10,
+        duration: 2000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+    } else {
+      // Floating Mimi fallback
+      const mimi = this.add.image(W / 2, H * 0.3, 'mimi').setScale(3);
+      this.tweens.add({
+        targets: mimi, y: H * 0.3 - 12,
+        duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      });
+      // Title text with shadow
+      this.add.text(W / 2 + 3, H * 0.52 + 3, 'Mimi vs. Math', {
+        fontSize: '52px', color: '#442200', fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
+      }).setOrigin(0.5);
+      this.add.text(W / 2, H * 0.52, 'Mimi vs. Math', {
+        fontSize: '52px', color: TITLE_COLOR, fontFamily: "'Fredoka', 'Nunito', Arial, sans-serif", fontStyle: 'bold',
+      }).setOrigin(0.5);
+      // Tagline
+      this.add.text(W / 2, H * 0.61, 'A Math Adventure for Grades 1–5', {
+        fontSize: '18px', color: '#AACCFF', fontFamily: "'Nunito', Arial, sans-serif",
+      }).setOrigin(0.5);
+    }
 
     // Main buttons
     this._makeButton(W / 2, H * 0.72, '⭐  New Game', () => this._showWorldSelect());
@@ -96,17 +114,31 @@ export default class TitleScene extends Phaser.Scene {
   }
 
   _addStars(W, H) {
+    const useSparkle = this.textures.exists('particle_sparkle');
     for (let i = 0; i < STAR_COUNT; i++) {
       const x    = Phaser.Math.Between(0, W);
       const y    = Phaser.Math.Between(0, H);
-      const size = Phaser.Math.FloatBetween(1, 3);
-      const star = this.add.circle(x, y, size, 0xFFFFFF, 0.7);
-      this.tweens.add({
-        targets: star, alpha: { from: 0.2, to: 0.9 },
-        duration: Phaser.Math.Between(800, 2400),
-        yoyo: true, repeat: -1,
-        delay: Phaser.Math.Between(0, 2000),
-      });
+      
+      if (useSparkle && i % 2 === 0) {
+        const star = this.add.image(x, y, 'particle_sparkle').setAlpha(0).setScale(Phaser.Math.FloatBetween(0.4, 0.8));
+        this.tweens.add({
+          targets: star,
+          alpha: { from: 0, to: 0.8 },
+          y: y - Phaser.Math.Between(40, 120),
+          duration: Phaser.Math.Between(2000, 5000),
+          yoyo: true, repeat: -1,
+          delay: Phaser.Math.Between(0, 3000),
+        });
+      } else {
+        const size = Phaser.Math.FloatBetween(1, 3);
+        const star = this.add.circle(x, y, size, 0xFFFFFF, 0.7);
+        this.tweens.add({
+          targets: star, alpha: { from: 0.2, to: 0.9 },
+          duration: Phaser.Math.Between(800, 2400),
+          yoyo: true, repeat: -1,
+          delay: Phaser.Math.Between(0, 2000),
+        });
+      }
     }
   }
 

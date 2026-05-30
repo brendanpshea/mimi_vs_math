@@ -105,8 +105,15 @@ export default class OverworldScene extends Phaser.Scene {
     );
 
     // Parchment land below sky
-    gfx.fillStyle(0xC9A87A, 1);
-    gfx.fillRect(0, 110, W, H - 110);
+    if (this.textures.exists('map_parchment')) {
+      const parY = 110 + (H - 110) / 2;
+      this.add.image(W / 2, parY, 'map_parchment').setDisplaySize(W, H - 110);
+      gfx.fillStyle(0x000000, 0.15);
+      gfx.fillRect(0, 110, W, H - 110);
+    } else {
+      gfx.fillStyle(0xC9A87A, 1);
+      gfx.fillRect(0, 110, W, H - 110);
+    }
 
     // Horizon line
     gfx.lineStyle(2, 0x9A7A4A, 0.55);
@@ -250,9 +257,14 @@ export default class OverworldScene extends Phaser.Scene {
     // Drop shadow
     if (unlocked) this.add.circle(pos.x + 4, pos.y + 4, NR + 3, 0x000000, 0.30);
 
-    const circle = this.add.circle(pos.x, pos.y, NR,
-      unlocked ? 0x1A2A44 : 0x1E1E2E, unlocked ? 1 : 0.55)
-      .setStrokeStyle(4, ringColor, unlocked ? 1 : 0.4);
+    let nodeBase;
+    if (unlocked && this.textures.exists('map_pin')) {
+      nodeBase = this.add.image(pos.x, pos.y, 'map_pin').setDisplaySize(NR * 1.8, NR * 1.8);
+    } else {
+      nodeBase = this.add.circle(pos.x, pos.y, NR,
+        unlocked ? 0x1A2A44 : 0x1E1E2E, unlocked ? 1 : 0.55)
+        .setStrokeStyle(4, ringColor, unlocked ? 1 : 0.4);
+    }
 
     // Boss sprite or padlock
     if (unlocked) {
@@ -290,12 +302,17 @@ export default class OverworldScene extends Phaser.Scene {
 
     // Interaction
     if (unlocked) {
-      circle.setInteractive({ useHandCursor: true });
-      circle.on('pointerover', () => circle.setStrokeStyle(5, 0xFFFFFF));
-      circle.on('pointerout',  () => circle.setStrokeStyle(4, ringColor));
-      circle.on('pointerdown', () => this._showNodeInfo(region));
+      nodeBase.setInteractive({ useHandCursor: true });
+      if (nodeBase.type === 'Image') {
+        nodeBase.on('pointerover', () => nodeBase.setScale(1.1));
+        nodeBase.on('pointerout',  () => nodeBase.setScale(1.0));
+      } else {
+        nodeBase.on('pointerover', () => nodeBase.setStrokeStyle(5, 0xFFFFFF));
+        nodeBase.on('pointerout',  () => nodeBase.setStrokeStyle(4, ringColor));
+      }
+      nodeBase.on('pointerdown', () => this._showNodeInfo(region));
       if (isCurrent) {
-        this.tweens.add({ targets: circle, scaleX: 1.08, scaleY: 1.08, duration: 700, yoyo: true, repeat: -1 });
+        this.tweens.add({ targets: nodeBase, y: nodeBase.y - 6, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
       }
     }
   }

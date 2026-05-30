@@ -28,6 +28,23 @@ try {
   assertContains('scenes/ExploreScene.js', "light_mask");
   assertContains('scenes/ExploreScene.js', "Phaser.BlendModes.ADD");
 
+  console.log("Verifying TitleScene.js visual enhancements...");
+  assertContains('scenes/TitleScene.js', "title_splash");
+  assertContains('scenes/TitleScene.js', "game_logo");
+
+  console.log("Verifying StoryScene.js visual enhancements...");
+  assertContains('scenes/StoryScene.js', "bgArt:      'story_village'");
+  
+  console.log("Verifying OverworldScene.js visual enhancements...");
+  assertContains('scenes/OverworldScene.js', "map_parchment");
+  assertContains('scenes/OverworldScene.js', "map_pin");
+
+  console.log("Verifying BestiaryScene.js visual enhancements...");
+  assertContains('scenes/BestiaryScene.js', "grimoire_open");
+
+  console.log("Verifying BootScene.js visual enhancements...");
+  assertContains('scenes/BootScene.js', "scepter_loading_boot");
+
   console.log("✅ Visual enhancement static assertions passed!");
 } catch (e) {
   console.error("❌ Test Failed:");

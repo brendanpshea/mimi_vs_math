@@ -27,6 +27,7 @@ const DOTS_Y     = 0.978;
 const PAGES = [
   {
     bg:         0x0A1520,
+    bgArt:      'story_village',
     title:      'Somewhere peaceful.  For now.',
     body: [
       'In the village of Sunny Paws —\npop. 214, or 213 if you didn\'t count\nMr. Threadwick\'s goldfish.',
@@ -37,6 +38,7 @@ const PAGES = [
   },
   {
     bg:         0x1A0808,
+    bgArt:      'story_thief',
     title:      '🦊  Enter Fenwick  (Stage Left, Dramatically)',
     body: [
       'Fenwick the Sly Fox had stolen many things.\nThree crowns.  Two pie recipes.  One royal hat.',
@@ -48,6 +50,7 @@ const PAGES = [
   },
   {
     bg:         0x080808,
+    bgArt:      'story_kingdoms',
     title:      'Six Kingdoms.  Six Champions.',
     body: [
       'Fenwick\'s shadow fell across six kingdoms,\neach locked behind a Math Seal.',
@@ -110,6 +113,18 @@ export default class StoryScene extends Phaser.Scene {
 
     // Zone A — background + stars
     this.add.rectangle(W / 2, H / 2, W, H, p.bg);
+
+    // Add storybook illustration
+    if (p.bgArt && this.textures.exists(p.bgArt)) {
+      const illustration = this.add.image(W / 2, H / 2, p.bgArt).setDisplaySize(W, H).setAlpha(0);
+      this.tweens.add({
+        targets: illustration,
+        alpha: 0.45,
+        duration: 2000,
+        ease: 'Sine.easeOut'
+      });
+    }
+
     this._stars(W, H);
 
     // Page-dot indicator

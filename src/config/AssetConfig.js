@@ -103,6 +103,12 @@ export const SPRITE_DEFS = [
  * UI icon definitions (lives, stars, item power-ups)
  */
 export const UI_DEFS = [
+  { key: 'portrait_mimi',   file: 'portrait_mimi',   size: 256 },
+  { key: 'portrait_mewton', file: 'portrait_mewton', size: 256 },
+  { key: 'portrait_witch',  file: 'portrait_witch',  size: 256 },
+  { key: 'particle_sparkle',file: 'particle_sparkle',size: 32 },
+  { key: 'particle_ring',   file: 'particle_ring',   size: 64 },
+  { key: 'light_mask',      file: 'light_mask',      size: 128 },
   { key: 'ui_heart',     file: 'ui/heart',        size: 32 },
   { key: 'ui_star',      file: 'ui/star',         size: 28 },
   { key: 'heart_full',   file: 'heart_full',      size: 20 },

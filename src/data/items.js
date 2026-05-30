@@ -53,6 +53,16 @@ const ITEMS = {
     value: 3,
     emoji: '🦴',
   },
+  math_net: {
+    id: 'math_net',
+    name: 'Math Net',
+    spriteKey: 'item_net',
+    color: 0x9955FF,
+    description: 'Use in battle when enemy HP is <= 2 to capture them for your Pasture!',
+    effect: 'capture',
+    value: 1,
+    emoji: '🕸️',
+  },
 };
 
 export default ITEMS;

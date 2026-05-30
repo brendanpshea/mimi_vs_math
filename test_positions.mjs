@@ -33,7 +33,6 @@
 import REGIONS               from './src/data/regions/index.js';
 import { POSITIONS }         from './src/data/maps.js';
 import ITEMS                 from './src/data/items.js';
-import { ITEM_POOLS }        from './src/data/ProceduralMap.js';  // single source of truth
 
 // ── Colour helpers (ANSI) ────────────────────────────────────────────────
 const G   = s => `\x1b[32m${s}\x1b[0m`;
@@ -185,7 +184,7 @@ console.log(B('\nInteractive items content'));
 for (const region of REGIONS) {
   const pos   = POSITIONS[region.id];
   const items = pos.interactiveItems;
-  const expectedPool = ITEM_POOLS[region.id];
+  const expectedPool = region.itemPool;
 
   test(`R${region.id} interactiveItems length 0–2`, () => {
     assert(items.length >= 0 && items.length <= 2,

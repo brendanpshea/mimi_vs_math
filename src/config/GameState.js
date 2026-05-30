@@ -13,7 +13,9 @@ const SAVE_KEY = 'mimi_vs_math_save';
  * stale keys from old configs can't keep boss doors permanently locked.
  * All other progress (stats, inventory, bosses, currentRegion) is preserved.
  */
-const SAVE_VERSION = 5;
+import GEAR from '../data/gear.js';
+
+const SAVE_VERSION = 6;
 
 const GameState = {
   // ── Player stats ──────────────────────────────────────────────────────
@@ -99,6 +101,22 @@ const GameState = {
   defeatedEnemyTypes: {},
   // key: enemy type id; number of times the player has defeated that type
   bestiaryKillCounts: {},
+
+  // ── Equippable Gear (persisted) ───────────────────────────────────────
+  equippedGear: {
+    weapon: 'wooden_wand',
+    hat: 'kitty_ears',
+    accessory: 'red_collar',
+  },
+  unlockedGear: ['wooden_wand', 'kitty_ears', 'red_collar'],
+
+  // ── Captured Enemies (Pasture, persisted) ─────────────────────────────
+  capturedEnemies: [], // Array of { id, name, capturedAt }
+  lastPastureCheck: Date.now(),
+
+  // ── Bounties / Quests (persisted) ─────────────────────────────────────
+  activeBounties: [], // Array of { id, type, count, target, progress, completed, reward }
+
   // ─────────────────────────────────────────────────────────────────────
   // Persistence
   // ─────────────────────────────────────────────────────────────────────
@@ -128,6 +146,11 @@ const GameState = {
       timeMult:               this.timeMult ?? 1.0,
       musicVol:               this.musicVol ?? 0.75,
       sfxVol:                 this.sfxVol  ?? 1.0,
+      equippedGear:           this.equippedGear,
+      unlockedGear:           this.unlockedGear,
+      capturedEnemies:        this.capturedEnemies,
+      lastPastureCheck:       this.lastPastureCheck,
+      activeBounties:         this.activeBounties,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   },
@@ -149,6 +172,21 @@ const GameState = {
       if (!this.bestiaryKillCounts)            this.bestiaryKillCounts = {};
       if (!this.bestiaryHighestDifficulty)     this.bestiaryHighestDifficulty = {};
       if (!this.topicTier)              this.topicTier = {};
+      if (!this.equippedGear) {
+        this.equippedGear = { weapon: 'wooden_wand', hat: 'kitty_ears', accessory: 'red_collar' };
+      }
+      if (!this.unlockedGear) {
+        this.unlockedGear = ['wooden_wand', 'kitty_ears', 'red_collar'];
+      }
+      if (!this.capturedEnemies) {
+        this.capturedEnemies = [];
+      }
+      if (this.lastPastureCheck === undefined) {
+        this.lastPastureCheck = Date.now();
+      }
+      if (!this.activeBounties) {
+        this.activeBounties = [];
+      }
       // topicPerfectStreak is session-only — always reset on load
       this.topicPerfectStreak = {};
       // Strip legacy topicAccuracy field from old saves
@@ -206,6 +244,11 @@ const GameState = {
     this.bestiaryKillCounts         = {};
     this.bestiaryHighestDifficulty  = {};
     this.regionMaxDifficulty        = {};
+    this.equippedGear    = { weapon: 'wooden_wand', hat: 'kitty_ears', accessory: 'red_collar' };
+    this.unlockedGear    = ['wooden_wand', 'kitty_ears', 'red_collar'];
+    this.capturedEnemies = [];
+    this.lastPastureCheck = Date.now();
+    this.activeBounties  = [];
     // timeMult is an accessibility preference — intentionally NOT reset by new-game
     this.save();
   },
@@ -398,8 +441,8 @@ const GameState = {
   },
 
   /** Add an item to inventory. */
-  addItem(itemId) {
-    this.inventory[itemId] = (this.inventory[itemId] || 0) + 1;
+  addItem(itemId, count = 1) {
+    this.inventory[itemId] = (this.inventory[itemId] || 0) + count;
     this.save();
   },
 
@@ -427,6 +470,105 @@ const GameState = {
   /** Reset battle-only effects at the start of each battle. */
   resetEffects() {
     this.activeEffects = { timerBonus: 0, doubleHit: false, shield: false, hintCharges: 0 };
+  },
+
+  // ── Dynamic Gear getters ──────────────────────────────────────────────
+  unlockGearItem(gearId) {
+    if (!this.unlockedGear) this.unlockedGear = ['wooden_wand', 'kitty_ears', 'red_collar'];
+    if (!this.unlockedGear.includes(gearId)) {
+      this.unlockedGear.push(gearId);
+      this.save();
+      return true;
+    }
+    return false;
+  },
+  getPlayerDamage(baseVal) {
+    const wp = this.equippedGear?.weapon ?? 'wooden_wand';
+    const bonus = GEAR[wp]?.damageBonus ?? 0;
+    return baseVal + bonus;
+  },
+  getPlayerTimerBonus() {
+    const hat = this.equippedGear?.hat ?? 'kitty_ears';
+    return GEAR[hat]?.timerBonus ?? 0;
+  },
+  getPlayerMaxHP() {
+    const acc = this.equippedGear?.accessory ?? 'red_collar';
+    const bonus = GEAR[acc]?.hpBonus ?? 0;
+    return 12 + bonus; // Base Max HP is 12 (6 hearts)
+  },
+  getPlayerDodgeChance() {
+    const acc = this.equippedGear?.accessory ?? 'red_collar';
+    return GEAR[acc]?.dodgeChance ?? 0;
+  },
+  getPlayerDamageReduction() {
+    const hat = this.equippedGear?.hat ?? 'kitty_ears';
+    return GEAR[hat]?.damageReduction ?? 0;
+  },
+
+  // ── Bounty Board / Quest hooks ─────────────────────────────────────────
+  recordEnemyDefeated(enemyId) {
+    if (!this.activeBounties) this.activeBounties = [];
+    this.activeBounties.forEach(q => {
+      if (q.completed) return;
+      if (q.type === 'defeat_enemy' && q.target === enemyId) {
+        q.progress = Math.min(q.count, q.progress + 1);
+        if (q.progress >= q.count) q.completed = true;
+      }
+      if (q.type === 'defeat_any') {
+        q.progress = Math.min(q.count, q.progress + 1);
+        if (q.progress >= q.count) q.completed = true;
+      }
+    });
+    this.save();
+  },
+  recordStreakAchieved(streak) {
+    if (!this.activeBounties) this.activeBounties = [];
+    this.activeBounties.forEach(q => {
+      if (q.completed) return;
+      if (q.type === 'streak' && streak >= q.count) {
+        q.progress = q.count;
+        q.completed = true;
+      }
+    });
+    this.save();
+  },
+
+  // ── Capture and Pasture ───────────────────────────────────────────────
+  captureEnemy(enemyId, name) {
+    if (!this.capturedEnemies) this.capturedEnemies = [];
+    this.capturedEnemies.push({
+      id: enemyId,
+      name: name,
+      capturedAt: Date.now()
+    });
+    this.save();
+  },
+  calculatePastureRewards() {
+    if (!this.capturedEnemies || this.capturedEnemies.length === 0) {
+      this.lastPastureCheck = Date.now();
+      this.save();
+      return [];
+    }
+    const elapsedSecs = Math.floor((Date.now() - (this.lastPastureCheck ?? Date.now())) / 1000);
+    this.lastPastureCheck = Date.now();
+
+    // 1 Sardine per 12 hours (43200 seconds) per captured Slime Pup or any enemy
+    // Cap rewards to max 3 days offline to prevent game balance break
+    const CAP_SECS = 3 * 24 * 3600; // 3 days
+    const activeSecs = Math.min(elapsedSecs, CAP_SECS);
+
+    const rewards = [];
+    this.capturedEnemies.forEach(e => {
+      const itemsToGenerate = Math.floor(activeSecs / 43200);
+      if (itemsToGenerate > 0) {
+        // Slime Pup generates sardines; others generate catnip/yarn/sardines
+        const itemType = e.id === 'slime_pup' ? 'sardine' : (Math.random() < 0.5 ? 'catnip' : 'yarn_ball');
+        this.addItem(itemType, itemsToGenerate);
+        rewards.push({ enemyName: e.name, itemId: itemType, count: itemsToGenerate });
+      }
+    });
+    this.save();
+    return rewards;
   },
 };
 

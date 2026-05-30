@@ -1,4 +1,4 @@
-﻿/**
+/**
  * BattleScene — turn-based math battle.
  *
  * Scene data expected:
@@ -58,6 +58,7 @@ export default class BattleScene extends Phaser.Scene {
     this._qStartTime        = 0;   // Phaser timestamp when current question appeared
     this._battlePaused      = false;
     this._pauseRemainingMs  = 0;
+    this.bossPhase         = 1;    // Multi-phase bosses
     // Adaptive difficulty (A + C)
     this.battleDiffOffset  = 0;    // A: in-battle drift −1/0/+1
     this.lossStreak        = 0;    // A: consecutive wrong/timeout counter
@@ -80,6 +81,7 @@ export default class BattleScene extends Phaser.Scene {
     this._drawBackground(W, H);
     this._buildLayout(W, H);
     this._setupKeys();
+    this._buildNetButton(W, H); // Net Button
 
     this.sound.play('sfx_battle_start', { volume: 0.75 });
     BGM.play(this.isBoss ? 'boss' : 'battle');
@@ -94,7 +96,16 @@ export default class BattleScene extends Phaser.Scene {
 
     // Display Full-screen backdrop
     if (this.textures.exists(backdropKey)) {
-      this.add.image(W / 2, H / 2, backdropKey).setDisplaySize(W, H).setDepth(0);
+      const bgImage = this.add.image(W / 2, H / 2, backdropKey).setDisplaySize(W, H).setDepth(0);
+      this.tweens.add({
+        targets: bgImage,
+        scaleX: bgImage.scaleX * 1.05,
+        scaleY: bgImage.scaleY * 1.05,
+        duration: 20000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
     } else {
       // Fallback if backdrop not loaded
       console.warn(`Backdrop ${backdropKey} not found, using solid color`);
@@ -547,7 +558,11 @@ export default class BattleScene extends Phaser.Scene {
     const wordBonus   = q.wordProblem ? 8 : 0;
     const topicSecs   = TOPIC_TIMERS[topic] ?? 22;
     const scaledSecs  = Math.round(topicSecs * (this.enemyData.timerScale ?? 1.0));
-    const baseSecs    = Math.max(8, scaledSecs) + (GameState.activeEffects.timerBonus ?? 0) + wordBonus;
+    const gearBonus   = GameState.getPlayerTimerBonus();
+    let baseSecs      = Math.max(8, scaledSecs) + (GameState.activeEffects.timerBonus ?? 0) + gearBonus + wordBonus;
+    if (this.bossPhase === 2) {
+      baseSecs = Math.max(4, Math.round(baseSecs / 2)); // Halve timer speed in Phase 2
+    }
     const duration    = baseSecs * 1000 * (GameState.timeMult ?? 1.0);
     this._startTimer(duration);
     this._qStartTime = this.time.now;
@@ -627,9 +642,10 @@ export default class BattleScene extends Phaser.Scene {
       this._floatDiffChange(-1);
     }
     this._showFeedback('⏱ Time\'s up!', 0xFF6633);
-    this._damagePlayer();
-
-    this.time.delayedCall(700, () => this._showExplanation(this.currentQuestion));
+    this._triggerActiveDefense((multiplier) => {
+      this._damagePlayer(multiplier);
+      this.time.delayedCall(1200, () => this._showExplanation(this.currentQuestion));
+    });
   }
 
   _selectAnswer(index) {
@@ -645,6 +661,24 @@ export default class BattleScene extends Phaser.Scene {
     if (selected.correct) {
       this.answerButtons[index].bg.setFillStyle(BTN_COLORS.correct).setStrokeStyle(4, 0x44FF88);
       this.answerButtons[index].icon.setText('✓').setColor('#44FF88').setAlpha(1);
+
+      // Emit SVG particle sparkle burst
+      for (let p = 0; p < 12; p++) {
+        const sparkle = this.add.image(this.answerButtons[index].bg.x, this.answerButtons[index].bg.y, 'particle_sparkle').setDepth(20).setTint(0xFFDD33);
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 60 + Math.random() * 80;
+        this.tweens.add({
+          targets: sparkle,
+          x: sparkle.x + Math.cos(angle) * dist,
+          y: sparkle.y + Math.sin(angle) * dist,
+          alpha: { start: 1, end: 0 },
+          scale: { start: 1, end: 0 },
+          duration: 600 + Math.random() * 400,
+          ease: 'Cubic.easeOut',
+          onComplete: () => sparkle.destroy()
+        });
+      }
+
       this._onCorrect(isFast, index);
     } else {
       this.answerButtons[index].bg.setFillStyle(BTN_COLORS.wrong).setStrokeStyle(4, 0xFF4444);
@@ -673,8 +707,12 @@ export default class BattleScene extends Phaser.Scene {
       this._floatDiffChange(+1);
     }
 
-    let dmg = isFast ? 3 : 2;
-    if (this.streak >= 3) dmg += 1;   // streak bonus
+    let baseDmg = isFast ? 3 : 2;
+    if (this.streak >= 3) baseDmg += 1;   // streak bonus
+    let dmg = GameState.getPlayerDamage(baseDmg);
+    if (this.bossPhase === 2) {
+      dmg = Math.round(dmg * 1.5); // 1.5x damage in Phase 2
+    }
     if (GameState.activeEffects.doubleHit) {
       dmg *= 2;
       GameState.activeEffects.doubleHit = false;
@@ -683,6 +721,12 @@ export default class BattleScene extends Phaser.Scene {
 
     this.enemyHP = Math.max(0, this.enemyHP - dmg);
     this._updateHPBar(this.enemyHPBar, this.enemyHP);
+
+    // Trigger Boss Phase 2 Transition at 50% HP
+    if (this.isBoss && this.bossPhase === 1 && this.enemyHP > 0 && this.enemyHP <= (this.enemyData.hp ?? 20) / 2) {
+      this.bossPhase = 2;
+      this.time.delayedCall(400, () => this._triggerBossPhase2Animation());
+    }
 
     // Lock the battle immediately if this hit killed the enemy — prevents any
     // subsequent timer tick or stale callback from loading a new question.
@@ -747,20 +791,44 @@ export default class BattleScene extends Phaser.Scene {
       this.lossStreak = 0;
       this._floatDiffChange(-1);
     }
-    this._damagePlayer();
     this._showFeedback('✗ Wrong!', 0xFF4444);
-
-    this.time.delayedCall(700, () => this._showExplanation(this.currentQuestion));
+    this._triggerActiveDefense((multiplier) => {
+      this._damagePlayer(multiplier);
+      this.time.delayedCall(1200, () => this._showExplanation(this.currentQuestion));
+    });
   }
 
-  _damagePlayer() {
+  _damagePlayer(multiplier = 1.0) {
     if (GameState.activeEffects.shield) {
       GameState.activeEffects.shield = false;
       this._refreshEffectsDisplay();
       this._showFeedback('💎 Shield blocked the hit!', 0xAADDFF);
       return;
     }
-    const dmg = this.enemyData.damage ?? 1;
+
+    // Dodge chance from accessory
+    const dodgeChance = GameState.getPlayerDodgeChance();
+    if (dodgeChance > 0 && Math.random() < dodgeChance) {
+      this._showFeedback('⭐ Safe! Diamond Collar dodged!', 0x44CCFF);
+      this._floatText(this.mimiSprite.x, this.mimiSprite.y - 20, 'DODGED!', 0x44CCFF);
+      return;
+    }
+
+    const baseEnemyDmg = this.enemyData.damage ?? 1;
+    const reduction = GameState.getPlayerDamageReduction();
+    
+    let dmg = Math.max(0, baseEnemyDmg - reduction);
+    dmg = Math.round(dmg * multiplier);
+
+    if (multiplier > 0 && dmg <= 0) {
+      dmg = 1; // Always take at least 1 damage on a missed defense unless fully dodged/shielded
+    }
+
+    if (dmg <= 0) {
+      this._showFeedback('🛡️ Fully Defended!', 0x44FF88);
+      return;
+    }
+
     this.sound.play('sfx_hit_player', { volume: 0.80 });
     this.playerHP = Math.max(0, this.playerHP - dmg);
     GameState.hp  = this.playerHP;
@@ -1176,6 +1244,9 @@ export default class BattleScene extends Phaser.Scene {
       // Bestiary: mark this enemy type as defeated
       GameState.markEnemyDefeated(this.enemyData.id);
 
+      GameState.recordEnemyDefeated(this.enemyData.id);
+      GameState.recordStreakAchieved(this.streak);
+
       this.sound.play('sfx_victory', { volume: 0.80 });
       // Victory effects
       this._spawnConfetti(W, H);
@@ -1192,6 +1263,21 @@ export default class BattleScene extends Phaser.Scene {
         const maxDiff      = GameState.getRegionMaxDifficulty(this.regionId);
         const starCeiling  = maxDiff >= 3 ? 3 : maxDiff >= 2 ? 2 : 1;
         this._bossStars    = Math.min(accuracyStars, starCeiling);
+
+        // Unlock gear based on defeated region boss
+        const bossGearMap = {
+          1: 'scholar_cap',
+          2: 'math_scepter',
+          3: 'iron_collar',
+          4: 'wizard_hat',
+          5: 'calculator_staff',
+          6: 'diamond_collar',
+        };
+        const gearToUnlock = bossGearMap[this.regionId];
+        if (gearToUnlock) {
+          GameState.unlockGearItem(gearToUnlock);
+          this._unlockedGearMsg = gearToUnlock;
+        }
       }
 
       // ── Item drop: 100% for bosses, 30% for regular enemies ──
@@ -1219,6 +1305,11 @@ export default class BattleScene extends Phaser.Scene {
 
       let yStars = null;
       if (this.isBoss) { yStars = nextY; nextY += 26; }
+
+      let yUnlockedGear = null;
+      if (this._unlockedGearMsg) {
+        yUnlockedGear = nextY; nextY += 24;
+      }
 
       let yItemTitle = null, yItemDesc = null;
       if (droppedItem) {
@@ -1266,6 +1357,14 @@ export default class BattleScene extends Phaser.Scene {
         const sLabel = stars === 3 ? '  Perfect!' : stars === 2 ? '  Well done!' : '';
         this.add.text(W / 2, yStars, `${sStr}${sLabel}`, {
           ...TEXT_STYLE(20, sColor, true), stroke: '#000', strokeThickness: 2,
+        }).setOrigin(0.5);
+      }
+
+      if (yUnlockedGear !== null) {
+        // Import GEAR dynamically since it's loaded in BattleScene
+        const gearName = this._unlockedGearMsg ? (this._unlockedGearMsg.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())) : '';
+        this.add.text(W / 2, yUnlockedGear, `✨ Unlocked Gear: ${gearName}!`, {
+          ...TEXT_STYLE(14, '#FFCC44', true), stroke: '#000', strokeThickness: 2
         }).setOrigin(0.5);
       }
 
@@ -1504,6 +1603,188 @@ export default class BattleScene extends Phaser.Scene {
     this.keys.forEach((key, i) => {
       if (Phaser.Input.Keyboard.JustDown(key)) this._selectAnswer(i);
     });
+    if (this._netKey && Phaser.Input.Keyboard.JustDown(this._netKey)) {
+      this._attemptCapture();
+    }
   }
 
+  _buildNetButton(W, H) {
+    const netCount = GameState.inventory.math_net || 0;
+    if (netCount <= 0) return;
+
+    this._netBtn = this.add.rectangle(W / 2, H * 0.61, 160, 32, 0x331166)
+      .setStrokeStyle(2, 0x9955FF).setInteractive({ useHandCursor: true }).setDepth(5);
+    this._netTxt = this.add.text(W / 2, H * 0.61, `🕸️ Use Net (×${netCount}) [N]`, {
+      ...TEXT_STYLE(12, '#DDBBFF', true),
+      fontFamily: FONT_TITLE
+    }).setOrigin(0.5).setDepth(6);
+
+    this._netBtn.on('pointerover', () => { this._netBtn.setFillStyle(0x442288); });
+    this._netBtn.on('pointerout',  () => { this._netBtn.setFillStyle(0x331166); });
+    this._netBtn.on('pointerdown', () => this._attemptCapture());
+
+    this._netKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N);
+  }
+
+  _attemptCapture() {
+    if (this.answering || this.battleOver) return;
+    const netCount = GameState.inventory.math_net || 0;
+    if (netCount <= 0) return;
+
+    this.answering = true;
+    if (this._timerEvent) this._timerEvent.remove();
+    this.answerButtons.forEach(btn => btn.bg.removeInteractive());
+
+    GameState.useItem('math_net');
+    
+    const newCount = GameState.inventory.math_net || 0;
+    if (newCount > 0) {
+      this._netTxt.setText(`🕸️ Use Net (×${newCount}) [N]`);
+    } else {
+      this._netBtn.destroy();
+      this._netTxt.destroy();
+      this._netBtn = null;
+      this._netKey = null;
+    }
+
+    this.sound.play('sfx_hit_enemy', { volume: 0.6 });
+    
+    const netGfx = this.add.graphics().setDepth(20);
+    netGfx.lineStyle(3, 0x9955FF, 1).strokeCircle(0, 0, 15);
+    netGfx.fillStyle(0x9955FF, 0.3).fillCircle(0, 0, 15);
+    netGfx.setPosition(this.mimiSprite.x, this.mimiSprite.y);
+
+    this.tweens.add({
+      targets: netGfx,
+      x: this.enemySprite.x,
+      y: this.enemySprite.y,
+      scaleX: 2.5,
+      scaleY: 2.5,
+      duration: 350,
+      ease: 'Quad.easeOut',
+      onComplete: () => {
+        netGfx.destroy();
+        
+        if (this.isBoss) {
+          this.sound.play('sfx_wrong', { volume: 0.8 });
+          this._floatText(this.enemySprite.x, this.enemySprite.y - 20, 'FAILED!', 0xFF4444, 1.2);
+          this._showFeedback('✗ Bosses cannot be captured!', 0xFF4444);
+          
+          this.time.delayedCall(1200, () => {
+            this.answering = false;
+            this._nextQuestion();
+          });
+          return;
+        }
+
+        if (this.enemyHP <= 2) {
+          this.sound.play('sfx_victory', { volume: 0.8 });
+          
+          this.tweens.add({
+            targets: this.enemySprite,
+            scaleX: 0,
+            scaleY: 0,
+            angle: 360,
+            duration: 600,
+            ease: 'Back.easeIn'
+          });
+
+          this._floatText(this.enemySprite.x, this.enemySprite.y - 20, 'CAPTURED!', 0x44FF88, 1.4);
+          this._showFeedback('🕸️ Enemy captured for Pasture!', 0x44FF88);
+
+          GameState.captureEnemy(this.enemyData.id, this.enemyData.name);
+
+          this.battleOver = true;
+          this.enemyHP = 0;
+          this._updateHPBar(this.enemyHPBar, 0);
+
+          this.time.delayedCall(1500, () => this._endBattle(true));
+        } else {
+          this.sound.play('sfx_wrong', { volume: 0.8 });
+          this._floatText(this.enemySprite.x, this.enemySprite.y - 20, 'BROKE FREE!', 0xFF5555, 1.2);
+          this._showFeedback('✗ Weaken enemy to 2 HP first!', 0xFF5555);
+
+          this.time.delayedCall(1200, () => {
+            this.answering = false;
+            this._nextQuestion();
+          });
+        }
+      }
+    });
+  }
+
+  _triggerBossPhase2Animation() {
+    this.sound.play('sfx_level_up', { volume: 0.85 });
+    this.cameras.main.flash(200, 255, 100, 100);
+    this.cameras.main.shake(400, 0.01);
+    
+    this.enemySprite.setTint(0xFF5555);
+    this._bossTint = 0xFF5555;
+    
+    this._floatText(this.enemySprite.x, this.enemySprite.y - 40, '⚠️ PHASE 2!', 0xFF3333, 1.4);
+    this._floatText(this.enemySprite.x, this.enemySprite.y - 10, 'DOUBLE TIMER SPEED!', 0xFF3333, 0.85);
+    this._floatText(this.mimiSprite.x, this.mimiSprite.y - 30, '1.5x DAMAGE POWER!', 0x44FF88, 0.85);
+  }
+
+  _triggerActiveDefense(onComplete) {
+    this.sound.play('sfx_timer_warn', { volume: 0.6 });
+    
+    const targetRing = this.add.circle(this.mimiSprite.x, this.mimiSprite.y, 40).setStrokeStyle(3, 0xFFFFFF, 0.8).setDepth(20);
+    const shrinkingRing = this.add.circle(this.mimiSprite.x, this.mimiSprite.y, 120).setStrokeStyle(3, 0xFFCC44, 0.9).setDepth(20);
+    const ringLabel = this.add.text(this.mimiSprite.x, this.mimiSprite.y - 60, 'DEFEND! [Space]', {
+      fontSize: '14px', color: '#FFCC44', fontFamily: FONT_TITLE, fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 3
+    }).setOrigin(0.5).setDepth(21);
+
+    let spacePressed = false;
+
+    const defenseTween = this.tweens.add({
+      targets: shrinkingRing,
+      radius: 0,
+      duration: 1500,
+      onComplete: () => {
+        if (!spacePressed) {
+          cleanUp('❌ MISSED DODGE!', 0xFF4444, 1.0);
+        }
+      }
+    });
+
+    const cleanUp = (msg, color, multiplier) => {
+      this.input.keyboard.off('keydown-SPACE', handleSpace);
+      targetRing.destroy();
+      shrinkingRing.destroy();
+      ringLabel.destroy();
+      
+      this._floatText(this.mimiSprite.x, this.mimiSprite.y - 40, msg, color, 1.2);
+      onComplete(multiplier);
+    };
+
+    const handleSpace = (event) => {
+      if (spacePressed) return;
+      spacePressed = true;
+      defenseTween.stop();
+
+      const r = shrinkingRing.radius;
+      if (r >= 36 && r <= 44) {
+        cleanUp('⚡ PERFECT DODGE!', 0x44FF88, 0.0);
+
+        // Emit shockwave ring
+        const shockwave = this.add.image(this.mimiSprite.x, this.mimiSprite.y, 'particle_ring').setDepth(15).setTint(0x44FF88).setScale(0.5);
+        this.tweens.add({
+          targets: shockwave,
+          scale: 3.5,
+          alpha: { start: 1, end: 0 },
+          duration: 400,
+          ease: 'Quad.easeOut',
+          onComplete: () => shockwave.destroy()
+        });
+      } else if (r >= 22 && r <= 58) {
+        cleanUp('🛡️ DEFENDED (50%)', 0x88DDFF, 0.5);
+      } else {
+        cleanUp('❌ MISSED DODGE!', 0xFF4444, 1.0);
+      }
+    };
+
+    this.input.keyboard.on('keydown-SPACE', handleSpace);
+  }
 }

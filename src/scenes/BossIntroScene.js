@@ -108,13 +108,34 @@ export default class BossIntroScene extends Phaser.Scene {
       duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
     });
 
-    if (this.textures.exists(p.spriteKey)) {
-      const portrait = this.add.image(avatarX, avatarY, p.spriteKey)
+    const portraitMap = {
+      'mimi': 'portrait_mimi',
+      'mimi_battle': 'portrait_mimi',
+      'subtraction_witch': 'portrait_witch',
+      'npc_wizard': 'portrait_mewton',
+      'npc_wizard_b': 'portrait_mewton'
+    };
+    const mappedKey = portraitMap[p.spriteKey] || p.spriteKey;
+
+    if (this.textures.exists(mappedKey)) {
+      const startX = onLeft ? avatarX - 300 : avatarX + 300;
+      const portrait = this.add.image(startX, avatarY, mappedKey)
         .setDisplaySize(AVATAR_SIZE, AVATAR_SIZE);
-      if (!onLeft) portrait.setFlipX(true);
+      if (!onLeft && mappedKey !== 'portrait_mewton' && mappedKey !== 'portrait_mimi' && mappedKey !== 'portrait_witch') {
+        portrait.setFlipX(true); // only flip generic sprites, portraits are pre-oriented
+      }
+      
       this.tweens.add({
-        targets: portrait, y: avatarY - 10,
-        duration: 1700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+        targets: portrait,
+        x: avatarX,
+        duration: 500,
+        ease: 'Back.easeOut',
+        onComplete: () => {
+          this.tweens.add({
+            targets: portrait, y: avatarY - 10,
+            duration: 1700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+          });
+        }
       });
     } else {
       // Fallback placeholder

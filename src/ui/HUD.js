@@ -29,9 +29,9 @@ export default class HUD {
     this._panel = scene.add.rectangle(W / 2, 30, W, 60, PANEL_COLOR, PANEL_ALPHA)
       .setScrollFactor(0).setDepth(50);
 
-    // Hearts (max 6 shown) — use pre-generated image textures from BootScene
+    // Hearts (up to 8 shown based on gear Max HP) — use pre-generated image textures from BootScene
     this._hearts = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 8; i++) {
       const h = scene.add.image(20 + i * 26, 20, 'heart_full')
         .setDisplaySize(20, 20).setScrollFactor(0).setDepth(51);
       this._hearts.push(h);
@@ -75,12 +75,18 @@ export default class HUD {
     const { hp, inventory } = GameState;
 
     // Hearts
+    const maxHearts = Math.floor(GameState.getPlayerMaxHP() / 2);
     const fullHearts = Math.floor(hp / 2);
     const halfHeart  = hp % 2 === 1;
-    for (let i = 0; i < 6; i++) {
-      if (i < fullHearts)                        this._hearts[i].setTexture('heart_full');
-      else if (i === fullHearts && halfHeart)    this._hearts[i].setTexture('heart_half');
-      else                                       this._hearts[i].setTexture('heart_empty');
+    for (let i = 0; i < 8; i++) {
+      if (i < maxHearts) {
+        this._hearts[i].setVisible(true);
+        if (i < fullHearts)                        this._hearts[i].setTexture('heart_full');
+        else if (i === fullHearts && halfHeart)    this._hearts[i].setTexture('heart_half');
+        else                                       this._hearts[i].setTexture('heart_empty');
+      } else {
+        this._hearts[i].setVisible(false);
+      }
     }
 
     // Kill-count progress (⚔ K / N defeated) — or legacy remaining count

@@ -24,6 +24,9 @@ import VirtualDPad     from '../ui/VirtualDPad.js';
 import MewtonDialogue  from '../ui/MewtonDialogue.js';
 import BossDoor        from '../ui/BossDoor.js';
 import { TERRAIN_DEFS } from '../config/AssetConfig.js';
+import { openGear, closeGear } from '../ui/GearOverlay.js';
+import { openBounties, closeBounties } from '../ui/BountyOverlay.js';
+import { openPasture, closePasture } from '../ui/PastureOverlay.js';
 
 // Module-level decoration scale map — built once from TERRAIN_DEFS so
 // _addDecorations() doesn't need a hardcoded SCALES object.
@@ -183,26 +186,45 @@ export default class ExploreScene extends Phaser.Scene {
     mapBtn.on('pointerout',  () => { mapBtn.setFillStyle(0x0A1A0A, 0.9); mapTxt.setColor('#88EE88'); });
     mapBtn.on('pointerdown', () => this._showExitConfirm());
 
-    // Settings button — sits just right of the Map button
-    const setBtn = this.add.rectangle(156, 48, 86, 22, 0x0A0A1C, 0.9)
+    // Settings button
+    const setBtn = this.add.rectangle(144, 48, 86, 22, 0x0A0A1C, 0.9)
       .setScrollFactor(0).setDepth(52).setStrokeStyle(1, 0x4466AA)
       .setInteractive({ useHandCursor: true });
-    const setTxt = this.add.text(156, 48, '⚙ Settings', {
+    const setTxt = this.add.text(144, 48, '⚙ Settings', {
       fontSize: '12px', color: '#99BBDD', fontFamily: "'Nunito', Arial, sans-serif",
     }).setOrigin(0.5).setScrollFactor(0).setDepth(53);
     setBtn.on('pointerover', () => { setBtn.setFillStyle(0x1A2050, 0.9); setTxt.setColor('#CCDDFF'); });
     setBtn.on('pointerout',  () => { setBtn.setFillStyle(0x0A0A1C, 0.9); setTxt.setColor('#99BBDD'); });
-    setBtn.on('pointerdown', () => openSettings(this, 60));
+    setBtn.on('pointerdown', () => openSettings(this));
 
-    // Fullscreen toggle — only shown on touch devices (phones/tablets).
-    // On Android Chrome this triggers true browser fullscreen.
-    // On iOS, share the URL via the browser and tap “Add to Home Screen”
-    // to launch permanently fullscreen as a web app (see apple-mobile-web-app-capable meta).
+    // Gear button
+    const gearBtn = this.add.rectangle(230, 48, 74, 22, 0x0A0A1C, 0.9)
+      .setScrollFactor(0).setDepth(52).setStrokeStyle(1, 0x9955FF)
+      .setInteractive({ useHandCursor: true });
+    const gearTxt = this.add.text(230, 48, '🎒 Gear', {
+      fontSize: '12px', color: '#DDBBFF', fontFamily: "'Nunito', Arial, sans-serif",
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(53);
+    gearBtn.on('pointerover', () => { gearBtn.setFillStyle(0x2A1166, 0.9); gearTxt.setColor('#FFEE88'); });
+    gearBtn.on('pointerout',  () => { gearBtn.setFillStyle(0x0A0A1C, 0.9); gearTxt.setColor('#DDBBFF'); });
+    gearBtn.on('pointerdown', () => openGear(this, 300, () => this.hud.refresh()));
+
+    // Bounty button
+    const bountyBtn = this.add.rectangle(322, 48, 88, 22, 0x0A0A1C, 0.9)
+      .setScrollFactor(0).setDepth(52).setStrokeStyle(1, 0x44AA44)
+      .setInteractive({ useHandCursor: true });
+    const bountyTxt = this.add.text(322, 48, '📋 Bounties', {
+      fontSize: '12px', color: '#88EE88', fontFamily: "'Nunito', Arial, sans-serif",
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(53);
+    bountyBtn.on('pointerover', () => { bountyBtn.setFillStyle(0x153015, 0.9); bountyTxt.setColor('#AAFFAA'); });
+    bountyBtn.on('pointerout',  () => { bountyBtn.setFillStyle(0x0A0A1C, 0.9); bountyTxt.setColor('#88EE88'); });
+    bountyBtn.on('pointerdown', () => openBounties(this, 300, () => this.hud.refresh()));
+
+    // Fullscreen toggle — touch devices only, bottom-right corner.
     if (this.sys.game.device.input.touch) {
-      const fsBtn = this.add.rectangle(250, 48, 82, 22, 0x0A1A0A, 0.9)
+      const fsBtn = this.add.rectangle(414, 48, 82, 22, 0x0A1A0A, 0.9)
         .setScrollFactor(0).setDepth(52).setStrokeStyle(1, 0x44AA44)
         .setInteractive({ useHandCursor: true });
-      const fsTxt = this.add.text(250, 48, '⛶ Full', {
+      const fsTxt = this.add.text(414, 48, '⛶ Full', {
         fontSize: '12px', color: '#88EE88', fontFamily: "'Nunito', Arial, sans-serif",
       }).setOrigin(0.5).setScrollFactor(0).setDepth(53);
       fsBtn.on('pointerover', () => { fsBtn.setFillStyle(0x153015, 0.9); fsTxt.setColor('#AAFFAA'); });
@@ -512,6 +534,19 @@ export default class ExploreScene extends Phaser.Scene {
   /** Wall sconce: static torch sprite + slow outer corona + fast inner flicker. */
   _spawnTorch(px, py) {
     this.add.image(px, py - 4, 'decoration_torch').setDepth(5);
+
+    if (this.textures.exists('light_mask')) {
+      const light = this.add.image(px, py - 10, 'light_mask').setDepth(6).setTint(0xFF8800).setBlendMode(Phaser.BlendModes.ADD);
+      this.tweens.add({
+        targets: light,
+        alpha: { from: 0.3, to: 0.8 },
+        scale: { from: 0.8, to: 1.1 },
+        duration: Phaser.Math.Between(700, 960),
+        yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+        delay: Phaser.Math.Between(0, 600),
+      });
+    }
+
     const corona = this.add.ellipse(px, py - 10, 24, 24, 0xFF8800, 0).setDepth(4);
     this.tweens.add({
       targets: corona,
@@ -898,6 +933,35 @@ export default class ExploreScene extends Phaser.Scene {
     const py       = this._returnNpcY ?? ty(npc.row);
     const regionId = this.regionId;
 
+    // Spawn Bounty Board and Pasture Gate in Region 0 (Sunny Village) near spawn
+    if (regionId === 0) {
+      // Bounty Board (represented as Bookshelf sprite)
+      const bbx = tx(36);
+      const bby = ty(38);
+      this.add.image(bbx, bby, 'decoration_bookshelf').setDepth(3).setDisplaySize(32, 48);
+      const bbBody = this.add.rectangle(bbx, bby, 32, 48, 0, 0);
+      this.physics.add.existing(bbBody, true);
+      this._decorObstacles.add(bbBody);
+      this.physics.add.overlap(this.mimi.sprite, bbBody, null, () => {
+        if (Phaser.Input.Keyboard.JustDown(this._spaceKey) && !this.dialog.isOpen) {
+          openBounties(this, 300, () => this.hud.refresh());
+        }
+      });
+
+      // Pasture Gate (represented as Well sprite)
+      const pgx = tx(40);
+      const pgy = ty(38);
+      this.add.image(pgx, pgy, 'decoration_well').setDepth(3).setDisplaySize(32, 40);
+      const pgBody = this.add.rectangle(pgx, pgy, 32, 40, 0, 0);
+      this.physics.add.existing(pgBody, true);
+      this._decorObstacles.add(pgBody);
+      this.physics.add.overlap(this.mimi.sprite, pgBody, null, () => {
+        if (Phaser.Input.Keyboard.JustDown(this._spaceKey) && !this.dialog.isOpen) {
+          openPasture(this, 300, () => this.hud.refresh());
+        }
+      });
+    }
+
     // Create MewtonDialogue helper (owns beacon, treat-given state, all conversation logic)
     this._mewton = new MewtonDialogue(this, this.regionData, {
       onItemGiven: (itemId) => {
@@ -1049,6 +1113,12 @@ export default class ExploreScene extends Phaser.Scene {
     if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
       if (this._settingsItems) {
         closeSettings(this);           // ESC closes settings first
+      } else if (this._gearItems) {
+        closeGear(this, () => this.hud.refresh());
+      } else if (this._bountyItems) {
+        closeBounties(this, () => this.hud.refresh());
+      } else if (this._pastureItems) {
+        closePasture(this, () => this.hud.refresh());
       } else if (this._exitConfirm) {
         this._closeExitConfirm(); // ESC while confirm open = cancel
       } else {

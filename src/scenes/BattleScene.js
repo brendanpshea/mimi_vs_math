@@ -642,10 +642,8 @@ export default class BattleScene extends Phaser.Scene {
       this._floatDiffChange(-1);
     }
     this._showFeedback('⏱ Time\'s up!', 0xFF6633);
-    this._triggerActiveDefense((multiplier) => {
-      this._damagePlayer(multiplier);
-      this.time.delayedCall(1200, () => this._showExplanation(this.currentQuestion));
-    });
+    this._damagePlayer(1.0);
+    this.time.delayedCall(1200, () => this._showExplanation(this.currentQuestion));
   }
 
   _selectAnswer(index) {
@@ -792,10 +790,8 @@ export default class BattleScene extends Phaser.Scene {
       this._floatDiffChange(-1);
     }
     this._showFeedback('✗ Wrong!', 0xFF4444);
-    this._triggerActiveDefense((multiplier) => {
-      this._damagePlayer(multiplier);
-      this.time.delayedCall(1200, () => this._showExplanation(this.currentQuestion));
-    });
+    this._damagePlayer(1.0);
+    this.time.delayedCall(1200, () => this._showExplanation(this.currentQuestion));
   }
 
   _damagePlayer(multiplier = 1.0) {
@@ -1203,6 +1199,12 @@ export default class BattleScene extends Phaser.Scene {
     if (this.feedbackText) this.feedbackText.setAlpha(0);
     if (this.streakText)   this.streakText.setAlpha(0);
     if (this.effectsRow)   this.effectsRow.setVisible(false);
+
+    if (this._netBtn) {
+      this._netBtn.destroy();
+      this._netTxt.destroy();
+      this._netBtn = null;
+    }
   }
 
   /** Spawn confetti particles across the screen. */
@@ -1634,6 +1636,25 @@ export default class BattleScene extends Phaser.Scene {
     const netCount = GameState.inventory.math_net || 0;
     if (netCount <= 0) return;
 
+    if (this.isBoss) {
+      this.sound.play('sfx_wrong', { volume: 0.8 });
+      this._showFeedback('✗ Bosses cannot be captured!', 0xFF4444);
+      return;
+    }
+
+    if (this.enemyHP > 2) {
+      this.sound.play('sfx_wrong', { volume: 0.8 });
+      this._showFeedback('✗ Weakened enemies (2 HP or less) only!', 0xFF4444);
+      return;
+    }
+
+    const currentPets = GameState.capturedEnemies || [];
+    if (currentPets.length >= 4) {
+      this.sound.play('sfx_wrong', { volume: 0.8 });
+      this._showFeedback('✗ Pasture is full! (Max 4)', 0xFF4444);
+      return;
+    }
+
     this.answering = true;
     if (this._timerEvent) this._timerEvent.remove();
     this.answerButtons.forEach(btn => btn.bg.removeInteractive());
@@ -1667,18 +1688,6 @@ export default class BattleScene extends Phaser.Scene {
       ease: 'Quad.easeOut',
       onComplete: () => {
         netGfx.destroy();
-        
-        if (this.isBoss) {
-          this.sound.play('sfx_wrong', { volume: 0.8 });
-          this._floatText(this.enemySprite.x, this.enemySprite.y - 20, 'FAILED!', 0xFF4444, 1.2);
-          this._showFeedback('✗ Bosses cannot be captured!', 0xFF4444);
-          
-          this.time.delayedCall(1200, () => {
-            this.answering = false;
-            this._nextQuestion();
-          });
-          return;
-        }
 
         if (this.enemyHP <= 2) {
           this.sound.play('sfx_victory', { volume: 0.8 });
@@ -1727,67 +1736,5 @@ export default class BattleScene extends Phaser.Scene {
     this._floatText(this.enemySprite.x, this.enemySprite.y - 40, '⚠️ PHASE 2!', 0xFF3333, 1.4);
     this._floatText(this.enemySprite.x, this.enemySprite.y - 10, 'DOUBLE TIMER SPEED!', 0xFF3333, 0.85);
     this._floatText(this.mimiSprite.x, this.mimiSprite.y - 30, '1.5x DAMAGE POWER!', 0x44FF88, 0.85);
-  }
-
-  _triggerActiveDefense(onComplete) {
-    this.sound.play('sfx_timer_warn', { volume: 0.6 });
-    
-    const targetRing = this.add.circle(this.mimiSprite.x, this.mimiSprite.y, 40).setStrokeStyle(3, 0xFFFFFF, 0.8).setDepth(20);
-    const shrinkingRing = this.add.circle(this.mimiSprite.x, this.mimiSprite.y, 120).setStrokeStyle(3, 0xFFCC44, 0.9).setDepth(20);
-    const ringLabel = this.add.text(this.mimiSprite.x, this.mimiSprite.y - 60, 'DEFEND! [Space]', {
-      fontSize: '14px', color: '#FFCC44', fontFamily: FONT_TITLE, fontStyle: 'bold',
-      stroke: '#000000', strokeThickness: 3
-    }).setOrigin(0.5).setDepth(21);
-
-    let spacePressed = false;
-
-    const defenseTween = this.tweens.add({
-      targets: shrinkingRing,
-      radius: 0,
-      duration: 1500,
-      onComplete: () => {
-        if (!spacePressed) {
-          cleanUp('❌ MISSED DODGE!', 0xFF4444, 1.0);
-        }
-      }
-    });
-
-    const cleanUp = (msg, color, multiplier) => {
-      this.input.keyboard.off('keydown-SPACE', handleSpace);
-      targetRing.destroy();
-      shrinkingRing.destroy();
-      ringLabel.destroy();
-      
-      this._floatText(this.mimiSprite.x, this.mimiSprite.y - 40, msg, color, 1.2);
-      onComplete(multiplier);
-    };
-
-    const handleSpace = (event) => {
-      if (spacePressed) return;
-      spacePressed = true;
-      defenseTween.stop();
-
-      const r = shrinkingRing.radius;
-      if (r >= 36 && r <= 44) {
-        cleanUp('⚡ PERFECT DODGE!', 0x44FF88, 0.0);
-
-        // Emit shockwave ring
-        const shockwave = this.add.image(this.mimiSprite.x, this.mimiSprite.y, 'particle_ring').setDepth(15).setTint(0x44FF88).setScale(0.5);
-        this.tweens.add({
-          targets: shockwave,
-          scale: 3.5,
-          alpha: { start: 1, end: 0 },
-          duration: 400,
-          ease: 'Quad.easeOut',
-          onComplete: () => shockwave.destroy()
-        });
-      } else if (r >= 22 && r <= 58) {
-        cleanUp('🛡️ DEFENDED (50%)', 0x88DDFF, 0.5);
-      } else {
-        cleanUp('❌ MISSED DODGE!', 0xFF4444, 1.0);
-      }
-    };
-
-    this.input.keyboard.on('keydown-SPACE', handleSpace);
   }
 }

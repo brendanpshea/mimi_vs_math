@@ -1,8 +1,7 @@
-﻿const REGION = {
+const REGION = {
     id: 6,
     name: 'Shadow Castle',
     subtitle: 'Grade 5 · Percentages, Ratios & Operations',
-    mathTopic: 'mixed',
     unlocked: false,
     floorColor: 0x3D2B5E,
     wallColor: 0x1E1232,
@@ -59,19 +58,72 @@
       { col: 76, row: 50 }, { col: 4,  row: 50 },
     ],
 
-    // ── Enemies: 10 — 4 native + 4 hard reviews from R3 + 2 native D3 ──
-    bossUnlockKills: 10,
-    enemySpawns: [
-      { id: 'shadow_knight'                              },  // D1 orderOfOps
-      { id: 'ratio_raven'                                },  // D2 percentages
-      { id: 'percent_wraith'                             },  // D2 ratiosProp
-      { id: 'shadow_knight'  },  // orderOfOps
-      { id: 'ice_frog',       difficultyOverride: 3      },  // D3 fractionCompare review
-      { id: 'snow_golem',     difficultyOverride: 3      },  // D3 fractionAdd review
-      { id: 'crystal_bat',    difficultyOverride: 3      },  // D3 decimals review
-      { id: 'ratio_raven'    },  // percentages
-      { id: 'percent_wraith' },  // ratiosProp
-      { id: 'shadow_knight'  },  // orderOfOps
+    // ── Sub-Levels ─────────────────────────────────────────────────────────
+    levels: [
+      {
+        id: '6-1',
+        name: 'The Courtyard',
+        mathTopic: 'percentages',
+        colorGrade: 0x551188,
+        weather: null,
+        bossUnlockKills: 3,
+        enemySpawns: [
+          { id: 'ratio_raven' },
+          { id: 'percent_wraith' },
+          { id: 'ratio_raven' }
+        ]
+      },
+      {
+        id: '6-2',
+        name: 'The Dungeons',
+        mathTopic: 'orderOfOps',
+        colorGrade: 0x330055,
+        weather: (camW, camH) => ({
+          texture: '_wx_dot', depth: 22,
+          config: {
+            x: { min: 0, max: camW }, y: camH + 8,
+            speedX: { min: -22, max: 22 },
+            speedY: { min: -75, max: -28 },
+            lifespan: { min: 3200, max: 5800 },
+            quantity: 1, frequency: 140,
+            alpha: { start: 0.55, end: 0 },
+            scale: { start: 0.55, end: 1.30 },
+            tint: 0x6622AA,
+            gravityY: 0, maxParticles: 0,
+          },
+        }),
+        bossUnlockKills: 4,
+        enemySpawns: [
+          { id: 'shadow_knight' },
+          { id: 'shadow_knight' },
+          { id: 'snow_golem', difficultyOverride: 3 }, // Review
+          { id: 'crystal_bat', difficultyOverride: 3 } // Review
+        ]
+      },
+      {
+        id: '6-3',
+        name: 'The Grand Hall',
+        mathTopic: 'mixed',
+        colorGrade: 0x440077,
+        weather: null,
+        bossUnlockKills: 5,
+        enemySpawns: [
+          { id: 'shadow_knight' },
+          { id: 'percent_wraith' },
+          { id: 'ratio_raven' },
+          { id: 'ice_frog', difficultyOverride: 3 } // Review
+        ]
+      },
+      {
+        id: '6-boss',
+        name: 'Fenwick\'s Sanctum',
+        mathTopic: 'mixed',
+        colorGrade: 0x220033,
+        weather: null,
+        isBossLevel: true,
+        bossUnlockKills: 0,
+        enemySpawns: []
+      }
     ],
 
     boss: 'fenwick',

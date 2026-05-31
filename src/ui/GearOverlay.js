@@ -10,8 +10,8 @@ export function openGear(scene, depth = 200, onClose = null) {
   const D = depth;
   const W = scene.cameras.main.width;
   const H = scene.cameras.main.height;
-  const items = scene._gearItems = [];
-  const add   = o => { items.push(o); return o; };
+  let items = scene._gearItems = [];
+  const add = o => { items.push(o); return o; };
 
   // Dim background
   const dim = add(scene.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.82)
@@ -37,7 +37,8 @@ export function openGear(scene, depth = 200, onClose = null) {
   const refresh = () => {
     // Clear dynamic cards (anything past index 2 in items list)
     items.slice(3).forEach(o => o.destroy());
-    scene._gearItems = items.slice(0, 3); // keep dim, panel, title
+    items = items.slice(0, 3); // keep dim, panel, title
+    scene._gearItems = items;
     
     slots.forEach((slot, sIdx) => {
       const cy = startY + sIdx * 94;

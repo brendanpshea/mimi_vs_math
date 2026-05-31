@@ -1,8 +1,7 @@
-﻿const REGION = {
+const REGION = {
     id: 4,
     name: 'Desert Dunes',
     subtitle: 'Grade 3.5 · Division & Word Problems',
-    mathTopic: 'division',
     unlocked: false,
     floorColor: 0xD4A044,
     wallColor: 0xAA7722,
@@ -58,19 +57,74 @@
       { col: 76, row: 50 }, { col: 4,  row: 50 },
     ],
 
-    // ── Enemies: 10 — 4 native + 4 hard reviews from R1 + 2 native D2 ──
-    bossUnlockKills: 10,
-    enemySpawns: [
-      { id: 'sand_scarab'                              },  // D1 division
-      { id: 'mummy_cat'                                },  // D2 mult review
-      { id: 'mirage_fox'                               },  // D2 divisionWord
-      { id: 'riddle_scarab'                            },  // D1 missingNumber
-      { id: 'slime_pup',     difficultyOverride: 3     },  // D3 multTables review
-      { id: 'cactus_sprite', difficultyOverride: 3     },  // D3 multiplication review
-      { id: 'cloud_bully',   difficultyOverride: 3     },  // D3 skipCounting review
-      { id: 'double_bunny',  difficultyOverride: 3     },  // D3 doubling review
-      { id: 'sand_scarab'   },  // division
-      { id: 'riddle_scarab' },  // missingNumber
+    // ── Sub-Levels ─────────────────────────────────────────────────────────
+    levels: [
+      {
+        id: '4-1',
+        name: 'Scorching Sands',
+        mathTopic: 'division',
+        colorGrade: 0xFFE0AA,
+        weather: null,
+        bossUnlockKills: 3,
+        enemySpawns: [
+          { id: 'sand_scarab' },
+          { id: 'riddle_scarab' },
+          { id: 'sand_scarab' }
+        ]
+      },
+      {
+        id: '4-2',
+        name: 'The Oasis',
+        mathTopic: 'division',
+        colorGrade: 0xCCFFDD,
+        weather: (camW, camH) => ({
+          texture: '_wx_line', depth: 22,
+          config: {
+            x: -8, y: { min: 0, max: camH },
+            speedX: { min: 340, max: 520 },
+            speedY: { min: -18, max: 18 },
+            lifespan: { min: 650, max: 1050 },
+            quantity: 2, frequency: 30,
+            alpha: { start: 0.45, end: 0 },
+            scale: { start: 1.3, end: 0.5 },
+            tint: 0xD4A844,
+            rotate: 90,
+            gravityY: 0, maxParticles: 0,
+          },
+        }),
+        bossUnlockKills: 4,
+        enemySpawns: [
+          { id: 'mummy_cat' },
+          { id: 'mirage_fox' },
+          { id: 'mummy_cat' },
+          { id: 'slime_pup', difficultyOverride: 3 } // Review
+        ]
+      },
+      {
+        id: '4-3',
+        name: 'Ancient Ruins',
+        mathTopic: 'missingNumber',
+        colorGrade: 0xFFBBAA,
+        weather: null,
+        bossUnlockKills: 5,
+        enemySpawns: [
+          { id: 'riddle_scarab' },
+          { id: 'mirage_fox' },
+          { id: 'cactus_sprite', difficultyOverride: 3 }, // Review
+          { id: 'cloud_bully', difficultyOverride: 3 },   // Review
+          { id: 'double_bunny', difficultyOverride: 3 }   // Review
+        ]
+      },
+      {
+        id: '4-boss',
+        name: 'The Diviner\'s Pyramid',
+        mathTopic: 'division',
+        colorGrade: 0x884422,
+        weather: null,
+        isBossLevel: true,
+        bossUnlockKills: 0,
+        enemySpawns: []
+      }
     ],
 
     boss: 'the_diviner',

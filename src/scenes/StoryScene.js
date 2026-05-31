@@ -10,6 +10,7 @@
  */
 import * as Phaser from 'phaser';
 import GameState   from '../config/GameState.js';
+import REGIONS     from '../data/regions/index.js';
 
 // ── Zone constants ────────────────────────────────────────────────────────────
 // H = 600 reference:
@@ -439,7 +440,12 @@ export default class StoryScene extends Phaser.Scene {
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.cameras.main.once('camerafadeoutcomplete', () => {
       if (regionId > 0) {
-        this.scene.start('ExploreScene', { regionId });
+        const region = REGIONS[regionId];
+        if (region && region.levels && region.levels.length > 0) {
+          this.scene.start('LevelSelectScene', { regionId });
+        } else {
+          this.scene.start('ExploreScene', { regionId });
+        }
       } else {
         this.scene.start('OverworldScene');
       }

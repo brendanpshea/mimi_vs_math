@@ -1,8 +1,7 @@
-﻿const REGION = {
+const REGION = {
     id: 5,
     name: 'Frostbite Cavern',
     subtitle: 'Grade 4 · Fractions & Decimals',
-    mathTopic: 'fractions',
     unlocked: false,
     floorColor: 0x99C8DD,
     wallColor: 0x5588AA,
@@ -59,19 +58,73 @@
       { col: 76, row: 50 }, { col: 4,  row: 50 },
     ],
 
-    // ── Enemies: 10 — 4 native + 4 hard reviews from R2 + 2 native D3 ──
-    bossUnlockKills: 10,
-    enemySpawns: [
-      { id: 'ice_frog'                               },  // D1 fractionCompare
-      { id: 'snow_golem'                             },  // D2 fractionAdd
-      { id: 'crystal_bat'                            },  // D2 decimals
-      { id: 'ice_frog'      },  // fractionCompare
-      { id: 'sand_scarab',   difficultyOverride: 3   },  // D3 division review
-      { id: 'mummy_cat',     difficultyOverride: 3   },  // D3 mult review
-      { id: 'mirage_fox',    difficultyOverride: 3   },  // D3 word-problem review
-      { id: 'riddle_scarab', difficultyOverride: 3   },  // D3 missingNumber review
-      { id: 'snow_golem'    },  // fractionAdd
-      { id: 'crystal_bat'   },  // decimals
+    // ── Sub-Levels ─────────────────────────────────────────────────────────
+    levels: [
+      {
+        id: '5-1',
+        name: 'Icy Slopes',
+        mathTopic: 'fractionCompare',
+        colorGrade: 0xEEFFFF,
+        weather: null,
+        bossUnlockKills: 3,
+        enemySpawns: [
+          { id: 'ice_frog' },
+          { id: 'snow_golem' },
+          { id: 'ice_frog' }
+        ]
+      },
+      {
+        id: '5-2',
+        name: 'Crystal Caves',
+        mathTopic: 'decimals',
+        colorGrade: 0xCCEEFF,
+        weather: (camW, camH) => ({
+          texture: '_wx_dot', depth: 22,
+          config: {
+            x: { min: -20, max: camW + 20 }, y: -8,
+            speedX: { min: -28, max: 28 },
+            speedY: { min: 35, max: 90 },
+            lifespan: { min: 5000, max: 9000 },
+            quantity: 1, frequency: 100,
+            alpha: { start: 0.80, end: 0 },
+            scale: { start: 0.3, end: 0.65 },
+            tint: 0xDDEEFF,
+            gravityY: 0, maxParticles: 0,
+          },
+        }),
+        bossUnlockKills: 4,
+        enemySpawns: [
+          { id: 'crystal_bat' },
+          { id: 'snow_golem' },
+          { id: 'crystal_bat' },
+          { id: 'sand_scarab', difficultyOverride: 3 } // Review
+        ]
+      },
+      {
+        id: '5-3',
+        name: 'Frozen Depths',
+        mathTopic: 'fractionAdd',
+        colorGrade: 0xAADDFF,
+        weather: null,
+        bossUnlockKills: 5,
+        enemySpawns: [
+          { id: 'snow_golem' },
+          { id: 'ice_frog' },
+          { id: 'mummy_cat', difficultyOverride: 3 },     // Review
+          { id: 'mirage_fox', difficultyOverride: 3 },    // Review
+          { id: 'riddle_scarab', difficultyOverride: 3 }  // Review
+        ]
+      },
+      {
+        id: '5-boss',
+        name: 'Glacius\'s Peak',
+        mathTopic: 'fractionAdd',
+        colorGrade: 0x224488,
+        weather: null,
+        isBossLevel: true,
+        bossUnlockKills: 0,
+        enemySpawns: []
+      }
     ],
 
     boss: 'glacius',

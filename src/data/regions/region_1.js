@@ -2,7 +2,6 @@ const REGION = {
     id: 1,
     name: 'Windmill Village',
     subtitle: 'Grade 2 · Place Value & 2-Digit Arithmetic',
-    mathTopic: 'addCarry',
     unlocked: false,
     floorColor:  0xC8A840,   // wheat gold
     wallColor:   0xD4C090,   // pale stone
@@ -58,19 +57,73 @@ const REGION = {
       { col: 76, row: 50 }, { col: 4,  row: 50 },
     ],
 
-    // ── Enemies: 10 — 4 native topics + 4 hard reviews from R0 + 1 native D2 ──
-    bossUnlockKills: 10,
-    enemySpawns: [
-      { id: 'gear_gnome'                                    },  // D1 placeValue
-      { id: 'windmill_sprite'                               },  // D1 addCarry
-      { id: 'harvest_scarecrow'                             },  // D2 subBorrow
-      { id: 'counting_crow'                                 },  // D1 rounding
-      { id: 'counting_caterpillar', difficultyOverride: 3   },  // D3 addition review
-      { id: 'minus_mole',           difficultyOverride: 3   },  // D3 comparison review
-      { id: 'number_gnome',         difficultyOverride: 3   },  // D3 subtraction review
-      { id: 'number_bee',           difficultyOverride: 3   },  // D3 numberOrder review
-      { id: 'gear_gnome'      },  // placeValue
-      { id: 'windmill_sprite' },  // addCarry
+    // ── Sub-Levels ─────────────────────────────────────────────────────────
+    levels: [
+      {
+        id: '1-1',
+        name: 'Wheat Fields',
+        mathTopic: 'placeValue',
+        colorGrade: 0xFFF8D0,
+        weather: null,
+        bossUnlockKills: 3,
+        enemySpawns: [
+          { id: 'gear_gnome' },
+          { id: 'counting_crow' },
+          { id: 'gear_gnome' }
+        ]
+      },
+      {
+        id: '1-2',
+        name: 'The Old Mill Road',
+        mathTopic: 'addCarry',
+        colorGrade: 0xFFE8AA,
+        weather: (camW, camH) => ({
+          texture: '_wx_dot', depth: 22,
+          config: {
+            x: { min: 0, max: camW }, y: { min: 0, max: camH },
+            speedX: { min: 18, max: 55 },
+            speedY: { min: -25, max: 25 },
+            lifespan: { min: 4000, max: 7000 },
+            quantity: 1, frequency: 220,
+            alpha: { start: 0.55, end: 0 },
+            scale: { start: 0.35, end: 0.12 },
+            tint: 0xF0D060,
+            gravityY: 18, maxParticles: 0,
+          },
+        }),
+        bossUnlockKills: 4,
+        enemySpawns: [
+          { id: 'windmill_sprite' },
+          { id: 'gear_gnome' },
+          { id: 'windmill_sprite' },
+          { id: 'minus_mole', difficultyOverride: 3 } // Review
+        ]
+      },
+      {
+        id: '1-3',
+        name: 'Scarecrow\'s Harvest',
+        mathTopic: 'subBorrow',
+        colorGrade: 0xFFCC88,
+        weather: null,
+        bossUnlockKills: 5,
+        enemySpawns: [
+          { id: 'harvest_scarecrow' },
+          { id: 'counting_caterpillar', difficultyOverride: 3 }, // Review
+          { id: 'harvest_scarecrow' },
+          { id: 'number_gnome', difficultyOverride: 3 }, // Review
+          { id: 'number_bee', difficultyOverride: 3 } // Review
+        ]
+      },
+      {
+        id: '1-boss',
+        name: 'Grand Miller\'s Tower',
+        mathTopic: 'addCarry',
+        colorGrade: 0x664422, // Dark/dusty interior look
+        weather: null,
+        isBossLevel: true,
+        bossUnlockKills: 0,
+        enemySpawns: []
+      }
     ],
 
     boss: 'grand_miller',

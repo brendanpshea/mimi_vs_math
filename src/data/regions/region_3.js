@@ -1,8 +1,7 @@
-﻿const REGION = {
+const REGION = {
     id: 3,
     name: 'Mycelium Hollow',
     subtitle: 'Grade 3 · Multi-Digit Multiplication',
-    mathTopic: 'multiDigitMult',
     unlocked: false,
     floorColor: 0x2D4A2D,
     wallColor: 0x1A2E1A,
@@ -57,19 +56,72 @@
       { col: 76, row: 50 }, { col: 4,  row: 50 },
     ],
 
-    // ── Enemies: 10 — 3 native types + 2 hard reviews from R2 ────────────
-    bossUnlockKills: 10,
-    enemySpawns: [
-      { id: 'fungus_toad'                              },  // D1 multiDigitMult
-      { id: 'mycelium_wisp'                            },  // D1 factorPairs
-      { id: 'spore_puff'                               },  // D1 area
-      { id: 'fungus_toad'   },  // multiDigitMult
-      { id: 'mycelium_wisp' },  // factorPairs
-      { id: 'spore_puff'    },  // area
-      { id: 'mycelium_wisp' },  // factorPairs (word problem)
-      { id: 'slime_pup',      difficultyOverride: 3    },  // D3 multTables review
-      { id: 'double_bunny',   difficultyOverride: 3    },  // D3 doubling review
-      { id: 'fungus_toad'   },  // multiDigitMult
+    // ── Sub-Levels ─────────────────────────────────────────────────────────
+    levels: [
+      {
+        id: '3-1',
+        name: 'Spore Paths',
+        mathTopic: 'multiDigitMult',
+        colorGrade: 0x88FFAA,
+        weather: null,
+        bossUnlockKills: 3,
+        enemySpawns: [
+          { id: 'fungus_toad' },
+          { id: 'mycelium_wisp' },
+          { id: 'fungus_toad' }
+        ]
+      },
+      {
+        id: '3-2',
+        name: 'Glowing Caverns',
+        mathTopic: 'multiDigitMult',
+        colorGrade: 0xAAFF88,
+        weather: (camW, camH) => ({
+          texture: '_wx_dot', depth: 22,
+          config: {
+            x: { min: 0, max: camW }, y: { min: 0, max: camH },
+            speedX: { min: -15, max: 15 },
+            speedY: { min: -30, max: 10 },
+            lifespan: { min: 3000, max: 6000 },
+            quantity: 1, frequency: 180,
+            alpha: { start: 0.45, end: 0 },
+            scale: { start: 0.25, end: 0.55 },
+            tint: 0x88FF99,
+            gravityY: -8, maxParticles: 0,
+          },
+        }),
+        bossUnlockKills: 4,
+        enemySpawns: [
+          { id: 'spore_puff' },
+          { id: 'mycelium_wisp' },
+          { id: 'spore_puff' },
+          { id: 'slime_pup', difficultyOverride: 3 } // Review
+        ]
+      },
+      {
+        id: '3-3',
+        name: 'Fungal Depths',
+        mathTopic: 'multiDigitMult',
+        colorGrade: 0x66FFCC,
+        weather: null,
+        bossUnlockKills: 5,
+        enemySpawns: [
+          { id: 'fungus_toad' },
+          { id: 'spore_puff' },
+          { id: 'mycelium_wisp' },
+          { id: 'double_bunny', difficultyOverride: 3 } // Review
+        ]
+      },
+      {
+        id: '3-boss',
+        name: 'Queen Sporella\'s Throne',
+        mathTopic: 'multiDigitMult',
+        colorGrade: 0x224422,
+        weather: null,
+        isBossLevel: true,
+        bossUnlockKills: 0,
+        enemySpawns: []
+      }
     ],
 
     boss: 'queen_sporella',

@@ -45,7 +45,7 @@ const GameState = {
 
   // ── Inventory ─────────────────────────────────────────────────────────
   // key: item id, value: count
-  inventory: {},
+  inventory: { math_net: 1 },
 
   // ── Active battle modifiers (reset between battles) ───────────────────
   activeEffects: {
@@ -190,6 +190,12 @@ const GameState = {
       if (!this.activeBounties) {
         this.activeBounties = [];
       }
+      
+      // Retroactively grant the starting net to existing players who haven't caught anything yet
+      if (!this.inventory) this.inventory = {};
+      if (!this.inventory.math_net && this.capturedEnemies.length === 0) {
+        this.inventory.math_net = 1;
+      }
       // topicPerfectStreak is session-only — always reset on load
       this.topicPerfectStreak = {};
       // Strip legacy topicAccuracy field from old saves
@@ -234,7 +240,7 @@ const GameState = {
     this.defeatedBosses  = [];
     this.clearedLevels   = [];
     this.defeatedEnemies = {};
-    this.inventory       = {};
+    this.inventory       = { math_net: 1 };
     this.bossIntroSeen          = [];
     this.regionStars            = {};
     this.activeEffects          = { timerBonus: 0, doubleHit: false, shield: false, hintCharges: 0 };

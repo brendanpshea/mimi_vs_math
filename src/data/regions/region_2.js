@@ -1,8 +1,7 @@
-﻿const REGION = {
+const REGION = {
     id: 2,
     name: 'Meadow Maze',
     subtitle: 'Grade 2.5 · Skip Counting & Times Tables',
-    mathTopic: 'multiplication',
     unlocked: false,
     floorColor: 0x5FA827,
     wallColor: 0x4A7A1E,
@@ -60,19 +59,74 @@
       { col: 76, row: 50 }, { col: 4,  row: 50 },
     ],
 
-    // ── Enemies: 10 — 4 native + 4 hard reviews from R0 + 2 native D2 ──
-    bossUnlockKills: 10,
-    enemySpawns: [
-      { id: 'slime_pup'                                    },  // D1 multTables
-      { id: 'cactus_sprite'                                },  // D2 multiplication
-      { id: 'cloud_bully'                                  },  // D2 skipCounting
-      { id: 'double_bunny'                                 },  // D1 doubling
-      { id: 'counting_caterpillar', difficultyOverride: 3  },  // D3 addition review
-      { id: 'number_gnome',         difficultyOverride: 3  },  // D3 subtraction review
-      { id: 'minus_mole',           difficultyOverride: 3  },  // D3 comparison review
-      { id: 'number_bee',           difficultyOverride: 3  },  // D3 numberOrder review
-      { id: 'slime_pup'    },  // multTables
-      { id: 'double_bunny' },  // doubling
+    // ── Sub-Levels ─────────────────────────────────────────────────────────
+    levels: [
+      {
+        id: '2-1',
+        name: 'Sunny Thicket',
+        mathTopic: 'skipCounting',
+        colorGrade: 0xEEFFAA,
+        weather: null,
+        bossUnlockKills: 3,
+        enemySpawns: [
+          { id: 'cloud_bully' },
+          { id: 'double_bunny' },
+          { id: 'cloud_bully' }
+        ]
+      },
+      {
+        id: '2-2',
+        name: 'Beehive Path',
+        mathTopic: 'multiplication',
+        colorGrade: 0xFFE088,
+        weather: (camW, camH) => ({
+          texture: '_wx_line', depth: 22,
+          config: {
+            x: { min: -20, max: camW + 20 }, y: -12,
+            speedX: { min: 35, max: 70 },
+            speedY: { min: 200, max: 320 },
+            lifespan: 2200,
+            quantity: 1, frequency: 70,
+            alpha: { start: 0.25, end: 0 },
+            scale: { start: 0.75, end: 0.75 },
+            tint: 0xCCEEBB,
+            rotate: 10,
+            gravityY: 0, maxParticles: 0,
+          },
+        }),
+        bossUnlockKills: 4,
+        enemySpawns: [
+          { id: 'slime_pup' },
+          { id: 'cactus_sprite' },
+          { id: 'slime_pup' },
+          { id: 'counting_caterpillar', difficultyOverride: 3 } // Review
+        ]
+      },
+      {
+        id: '2-3',
+        name: 'The Deep Maze',
+        mathTopic: 'multiplication',
+        colorGrade: 0x88FFCC,
+        weather: null,
+        bossUnlockKills: 5,
+        enemySpawns: [
+          { id: 'cactus_sprite' },
+          { id: 'double_bunny' },
+          { id: 'number_gnome', difficultyOverride: 3 }, // Review
+          { id: 'minus_mole', difficultyOverride: 3 },   // Review
+          { id: 'number_bee', difficultyOverride: 3 }    // Review
+        ]
+      },
+      {
+        id: '2-boss',
+        name: 'Count Multiplico\'s Lair',
+        mathTopic: 'multiplication',
+        colorGrade: 0x442288,
+        weather: null,
+        isBossLevel: true,
+        bossUnlockKills: 0,
+        enemySpawns: []
+      }
     ],
 
     boss: 'count_multiplico',
